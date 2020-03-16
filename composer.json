@@ -1,0 +1,54 @@
+{
+    "name": "imanghafoori/laravel-self-test",
+    "description": "Auto test your laravel application",
+    "keywords": [
+        "imanghafoori1",
+        "laravel-self-test"
+    ],
+    "homepage": "https://github.com/imanghafoori1/laravel-self-test",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Iman",
+            "email": "imanghafoori1@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Imanghafoori\\LaravelSelfTest\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Imanghafoori\\LaravelSelfTest\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Imanghafoori\\LaravelSelfTest\\LaravelSelfTestServiceProvider"
+            ],
+            "aliases": {
+                "LaravelSelfTest": "Imanghafoori\\LaravelSelfTest\\LaravelSelfTestFacade"
+            }
+        }
+    }
+}
