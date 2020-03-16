@@ -1,24 +1,25 @@
-# Very short description of the package
+# Auto test your laravel application
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori1/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-self-test)
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-self-test)
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-self-test.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-self-test)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori1/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-self-test)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This package provides a way to find errors without writing any tests. For example when you setup an event handler which does not exist at all, notifies you.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require imanghafoori1/laravel-self-test
+composer require imanghafoori/laravel-self-test
 ```
 
 ## Usage
 
+You can run:
 ``` php
-// Usage description here
+php artisan event:check
 ```
 
 ### Testing
@@ -47,7 +48,3 @@ If you discover any security related issues, please email imanghafoori1@gmail.co
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
