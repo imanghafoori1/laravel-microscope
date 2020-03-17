@@ -18,19 +18,13 @@ composer require imanghafoori/laravel-self-test
 ## Usage
 
 You can run:
+
 ``` php
 php artisan event:check
 ```
 
-### Testing
+It does not matter how you are setting your event listener, in the `EventServiceProvider`, by `Event::listen` facade, by Subscriber class... or any other way. The error would be found . :)
 
-``` bash
-composer test
-```
-
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 ## Contributing
 
