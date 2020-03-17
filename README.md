@@ -26,10 +26,6 @@ php artisan event:check
 It does not matter how you are setting your event listener, in the `EventServiceProvider`, by `Event::listen` facade, by Subscriber class... or any other way. The error would be found . :)
 
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
 ### Security
 
 If you discover any security related issues, please email imanghafoori1@gmail.com instead of using the issue tracker.
@@ -42,3 +38,69 @@ If you discover any security related issues, please email imanghafoori1@gmail.co
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+--------------------
+
+### :raising_hand: Contributing 
+If you find an issue, or have a better way to do something, feel free to open an issue or a pull request.
+If you use laravel-widgetize in your open source project, create a pull request to provide it's url as a sample application in the README.md file. 
+
+
+### :exclamation: Security
+If you discover any security related issues, please use the `security tab` instead of using the issue tracker.
+
+
+### :star: Your Stars Make Us Do More :star:
+As always if you found this package useful and you want to encourage us to maintain and work on it. Just press the star button to declare your willing.
+
+
+
+## More from the author:
+
+### Laravel HeyMan
+
+:gem: It allows to write expressive code to authorize, validate and authenticate.
+
+- https://github.com/imanghafoori1/laravel-heyman
+
+
+--------------
+
+### Laravel Terminator
+
+
+ :gem: A minimal yet powerful package to give you opportunity to refactor your controllers.
+
+- https://github.com/imanghafoori1/laravel-terminator
+
+
+------------
+
+### Laravel AnyPass
+
+:gem: It allows you login with any password in local environment only.
+
+- https://github.com/imanghafoori1/laravel-anypass
+
+------------
+
+### Eloquent Relativity
+
+:gem: It allows you to decouple your eloquent models to reach a modular structure
+
+- https://github.com/imanghafoori1/eloquent-relativity
+
+
+----------------
+
+### 🍌 Reward me a banana 🍌
+
+Send me as much as a banana costs in your region:
+
+- Dodge Coin: DJEZr6GJ4Vx37LGF3zSng711AFZzmJTouN
+- LiteCoin: ltc1q82gnjkend684c5hvprg95fnja0ktjdfrhcu4c4
+- BitCoin: bc1q53dys3jkv0h4vhl88yqhqzyujvk35x8wad7uf9
+- Ripple: rJwrb2v1TR6rAHRWwcYvNZxjDN2bYpYXhZ
+- Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
+
+--------------
