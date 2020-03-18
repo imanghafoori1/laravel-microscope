@@ -34,6 +34,7 @@ php artisan check:gate
 
 It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
+It also checks for the policy definitions to be valid. `Gate::policy(User::class, UserPolicy::class);`
 
 ### Security
 
@@ -78,7 +79,7 @@ As always if you found this package useful and you want to encourage us to maint
 ### Laravel Terminator
 
 
- :gem: A minimal yet powerful package to give you opportunity to refactor your controllers.
+ :gem: A minimal yet powerful package to give you the opportunity to refactor your controllers.
 
 - https://github.com/imanghafoori1/laravel-terminator
 
