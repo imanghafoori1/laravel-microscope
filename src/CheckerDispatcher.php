@@ -15,7 +15,7 @@ class CheckerDispatcher extends Dispatcher
 
     private function error(string $string)
     {
-        dump($string);
+        app(ErrorPrinter::class)->print($string);
     }
 
     /**
