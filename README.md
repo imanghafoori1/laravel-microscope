@@ -1,4 +1,7 @@
-# Auto test your laravel application
+# Auto-test your laravel application
+
+### Smart enough to know about all the laravel's magic :)
+
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-self-test)
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-self-test)
@@ -20,10 +23,16 @@ composer require imanghafoori/laravel-self-test
 You can run:
 
 ``` php
-php artisan event:check
+php artisan check:event
 ```
 
-It does not matter how you are setting your event listener, in the `EventServiceProvider`, by `Event::listen` facade, by Subscriber class... or any other way. The error would be found . :)
+- It does not matter how you are setting your event listener, in the `EventServiceProvider`, by `Event::listen` facade, by Subscriber class... or any other way. The error would be found . :)
+
+``` php
+php artisan check:gate
+```
+
+It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
 
 ### Security
