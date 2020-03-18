@@ -56,7 +56,7 @@ If you use laravel-widgetize in your open source project, create a pull request 
 
 
 ### :exclamation: Security
-If you discover any security related issues, please use the `security tab` instead of using the issue tracker.
+If you discover any security related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
 
 
 ### :star: Your Stars Make Us Do More :star:
@@ -68,7 +68,7 @@ As always if you found this package useful and you want to encourage us to maint
 
 ### Laravel HeyMan
 
-:gem: It allows to write expressive code to authorize, validate and authenticate.
+:gem: It allows us to write expressive code to authorize, validate and authenticate.
 
 - https://github.com/imanghafoori1/laravel-heyman
 
@@ -87,7 +87,7 @@ As always if you found this package useful and you want to encourage us to maint
 
 ### Laravel AnyPass
 
-:gem: It allows you login with any password in local environment only.
+:gem: It allows you login with any password in the local environment only.
 
 - https://github.com/imanghafoori1/laravel-anypass
 
