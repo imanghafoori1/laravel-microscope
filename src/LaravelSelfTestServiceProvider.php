@@ -2,9 +2,13 @@
 
 namespace Imanghafoori\LaravelSelfTest;
 
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
+use Imanghafoori\LaravelSelfTest\Commands\CheckGate;
+use Imanghafoori\LaravelSelfTest\Commands\CheckEvent;
 
 class LaravelSelfTestServiceProvider extends ServiceProvider
 {
@@ -14,7 +18,7 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([CheckEvent::class]);
+            $this->commands([CheckEvent::class, CheckGate::class]);
         }
     }
 
@@ -23,15 +27,30 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-self-test');
+        app()->singleton(ErrorPrinter::class);
 
-        if ($this->app->runningInConsole() and ($_SERVER['argv'][1] ?? null) == 'event:check') {
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-self-test');
+        if (! $this->app->runningInConsole()) {
+            return ;
+        }
+        $command = $_SERVER['argv'][1] ?? null;
+
+        if ($command == 'check:event') {
             $this->app->singleton('events', function ($app) {
                 return (new CheckerDispatcher($app))->setQueueResolver(function () use ($app) {
                     return $app->make(QueueFactoryContract::class);
                 });
             });
             Event::clearResolvedInstance('events');
+        }
+
+        if ($command == 'check:gate') {
+          
+            $this->app->singleton(GateContract::class, function ($app) {
+                return new CheckerGate($app, function () use ($app) {
+                    return call_user_func($app['auth']->userResolver());
+                });
+            });
         }
     }
 }
