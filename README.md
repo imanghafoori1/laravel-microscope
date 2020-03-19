@@ -26,7 +26,24 @@ You can run:
 php artisan check:event
 ```
 
-- It does not matter how you are setting your event listener, in the `EventServiceProvider`, by `Event::listen` facade, by Subscriber class... or any other way. The error would be found . :)
+Consider:
+```php
+Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
+```
+1 - It checks the  `MyEvent` class path to be valid.
+2 - It checks the  `MyListener` class path to be valid.
+3 - It checks the  `myMethod` to exist.
+4 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
+```
+public function myMethod(NotMyEvent $event)
+{
+    //
+}
+```
+This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
+
+
+- Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
 
 ``` php
 php artisan check:gate
