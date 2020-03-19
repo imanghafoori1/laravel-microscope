@@ -1,5 +1,4 @@
 <?php
-
 namespace Imanghafoori\LaravelSelfTest;
 
 use Illuminate\Events\Dispatcher;
@@ -18,6 +17,10 @@ class CheckerDispatcher extends Dispatcher
         app(ErrorPrinter::class)->print($string);
     }
 
+    private function isLikeClassPath($event)
+    {
+        return count(explode('\\', $event)) > 1;
+    }
     /**
      * @param $listener
      *
@@ -25,6 +28,10 @@ class CheckerDispatcher extends Dispatcher
      */
     protected function validateCallback($event, $listener)
     {
+        if ($this->isLikeClassPath($event) && ! (class_exists($event) || interface_exists($event))) {
+            return $this->error("The Event class: \"$event\" you are listening to does not exist.");
+        }
+
         if (! is_string($listener)) {
             return;
         }
@@ -42,6 +49,27 @@ class CheckerDispatcher extends Dispatcher
 
         if (! method_exists($obj, $method)) {
             return $this->error($this->noMethod($event, $class, $method));
+        }
+
+        $typeHintClassPath = null;
+        $typeHint = (new \ReflectionParameter([
+            $obj,
+            $method,
+        ], 0))->getType();
+        if ($typeHint) {
+            $typeHintClassPath = $typeHint->getName();
+
+            if (! (class_exists($typeHintClassPath) || interface_exists($typeHintClassPath))) {
+                return $this->error('The type hint is wrong on the listener: '.$typeHintClassPath);
+            }
+        }
+
+        $eventName = $this->stringify($event);
+
+        if (class_exists($eventName)) {
+            if ($typeHintClassPath && !($eventName == $typeHintClassPath || is_subclass_of($eventName, $typeHintClassPath))) {
+                return $this->error('The type hint on the listener: '.$listener.' does not match the event class path.');
+            }
         }
     }
 

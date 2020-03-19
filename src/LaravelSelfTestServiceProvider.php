@@ -2,13 +2,13 @@
 
 namespace Imanghafoori\LaravelSelfTest;
 
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
+use Imanghafoori\LaravelSelfTest\Commands\CheckAuth;
 use Imanghafoori\LaravelSelfTest\Commands\CheckGate;
 use Imanghafoori\LaravelSelfTest\Commands\CheckEvent;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 
 class LaravelSelfTestServiceProvider extends ServiceProvider
 {
@@ -18,7 +18,7 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([CheckEvent::class, CheckGate::class]);
+            $this->commands([CheckEvent::class, CheckGate::class, CheckAuth::class]);
         }
     }
 
@@ -45,7 +45,6 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
         }
 
         if ($command == 'check:gate') {
-          
             $this->app->singleton(GateContract::class, function ($app) {
                 return new CheckerGate($app, function () use ($app) {
                     return call_user_func($app['auth']->userResolver());
