@@ -21,21 +21,23 @@ composer require imanghafoori/laravel-self-test
 ## Usage
 
 You can run:
-
-``` php
-php artisan check:event
+```
+php artisan check:event 
 ```
 
-Consider:
+For example:
 ```php
 Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 ```
 1 - It checks the  `MyEvent` class path to be valid.
+
 2 - It checks the  `MyListener` class path to be valid.
+
 3 - It checks the  `myMethod` to exist.
+
 4 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
 ```
-public function myMethod(NotMyEvent $event)
+public function myMethod(NotMyEvent $e)  <---- notice type-hint here
 {
     //
 }
@@ -51,7 +53,17 @@ php artisan check:gate
 
 It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
-It also checks for the policy definitions to be valid. `Gate::policy(User::class, UserPolicy::class);`
+It also checks for the policy definitions to be valid. 
+
+```
+Gate::policy(User::class, UserPolicy@someMethod); 
+```
+
+1 - It checks the  `User` class path to be valid.
+
+2 - It checks the  `UserPolicy` class path to be valid.
+
+3 - It checks the  `someMethod` to exist.
 
 ### Security
 
