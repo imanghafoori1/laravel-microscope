@@ -21,14 +21,10 @@ class CheckerDispatcher extends Dispatcher
     {
         return count(explode('\\', $event)) > 1;
     }
-    /**
-     * @param $listener
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
+
     protected function validateCallback($event, $listener)
     {
-        if ($this->isLikeClassPath($event) && ! (class_exists($event) || interface_exists($event))) {
+        if ($this->isLikeClassPath($event) && ! $this->exists($event)) {
             return $this->error("The Event class: \"$event\" you are listening to does not exist.");
         }
 
@@ -37,31 +33,24 @@ class CheckerDispatcher extends Dispatcher
         }
 
         [
-            $class,
-            $method,
+            $listenerClass,
+            $methodName,
         ] = $this->parseClassCallable($listener);
 
         try {
-            $obj = app()->make($class);
+            $listenerObj = app()->make($listenerClass);
         } catch (BindingResolutionException $e) {
-            return $this->error($this->noClass($event, $class, $method));
+            return $this->error($this->noClass($event, $listenerClass, $methodName));
         }
 
-        if (! method_exists($obj, $method)) {
-            return $this->error($this->noMethod($event, $class, $method));
+        if (! method_exists($listenerObj, $methodName)) {
+            return $this->error($this->noMethod($event, $listenerClass, $methodName));
         }
 
-        $typeHintClassPath = null;
-        $typeHint = (new \ReflectionParameter([
-            $obj,
-            $method,
-        ], 0))->getType();
-        if ($typeHint) {
-            $typeHintClassPath = $typeHint->getName();
+        $typeHintClassPath = $this->getTypeHintedClass($listenerObj, $methodName);
 
-            if (! (class_exists($typeHintClassPath) || interface_exists($typeHintClassPath))) {
-                return $this->error('The type hint is wrong on the listener: '.$typeHintClassPath);
-            }
+        if ($typeHintClassPath && ! $this->exists($typeHintClassPath)) {
+            return $this->error('The '.$typeHintClassPath.' type hint is wrong on the listener: '.$typeHintClassPath);
         }
 
         $eventName = $this->stringify($event);
@@ -99,5 +88,20 @@ class CheckerDispatcher extends Dispatcher
         $e = $this->stringify($event);
 
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
+    }
+
+    private function exists($event)
+    {
+        return class_exists($event) || interface_exists($event);
+    }
+
+    protected function getTypeHintedClass($listenerObj, $methodName)
+    {
+        $typeHint = (new \ReflectionParameter([
+            $listenerObj,
+            $methodName,
+        ], 0))->getType();
+
+        return $typeHint ? $typeHint->getName() : null;
     }
 }
