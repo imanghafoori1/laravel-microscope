@@ -43,11 +43,11 @@ class CheckRoute extends Command
             ] = Str::parseCallback($ctrl, '__invoke');
 
             if (! class_exists($ctrlClass)) {
-                $this->errorIt($route, 'The controller does not exist: '.$ctrlClass);
+                return $this->errorIt($route, 'The controller does not exist: '.$ctrlClass);
             }
 
             if (! method_exists($ctrlClass, $method)) {
-                $this->errorIt($route, 'The controller action does not exist: '.$ctrl);
+                return $this->errorIt($route, 'The controller action does not exist: '.$ctrl);
             }
         }
     }
