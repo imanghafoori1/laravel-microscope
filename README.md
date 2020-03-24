@@ -21,6 +21,11 @@ composer require imanghafoori/laravel-self-test
 ## Usage
 
 You can run:
+- php artisan check:event 
+- php artisan check:gate 
+- php artisan check:route 
+- php artisan check:auth 
+
 ```
 php artisan check:event 
 ```
@@ -64,6 +69,11 @@ Gate::policy(User::class, UserPolicy@someMethod);
 2 - It checks the  `UserPolicy` class path to be valid.
 
 3 - It checks the  `someMethod` to exist.
+
+``` php
+php artisan check:route
+```
+- It check that your routes refer to valid controller classes and methods.
 
 ### Security
 
