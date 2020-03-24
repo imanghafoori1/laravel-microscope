@@ -48,8 +48,8 @@ Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 3 - It checks the  `myMethod` to exist.
 
 4 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
-```
-public function myMethod(NotMyEvent $e)  <---- notice type-hint here
+```php
+public function myMethod(NotExistsEvent $e) // <---- notice type-hint here
 {
     //
 }
@@ -59,7 +59,7 @@ This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
 
 - Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
 
-``` php
+``` 
 php artisan check:gate
 ```
 
@@ -67,7 +67,7 @@ It check the validity of all the gates you have defined, making sure that they r
 
 It also checks for the policy definitions to be valid. 
 
-```
+```php
 Gate::policy(User::class, UserPolicy@someMethod); 
 ```
 
