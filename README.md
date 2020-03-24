@@ -26,14 +26,21 @@ You can run:
 - php artisan check:route 
 - php artisan check:auth 
 
+
+
+## What the Commands do?
+
+Lets start with:
 ```
 php artisan check:event 
 ```
 
-For example:
+For example consider:
+
 ```php
 Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 ```
+
 1 - It checks the  `MyEvent` class path to be valid.
 
 2 - It checks the  `MyListener` class path to be valid.
@@ -73,7 +80,10 @@ Gate::policy(User::class, UserPolicy@someMethod);
 ``` php
 php artisan check:route
 ```
+
 - It check that your routes refer to valid controller classes and methods.
+
+and more features will be added soon.
 
 ### Security
 
