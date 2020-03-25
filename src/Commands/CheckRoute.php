@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
+use ReflectionException;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
@@ -77,8 +78,20 @@ class CheckRoute extends Command
      */
     protected function checkViews($ctrl, $method)
     {
-        $controllerAction = (new ControllerParser())->parse($ctrl, $method);
-        $vParser = new ViewParser($controllerAction);
+        $controllerMethod = (new ControllerParser())->parse($ctrl, $method);
+        $params = $controllerMethod->getParameters();
+        foreach ($params as $param) {
+            try {
+                $param->getClass();
+            } catch (ReflectionException $e) {
+                $p = app(ErrorPrinter::class);
+                $p->print(
+                    'The type hint in the "'. get_class($ctrl).'@'.$method. '" is wrong.'
+                );
+            }
+        }
+
+        $vParser = new ViewParser($controllerMethod);
         $views = $vParser->parse()->getChildren();
 
         $this->checkView($ctrl, $method, $views);
@@ -95,11 +108,8 @@ class CheckRoute extends Command
                 $p = app(ErrorPrinter::class);
                 $p->print(
                     $_['file'].', line number:'.$_['lineNumber']
-                    .PHP_EOL
-                    .PHP_EOL
                     .'  => '.($_['line'])
-                    .PHP_EOL.
-                    '"'.$_['name'].'.blade.php" does not exist'
+                    .'"'.$_['name'].'.blade.php" does not exist'
                 );
            }
         }
