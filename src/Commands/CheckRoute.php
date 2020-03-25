@@ -55,7 +55,6 @@ class CheckRoute extends Command
             if (! method_exists($ctrlObject, $method)) {
                 $this->errorIt($route);
                 app(ErrorPrinter::class)->print('The controller action does not exist: '.$ctrl);
-                return ;
             }
 
             $this->checkViews($ctrlObject, $method);
@@ -92,7 +91,7 @@ class CheckRoute extends Command
             }
 
             if (! $_['children']) {
-                dump($_['file'].'.blade.php line number:'.$_['lineNumber'].  '  =>  '.trim($_['line']). '  file does not exist:  '.$_['name'].'.blade.php');
+                dump($_['file'].' line number:'.$_['lineNumber'].  '  =>  '.trim($_['line']). '  file does not exist:  '.$_['name'].'.blade.php');
             }
         }
     }
