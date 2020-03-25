@@ -87,6 +87,8 @@ php artisan check:route
 - It Scans your controller code and find the `view()` and `View::make()` and reports if they refer to wrong files.
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
 
+![image](https://user-images.githubusercontent.com/6961695/77560076-929e5f80-6eda-11ea-8482-9ccb9cafb1ed.png)
+
 and more features will be added soon. ;)
 
 ### Security
