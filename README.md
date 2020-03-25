@@ -1,5 +1,6 @@
 # Auto-test your laravel application
 
+## Give your eyes a rest, this will check it for you.
 ### Smart enough to know about all the laravel's magic :)
 
 
