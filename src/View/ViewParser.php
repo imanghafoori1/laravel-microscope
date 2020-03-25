@@ -26,6 +26,11 @@ class ViewParser
     /**
      * @var array
      */
+    protected $childrenViews = [];
+
+    /**
+     * @var array
+     */
     protected $viewAliases = [
         'View::make(',
         'view(',
@@ -126,6 +131,7 @@ class ViewParser
                         'name' => $this->retrieveViewFromLine($view, $viewAlias),
                         'lineNumber' => $key + 1,
                         'directive' => 'view(',
+                        'file' => '',
                         'line' => $line
                     ];
                 }
@@ -147,7 +153,7 @@ class ViewParser
     }
 
     /**
-     * @param  string  $line
+     * @param  string  $view
      * @param  string  $viewAlias
      *
      * @return string
@@ -170,7 +176,7 @@ class ViewParser
     }
 
     /**
-     * @param  string  $parent_view
+     * @param  string  $view
      *
      * @return array
      */
@@ -186,7 +192,7 @@ class ViewParser
                     $view = $this->getViewFromLine(substr($line, $position), $bladeDirective);
                     $views[] = [
                         'name' => $this->retrieveViewFromLine($view, $bladeDirective),
-                        'file' => $parent_view,
+                        'file' => $parent_view. '.blade.php',
                         'lineNumber' => $lineNumber + 1,
                         'directive' => $bladeDirective,
                         'line' => $line
