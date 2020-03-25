@@ -23,8 +23,6 @@ class ControllerParser
         }*/
 
         return $method = (new ReflectionClass($ctrl))->getMethod($method);
-
-        return $this->readContent($method);
     }
 
     /**
