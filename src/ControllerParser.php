@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelSelfTest;
 
 use Illuminate\Http\Request;
 use ReflectionClass;
-use ReflectionMethod;
 
 class ControllerParser
 {
@@ -23,7 +22,7 @@ class ControllerParser
             return $this->resolveViewControllerInvokeMethod();
         }*/
 
-        $method = (new ReflectionClass($ctrl))->getMethod($method);
+        return $method = (new ReflectionClass($ctrl))->getMethod($method);
 
         return $this->readContent($method);
     }
@@ -52,13 +51,5 @@ class ControllerParser
         }
 
         return $this->ctrl->parametersWithoutNulls();
-    }
-
-    protected function readContent(ReflectionMethod $method)
-    {
-        $start = $method->getStartLine() - 1;
-        $length = $method->getEndLine() - $method->getStartLine() + 1;
-
-        return array_slice(file($method->getFileName()), $start, $length);
     }
 }
