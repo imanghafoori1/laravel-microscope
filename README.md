@@ -69,6 +69,7 @@ It also checks for the policy definitions to be valid.
 
 ```php
 Gate::policy(User::class, UserPolicy@someMethod); 
+Gate::define('someAbility', UserGate@someMethod); 
 ```
 
 1 - It checks the  `User` class path to be valid.
@@ -82,10 +83,10 @@ php artisan check:route
 ```
 
 - It check that your routes refer to valid controller classes and methods.
-- It Scans your controller code and find the `view()` and `View::make` and reports if they refer to wrong files.
-- It scans your blade files for `@include` and `@extends` and reports if they refer to wrong files.
+- It Scans your controller code and find the `view()` and `View::make()` and reports if they refer to wrong files.
+- It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
 
-and more features will be added soon.
+and more features will be added soon. ;)
 
 ### Security
 
