@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelSelfTest\View;
 
+use ReflectionMethod;
 use Illuminate\View\ViewName;
 use Illuminate\Support\Facades\View;
 use TypeHints\Unused\Parser\Action\ParserActionInterface;
@@ -87,6 +88,20 @@ class ViewParser
         $this->children = $this->loopForNestedViews($this->parent);
     }
 
+    /**
+     * @param  array  $children
+     */
+    public function resolveChildrenHierarchy(array $children)
+    {
+        collect($children)->each(function ($value, $key) {
+            if (is_string($key)) {
+                $this->childrenViews[] = $key;
+            }
+
+            return $this->resolveChildrenHierarchy($value);
+        });
+    }
+
     public function loopForNestedViews($views)
     {
         $generated = [];
@@ -102,13 +117,23 @@ class ViewParser
     }
 
     /**
+     * @param  \ReflectionMethod  $method
+     *
      * @return array
      */
+    protected function readContent(ReflectionMethod $method)
+    {
+        $start = $method->getStartLine() - 1;
+        $length = $method->getEndLine() - $method->getStartLine() + 1;
+
+        return array_slice(file($method->getFileName()), $start, $length);
+    }
+
     protected function retrieveViewsFromMethod()
     {
         $views = [];
 
-        $content = $this->action;
+        $content = $this->readContent($this->action);
 
         if (! $content) {
             return [];
@@ -129,10 +154,10 @@ class ViewParser
                     }
                     $views[] = [
                         'name' => $this->retrieveViewFromLine($view, $viewAlias),
-                        'lineNumber' => $key + 1,
+                        'lineNumber' => $this->action->getStartLine() + $key,
                         'directive' => 'view(',
-                        'file' => '',
-                        'line' => $line
+                        'file' => $this->action->class,
+                        'line' => $line,
                     ];
                 }
             }
@@ -158,7 +183,7 @@ class ViewParser
      *
      * @return string
      */
-    protected function retrieveViewFromLine(string $view, string $viewAlias): string
+    protected function retrieveViewFromLine(string $view, string $viewAlias)
     {
         if (strpos($view, ')') !== false) {
             $view = substr($view, 0, strpos($view, ')'));

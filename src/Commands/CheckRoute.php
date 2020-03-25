@@ -80,10 +80,11 @@ class CheckRoute extends Command
         $controllerAction = (new ControllerParser())->parse($ctrl, $method);
         $vParser = new ViewParser($controllerAction);
         $views = $vParser->parse()->getChildren();
+
         $this->checkView($ctrl, $method, $views);
     }
 
-    protected function checkView($ctrl, $method, array $views): void
+    protected function checkView($ctrl, $method, array $views)
     {
         foreach ($views as $view => $_) {
             if ($_['children']) {
@@ -91,8 +92,16 @@ class CheckRoute extends Command
             }
 
             if (! $_['children']) {
-                dump($_['file'].' line number:'.$_['lineNumber'].  '  =>  '.trim($_['line']). '  file does not exist:  '.$_['name'].'.blade.php');
-            }
+                $p = app(ErrorPrinter::class);
+                $p->print(
+                    $_['file'].', line number:'.$_['lineNumber']
+                    .PHP_EOL
+                    .PHP_EOL
+                    .'  => '.($_['line'])
+                    .PHP_EOL.
+                    '"'.$_['name'].'.blade.php" does not exist'
+                );
+           }
         }
     }
 }
