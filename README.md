@@ -1,7 +1,7 @@
 # Auto-test your laravel application
 
 ## Give your eyes a rest, this will check it for you.
-### Smart enough to know about all the laravel's magic :)
+### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
 
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-self-test)
