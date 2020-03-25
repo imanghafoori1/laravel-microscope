@@ -2,10 +2,13 @@
 
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
-use Illuminate\Console\Command;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
+use Illuminate\Routing\Router;
+use Illuminate\Console\Command;
+use Imanghafoori\LaravelSelfTest\ErrorPrinter;
+use Imanghafoori\LaravelSelfTest\View\ViewParser;
+use Imanghafoori\LaravelSelfTest\ControllerParser;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class CheckRoute extends Command
 {
@@ -32,7 +35,6 @@ class CheckRoute extends Command
     {
         $routes = app(Router::class)->getRoutes()->getRoutes();
         foreach ($routes as $route) {
-
             if (! is_string($ctrl = $route->getAction()['uses'])) {
                 continue;
             }
@@ -42,17 +44,25 @@ class CheckRoute extends Command
                 $method,
             ] = Str::parseCallback($ctrl, '__invoke');
 
-            if (! class_exists($ctrlClass)) {
-                return $this->errorIt($route, 'The controller does not exist: '.$ctrlClass);
+            try {
+                $ctrlObject = app()->make($ctrlClass);
+            } catch (BindingResolutionException $e) {
+                $this->errorIt($route);
+                app(ErrorPrinter::class)->print('The controller can not be resolved: '.$ctrlClass);
+                return ;
             }
 
-            if (! method_exists($ctrlClass, $method)) {
-                return $this->errorIt($route, 'The controller action does not exist: '.$ctrl);
+            if (! method_exists($ctrlObject, $method)) {
+                $this->errorIt($route);
+                app(ErrorPrinter::class)->print('The controller action does not exist: '.$ctrl);
+                return ;
             }
+
+            $this->checkViews($ctrlObject, $method);
         }
     }
 
-    public function errorIt($route, $msg)
+    public function errorIt($route)
     {
         $p = app(ErrorPrinter::class);
         if ($routeName = $route->getName()) {
@@ -60,6 +70,30 @@ class CheckRoute extends Command
         } else {
             $p->print('Error on route url: '.$route->uri());
         }
-        $p->print($msg);
+    }
+
+    /**
+     * @param $method
+     * @param $ctrl
+     */
+    protected function checkViews($ctrl, $method)
+    {
+        $controllerAction = (new ControllerParser())->parse($ctrl, $method);
+        $vParser = new ViewParser($controllerAction);
+        $views = $vParser->parse()->getChildren();
+        $this->checkView($ctrl, $method, $views);
+    }
+
+    protected function checkView($ctrl, $method, array $views): void
+    {
+        foreach ($views as $view => $_) {
+            if ($_['children']) {
+                $this->checkView($ctrl, $method, $_['children']);
+            }
+
+            if (! $_['children']) {
+                dump($_['file'].'.blade.php line number:'.$_['lineNumber'].  '  =>  '.trim($_['line']). '  file does not exist:  '.$_['name'].'.blade.php');
+            }
+        }
     }
 }
