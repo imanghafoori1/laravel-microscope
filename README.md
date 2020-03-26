@@ -26,8 +26,7 @@ You can run:
 - php artisan check:gate 
 - php artisan check:route 
 - php artisan check:auth 
-
-
+- php artisan check:psr4 
 
 ## What the Commands do?
 
@@ -78,6 +77,12 @@ Gate::define('someAbility', 'UserGate@someMethod');
 2 - It checks the  `UserPolicy` class path to be valid.
 
 3 - It checks the  `someMethod` to exist.
+
+``` php
+php artisan check:psr4
+```
+- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard. 
+It also suggests the right namespace for the file.
 
 ``` php
 php artisan check:route
