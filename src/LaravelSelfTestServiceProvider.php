@@ -2,15 +2,11 @@
 
 namespace Imanghafoori\LaravelSelfTest;
 
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Imanghafoori\LaravelSelfTest\Commands\CheckAuth;
-use Imanghafoori\LaravelSelfTest\Commands\CheckRoute;
+use Imanghafoori\LaravelSelfTest\Commands\{CheckAuth, CheckPsr4, CheckRoute, CheckGate, CheckEvent};
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
-use Imanghafoori\LaravelSelfTest\Commands\CheckGate;
-use Imanghafoori\LaravelSelfTest\Commands\CheckEvent;
 
 class LaravelSelfTestServiceProvider extends ServiceProvider
 {
@@ -25,6 +21,7 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
                 CheckGate::class,
                 CheckAuth::class,
                 CheckRoute::class,
+                CheckPsr4::class,
             ]);
         }
     }
