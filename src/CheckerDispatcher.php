@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelSelfTest;
 
 use Illuminate\Events\Dispatcher;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 class CheckerDispatcher extends Dispatcher

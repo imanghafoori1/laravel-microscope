@@ -7,6 +7,8 @@ use ReflectionClass;
 use ReflectionException;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelSelfTest\View\ModelParser;
 
 class DiscoverClasses
 {
@@ -40,8 +42,11 @@ class DiscoverClasses
             try {
                 $t = static::classFromFile($classFilePath, $basePath);
                 if (self::hasOpeningTag($classFilePath->getRealPath())) {
-                    new ReflectionClass($t);
+                    $ref = new ReflectionClass($t);
                 }
+
+                self::checkImportedClassed($ref);
+                self::checkModelsRelations($t, $ref);
             } catch (ReflectionException $e) {
                 [
                     $incorrect_namespace,
@@ -143,5 +148,35 @@ class DiscoverClasses
             '\\',
             app()->getNamespace(),
         ], ucfirst(Str::replaceLast('.php', '', $class)));
+    }
+
+    /**
+     * @param  string  $t
+     * @param  \ReflectionClass  $ref
+     */
+    protected static function checkModelsRelations(string $t, ReflectionClass $ref): void
+    {
+        if (is_subclass_of($t, Model::class)) {
+            foreach ($ref->getMethods() as $method) {
+                $errors = (new ModelParser())->retrieveFromMethod($method);
+                foreach ($errors as $err) {
+                    app(ErrorPrinter::class)->print('wrong model is pass in relation');
+                    app(ErrorPrinter::class)->print($err);
+                }
+            }
+        }
+    }
+
+    private static function checkImportedClassed(ReflectionClass $ref)
+    {
+        $imports = ParseUseStatement::getUseStatements($ref);
+
+        foreach ($imports as $imp) {
+            if (! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp)) {
+                $err = 'Wrong import at '.$ref->getFileName();
+                app(ErrorPrinter::class)->print($err);
+                app(ErrorPrinter::class)->print($imp);
+            }
+        }
     }
 }

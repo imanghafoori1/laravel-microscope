@@ -3,10 +3,11 @@
 namespace Imanghafoori\LaravelSelfTest\View;
 
 use ReflectionMethod;
+use Illuminate\Support\Str;
 use Illuminate\View\ViewName;
 use Illuminate\Support\Facades\View;
 
-class ViewParser
+class ModelParser
 {
     protected $action;
 
@@ -28,10 +29,16 @@ class ViewParser
     /**
      * @var array
      */
-    protected $viewAliases = [
-        'View::make',
-        'view',
-        'view->make',
+    protected $methods = [
+        '->hasMany',
+        '->hasOne',
+        '->belongsTo',
+        '->belongsToMany',
+        '->belongsToOne',
+        '->hasManyThrough',
+        '->morphTo',
+        '->morphToMany',
+        '->morphedByMany',
     ];
 
     /**
@@ -63,14 +70,14 @@ class ViewParser
         '@includeFirst(',
     ];
 
-    public function __construct($action)
+/*    public function __construct($action)
     {
         $this->action = $action;
-    }
+    }*/
 
     public function parse()
     {
-        $this->parent = $this->retrieveViewsFromMethod();
+        $this->parent = $this->retrieveFromMethod();
 
         if ($this->parent) {
             $this->retrieveChildrenFromNestedViews();
@@ -125,14 +132,16 @@ class ViewParser
         return array_slice(file($method->getFileName()), $start, $length);
     }
 
-    protected function retrieveViewsFromMethod()
+    public function retrieveFromMethod($method)
     {
-        $content = $this->readContent($this->action);
+        $this->action = $method;
+        $content = $this->readContent($method);
 
         if (! $content) {
             return [];
         }
-        $search = $this->viewAliases;
+
+        $search = $this->methods;
 
         return $this->extractParameterValue($content, $search);
     }
@@ -258,30 +267,29 @@ class ViewParser
                 if (strpos($line, $viewAlias) === false) {
                     continue;
                 }
+                if ($this->action->class == 'Illuminate\Database\Eloquent\Model') {
+                    continue;
+                }
                 $methodParameter = $this->getFromLine($line, $viewAlias);
 
                 $c = $key;
 
-                /**
-                 *   For such a case when the are multiple lines of white space:
-                 *
-                 * view(
-                 *
-                 *  'welcome'
-                 *
-                 * );
-                 *
-                 *   We will loop until we find the parameter.
-                 */
                 while (empty($methodParameter)) {
                     $methodParameter = $this->getFromLine($content[$c], $viewAlias);
                     $c++;
                 }
                 unset($c);
+
+                $name = $this->retrieveFirstParamValue($methodParameter);
+
+                if (Str::contains($name, ['$', '::class'])) {
+                    continue;
+                }
+
                 $results[] = [
                     'name' => $this->retrieveFirstParamValue($methodParameter),
                     'lineNumber' => $this->action->getStartLine() + $key,
-                    'directive' => 'view(',
+                    'directive' => $viewAlias,
                     'file' => $this->action->class,
                     'line' => $line,
                 ];
