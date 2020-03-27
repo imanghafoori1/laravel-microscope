@@ -8,7 +8,7 @@ use ReflectionException;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
-class DiscoverEvents
+class DiscoverClasses
 {
     /**
      * Get all of the events and listeners by searching the given listener directory.

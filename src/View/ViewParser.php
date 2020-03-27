@@ -147,19 +147,35 @@ class ViewParser
 
         foreach ($content as $key => $line) {
             foreach ($this->viewAliases as $viewAlias) {
-                if (strpos($line, $viewAlias) !== false) {
-                    $view = $this->getViewFromLine($line, $viewAlias);
-                    if (empty($view)) {
-                        $view = $this->getViewFromLine($content[$key + 1], $viewAlias);
-                    }
-                    $views[] = [
-                        'name' => $this->retrieveViewFromLine($view, $viewAlias),
-                        'lineNumber' => $this->action->getStartLine() + $key,
-                        'directive' => 'view(',
-                        'file' => $this->action->class,
-                        'line' => $line,
-                    ];
+                if (strpos($line, $viewAlias) === false) {
+                    continue;
                 }
+                $view = $this->getViewFromLine($line, $viewAlias);
+                $c = $key;
+
+                /**
+                 *   For such a case when the are multiple lines of white space:
+                 *
+                 * view(
+                 *
+                 *  'welcome'
+                 *
+                 * );
+                 *
+                 *   We will loop until we find the parameter.
+                 */
+                while(empty($view)) {
+                    $view = $this->getViewFromLine($content[$c], $viewAlias);
+                    $c++;
+                }
+                unset($c);
+                $views[] = [
+                    'name' => $this->retrieveViewFromLine($view, $viewAlias),
+                    'lineNumber' => $this->action->getStartLine() + $key,
+                    'directive' => 'view(',
+                    'file' => $this->action->class,
+                    'line' => $line,
+                ];
             }
         }
 
@@ -201,7 +217,7 @@ class ViewParser
     }
 
     /**
-     * @param  string  $view
+     * @param  string  $parent_view
      *
      * @return array
      */

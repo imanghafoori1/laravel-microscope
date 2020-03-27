@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelSelfTest\DiscoverEvents;
+use Imanghafoori\LaravelSelfTest\DiscoverClasses;
 
 class CheckPsr4 extends Command
 {
@@ -31,7 +31,7 @@ class CheckPsr4 extends Command
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
-            DiscoverEvents::within($path, $namespace);
+            DiscoverClasses::within($path, $namespace);
         }
     }
 }
