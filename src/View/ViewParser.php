@@ -33,9 +33,9 @@ class ViewParser
      * @var array
      */
     protected $viewAliases = [
-        'View::make(',
-        'view(',
-        'view->make(',
+        'View::make',
+        'view',
+        'view->make',
     ];
 
     /**
@@ -131,58 +131,17 @@ class ViewParser
 
     protected function retrieveViewsFromMethod()
     {
-        $views = [];
-
         $content = $this->readContent($this->action);
 
         if (! $content) {
             return [];
         }
+        $search = $this->viewAliases;
 
-        if (array_key_exists('view', ($content))) {
-            $views[] = $content['view'];
-
-            return $views;
-        }
-
-        foreach ($content as $key => $line) {
-            foreach ($this->viewAliases as $viewAlias) {
-                if (strpos($line, $viewAlias) === false) {
-                    continue;
-                }
-                $view = $this->getViewFromLine($line, $viewAlias);
-                $c = $key;
-
-                /**
-                 *   For such a case when the are multiple lines of white space:
-                 *
-                 * view(
-                 *
-                 *  'welcome'
-                 *
-                 * );
-                 *
-                 *   We will loop until we find the parameter.
-                 */
-                while(empty($view)) {
-                    $view = $this->getViewFromLine($content[$c], $viewAlias);
-                    $c++;
-                }
-                unset($c);
-                $views[] = [
-                    'name' => $this->retrieveViewFromLine($view, $viewAlias),
-                    'lineNumber' => $this->action->getStartLine() + $key,
-                    'directive' => 'view(',
-                    'file' => $this->action->class,
-                    'line' => $line,
-                ];
-            }
-        }
-
-        return $views;
+        return $this->extractParameterValue($content, $search);
     }
 
-    protected function getViewFromLine($line, $viewAlias)
+    protected function getFromLine($line, $viewAlias)
     {
         $line = trim($line);
 
@@ -190,30 +149,30 @@ class ViewParser
             return $line;
         }
 
-        return substr($line, strpos($line, $viewAlias) + strlen($viewAlias));
+        return trim(substr($line, strpos($line, $viewAlias) + strlen($viewAlias) + 1), ' (');
     }
 
     /**
-     * @param  string  $view
-     * @param  string  $viewAlias
+     * @param  string  $parameters
+     * @param  int  $n
      *
      * @return string
      */
-    protected function retrieveViewFromLine(string $view, string $viewAlias)
+    protected function retrieveFirstParamValue(string $parameters, $n = 0)
     {
-        if (strpos($view, ')') !== false) {
-            $view = substr($view, 0, strpos($view, ')'));
+        if (strpos($parameters, ')') !== false) {
+            $parameters = substr($parameters, 0, strpos($parameters, ')'));
         }
 
-        if (($position = strpos($view, ',')) !== false) {
-            $view = substr($view, 0, $position);
+        if (($position = strpos($parameters, ',')) !== false) {
+            $parameters = substr($parameters, 0, $position);
         }
 
         foreach ($this->ignoredStrings as $string) {
-            $view = str_replace($string, '', $view);
+            $parameters = str_replace($string, '', $parameters);
         }
 
-        return trim($view);
+        return trim($parameters);
     }
 
     /**
@@ -230,9 +189,9 @@ class ViewParser
             foreach ($this->bladeDirectives as $key => $bladeDirective) {
                 $positions = $this->getPositionOfBladeDirectives($bladeDirective, $line);
                 foreach ($positions as $position) {
-                    $view = $this->getViewFromLine(substr($line, $position), $bladeDirective);
+                    $view = $this->getFromLine(substr($line, $position), $bladeDirective);
                     $views[] = [
-                        'name' => $this->retrieveViewFromLine($view, $bladeDirective),
+                        'name' => $this->retrieveFirstParamValue($view),
                         'file' => $parent_view. '.blade.php',
                         'lineNumber' => $lineNumber + 1,
                         'directive' => $bladeDirective,
@@ -287,5 +246,52 @@ class ViewParser
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * @param  array  $content
+     * @param  array  $search
+     *
+     * @return array
+     */
+    protected function extractParameterValue(array $content, array $search)
+    {
+        $results = [];
+        foreach ($content as $key => $line) {
+            foreach ($search as $viewAlias) {
+                if (strpos($line, $viewAlias) === false) {
+                    continue;
+                }
+                $methodParameter = $this->getFromLine($line, $viewAlias);
+
+                $c = $key;
+
+                /**
+                 *   For such a case when the are multiple lines of white space:
+                 *
+                 * view(
+                 *
+                 *  'welcome'
+                 *
+                 * );
+                 *
+                 *   We will loop until we find the parameter.
+                 */
+                while (empty($methodParameter)) {
+                    $methodParameter = $this->getFromLine($content[$c], $viewAlias);
+                    $c++;
+                }
+                unset($c);
+                $results[] = [
+                    'name' => $this->retrieveFirstParamValue($methodParameter),
+                    'lineNumber' => $this->action->getStartLine() + $key,
+                    'directive' => 'view(',
+                    'file' => $this->action->class,
+                    'line' => $line,
+                ];
+            }
+        }
+
+        return $results;
     }
 }
