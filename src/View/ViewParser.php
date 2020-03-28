@@ -127,6 +127,7 @@ class ViewParser
 
     protected function retrieveViewsFromMethod()
     {
+
         $content = $this->readContent($this->action);
 
         if (! $content) {

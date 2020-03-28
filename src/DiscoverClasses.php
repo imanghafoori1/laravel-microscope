@@ -64,8 +64,10 @@ class DiscoverClasses
                 array_pop($p);
                 $p = implode('\\', $p);
 
-                app(ErrorPrinter::class)->print('Incorrect namespace at: '.$classPath);
+                app(ErrorPrinter::class)->print(' - Incorrect namespace');
+                app(ErrorPrinter::class)->print($classPath);
                 app(ErrorPrinter::class)->print('It should be:   namespace '.str_replace(trim($path, '\\//'), trim($root_namespace, '\\/'), $p).';    ');
+                app(ErrorPrinter::class)->print('/********************************************/');
             }
         }
     }
@@ -160,8 +162,11 @@ class DiscoverClasses
             foreach ($ref->getMethods() as $method) {
                 $errors = (new ModelParser())->retrieveFromMethod($method);
                 foreach ($errors as $err) {
-                    app(ErrorPrinter::class)->print('wrong model is pass in relation');
-                    app(ErrorPrinter::class)->print($err);
+                    app(ErrorPrinter::class)->print(' - Wrong model is passed in relation');
+                    app(ErrorPrinter::class)->print($err['file']);
+                    app(ErrorPrinter::class)->print('line: '. $err['lineNumber'].'       '.trim($err['line']). $err['name']);
+                    app(ErrorPrinter::class)->print($err['name'].' is not a valid class.');
+                    app(ErrorPrinter::class)->print('/********************************************/');
                 }
             }
         }
@@ -171,11 +176,13 @@ class DiscoverClasses
     {
         $imports = ParseUseStatement::getUseStatements($ref);
 
-        foreach ($imports as $imp) {
-            if (! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp)) {
-                $err = 'Wrong import at '.$ref->getFileName();
+        foreach ($imports as $i => $imp) {
+            if (! class_exists($imp[0]) && ! interface_exists($imp[0]) && ! trait_exists($imp[0])) {
+                $err = $ref->getName();
+                app(ErrorPrinter::class)->print(' - Wrong import');
                 app(ErrorPrinter::class)->print($err);
-                app(ErrorPrinter::class)->print($imp);
+                app(ErrorPrinter::class)->print('line: '. $imp[1].'     use '.$imp[0].';');
+                app(ErrorPrinter::class)->print('/********************************************/');
             }
         }
     }
