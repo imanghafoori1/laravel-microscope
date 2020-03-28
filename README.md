@@ -9,12 +9,14 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-self-test.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-self-test)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-self-test)
 
-This package provides a way to find errors without writing any tests. For example when you setup an event handler which does not exist at all, notifies you.
+This package provides a way to find errors without writing any tests.
 
 ## Key things to know:
+
 - It is created to be smarter than phpstorm and other IDEs in finding errors.
 - It is created to understand laravel run-time and magic.
 - It does not show you stupid false errors, all the errors are really errors.
+
 
 ## Installation
 
@@ -28,10 +30,9 @@ composer require imanghafoori/laravel-self-test
 
 You can run:
 - php artisan check:event 
-- php artisan check:gate 
-- php artisan check:route 
-- php artisan check:auth 
-- php artisan check:psr4 
+- php artisan check:gate   
+- php artisan check:route  (checks controller classes and methods to exist)
+- php artisan check:psr4   (checks namespaces, imports)
 
 ## What the Commands do?
 
