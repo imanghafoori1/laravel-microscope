@@ -4,27 +4,10 @@ namespace Imanghafoori\LaravelSelfTest\View;
 
 use ReflectionMethod;
 use Illuminate\Support\Str;
-use Illuminate\View\ViewName;
-use Illuminate\Support\Facades\View;
 
 class ModelParser
 {
     protected $action;
-
-    /**
-     * @var array
-     */
-    protected $parent = [];
-
-    /**
-     * @var array
-     */
-    protected $children = [];
-
-    /**
-     * @var array
-     */
-    protected $childrenViews = [];
 
     /**
      * @var array
@@ -50,74 +33,6 @@ class ModelParser
         ';',
         "'",
     ];
-
-    /**
-     * @var array
-     */
-    protected $bladeDirectives = [
-        '@include(',
-        '@includeIf(',
-        '@extends(',
-        'Blade::include(',
-    ];
-
-    /**
-     * @var array
-     */
-    protected $statementBladeDirectives = [
-        '@includeWhen(',
-        '@includeUnless(',
-        '@includeFirst(',
-    ];
-
-/*    public function __construct($action)
-    {
-        $this->action = $action;
-    }*/
-
-    public function parse()
-    {
-        $this->parent = $this->retrieveFromMethod();
-
-        if ($this->parent) {
-            $this->retrieveChildrenFromNestedViews();
-        }
-
-        return $this;
-    }
-
-    public function retrieveChildrenFromNestedViews()
-    {
-        $this->children = $this->loopForNestedViews($this->parent);
-    }
-
-    /**
-     * @param  array  $children
-     */
-    public function resolveChildrenHierarchy(array $children)
-    {
-        collect($children)->each(function ($value, $key) {
-            if (is_string($key)) {
-                $this->childrenViews[] = $key;
-            }
-
-            return $this->resolveChildrenHierarchy($value);
-        });
-    }
-
-    public function loopForNestedViews($views)
-    {
-        $generated = [];
-
-        if (! is_array($views)) {
-            return $this->loopForNestedViews($this->retrieveNestedViews($views));
-        }
-        foreach ($views as $view) {
-            $generated[$view['name']] = $view + ['children' => $this->loopForNestedViews($view['name'])];
-        }
-
-        return $generated;
-    }
 
     /**
      * @param  \ReflectionMethod  $method
@@ -178,79 +93,6 @@ class ModelParser
         }
 
         return trim($parameters);
-    }
-
-    /**
-     * @param  string  $parent_view
-     *
-     * @return array
-     */
-    protected function retrieveNestedViews(string $parent_view)
-    {
-        $views = [];
-        $lines = (array) $this->getViewContent($parent_view);
-
-        foreach ($lines as $lineNumber => $line) {
-            foreach ($this->bladeDirectives as $key => $bladeDirective) {
-                $positions = $this->getPositionOfBladeDirectives($bladeDirective, $line);
-                foreach ($positions as $position) {
-                    $view = $this->getFromLine(substr($line, $position), $bladeDirective);
-                    $views[] = [
-                        'name' => $this->retrieveFirstParamValue($view),
-                        'file' => $parent_view. '.blade.php',
-                        'lineNumber' => $lineNumber + 1,
-                        'directive' => $bladeDirective,
-                        'line' => $line
-                    ];
-                }
-            }
-        }
-        return $views;
-    }
-
-    /**
-     * @param  string  $bladeDirective
-     * @param  string  $content
-     *
-     * @return array
-     */
-    protected function getPositionOfBladeDirectives(string $bladeDirective, $content)
-    {
-        $positions = [];
-
-        $lastPos = 0;
-
-        while (($lastPos = strpos($content, $bladeDirective, $lastPos)) !== false) {
-            $positions[] = $lastPos;
-            $lastPos = $lastPos + strlen($bladeDirective);
-        }
-
-        return $positions;
-    }
-
-    /**
-     * @param  string  $view
-     *
-     * @return string
-     */
-    public function getViewContent(string $view)
-    {
-        $view = ViewName::normalize($view);
-        try {
-            $path = View::getFinder()->find($view);
-
-            return file($path);
-        } catch (\InvalidArgumentException $e) {
-            return '';
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getChildren()
-    {
-        return $this->children;
     }
 
     /**
