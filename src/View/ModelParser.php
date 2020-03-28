@@ -7,8 +7,6 @@ use Illuminate\Support\Str;
 
 class ModelParser
 {
-    protected $action;
-
     /**
      * @var array
      */
@@ -49,7 +47,6 @@ class ModelParser
 
     public function retrieveFromMethod($method)
     {
-        $this->action = $method;
         $content = $this->readContent($method);
 
         if (! $content) {
@@ -58,7 +55,7 @@ class ModelParser
 
         $search = $this->methods;
 
-        return $this->extractParameterValue($content, $search);
+        return $this->extractParametersValueWithinMethod($method, $content, $search);
     }
 
     protected function getFromLine($line, $viewAlias)
@@ -96,28 +93,29 @@ class ModelParser
     }
 
     /**
+     * @param $method
      * @param  array  $content
      * @param  array  $search
      *
      * @return array
      */
-    protected function extractParameterValue(array $content, array $search)
+    protected function extractParametersValueWithinMethod($method, array $content, array $search)
     {
         $results = [];
         foreach ($content as $key => $line) {
-            foreach ($search as $viewAlias) {
-                if (strpos($line, $viewAlias) === false) {
+            foreach ($search as $methodName) {
+                if (strpos($line, $methodName) === false) {
                     continue;
                 }
-                if ($this->action->class == 'Illuminate\Database\Eloquent\Model') {
+                if ($method->class == 'Illuminate\Database\Eloquent\Model') {
                     continue;
                 }
-                $methodParameter = $this->getFromLine($line, $viewAlias);
+                $methodParameter = $this->getFromLine($line, $methodName);
 
                 $c = $key;
 
                 while (empty($methodParameter)) {
-                    $methodParameter = $this->getFromLine($content[$c], $viewAlias);
+                    $methodParameter = $this->getFromLine($content[$c], $methodName);
                     $c++;
                 }
                 unset($c);
@@ -130,9 +128,9 @@ class ModelParser
 
                 $results[] = [
                     'name' => $this->retrieveFirstParamValue($methodParameter),
-                    'lineNumber' => $this->action->getStartLine() + $key,
-                    'directive' => $viewAlias,
-                    'file' => $this->action->class,
+                    'lineNumber' => $method->getStartLine() + $key,
+                    'directive' => $methodName,
+                    'file' => $method->class,
                     'line' => $line,
                 ];
             }
