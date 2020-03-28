@@ -82,6 +82,9 @@ Gate::define('someAbility', 'UserGate@someMethod');
 php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard. 
+- It check all the imports (`use` statements) to be valid. (It can understand the laravel aliased classes like: `use Request;`)
+
+
 It also suggests the right namespace for the file.
 
 ``` php
