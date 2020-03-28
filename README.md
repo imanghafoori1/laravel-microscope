@@ -11,6 +11,11 @@
 
 This package provides a way to find errors without writing any tests. For example when you setup an event handler which does not exist at all, notifies you.
 
+## Key things to know:
+- It is created to be smarter than phpstorm and other IDEs in finding errors.
+- It is created to understand laravel run-time and magic.
+- It does not show you stupid false errors, all the errors are really errors.
+
 ## Installation
 
 You can install the package via composer:
