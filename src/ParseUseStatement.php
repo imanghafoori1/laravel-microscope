@@ -80,7 +80,8 @@ class ParseUseStatement
     /**
      * Parses PHP code.
      *
-     * @param  string
+     * @param $code
+     * @param  null  $forClass
      *
      * @return array of [class => [alias => class, ...]]
      */
@@ -125,20 +126,20 @@ class ParseUseStatement
                                 T_NS_SEPARATOR,
                             ])) {
                                 if (self::fetch($tokens, T_AS)) {
-                                    $uses[self::fetch($tokens, T_STRING)] = $name.$suffix;
+                                    $uses[self::fetch($tokens, T_STRING)] = [$name.$suffix, $token[2]];
                                 } else {
                                     $tmp = explode('\\', $suffix);
-                                    $uses[end($tmp)] = $name.$suffix;
+                                    $uses[end($tmp)] = [$name.$suffix, $token[2]];
                                 }
                                 if (! self::fetch($tokens, ',')) {
                                     break;
                                 }
                             }
                         } elseif (self::fetch($tokens, T_AS)) {
-                            $uses[self::fetch($tokens, T_STRING)] = $name;
+                            $uses[self::fetch($tokens, T_STRING)] = [$name, $token[2]];
                         } else {
                             $tmp = explode('\\', $name);
-                            $uses[end($tmp)] = $name;
+                            $uses[end($tmp)] = [$name, $token[2]];
                         }
                         if (! self::fetch($tokens, ',')) {
                             break;
