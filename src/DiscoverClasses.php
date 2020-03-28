@@ -43,10 +43,9 @@ class DiscoverClasses
                 $t = static::classFromFile($classFilePath, $basePath);
                 if (self::hasOpeningTag($classFilePath->getRealPath())) {
                     $ref = new ReflectionClass($t);
+                    self::checkImportedClassed($ref);
+                    self::checkModelsRelations($t, $ref);
                 }
-
-                self::checkImportedClassed($ref);
-                self::checkModelsRelations($t, $ref);
             } catch (ReflectionException $e) {
                 [
                     $incorrect_namespace,
