@@ -42,11 +42,11 @@ class DiscoverClasses
     {
         foreach ($classes as $classFilePath) {
             try {
-                $t = static::classFromFile($classFilePath, $basePath);
+                $theClass = static::classFromFile($classFilePath, $basePath);
                 if (self::hasOpeningTag($classFilePath->getRealPath())) {
-                    $ref = new ReflectionClass($t);
+                    $ref = new ReflectionClass($theClass);
                     self::checkImportedClassed($ref);
-                    self::checkModelsRelations($t, $ref);
+                    self::checkModelsRelations($theClass, $ref);
                 }
             } catch (ReflectionException $e) {
                 [
@@ -160,16 +160,16 @@ class DiscoverClasses
     }
 
     /**
-     * @param  string  $t
+     * @param  string  $class
      * @param  \ReflectionClass  $ref
      */
-    protected static function checkModelsRelations(string $t, ReflectionClass $ref)
+    protected static function checkModelsRelations(string $class, ReflectionClass $ref)
     {
-        if (is_subclass_of($t, Model::class)) {
+        if (is_subclass_of($class, Model::class)) {
             foreach ($ref->getMethods() as $method) {
                 $errors = (new ModelParser())->retrieveFromMethod($method);
                 foreach ($errors as $err) {
-                    app(ErrorPrinter::class)->print(' - Wrong model is passed in relation');
+                    app(ErrorPrinter::class)->print('- Wrong model is passed in relation');
                     app(ErrorPrinter::class)->print($err['file']);
                     app(ErrorPrinter::class)->print('line: '. $err['lineNumber'].'       '.trim($err['line']));
                     app(ErrorPrinter::class)->print($err['name'].' is not a valid class.');
@@ -202,6 +202,10 @@ class DiscoverClasses
     protected static function correctNamespace($classFilePath, string $incorrectNamespace, string $correctNamespace)
     {
         $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
+        if (! $incorrectNamespace) {
+            $incorrectNamespace = '<?php';
+            $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
+        }
         $search = ltrim($incorrectNamespace, '\\');
         ReplaceLine::replace($classFilePath, $search, $newline);
     }
