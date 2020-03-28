@@ -12,6 +12,8 @@ use Imanghafoori\LaravelSelfTest\View\ModelParser;
 
 class DiscoverClasses
 {
+    protected static $fixedNamespaces = [];
+
     /**
      * Get all of the events and listeners by searching the given listener directory.
      *
@@ -22,7 +24,7 @@ class DiscoverClasses
      */
     public static function within($path, $namespace)
     {
-        static::getListenerEvents((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
+        static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
     /**
@@ -32,11 +34,11 @@ class DiscoverClasses
      * @param  string  $basePath
      *
      * @param $path
-     * @param $root_namespace
+     * @param $rootNamespace
      *
      * @return void
      */
-    protected static function getListenerEvents($classes, $basePath, $path, $root_namespace)
+    protected static function checkAllClasses($classes, $basePath, $path, $rootNamespace)
     {
         foreach ($classes as $classFilePath) {
             try {
@@ -48,11 +50,12 @@ class DiscoverClasses
                 }
             } catch (ReflectionException $e) {
                 [
-                    $incorrect_namespace,
+                    $incorrectNamespace,
                     $class,
                     $type,
                 ] = self::getClass($classFilePath->getRealPath());
 
+                $incorrectNamespace = ltrim($incorrectNamespace, '\\');
                 if (! $class) {
                     continue;
                 }
@@ -62,10 +65,15 @@ class DiscoverClasses
                 $p = explode(DIRECTORY_SEPARATOR, $classPath);
                 array_pop($p);
                 $p = implode('\\', $p);
+                $correctNamespace = str_replace(trim($path, '\\//'), trim($rootNamespace, '\\/'), $p);
 
-                app(ErrorPrinter::class)->print(' - Incorrect namespace');
-                app(ErrorPrinter::class)->print($classPath);
-                app(ErrorPrinter::class)->print('It should be:   namespace '.str_replace(trim($path, '\\//'), trim($root_namespace, '\\/'), $p).';    ');
+                self::errorOut($classPath, $correctNamespace);
+                self::correctNamespace($classFilePath->getRealPath(), $incorrectNamespace, $correctNamespace);
+                /*static::$fixedNamespaces[$incorrectNamespace] = [
+                    'class' => $class,
+                    'correct_namespace' => $correctNamespace
+                ];*/
+
                 app(ErrorPrinter::class)->print('/********************************************/');
             }
         }
@@ -155,7 +163,7 @@ class DiscoverClasses
      * @param  string  $t
      * @param  \ReflectionClass  $ref
      */
-    protected static function checkModelsRelations(string $t, ReflectionClass $ref): void
+    protected static function checkModelsRelations(string $t, ReflectionClass $ref)
     {
         if (is_subclass_of($t, Model::class)) {
             foreach ($ref->getMethods() as $method) {
@@ -163,7 +171,7 @@ class DiscoverClasses
                 foreach ($errors as $err) {
                     app(ErrorPrinter::class)->print(' - Wrong model is passed in relation');
                     app(ErrorPrinter::class)->print($err['file']);
-                    app(ErrorPrinter::class)->print('line: '. $err['lineNumber'].'       '.trim($err['line']). $err['name']);
+                    app(ErrorPrinter::class)->print('line: '. $err['lineNumber'].'       '.trim($err['line']));
                     app(ErrorPrinter::class)->print($err['name'].' is not a valid class.');
                     app(ErrorPrinter::class)->print('/********************************************/');
                 }
@@ -184,5 +192,28 @@ class DiscoverClasses
                 app(ErrorPrinter::class)->print('/********************************************/');
             }
         }
+    }
+
+    /**
+     * @param  string  $classFilePath
+     * @param  string  $incorrectNamespace
+     * @param  string  $correctNamespace
+     */
+    protected static function correctNamespace($classFilePath, string $incorrectNamespace, string $correctNamespace)
+    {
+        $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
+        $search = ltrim($incorrectNamespace, '\\');
+        ReplaceLine::replace($classFilePath, $search, $newline);
+    }
+
+    /**
+     * @param  string  $classPath
+     * @param  string  $correctNamespace
+     */
+    protected static function errorOut(string $classPath, string $correctNamespace)
+    {
+        app(ErrorPrinter::class)->print(' - Incorrect namespace');
+        app(ErrorPrinter::class)->print($classPath);
+        app(ErrorPrinter::class)->print('It should be:   namespace '.$correctNamespace.';  ');
     }
 }
