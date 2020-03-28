@@ -31,8 +31,8 @@ composer require imanghafoori/laravel-self-test
 You can run:
 - php artisan check:event 
 - php artisan check:gate   
-- php artisan check:route  (checks controller classes and methods to exist)
-- php artisan check:psr4   (checks namespaces, imports)
+- php artisan check:route  `(checks controller class and method also the blade files path to be correct)`
+- php artisan check:psr4   `(checks namespaces, imports)`
 
 ## What the Commands do?
 
