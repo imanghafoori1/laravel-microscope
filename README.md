@@ -32,7 +32,7 @@ You can run:
 - php artisan check:event 
 - php artisan check:gate   
 - php artisan check:route  `(checks controller class and method also the blade files path to be correct)`
-- php artisan check:psr4   `(checks namespaces, imports)`
+- php artisan check:psr4   `(auto-corrects namespaces, reports wrong imports)`
 
 ## What the Commands do?
 
