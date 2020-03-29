@@ -42,7 +42,8 @@ class DiscoverClasses
     {
         foreach ($classes as $classFilePath) {
             try {
-                $theClass = static::classFromFile($classFilePath, $basePath);
+                $theClass = static::classFromFile($classFilePath, $basePath, $path, $rootNamespace);
+
                 if (self::hasOpeningTag($classFilePath->getRealPath())) {
                     $ref = new ReflectionClass($theClass);
                     self::checkImportedClassed($ref);
@@ -144,19 +145,20 @@ class DiscoverClasses
      * @param  \SplFileInfo  $file
      * @param  string  $basePath
      *
+     * @param $path
+     * @param $rootNamespace
+     *
      * @return string
      */
-    protected static function classFromFile(SplFileInfo $file, $basePath)
+    protected static function classFromFile(SplFileInfo $file, $basePath, $path, $rootNamespace)
     {
         $class = trim(Str::replaceFirst($basePath, '', $file->getRealPath()), DIRECTORY_SEPARATOR);
 
-        return str_replace([
-            DIRECTORY_SEPARATOR,
-            ucfirst(basename(app()->path())).'\\',
-        ], [
-            '\\',
-            app()->getNamespace(),
-        ], ucfirst(Str::replaceLast('.php', '', $class)));
+        $withoutDotPhp = Str::replaceLast('.php', '', $class);
+        $allBackSlash = str_replace(DIRECTORY_SEPARATOR, '\\', $withoutDotPhp);
+
+        // replaces the base folder name with corresponding namespace
+        return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
     /**
