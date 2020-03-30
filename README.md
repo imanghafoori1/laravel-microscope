@@ -31,8 +31,9 @@ composer require imanghafoori/laravel-self-test
 You can run:
 - php artisan check:event 
 - php artisan check:gate   
-- php artisan check:route  `(checks controller class and method also the blade files path to be correct)`
-- php artisan check:psr4   `(auto-corrects namespaces, reports wrong imports)`
+- php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
+- php artisan check:psr4    `(auto-corrects namespaces, reports wrong imports)`
+- php artisan check:import  `(checks all the imports at the top of the files `use statements`)`
 
 ## What the Commands do?
 
@@ -88,10 +89,15 @@ Gate::define('someAbility', 'UserGate@someMethod');
 php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard. 
-- It check all the imports (`use` statements) to be valid. (It can understand the laravel aliased classes like: `use Request;`)
-- It automatically corrects namespaces. (according to PSR-4 rules)
+- It automatically corrects namespaces (according to PSR-4 rules)
 
-It also suggests the right namespace for the file.
+```
+php artisan check:import
+```
+
+- It check all the imports (`use` statements) to be valid.
+- It can understand the laravel aliased classes so `use Request;` would be valid.
+
 
 ``` php
 php artisan check:route
