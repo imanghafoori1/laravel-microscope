@@ -2,13 +2,10 @@
 
 namespace Imanghafoori\LaravelSelfTest;
 
-use SplFileInfo;
 use ReflectionClass;
 use ReflectionException;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
-use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelSelfTest\View\ModelParser;
 
 class DiscoverClasses
 {
@@ -27,103 +24,100 @@ class DiscoverClasses
         static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
+    public static function import($path, $namespace)
+    {
+        static::checkImports((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
+    }
+
     /**
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $classes
      * @param  string  $basePath
      *
-     * @param $path
-     * @param $rootNamespace
+     * @param $composerPath
+     * @param $composerNamespace
      *
      * @return void
      */
-    protected static function checkAllClasses($classes, $basePath, $path, $rootNamespace)
+    protected static function checkImports($classes, $basePath, $composerPath, $composerNamespace)
     {
         foreach ($classes as $classFilePath) {
-            try {
-                $theClass = static::classFromFile($classFilePath, $basePath, $path, $rootNamespace);
+            $absFilePath = $classFilePath->getRealPath();
 
-                if (self::hasOpeningTag($classFilePath->getRealPath())) {
-                    $ref = new ReflectionClass($theClass);
-                    self::checkImportedClassed($ref);
-                    self::checkModelsRelations($theClass, $ref);
+            if (! self::hasOpeningTag($absFilePath)) {
+                continue;
+            }
+            [
+                $currentNamespace,
+                $class,
+                $type,
+            ] = GetClassProperties::fromFilePath($absFilePath);
+
+            // it means that, there is no class/trait definition found in the file.
+            if (! $class) {
+                continue;
+            }
+
+            try {
+                $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
+
+                $correctNamespace = self::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+
+                if (self::hasOpeningTag($absFilePath)) {
+                    $ref = new ReflectionClass($correctNamespace.'\\'.$class);
+                    self::checkImportedClasses($ref);
+                    ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
                 }
             } catch (ReflectionException $e) {
-                [
-                    $incorrectNamespace,
-                    $class,
-                    $type,
-                ] = self::getClass($classFilePath->getRealPath());
 
-                $incorrectNamespace = ltrim($incorrectNamespace, '\\');
-                if (! $class) {
-                    continue;
-                }
-
-                $classPath = trim(Str::replaceFirst($basePath, '', $classFilePath->getRealPath()), DIRECTORY_SEPARATOR);
-
-                $p = explode(DIRECTORY_SEPARATOR, $classPath);
-                array_pop($p);
-                $p = implode('\\', $p);
-                $correctNamespace = str_replace(trim($path, '\\//'), trim($rootNamespace, '\\/'), $p);
-
-                self::errorOut($classPath, $correctNamespace);
-                self::correctNamespace($classFilePath->getRealPath(), $incorrectNamespace, $correctNamespace);
-                /*static::$fixedNamespaces[$incorrectNamespace] = [
-                    'class' => $class,
-                    'correct_namespace' => $correctNamespace
-                ];*/
-
-                app(ErrorPrinter::class)->print('/********************************************/');
             }
         }
     }
 
-    public static function getClass(string $file)
+    /**
+     * Get all of the listeners and their corresponding events.
+     *
+     * @param  iterable  $classes
+     * @param  string  $basePath
+     *
+     * @param $composerPath
+     * @param $composerNamespace
+     *
+     * @return void
+     */
+    protected static function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
     {
-        $fp = fopen($file, 'r');
-        $type = $class = $namespace = $buffer = '';
-        $i = 0;
-        while (! $class) {
-            if (feof($fp)) {
-                break;
+        foreach ($classes as $classFilePath) {
+            $absFilePath = $classFilePath->getRealPath();
+            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
+            if (! self::hasOpeningTag($absFilePath)) {
+                app(ErrorPrinter::class)->print('Skipped file: ' .$classPath);
+                continue;
             }
+            [
+                $currentNamespace,
+                $class,
+                $type,
+            ] = GetClassProperties::fromFilePath($absFilePath);
 
-            $buffer .= fread($fp, 512);
-            $tokens = token_get_all($buffer);
-
-            if (strpos($buffer, '{') === false) {
+            // it means that, there is no class/trait definition found in the file.
+            if (! $class) {
+                app(ErrorPrinter::class)->print('skipped file: ' .$classPath);
                 continue;
             }
 
-            for (; $i < count($tokens); $i++) {
-                if ($tokens[$i][0] === T_NAMESPACE) {
-                    for ($j = $i + 1; $j < count($tokens); $j++) {
-                        if ($tokens[$j][0] === T_STRING) {
-                            $namespace .= '\\'.$tokens[$j][1];
-                        } elseif ($tokens[$j] === '{' || $tokens[$j] === ';') {
-                            break;
-                        }
-                    }
-                }
+            try {
+                $correctNamespace = self::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
-                if (($tokens[$i][0] === T_CLASS) || $tokens[$i][0] === T_INTERFACE) {
-                    $type = $tokens[$i][0] === T_CLASS ? 'class' : 'interface';
-                    for ($j = $i + 1; $j < count($tokens); $j++) {
-                        if ($tokens[$j] === '{') {
-                            $class = $tokens[$i + 2][1];
-                        }
-                    }
+                if ($currentNamespace !== $correctNamespace) {
+                    self::errorOut($classPath, $correctNamespace, $currentNamespace);
+                    self::correctNamespace($absFilePath, $currentNamespace, $correctNamespace);
                 }
+            } catch (ReflectionException $e) {
+
             }
         }
-
-        return [
-            $namespace,
-            $class,
-            $type,
-        ];
     }
 
     public static function hasOpeningTag(string $file)
@@ -134,15 +128,19 @@ class DiscoverClasses
             return false;
         }
 
-        $buffer = fread($fp, 51);
+        $buffer = fread($fp, 20);
 
-        return (strpos($buffer, '<?php') !== false);
+        $result = strpos($buffer, '<?php') !== false;
+
+        fclose($fp);
+
+        return $result;
     }
 
     /**
-     * Extract the class name from the given file path.
+     * Calculate the namespace\className from absolute file path.
      *
-     * @param  \SplFileInfo  $file
+     * @param  string  $filePath
      * @param  string  $basePath
      *
      * @param $path
@@ -150,48 +148,25 @@ class DiscoverClasses
      *
      * @return string
      */
-    protected static function classFromFile(SplFileInfo $file, $basePath, $path, $rootNamespace)
+    protected static function calculateClassFromFile($filePath, $basePath, $path, $rootNamespace)
     {
-        $class = trim(Str::replaceFirst($basePath, '', $file->getRealPath()), DIRECTORY_SEPARATOR);
+        $class = trim(Str::replaceFirst($basePath, '', $filePath), DIRECTORY_SEPARATOR);
 
+        // remove .php from class path
         $withoutDotPhp = Str::replaceLast('.php', '', $class);
+        // ensure backslash on windows
         $allBackSlash = str_replace(DIRECTORY_SEPARATOR, '\\', $withoutDotPhp);
 
         // replaces the base folder name with corresponding namespace
         return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
-    /**
-     * @param  string  $class
-     * @param  \ReflectionClass  $ref
-     */
-    protected static function checkModelsRelations(string $class, ReflectionClass $ref)
+    private static function checkImportedClasses(ReflectionClass $classReflection)
     {
-        if (is_subclass_of($class, Model::class)) {
-            foreach ($ref->getMethods() as $method) {
-                $errors = (new ModelParser())->retrieveFromMethod($method);
-                foreach ($errors as $err) {
-                    app(ErrorPrinter::class)->print('- Wrong model is passed in relation');
-                    app(ErrorPrinter::class)->print($err['file']);
-                    app(ErrorPrinter::class)->print('line: '. $err['lineNumber'].'       '.trim($err['line']));
-                    app(ErrorPrinter::class)->print($err['name'].' is not a valid class.');
-                    app(ErrorPrinter::class)->print('/********************************************/');
-                }
-            }
-        }
-    }
-
-    private static function checkImportedClassed(ReflectionClass $ref)
-    {
-        $imports = ParseUseStatement::getUseStatements($ref);
-
+        $imports = ParseUseStatement::getUseStatements($classReflection);
         foreach ($imports as $i => $imp) {
-            if (! class_exists($imp[0]) && ! interface_exists($imp[0]) && ! trait_exists($imp[0])) {
-                $err = $ref->getName();
-                app(ErrorPrinter::class)->print(' - Wrong import');
-                app(ErrorPrinter::class)->print($err);
-                app(ErrorPrinter::class)->print('line: '. $imp[1].'     use '.$imp[0].';');
-                app(ErrorPrinter::class)->print('/********************************************/');
+            if (self::exists($imp[0])) {
+                self::wrongImport($classReflection->getName(), $imp);
             }
         }
     }
@@ -204,22 +179,75 @@ class DiscoverClasses
     protected static function correctNamespace($classFilePath, string $incorrectNamespace, string $correctNamespace)
     {
         $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
+
+        // in case there is no namespace specified in the file:
         if (! $incorrectNamespace) {
             $incorrectNamespace = '<?php';
             $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
         }
         $search = ltrim($incorrectNamespace, '\\');
         ReplaceLine::replace($classFilePath, $search, $newline);
+
+        app(ErrorPrinter::class)->print('namespace fixed to:'. $correctNamespace);
     }
 
     /**
      * @param  string  $classPath
      * @param  string  $correctNamespace
      */
-    protected static function errorOut(string $classPath, string $correctNamespace)
+    protected static function errorOut(string $classPath, string $correctNamespace, $incorrectNamespace)
     {
-        app(ErrorPrinter::class)->print(' - Incorrect namespace');
+        app(ErrorPrinter::class)->print(' - Incorrect namespace: '.$incorrectNamespace);
         app(ErrorPrinter::class)->print($classPath);
         app(ErrorPrinter::class)->print('It should be:   namespace '.$correctNamespace.';  ');
+    }
+
+    protected static function calculateCorrectNamespace($classPath, $path, $rootNamespace)
+    {
+        $p = explode(DIRECTORY_SEPARATOR, $classPath);
+        array_pop($p);
+        $p = implode('\\', $p);
+
+        return str_replace(trim($path, '\\//'), trim($rootNamespace, '\\/'), $p);
+    }
+
+    /**
+     * @param $imp
+     *
+     * @return bool
+     */
+    private static function exists($imp)
+    {
+        return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
+    }
+
+    /**
+     * @param  string  $err
+     * @param $imp
+     */
+    private static function wrongImport(string $err, $imp): void
+    {
+        app(ErrorPrinter::class)->print(' - Wrong import');
+        app(ErrorPrinter::class)->print($err);
+        app(ErrorPrinter::class)->print('line: '.$imp[1].'     use '.$imp[0].';');
+        app(ErrorPrinter::class)->print('/********************************************/');
+    }
+
+    /**
+     * @param $basePath
+     * @param $path
+     * @param $rootNamespace
+     * @param $_path
+     * @param $incorrectNamespace
+     */
+    protected static function handleMissingClass($basePath, $path, $rootNamespace, $_path, $incorrectNamespace)
+    {
+
+        /*static::$fixedNamespaces[$incorrectNamespace] = [
+            'class' => $class,
+            'correct_namespace' => $correctNamespace
+        ];*/
+
+        app(ErrorPrinter::class)->print('/********************************************/');
     }
 }
