@@ -44,6 +44,8 @@ class ParseUseStatement
     }
 
     /**
+     * @param  \ReflectionClass  $class
+     *
      * @return array of [alias => class]
      */
     public static function getUseStatements(ReflectionClass $class)

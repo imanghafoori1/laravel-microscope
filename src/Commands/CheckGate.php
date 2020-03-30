@@ -27,6 +27,9 @@ class CheckGate extends Command
      */
     public function handle()
     {
-        //
+       /* $this->comment('$string');
+        $this->warn('$string');
+        $this->error('$string');
+        $this->alert('alert');*/
     }
 }
