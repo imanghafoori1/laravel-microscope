@@ -30,7 +30,7 @@ class CheckPsr4 extends Command
     {
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
 
-        foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
+        foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             DiscoverClasses::within($path, $namespace);
         }
     }

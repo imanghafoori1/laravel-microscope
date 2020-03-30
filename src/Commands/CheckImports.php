@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 use Imanghafoori\LaravelSelfTest\DiscoverClasses;
 
 class CheckImports extends Command
@@ -32,6 +34,16 @@ class CheckImports extends Command
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             DiscoverClasses::import($path, $namespace);
+        }
+
+        $this->checkConfig();
+    }
+
+    protected function checkConfig()
+    {
+        $user = config('auth.providers.users.model');
+        if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
+            resolve(ErrorPrinter::class)->print('The user model in the "config/auth.php" is not a valid class.');
         }
     }
 }
