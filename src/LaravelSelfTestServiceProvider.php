@@ -19,7 +19,6 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
             $this->commands([
                 CheckEvent::class,
                 CheckGate::class,
-                CheckAuth::class,
                 CheckRoute::class,
                 CheckPsr4::class,
                 CheckImports::class,
