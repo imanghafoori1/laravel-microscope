@@ -139,7 +139,7 @@ If you discover any security related issues, please email `imanghafoori1@gmail.c
 ### :star: Your Stars Make Us Do More :star:
 As always if you found this package useful and you want to encourage us to maintain and work on it. Just press the star button to declare your willing.
 
-
+Stargazers: https://github.com/imanghafoori1/laravel-self-test/stargazers
 
 ## More from the author:
 
@@ -183,7 +183,7 @@ As always if you found this package useful and you want to encourage us to maint
 
 Send me as much as a banana costs in your region:
 
-- Dodge Coin: DJEZr6GJ4Vx37LGF3zSng711AFZzmJTouN
+- DogeCoin: DJEZr6GJ4Vx37LGF3zSng711AFZzmJTouN
 - LiteCoin: ltc1q82gnjkend684c5hvprg95fnja0ktjdfrhcu4c4
 - BitCoin: bc1q53dys3jkv0h4vhl88yqhqzyujvk35x8wad7uf9
 - Ripple: rJwrb2v1TR6rAHRWwcYvNZxjDN2bYpYXhZ
