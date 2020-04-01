@@ -35,6 +35,7 @@ class CheckRoute extends Command
     public function handle()
     {
         $routes = app(Router::class)->getRoutes()->getRoutes();
+        $errorPrinter = app(ErrorPrinter::class);
         foreach ($routes as $route) {
             if (! is_string($ctrl = $route->getAction()['uses'])) {
                 continue;
@@ -49,13 +50,13 @@ class CheckRoute extends Command
                 $ctrlObject = app()->make($ctrlClass);
             } catch (BindingResolutionException $e) {
                 $this->errorIt($route);
-                app(ErrorPrinter::class)->print('The controller can not be resolved: '.$ctrlClass);
+                $errorPrinter->print('The controller can not be resolved: '.$ctrlClass);
                 return ;
             }
 
             if (! method_exists($ctrlObject, $method)) {
                 $this->errorIt($route);
-                app(ErrorPrinter::class)->print('The controller action does not exist: '.$ctrl);
+                $errorPrinter->print('The controller action does not exist: '.$ctrl);
             }
 
             $this->checkViews($ctrlObject, $method);
@@ -64,11 +65,11 @@ class CheckRoute extends Command
 
     public function errorIt($route)
     {
-        $p = app(ErrorPrinter::class);
+        $errorPrinter = app(ErrorPrinter::class);
         if ($routeName = $route->getName()) {
-            $p->print('Error on route name: '.$routeName);
+            $errorPrinter->print('Error on route name: '.$routeName);
         } else {
-            $p->print('Error on route url: '.$route->uri());
+            $errorPrinter->print('Error on route url: '.$route->uri());
         }
     }
 
@@ -84,8 +85,8 @@ class CheckRoute extends Command
             try {
                 $param->getClass();
             } catch (ReflectionException $e) {
-                $p = app(ErrorPrinter::class);
-                $p->print(
+                $errorPrinter = app(ErrorPrinter::class);
+                $errorPrinter->print(
                     'The type hint in the "'. get_class($ctrl).'@'.$method. '" is wrong.'
                 );
             }
@@ -105,8 +106,8 @@ class CheckRoute extends Command
             }
 
             if (! $_['children']) {
-                $p = app(ErrorPrinter::class);
-                $p->print(
+                $errorPrinter = app(ErrorPrinter::class);
+                $errorPrinter->print(
                     $_['file'].', line number:'.$_['lineNumber']
                     .'  => '.($_['line'])
                     .'"'.$_['name'].'.blade.php" does not exist'
