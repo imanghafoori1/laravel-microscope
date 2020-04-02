@@ -86,13 +86,17 @@ class ParseUseStatement
         $classes = [];
         $force_close = false;
         $lastToken = '_';
+        $imports = self::parseUseStatements($tokens);
         while ($token = current($tokens)) {
             next($tokens);
             $t = is_array($token) ? $token[0] : $token;
 
-            if ($t == T_USE || $t == T_NAMESPACE) {
+            if ($t == T_USE) {
                 $force_close = true;
                 $collect = false;
+            } elseif ($t == T_NAMESPACE) {
+                $force_close = false;
+                $collect = true;
             } elseif ($t == T_WHITESPACE) {
                 $lastToken = $token;
                 continue;
@@ -104,7 +108,16 @@ class ParseUseStatement
                 $collect = false;
                 $lastToken = $token;
                 continue;
-            } elseif ( $t == '(' || $t == T_DOUBLE_COLON) {
+            } elseif ( $t == '(' || $t == ')') {
+                $collect = false;
+                $c++;
+                $lastToken = $token;
+                continue;
+            } elseif ( $t == T_DOUBLE_COLON ) {
+                $nextToken = current($tokens);
+                if (($nextToken[0] ?? '') === T_CLASS && ! $collect) {
+                    $classes[$c][] = $lastToken;
+                }
                 $collect = false;
                 $c++;
                 $lastToken = $token;
@@ -120,6 +133,10 @@ class ParseUseStatement
                 if ($lastToken[0] == T_STRING && $collect && ! isset($classes[$c])) {
                     $classes[$c][] = $lastToken;
                 }
+            } elseif ($t == T_NEW) {
+                $collect = true;
+                $lastToken = $token;
+                continue;
             }
 
             if ($collect) {
@@ -130,13 +147,37 @@ class ParseUseStatement
 
         // Here we implode the tokens to form the full namespaced class path
         $results = [];
+        $namespace = '';
         foreach ($classes as $i => $rows) {
+            if ($rows[0][0] == T_NAMESPACE) {
+                unset($rows[0]);
+                foreach ($rows as $row) {
+                    $namespace .= $row[1];
+                }
+                continue;
+            }
+
             $results[$i]['class'] = '';
+
+            // attach the current namespace if it does not begin with '\'
+            if ($rows[0][1] != '\\') {
+                $results[$i]['class'] = $namespace .'\\';
+            }
+
             foreach ($rows as $row) {
-                $results[$i]['class'] .= $row[1];
+                if ($rows[0][1] != '\\') {
+                    if (isset(array_values($imports)[0][$rows[0][1]][0])) {
+                        $results[$i]['class'] = array_values($imports)[0][$rows[0][1]][0];
+                    } else {
+                        $results[$i]['class'] .= $row[1];
+                    }
+                } else {
+                    $results[$i]['class'] .= $row[1];
+                }
                 $results[$i]['line'] = $row[2];
             }
         }
+
         return $results;
     }
 

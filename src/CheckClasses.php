@@ -19,7 +19,7 @@ class CheckClasses
      *
      * @return void
      */
-    public static function within($path, $namespace)
+    public static function within($namespace, $path)
     {
         static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
@@ -63,7 +63,7 @@ class CheckClasses
             $tokens = token_get_all(file_get_contents($absFilePath));
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
             foreach ($nonImportedClasses as $nonImportedClass) {
-                if (! class_exists($nonImportedClass['class'])) {
+                if (! class_exists(trim($nonImportedClass['class'], '\\'))) {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
                 }
             }
@@ -124,7 +124,7 @@ class CheckClasses
                     NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
                 }
             } catch (ReflectionException $e) {
-
+                //
             }
         }
     }
