@@ -20,16 +20,8 @@ class CheckGate extends Command
      */
     protected $description = 'Checks the validity of gate definitions';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-       /* $this->comment('$string');
-        $this->warn('$string');
-        $this->error('$string');
-        $this->alert('alert');*/
+        //
     }
 }

@@ -3,7 +3,9 @@
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelSelfTest\DiscoverClasses;
+use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelSelfTest\ErrorPrinter;
+use Imanghafoori\LaravelSelfTest\CheckClasses;
 
 class CheckPsr4 extends Command
 {
@@ -31,7 +33,17 @@ class CheckPsr4 extends Command
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
 
         foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
-            DiscoverClasses::within($path, $namespace);
+            CheckClasses::within($path, $namespace);
+        }
+
+        $this->checkConfig();
+    }
+
+    protected function checkConfig()
+    {
+        $user = config('auth.providers.users.model');
+        if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
+            resolve(ErrorPrinter::class)->print('The user model in the "config/auth.php" is not a valid class.');
         }
     }
 }
