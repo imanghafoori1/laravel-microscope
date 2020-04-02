@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelSelfTest\View;
 
 use ReflectionMethod;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelSelfTest\ParseUseStatement;
 
 class ModelParser
 {
@@ -45,7 +46,7 @@ class ModelParser
         return array_slice(file($method->getFileName()), $start, $length);
     }
 
-    public function retrieveFromMethod($method)
+    public function retrieveFromMethod($method, $ref)
     {
         $content = $this->readContent($method);
 
@@ -55,7 +56,7 @@ class ModelParser
 
         $search = $this->methods;
 
-        return $this->extractParametersValueWithinMethod($method, $content, $search);
+        return $this->extractParametersValueWithinMethod($ref, $content);
     }
 
     protected function getFromLine($line, $viewAlias)
@@ -99,7 +100,78 @@ class ModelParser
      *
      * @return array
      */
-    protected function extractParametersValueWithinMethod($method, array $content, array $search)
+    protected function extractParametersValueWithinMethod($ref, $content)
+    {
+        $tokens = token_get_all('<?php '.implode('',$content));
+        foreach ($tokens as $i => $token) {
+
+            if (! is_array($token)) {
+                continue;
+            }
+
+            $next = $i;
+            $relation = [];
+
+            if (! $this->isThis($token)) {
+                continue;
+            }
+
+            $relation[] = '$this';
+            $nextToken = $this->getNextToken($tokens, $next);
+
+            if ($this->isArrow($nextToken)) {
+                $relation[] = '->';
+            }
+
+            $nextToken = $this->getNextToken($tokens, $next);
+
+            if (!$this->isRelation($nextToken)) {
+                continue;
+                $relation[] = 'relation';
+                $relation['relation'] = $nextToken[1];
+            }
+
+            $nextToken = $this->getNextToken($tokens, $next);
+
+            if ($nextToken == '(') {
+                $relation[] = '(';
+            }
+
+            $params = [];
+
+            $f = 0;
+            while (true) {
+
+                $nextToken = $this->getNextToken($tokens, $next);
+
+                if ($nextToken == ',' || $nextToken == ')') {
+                    $f++;
+                }
+
+                if ($nextToken == ',') {
+                    continue;
+                }
+
+                if ($nextToken == ')') {
+                    break;
+                }
+
+                $params[$f][] = trim($nextToken[1], '\'\"');
+            }
+
+            foreach ($params as &$param) {
+                if ($param[1] ?? null) {
+                    $param[0] = ParseUseStatement::getUseStatements($ref)[$param[0]][0] ?? $param[0];
+                }
+            }
+            return $params;
+
+        }
+
+        return [];
+    }
+
+    protected function extractParametersValueWithinMethod2($method, array $content, array $search)
     {
         $results = [];
         foreach ($content as $key => $line) {
@@ -137,5 +209,48 @@ class ModelParser
         }
 
         return $results;
+    }
+
+    /**
+     * @param  array  $token
+     *
+     * @return bool
+     */
+    protected function isThis(array $token): bool
+    {
+        return $token[0] == T_VARIABLE and $token[1] == '$this';
+}
+
+    /**
+     * @param $nextToken
+     *
+     * @return bool
+     */
+    protected function isArrow($nextToken): bool
+    {
+        return $nextToken[0] == T_OBJECT_OPERATOR and $nextToken[1] == '->';
+}
+
+    /**
+     * @param  array  $tokens
+     * @param $next
+     *
+     * @return mixed
+     */
+    protected function getNextToken(array $tokens, &$next)
+    {
+        ++$next;
+        $nextToken = $tokens[$next];
+        if ($nextToken[0] == T_WHITESPACE) {
+            ++$next;
+            $nextToken = $tokens[$next] ;
+        }
+
+        return $nextToken;
+    }
+
+    private function isRelation($nextToken)
+    {
+        return ($nextToken[1] ?? '') == 'hasMany';
     }
 }

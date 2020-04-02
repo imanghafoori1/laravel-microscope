@@ -7,7 +7,7 @@ use ReflectionException;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
-class DiscoverClasses
+class CheckClasses
 {
     protected static $fixedNamespaces = [];
 
@@ -24,7 +24,7 @@ class DiscoverClasses
         static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
-    public static function import($path, $namespace)
+    public static function import($namespace, $path)
     {
         static::checkImports((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
@@ -32,7 +32,7 @@ class DiscoverClasses
     /**
      * Get all of the listeners and their corresponding events.
      *
-     * @param  iterable  $classes
+     * @param  iterable  $files
      * @param  string  $basePath
      *
      * @param $composerPath
@@ -40,10 +40,9 @@ class DiscoverClasses
      *
      * @return void
      */
-    protected static function checkImports($classes, $basePath, $composerPath, $composerNamespace)
+    protected static function checkImports($files, $basePath, $composerPath, $composerNamespace)
     {
-
-        foreach ($classes as $classFilePath) {
+        foreach ($files as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
             if (! self::hasOpeningTag($absFilePath)) {
@@ -55,7 +54,8 @@ class DiscoverClasses
                 $class,
                 $type,
             ] = GetClassProperties::fromFilePath($absFilePath);
-            // it means that, there is no class/trait definition found in the file.
+
+            // It means that, there is no class/trait definition found in the file.
             if (! $class) {
                 continue;
             }
@@ -64,18 +64,14 @@ class DiscoverClasses
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
             foreach ($nonImportedClasses as $nonImportedClass) {
                 if (! class_exists($nonImportedClass['class'])) {
-                    app(ErrorPrinter::class)->print('used class does not exist');
-                    app(ErrorPrinter::class)->print($absFilePath);
-                    app(ErrorPrinter::class)->print($nonImportedClass['class']);
-                    app(ErrorPrinter::class)->print($nonImportedClass['line']);
-                    app(ErrorPrinter::class)->print('---------------------');
+                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
                 }
             }
 
             try {
                 $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
 
-                $correctNamespace = self::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
                 if (self::hasOpeningTag($absFilePath)) {
                     $ref = new ReflectionClass($correctNamespace.'\\'.$class);
@@ -108,7 +104,6 @@ class DiscoverClasses
                 app(ErrorPrinter::class)->print('Skipped file: ' .$classPath);
                 continue;
             }
-
             [
                 $currentNamespace,
                 $class,
@@ -122,11 +117,11 @@ class DiscoverClasses
             }
 
             try {
-                $correctNamespace = self::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
                 if ($currentNamespace !== $correctNamespace) {
-                    self::errorOut($classPath, $correctNamespace, $currentNamespace);
-                    self::correctNamespace($absFilePath, $currentNamespace, $correctNamespace);
+                    app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
+                    NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
                 }
             } catch (ReflectionException $e) {
 
@@ -178,51 +173,11 @@ class DiscoverClasses
     private static function checkImportedClasses(ReflectionClass $classReflection)
     {
         $imports = ParseUseStatement::getUseStatements($classReflection);
-        foreach ($imports as $i => $imp) {
-            if (self::exists($imp[0])) {
-                self::wrongImport($classReflection->getName(), $imp);
+        foreach ($imports as $i => $import) {
+            if (self::exists($import[0])) {
+                app(ErrorPrinter::class)->wrongImport($classReflection->getName(), $import);
             }
         }
-    }
-
-    /**
-     * @param  string  $classFilePath
-     * @param  string  $incorrectNamespace
-     * @param  string  $correctNamespace
-     */
-    protected static function correctNamespace($classFilePath, string $incorrectNamespace, string $correctNamespace)
-    {
-        $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
-
-        // in case there is no namespace specified in the file:
-        if (! $incorrectNamespace) {
-            $incorrectNamespace = '<?php';
-            $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
-        }
-        $search = ltrim($incorrectNamespace, '\\');
-        ReplaceLine::replace($classFilePath, $search, $newline);
-
-        app(ErrorPrinter::class)->print('namespace fixed to:'. $correctNamespace);
-    }
-
-    /**
-     * @param  string  $classPath
-     * @param  string  $correctNamespace
-     */
-    protected static function errorOut(string $classPath, string $correctNamespace, $incorrectNamespace)
-    {
-        app(ErrorPrinter::class)->print(' - Incorrect namespace: '.$incorrectNamespace);
-        app(ErrorPrinter::class)->print($classPath);
-        app(ErrorPrinter::class)->print('It should be:   namespace '.$correctNamespace.';  ');
-    }
-
-    protected static function calculateCorrectNamespace($classPath, $path, $rootNamespace)
-    {
-        $p = explode(DIRECTORY_SEPARATOR, $classPath);
-        array_pop($p);
-        $p = implode('\\', $p);
-
-        return str_replace(trim($path, '\\//'), trim($rootNamespace, '\\/'), $p);
     }
 
     /**
@@ -233,18 +188,6 @@ class DiscoverClasses
     private static function exists($imp)
     {
         return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
-    }
-
-    /**
-     * @param  string  $err
-     * @param $imp
-     */
-    private static function wrongImport(string $err, $imp)
-    {
-        app(ErrorPrinter::class)->print(' - Wrong import');
-        app(ErrorPrinter::class)->print($err);
-        app(ErrorPrinter::class)->print('line: '.$imp[1].'     use '.$imp[0].';');
-        app(ErrorPrinter::class)->print('/********************************************/');
     }
 
     /**

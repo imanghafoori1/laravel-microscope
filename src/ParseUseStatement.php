@@ -55,7 +55,7 @@ class ParseUseStatement
                 self::$cache[$name] = [];
             } else {
                 $code = file_get_contents($class->getFileName());
-                self::$cache = self::parseUseStatements($code, $name) + self::$cache;
+                self::$cache = self::parseUseStatements(token_get_all($code), $name) + self::$cache;
             }
         }
 
@@ -79,17 +79,132 @@ class ParseUseStatement
         ], true);
     }
 
+    public static function findClassReferences(&$tokens)
+    {
+        $c = 0;
+        $collect = false;
+        $classes = [];
+        $force_close = false;
+        $lastToken = '_';
+        while ($token = current($tokens)) {
+            next($tokens);
+            $t = is_array($token) ? $token[0] : $token;
+
+            if ($t == T_USE || $t == T_NAMESPACE) {
+                $force_close = true;
+                $collect = false;
+            } elseif ($t == T_WHITESPACE) {
+                $lastToken = $token;
+                continue;
+            } elseif ($t == ';') {
+                $force_close = false;
+                if ($collect) {
+                    $c++;
+                }
+                $collect = false;
+                $lastToken = $token;
+                continue;
+            } elseif ( $t == '(' || $t == T_DOUBLE_COLON) {
+                $collect = false;
+                $c++;
+                $lastToken = $token;
+                continue;
+            } elseif ($t == T_NS_SEPARATOR) {
+                if (! $force_close) {
+                    $collect = true;
+                }
+
+                // Add the previous token,
+                // In case the namespace does not start with '\'
+                // like: App\User::where(...
+                if ($lastToken[0] == T_STRING && $collect && ! isset($classes[$c])) {
+                    $classes[$c][] = $lastToken;
+                }
+            }
+
+            if ($collect) {
+                $classes[$c][] = $token;
+            }
+            $lastToken = $token;
+        }
+
+        // Here we implode the tokens to form the full namespaced class path
+        $results = [];
+        foreach ($classes as $i => $rows) {
+            $results[$i]['class'] = '';
+            foreach ($rows as $row) {
+                $results[$i]['class'] .= $row[1];
+                $results[$i]['line'] = $row[2];
+            }
+        }
+        return $results;
+    }
+
+    public static function findUseStatements(&$tokens)
+    {
+        $class = $classLevel = $level = null;
+        $uses = [];
+        while ($token = current($tokens)) {
+            next($tokens);
+            switch (is_array($token) ? $token[0] : $token) {
+                case T_USE:
+                    while (! $class && ($name = self::fetch($tokens, [
+                            T_STRING,
+                            T_NS_SEPARATOR,
+                        ]))) {
+                        $name = ltrim($name, '\\');
+                        if (self::fetch($tokens, '{')) {
+                            while ($suffix = self::fetch($tokens, [
+                                T_STRING,
+                                T_NS_SEPARATOR,
+                            ])) {
+                                if (self::fetch($tokens, T_AS)) {
+                                    $uses[self::fetch($tokens, T_STRING)] = [$name.$suffix, $token[2]];
+                                } else {
+                                    $tmp = explode('\\', $suffix);
+                                    $uses[end($tmp)] = [$name.$suffix, $token[2]];
+                                }
+                                if (! self::fetch($tokens, ',')) {
+                                    break;
+                                }
+                            }
+                        } elseif (self::fetch($tokens, T_AS)) {
+                            $uses[self::fetch($tokens, T_STRING)] = [$name, $token[2]];
+                        } else {
+                            $tmp = explode('\\', $name);
+                            $uses[end($tmp)] = [$name, $token[2]];
+                        }
+                        if (! self::fetch($tokens, ',')) {
+                            break;
+                        }
+                    }
+                    break;
+                case T_CURLY_OPEN:
+                case T_DOLLAR_OPEN_CURLY_BRACES:
+                case '{':
+                    $level++;
+                    break;
+                case '}':
+                    if ($level === $classLevel) {
+                        $class = $classLevel = null;
+                    }
+                    $level--;
+            }
+        }
+
+        return $uses;
+    }
+
     /**
      * Parses PHP code.
      *
-     * @param $code
+     * @param $tokens
      * @param  null  $forClass
      *
      * @return array of [class => [alias => class, ...]]
      */
-    public static function parseUseStatements($code, $forClass = null)
+    public static function parseUseStatements($tokens, $forClass = null)
     {
-        $tokens = token_get_all($code);
         $namespace = $class = $classLevel = $level = null;
         $res = $uses = [];
         while ($token = current($tokens)) {
@@ -166,7 +281,7 @@ class ParseUseStatement
         return $res;
     }
 
-    private static function fetch(&$tokens, $take)
+    static function fetch(&$tokens, $take)
     {
         $res = null;
         while ($token = current($tokens)) {
