@@ -87,13 +87,14 @@ class ParseUseStatement
         $force_close = false;
         $lastToken = '_';
         $imports = self::parseUseStatements($tokens);
-        $isInSideClass = false;
+        $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
         while ($token = current($tokens)) {
             next($tokens);
             $t = is_array($token) ? $token[0] : $token;
 
             if ($t == T_USE) {
-                // since we don't want to collect use statements (imports)
+                // Since we don't want to collect use statements (imports)
+                // and we want to collect the used traits on the class.
                 if (! $isInSideClass) {
                     $force_close = true;
                     $collect = false;
@@ -104,13 +105,29 @@ class ParseUseStatement
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
                 $isInSideClass = true;
+            } elseif ($t == T_CATCH) {
+                $collect = true;
+                $isCatchException = true;
+                continue;
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
+            } elseif ($t == T_FUNCTION) {
+                if ($isInSideClass and ! $isInsideMethod) {
+                    $isDefiningMethod = true;
+                }
+            } elseif ($t == T_VARIABLE) {
+                // we do not want to collect variables
+                if ($isMethodSignature) {
+                    $collect = false;
+                    $lastToken = $token;
+                }
+                continue;
             } elseif ($t == T_WHITESPACE) {
                 $lastToken = $token;
                 continue;
             } elseif ($t == ';') {
+                $isMethodSignature = false;
                 $force_close = false;
                 if ($collect) {
                     $c++;
@@ -119,22 +136,44 @@ class ParseUseStatement
                 $lastToken = $token;
                 continue;
             } elseif ($t == ',') {
+                if ($isMethodSignature) {
+                    $collect = true;
+                }
                 $force_close = false;
                 if ($collect) {
                     $c++;
                 }
-//                $collect = false;
                 $lastToken = $token;
                 continue;
+            } elseif ( $t == '{') {
+                $isMethodSignature = false;
+                if ($isDefiningMethod) {
+                    $isDefiningMethod = false;
+                    $isInsideMethod = true;
+                    $scope = 'method_body';
+                }
+                continue;
             } elseif ( $t == '(' || $t == ')') {
-                $collect = false;
+                if ($t == '(' && ($isDefiningMethod || $isCatchException)) {
+                    $isMethodSignature = true;
+                    $collect = true;
+                } else {
+                    // so is calling a method by: ()
+                    $collect = false;
+                }
+                if ($t == ')') {
+                    $isCatchException = false;
+                }
                 $c++;
                 $lastToken = $token;
                 continue;
             } elseif ( $t == T_DOUBLE_COLON ) {
                 $nextToken = current($tokens);
-                if (($nextToken[0] ?? '') === T_CLASS && ! $collect) {
-                    $classes[$c][] = $lastToken;
+                // When we reach the ::class syntax.
+                if (! $collect) {
+                    if ($lastToken[1] != 'parent') {
+                        $classes[$c][] = $lastToken;
+                    }
                 }
                 $collect = false;
                 $c++;
@@ -152,8 +191,11 @@ class ParseUseStatement
                     $classes[$c][] = $lastToken;
                 }
             } elseif ($t == T_NEW) {
+                // we start to collect tokens after the new keyword.
                 $collect = true;
                 $lastToken = $token;
+
+                // we do not want to collect the new keyword itself
                 continue;
             }
 
@@ -192,6 +234,7 @@ class ParseUseStatement
                 } else {
                     $results[$i]['class'] .= $row[1];
                 }
+
                 $results[$i]['line'] = $row[2];
             }
         }
