@@ -63,7 +63,7 @@ class CheckClasses
             $tokens = token_get_all(file_get_contents($absFilePath));
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
             foreach ($nonImportedClasses as $nonImportedClass) {
-                if (! class_exists(trim($nonImportedClass['class'], '\\'))) {
+                if (! class_exists(trim($nonImportedClass['class'], '\\')) && ! trait_exists(trim($nonImportedClass['class'], '\\'))) {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
                 }
             }

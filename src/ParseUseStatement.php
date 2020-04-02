@@ -87,13 +87,23 @@ class ParseUseStatement
         $force_close = false;
         $lastToken = '_';
         $imports = self::parseUseStatements($tokens);
+        $isInSideClass = false;
         while ($token = current($tokens)) {
             next($tokens);
             $t = is_array($token) ? $token[0] : $token;
 
             if ($t == T_USE) {
-                $force_close = true;
-                $collect = false;
+                // since we don't want to collect use statements (imports)
+                if (! $isInSideClass) {
+                    $force_close = true;
+                    $collect = false;
+                } else {
+                    $collect = true;
+                }
+                $lastToken = $token;
+                continue;
+            } elseif ($t == T_CLASS || $t == T_TRAIT) {
+                $isInSideClass = true;
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
@@ -106,6 +116,14 @@ class ParseUseStatement
                     $c++;
                 }
                 $collect = false;
+                $lastToken = $token;
+                continue;
+            } elseif ($t == ',') {
+                $force_close = false;
+                if ($collect) {
+                    $c++;
+                }
+//                $collect = false;
                 $lastToken = $token;
                 continue;
             } elseif ( $t == '(' || $t == ')') {
