@@ -168,10 +168,9 @@ class ParseUseStatement
                 $lastToken = $token;
                 continue;
             } elseif ( $t == T_DOUBLE_COLON ) {
-                $nextToken = current($tokens);
                 // When we reach the ::class syntax.
                 if (! $collect) {
-                    if ($lastToken[1] != 'parent') {
+                    if (!in_array($lastToken[1], ['parent', 'self', 'static'])) {
                         $classes[$c][] = $lastToken;
                     }
                 }
@@ -225,6 +224,10 @@ class ParseUseStatement
             }
 
             foreach ($rows as $row) {
+                if (self::isBuiltinType($row[1])) {
+                    unset($results[$i]);
+                    continue;
+                }
                 if ($rows[0][1] != '\\') {
                     if (isset(array_values($imports)[0][$rows[0][1]][0])) {
                         $results[$i]['class'] = array_values($imports)[0][$rows[0][1]][0];
