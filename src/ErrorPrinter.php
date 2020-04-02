@@ -6,9 +6,10 @@ class ErrorPrinter
 {
     function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $p)
     {
-        $this->print('- Wrong model is passed in relation:');
-        $this->print($ref->getName().'@'.$method->getShortName());
+        $this->print('Wrong model is passed in relation:');
+        $this->print('file: '.$ref->getName().'@'.$method->getShortName());
         $this->print($p[0].' does not exist');
+        $this->print('/********************************************/');
     }
 
     /**
@@ -28,7 +29,7 @@ class ErrorPrinter
         $this->print('Used class does not exist.');
         $this->print(str_replace(base_path(), '', $absFilePath));
         $this->print('line: '.$nonImportedClass['line'].'    '.$nonImportedClass['class']);
-        $this->print('---------------------');
+        $this->print('/********************************************/');
     }
 
     /**
@@ -42,6 +43,7 @@ class ErrorPrinter
         $this->print('- Incorrect namespace: '.$incorrectNamespace);
         $this->print('At: '.$classPath);
         $this->print('It should be:   namespace '.$correctNamespace.';  ');
+        $this->print('/********************************************/');
     }
 
     public function print($msg)

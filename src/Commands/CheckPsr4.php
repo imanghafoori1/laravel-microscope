@@ -31,9 +31,10 @@ class CheckPsr4 extends Command
     public function handle()
     {
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
+        $psr4 = (array) data_get($composer, 'autoload.psr-4');
 
-        foreach ((array)data_get($composer, 'autoload.psr-4') as $namespace => $path) {
-            CheckClasses::within($path, $namespace);
+        foreach ($psr4 as $namespace => $path) {
+            CheckClasses::within($namespace, $path);
         }
 
         $this->checkConfig();
