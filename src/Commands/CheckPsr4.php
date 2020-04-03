@@ -3,8 +3,6 @@
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 use Imanghafoori\LaravelSelfTest\CheckClasses;
 
 class CheckPsr4 extends Command
@@ -35,16 +33,6 @@ class CheckPsr4 extends Command
 
         foreach ($psr4 as $namespace => $path) {
             CheckClasses::within($namespace, $path);
-        }
-
-        $this->checkConfig();
-    }
-
-    protected function checkConfig()
-    {
-        $user = config('auth.providers.users.model');
-        if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
-            resolve(ErrorPrinter::class)->print('The user model in the "config/auth.php" is not a valid class.');
         }
     }
 }

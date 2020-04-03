@@ -3,7 +3,9 @@
 namespace Imanghafoori\LaravelSelfTest\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelSelfTest\CheckClasses;
+use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 use Imanghafoori\LaravelSelfTest\CheckViewRoute;
 
 class CheckImports extends Command
@@ -37,5 +39,15 @@ class CheckImports extends Command
         }
 
         (new CheckViewRoute)->check();
+
+        $this->checkConfig();
+    }
+
+    protected function checkConfig()
+    {
+        $user = config('auth.providers.users.model');
+        if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
+            resolve(ErrorPrinter::class)->authConf();
+        }
     }
 }

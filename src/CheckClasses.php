@@ -116,16 +116,7 @@ class CheckClasses
                 continue;
             }
 
-            try {
-                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
-
-                if ($currentNamespace !== $correctNamespace) {
-                    app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-                    NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
-                }
-            } catch (ReflectionException $e) {
-                //
-            }
+            self::doNamespaceCorrection($composerPath, $composerNamespace, $classPath, $currentNamespace, $absFilePath);
         }
     }
 
@@ -206,5 +197,26 @@ class CheckClasses
         ];*/
 
         app(ErrorPrinter::class)->print('/********************************************/');
+    }
+
+    /**
+     * @param $composerPath
+     * @param $composerNamespace
+     * @param  string  $classPath
+     * @param $currentNamespace
+     * @param $absFilePath
+     */
+    protected static function doNamespaceCorrection($composerPath, $composerNamespace, string $classPath, $currentNamespace, $absFilePath): void
+    {
+        try {
+            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+
+            if ($currentNamespace !== $correctNamespace) {
+                app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
+                NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
+            }
+        } catch (ReflectionException $e) {
+            //
+        }
     }
 }

@@ -22,7 +22,7 @@ class ControllerParser
             return $this->resolveViewControllerInvokeMethod();
         }*/
 
-        return $method = (new ReflectionClass($ctrl))->getMethod($method);
+        return (new ReflectionClass($ctrl))->getMethod($method);
     }
 
     /**
