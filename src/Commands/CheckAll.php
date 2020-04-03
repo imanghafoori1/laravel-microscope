@@ -27,11 +27,10 @@ class CheckAll extends Command
      */
     public function handle()
     {
-        // $this->call('check:auth');
+        $this->call('check:view');
         $this->call('check:event');
         $this->call('check:gate');
         $this->call('check:import');
-        $this->call('check:psr4');
         $this->call('check:route');
     }
 }

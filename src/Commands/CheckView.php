@@ -103,17 +103,12 @@ class CheckView extends Command
     {
         foreach ($views as $view => $_) {
             if ($_['children']) {
-//                $this->checkView($ctrl, $method, $_['children']);
+                self::checkView($ctrl, $method, $_['children']);
             }
 
             if (! $_['children']) {
                 if (! View::exists($_['name'])) {
-                    $p = app(ErrorPrinter::class);
-                    $p->print(
-                        $_['file'].', line number:'.$_['lineNumber']
-                        .'  => '.($_['line'])
-                        .'"'.$_['name'].'.blade.php" does not exist'
-                    );
+                    app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
                 }
             }
         }
