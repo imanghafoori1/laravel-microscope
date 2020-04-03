@@ -15,17 +15,19 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CheckEvent::class,
-                CheckGate::class,
-                CheckRoute::class,
-                CheckView::class,
-                CheckPsr4::class,
-                CheckImports::class,
-                CheckAll::class,
-            ]);
+        if (! $this->app->runningInConsole() || app()->isProduction()) {
+            return ;
         }
+
+        $this->commands([
+            CheckEvent::class,
+            CheckGate::class,
+            CheckRoute::class,
+            CheckView::class,
+            CheckPsr4::class,
+            CheckImports::class,
+            CheckAll::class,
+        ]);
     }
 
     /**
@@ -33,12 +35,13 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if (! $this->app->runningInConsole() || app()->isProduction()) {
+            return ;
+        }
+
         app()->singleton(ErrorPrinter::class);
 
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-self-test');
-        if (! $this->app->runningInConsole()) {
-            return ;
-        }
         $command = $_SERVER['argv'][1] ?? null;
 
         if ($command == 'check:event') {
