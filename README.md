@@ -29,8 +29,10 @@ composer require imanghafoori/laravel-self-test
 ## Usage
 
 You can run:
+
 - php artisan check:event
 - php artisan check:gate
+- php artisan check:view
 - php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
 - php artisan check:psr4    `(Auto-corrects namespaces)`
 - php artisan check:import  `(checks all the imports at the top of the files use statements) and event non-imported inline class usages within blade files and classes!!`
