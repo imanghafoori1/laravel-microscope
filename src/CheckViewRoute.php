@@ -58,10 +58,7 @@ class CheckViewRoute
 
                 foreach($classes as $class) {
                     if (! class_exists($class['class'])) {
-                        app(ErrorPrinter::class)->print($class['class']. ' does not exist');
-                        app(ErrorPrinter::class)->print('line: '. $class['line']);
-                        app(ErrorPrinter::class)->print($blade->getPathname());
-                        app(ErrorPrinter::class)->print('----------------');
+                        app(ErrorPrinter::class)->bladeImport($class, $blade);
                     }
                 }
 
