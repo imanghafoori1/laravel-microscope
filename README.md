@@ -29,17 +29,18 @@ composer require imanghafoori/laravel-self-test
 ## Usage
 
 You can run:
-- php artisan check:event 
-- php artisan check:gate   
+- php artisan check:event
+- php artisan check:gate
 - php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
 - php artisan check:psr4    `(Auto-corrects namespaces)`
 - php artisan check:import  `(checks all the imports at the top of the files use statements) and event non-imported inline class usages within blade files and classes!!`
+- php artisan check:all
 
 ## What the Commands do?
 
 Lets start with:
 ```
-php artisan check:event 
+php artisan check:event
 ```
 
 For example consider:
@@ -66,17 +67,17 @@ This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
 
 - Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
 
-``` 
+```
 php artisan check:gate
 ```
 
 It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
-It also checks for the policy definitions to be valid. 
+It also checks for the policy definitions to be valid.
 
 ```php
-Gate::policy(User::class, 'UserPolicy@someMethod'); 
-Gate::define('someAbility', 'UserGate@someMethod'); 
+Gate::policy(User::class, 'UserPolicy@someMethod');
+Gate::define('someAbility', 'UserGate@someMethod');
 ```
 
 1 - It checks the  `User` class path to be valid.
@@ -88,7 +89,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 ``` php
 php artisan check:psr4
 ```
-- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard. 
+- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
 
 ```
@@ -127,9 +128,9 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 --------------------
 
-### :raising_hand: Contributing 
+### :raising_hand: Contributing
 If you find an issue, or have a better way to do something, feel free to open an issue or a pull request.
-If you use laravel-widgetize in your open source project, create a pull request to provide it's url as a sample application in the README.md file. 
+If you use laravel-widgetize in your open source project, create a pull request to provide it's url as a sample application in the README.md file.
 
 
 ### :exclamation: Security
