@@ -4,6 +4,14 @@ namespace Imanghafoori\LaravelSelfTest;
 
 class ErrorPrinter
 {
+    function view($file, $line, $lineNumber, $name)
+    {
+        $this->print($file.', line: '.$lineNumber);
+        $this->print(trim($line));
+        $this->print($name.'.blade.php" does not exist');
+        $this->end();
+    }
+
     function bladeImport($class, $blade)
     {
         $this->print('Class does not exist:');
@@ -61,7 +69,7 @@ class ErrorPrinter
 
     public function print($msg)
     {
-        $len = 56 - strlen($msg);
+        $len = 61 - strlen($msg);
         if ($len < 0) {
             $len = 0;
         }
@@ -70,6 +78,6 @@ class ErrorPrinter
 
     protected function end(): void
     {
-        dump('  |'.str_repeat('*', 60).'|  ');
+        dump('  |'.str_repeat('*', 65).'|  ');
     }
 }
