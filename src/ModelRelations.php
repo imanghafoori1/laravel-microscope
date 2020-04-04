@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelSelfTest;
 use ReflectionClass;
 use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelSelfTest\View\ModelParser;
+use Imanghafoori\LaravelSelfTest\Commands\CheckView;
 
 class ModelRelations
 {
@@ -18,9 +19,8 @@ class ModelRelations
             return;
         }
 
-        foreach ($ref->getMethods() as $method) {
+        foreach (CheckView::get_class_methods($ref) as $method) {
             $params = (new ModelParser())->retrieveFromMethod($method, $ref);
-
             foreach($params as $p) {
                 if (! class_exists($p[0])) {
                     app(ErrorPrinter::class)->badRelation($ref, $method, $p);
