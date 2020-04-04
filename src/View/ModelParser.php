@@ -54,8 +54,6 @@ class ModelParser
             return [];
         }
 
-        $search = $this->methods;
-
         return $this->extractParametersValueWithinMethod($ref, $content);
     }
 
@@ -148,7 +146,7 @@ class ModelParser
                 }
 
                 if ($nextToken == ',') {
-                    continue;
+                    break;
                 }
 
                 if ($nextToken == ')') {
@@ -263,6 +261,17 @@ class ModelParser
 
     private function isRelation($nextToken)
     {
-        return ($nextToken[1] ?? '') == 'hasMany';
+        $rel = ($nextToken[1] ?? '');
+        return (in_array($rel , [
+            'hasOne',
+            'hasMany',
+            'belongsTo',
+            'belongsToMany',
+            'belongsToOne',
+            'hasManyThrough',
+            'morphTo',
+            'morphToMany',
+            'morphedByMany',
+        ]));
     }
 }

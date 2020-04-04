@@ -88,7 +88,7 @@ class CheckView extends Command
      */
     protected static function checkViews($ctrl)
     {
-        $methods = self::get_class_methods($ctrl);
+        $methods = self::get_class_methods(new \ReflectionClass($class));
 
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
@@ -114,13 +114,15 @@ class CheckView extends Command
         }
     }
 
-    static function get_class_methods($class)
+    static function get_class_methods(\ReflectionClass $classReflection)
     {
-        $rc = new \ReflectionClass($class);
-        $rm = $rc->getMethods(\ReflectionMethod::IS_PUBLIC);
-
+        $className = $classReflection->getName();
+        $rm = $classReflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        
         $functions = [];
-        foreach ($rm as $f) $f->class === $class && $functions[] = $f;
+        foreach ($rm as $f) {
+            ($f->class === $className) && $functions[] = $f;
+        }
 
         return $functions;
     }
