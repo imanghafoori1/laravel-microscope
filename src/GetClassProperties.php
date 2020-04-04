@@ -44,7 +44,7 @@ class GetClassProperties
      */
     protected static function getImports(int $i, array $tokens, string $namespace): array
     {
-        $type = $class = 0;
+        $type = $class = null;
         for (; $i < count($tokens); $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
                 for ($j = $i + 1; $j < count($tokens); $j++) {
@@ -63,7 +63,7 @@ class GetClassProperties
             ])) {
                 $type = $tokens[$i][0];
                 for ($j = $i + 1; $j < count($tokens); $j++) {
-                    if ($tokens[$j] === '{') {
+                    if (!$class && $tokens[$j] === '{') {
                         $class = $tokens[$i + 2][1];
                     }
                 }

@@ -143,13 +143,6 @@ class ModelParser
 
                 if ($nextToken == ',' || $nextToken == ')') {
                     $f++;
-                }
-
-                if ($nextToken == ',') {
-                    break;
-                }
-
-                if ($nextToken == ')') {
                     break;
                 }
 
@@ -157,16 +150,12 @@ class ModelParser
                 //
                 // $this->hasMany(Passport::clientModel());
                 if ($nextToken == '(') {
-                    if (($params[$f][2] ?? null) !== 'class' && ($params[$f][1] ?? null) == '::') {
-                        $nextToken = $this->getNextToken($tokens, $next);
-                        unset($params[$f]);
-                        break;
-                        // if ($nextToken == ')') { $params[$f] == $params[$f][0]; }
-                    }
+                    unset($params[$f]);
+                    break;
                 }
 
 
-                $params[$f][] = trim($nextToken[1], '\'\"');
+                $params[$f][] = $nextToken[1];
             }
 
             foreach ($params as &$param) {

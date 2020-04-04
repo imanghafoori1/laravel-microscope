@@ -34,8 +34,7 @@ class ParseUseStatement
         $parts = explode('\\', $name, 2);
         if (isset($uses[$parts[0]])) {
             $parts[0] = $uses[$parts[0]];
-
-            return implode('\\', $parts);
+            return $parts[0][0];
         } elseif ($rc->inNamespace()) {
             return $rc->getNamespaceName().'\\'.$name;
         } else {
