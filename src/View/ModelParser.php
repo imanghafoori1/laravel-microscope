@@ -46,7 +46,7 @@ class ModelParser
         return array_slice(file($method->getFileName()), $start, $length);
     }
 
-    public function retrieveFromMethod($method, $ref)
+    public function retrieveFromMethod($method, \ReflectionClass $ref)
     {
         $content = $this->readContent($method);
 
@@ -141,7 +141,6 @@ class ModelParser
 
             $f = 0;
             while (true) {
-
                 $nextToken = $this->getNextToken($tokens, $next);
 
                 if ($nextToken == ',' || $nextToken == ')') {
@@ -156,12 +155,25 @@ class ModelParser
                     break;
                 }
 
+                // in case we have something like:
+                //
+                // $this->hasMany(Passport::clientModel());
+                if ($nextToken == '(') {
+                    if (($params[$f][2] ?? null) !== 'class' && ($params[$f][1] ?? null) == '::') {
+                        $nextToken = $this->getNextToken($tokens, $next);
+                        unset($params[$f]);
+                        break;
+                        // if ($nextToken == ')') { $params[$f] == $params[$f][0]; }
+                    }
+                }
+
+
                 $params[$f][] = trim($nextToken[1], '\'\"');
             }
 
             foreach ($params as &$param) {
                 if ($param[1] ?? null) {
-                    $param[0] = ParseUseStatement::getUseStatements($ref)[$param[0]][0] ?? $param[0];
+                    $param[0] = ParseUseStatement::expandClassName($param[0],$ref);
                 }
             }
             return $params;
@@ -216,20 +228,20 @@ class ModelParser
      *
      * @return bool
      */
-    protected function isThis(array $token): bool
+    protected function isThis(array $token)
     {
         return $token[0] == T_VARIABLE and $token[1] == '$this';
-}
+    }
 
     /**
      * @param $nextToken
      *
      * @return bool
      */
-    protected function isArrow($nextToken): bool
+    protected function isArrow($nextToken)
     {
         return $nextToken[0] == T_OBJECT_OPERATOR and $nextToken[1] == '->';
-}
+    }
 
     /**
      * @param  array  $tokens
