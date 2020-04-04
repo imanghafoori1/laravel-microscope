@@ -14,14 +14,15 @@ class CheckClasses
     /**
      * Get all of the events and listeners by searching the given listener directory.
      *
-     * @param  string  $path
-     * @param  string  $namespace
+     * @param  string  $psr4Path
+     * @param  string  $psr4Namespace
      *
      * @return void
      */
-    public static function within($namespace, $path)
+    public static function within($psr4Namespace, $psr4Path)
     {
-        static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
+        $files = (new Finder)->files()->in(base_path($psr4Path));
+        static::checkAllClasses($files, base_path(), $psr4Path, $psr4Namespace);
     }
 
     public static function import($namespace, $path)
@@ -79,7 +80,7 @@ class CheckClasses
                     ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
                 }
             } catch (ReflectionException $e) {
-
+                //
             }
         }
     }
@@ -99,9 +100,19 @@ class CheckClasses
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
+
+            if (Str::endsWith($absFilePath, ['.blade.php'])) {
+                continue;
+            }
+
+            $migrationDirs = self::migrationPaths();
+
+            if (Str::startsWith($absFilePath, $migrationDirs)) {
+                continue;
+            }
+
             $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
             if (! self::hasOpeningTag($absFilePath)) {
-                app(ErrorPrinter::class)->print('Skipped file: ' .$classPath);
                 continue;
             }
             [
@@ -112,7 +123,6 @@ class CheckClasses
 
             // it means that, there is no class/trait definition found in the file.
             if (! $class) {
-                app(ErrorPrinter::class)->print('skipped file: ' .$classPath);
                 continue;
             }
 
@@ -120,7 +130,7 @@ class CheckClasses
         }
     }
 
-    public static function hasOpeningTag(string $file)
+    public static function hasOpeningTag($file)
     {
         $fp = fopen($file, 'r');
 
@@ -206,11 +216,10 @@ class CheckClasses
      * @param $currentNamespace
      * @param $absFilePath
      */
-    protected static function doNamespaceCorrection($composerPath, $composerNamespace, string $classPath, $currentNamespace, $absFilePath): void
+    protected static function doNamespaceCorrection($composerPath, $composerNamespace, $classPath, $currentNamespace, $absFilePath)
     {
         try {
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
-
             if ($currentNamespace !== $correctNamespace) {
                 app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
                 NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
@@ -218,5 +227,21 @@ class CheckClasses
         } catch (ReflectionException $e) {
             //
         }
+    }
+
+    private static function migrationPaths()
+    {
+        $migrationDirs = [];
+        foreach (app('migrator')->paths() as $path) {
+            $migrationDirs[] = str_replace([
+                '\\',
+                '/',
+            ], [
+                DIRECTORY_SEPARATOR,
+                DIRECTORY_SEPARATOR,
+            ], $path);
+        }
+
+        return $migrationDirs;
     }
 }

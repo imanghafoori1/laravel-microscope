@@ -42,7 +42,6 @@ class DiscoverClasses
      */
     protected static function checkImports($classes, $basePath, $composerPath, $composerNamespace)
     {
-
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 

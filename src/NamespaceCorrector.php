@@ -9,7 +9,7 @@ class NamespaceCorrector
      * @param  string  $incorrectNamespace
      * @param  string  $correctNamespace
      */
-    public static function fix($classFilePath, string $incorrectNamespace, string $correctNamespace)
+    public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
         $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
 
@@ -26,10 +26,13 @@ class NamespaceCorrector
 
     static function calculateCorrectNamespace($classPath, $path, $rootNamespace)
     {
+        // remove the filename.php from the end of the string
         $p = explode(DIRECTORY_SEPARATOR, $classPath);
         array_pop($p);
         $p = implode('\\', $p);
 
-        return str_replace(trim($path, '\\//'), trim($rootNamespace, '\\/'), $p);
+        $path = str_replace( '/', '\\', $path);
+
+        return str_replace(trim($path, '\\'), trim($rootNamespace, '\\/'), $p);
     }
 }
