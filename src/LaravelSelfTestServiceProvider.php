@@ -10,9 +10,6 @@ use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 
 class LaravelSelfTestServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
     public function boot()
     {
         if (! $this->app->runningInConsole() || app()->isProduction()) {
@@ -30,9 +27,6 @@ class LaravelSelfTestServiceProvider extends ServiceProvider
         ]);
     }
 
-    /**
-     * Register the application services.
-     */
     public function register()
     {
         if (! $this->app->runningInConsole() || app()->isProduction()) {

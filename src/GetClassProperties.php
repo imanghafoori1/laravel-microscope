@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelSelfTest;
 
 class GetClassProperties
 {
-    public static function fromFilePath(string $filePath)
+    public static function fromFilePath($filePath)
     {
         $fp = fopen($filePath, 'r');
         $type = $class = $namespace = $buffer = '';
@@ -14,7 +14,7 @@ class GetClassProperties
                 break;
             }
 
-            $buffer .= fread($fp, 400);
+            $buffer .= fread($fp, 1200);
             $tokens = token_get_all($buffer.'/**/');
 
             if (strpos($buffer, '{') === false) {
@@ -35,36 +35,44 @@ class GetClassProperties
         ];
     }
 
-    /**
-     * @param  int  $i
-     * @param  array  $tokens
-     * @param  string  $namespace
-     *
-     * @return array
-     */
-    protected static function getImports(int $i, array $tokens, string $namespace): array
+    protected static function getImports($i, array $tokens, $namespace)
     {
         $type = $class = null;
         for (; $i < count($tokens); $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
-                for ($j = $i + 1; $j < count($tokens); $j++) {
+                $tCount = count($tokens);
+                for ($j = $i + 1; $j < $tCount; $j++) {
                     if ($tokens[$j][0] === T_STRING) {
                         $namespace .= '\\'.$tokens[$j][1];
                     } elseif ($tokens[$j] === '{' || $tokens[$j] === ';') {
+                        // go ahead until you reach:
+                        // 1. an opening curly brace {
+                        // 2. or a semi-colon ;
                         break;
                     }
                 }
             }
 
-            if (in_array($tokens[$i][0], [
-                T_CLASS,
-                T_INTERFACE,
-                T_TRAIT,
-            ])) {
+            if (! $class && $tokens[$i][0] == T_DOUBLE_COLON) {
+                return [$namespace, null, null,];
+            }
+
+            if (! $class && in_array($tokens[$i][0], [
+                    T_CLASS,
+                    T_INTERFACE,
+                    T_TRAIT,
+                ])) {
                 $type = $tokens[$i][0];
-                for ($j = $i + 1; $j < count($tokens); $j++) {
-                    if (!$class && $tokens[$j] === '{') {
+                $tCount = count($tokens);
+
+                if ($tokens[$i-1][0] == T_DOUBLE_COLON) {
+                    return [$namespace, null, null,];
+                }
+
+                for ($j = $i + 1; $j < $tCount; $j++) {
+                    if (! $class && $tokens[$j] === '{') {
                         $class = $tokens[$i + 2][1];
+                        break;
                     }
                 }
             }
