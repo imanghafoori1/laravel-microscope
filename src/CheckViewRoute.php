@@ -83,7 +83,7 @@ class CheckViewRoute
                 $classes = ParseUseStatement::findClassReferences($tokens);
 
                 foreach($classes as $class) {
-                    if (! class_exists($class['class'])) {
+                    if (! class_exists($class['class']) && ! interface_exists($class['class'])) {
                         app(ErrorPrinter::class)->bladeImport($class, $blade);
                     }
                 }
