@@ -85,7 +85,7 @@ class ParseUseStatement
         $collect = false;
         $classes = [];
         $force_close = false;
-        $lastToken = '_';
+        $lastToken = $secLastToken = [null, null,null];
         $imports = self::parseUseStatements($tokens);
         $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
         while ($token = current($tokens)) {
@@ -101,6 +101,7 @@ class ParseUseStatement
                 } else {
                     $collect = true;
                 }
+                $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
@@ -120,6 +121,7 @@ class ParseUseStatement
                 // we do not want to collect variables
                 if ($isMethodSignature) {
                     $collect = false;
+                    $secLastToken = $lastToken;
                     $lastToken = $token;
                 }
                 continue;
@@ -133,6 +135,8 @@ class ParseUseStatement
                     $c++;
                 }
                 $collect = false;
+
+                $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
             } elseif ($t == ',') {
@@ -145,6 +149,7 @@ class ParseUseStatement
                 if ($collect) {
                     $c++;
                 }
+                $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
             } elseif ( $t == '{') {
@@ -167,17 +172,19 @@ class ParseUseStatement
                     $isCatchException = false;
                 }
                 $c++;
+                $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
             } elseif ( $t == T_DOUBLE_COLON ) {
                 // When we reach the ::class syntax.
                 // we do not want to treat: $var::method(), self::method()
                 // as a real class name, so it must be of type T_STRING
-                if (! $collect && ! in_array($lastToken[1], ['parent', 'self', 'static']) && $lastToken[0] == T_STRING) {
+                if (! $collect && ! in_array($lastToken[1], ['parent', 'self', 'static']) && $lastToken[0] == T_STRING && ($secLastToken[1] ?? null) !== '->') {
                     $classes[$c][] = $lastToken;
                 }
                 $collect = false;
                 $c++;
+                $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
             } elseif ($t == T_NS_SEPARATOR) {
@@ -194,6 +201,7 @@ class ParseUseStatement
             } elseif ($t == T_NEW) {
                 // we start to collect tokens after the new keyword.
                 $collect = true;
+                $secLastToken = $lastToken;
                 $lastToken = $token;
 
                 // we do not want to collect the new keyword itself
@@ -203,6 +211,7 @@ class ParseUseStatement
             if ($collect) {
                 $classes[$c][] = $token;
             }
+            $secLastToken = $lastToken;
             $lastToken = $token;
         }
 
