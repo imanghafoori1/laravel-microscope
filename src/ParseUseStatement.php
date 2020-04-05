@@ -126,7 +126,7 @@ class ParseUseStatement
             } elseif ($t == T_WHITESPACE) {
                 $lastToken = $token;
                 continue;
-            } elseif ($t == ';') {
+            } elseif ($t == ';' || $t == '}') {
                 $isMethodSignature = false;
                 $force_close = false;
                 if ($collect) {
@@ -138,6 +138,8 @@ class ParseUseStatement
             } elseif ($t == ',') {
                 if ($isMethodSignature) {
                     $collect = true;
+                } else {
+                    $collect = false;
                 }
                 $force_close = false;
                 if ($collect) {
