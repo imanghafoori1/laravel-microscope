@@ -38,12 +38,38 @@ class CheckViewRoute
         return $nextToken;
     }
 
+    public function checkConfigPaths($paths)
+    {
+        foreach ($paths as $path) {
+            $files = (new Finder)->files()->in($path);
+
+            foreach ($files as $blade) {
+                /**
+                 * @var \Symfony\Component\Finder\SplFileInfo $blade
+                 */
+                $content = file_get_contents($blade->getRealPath());
+                $tokens = token_get_all($content);
+
+                $classes = ParseUseStatement::findUseStatements($tokens);
+
+
+                foreach($classes as $class) {
+                    if (! class_exists($class[0])) {
+                        app(ErrorPrinter::class)->print('wrong import at: '. $blade->getRealPath());
+                    }
+                }
+
+                return ;
+            }
+        }
+    }
+
     /**
      * @param $paths
      *
      * @return int|string
      */
-    protected function checkPaths($paths)
+    public function checkPaths($paths)
     {
         foreach ($paths as $path) {
             $files = (new Finder)->files()->in($path);
