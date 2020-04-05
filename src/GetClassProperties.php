@@ -35,10 +35,11 @@ class GetClassProperties
         ];
     }
 
-    protected static function getImports($i, array $tokens, $namespace)
+    protected static function getImports($i, $tokens, $namespace)
     {
         $type = $class = null;
-        for (; $i < count($tokens); $i++) {
+        $allTokensCount = count($tokens);
+        for (; $i < $allTokensCount; $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
                 $tCount = count($tokens);
                 for ($j = $i + 1; $j < $tCount; $j++) {
@@ -51,24 +52,23 @@ class GetClassProperties
                         break;
                     }
                 }
+                unset($tCount);
             }
 
+            // if we reach a double colon before a class keyword
+            // it means that, it is not a psr-4 class.
             if (! $class && $tokens[$i][0] == T_DOUBLE_COLON) {
                 return [$namespace, null, null,];
             }
 
-            if (! $class && in_array($tokens[$i][0], [
+            $type = $tokens[$i][0];
+            if (! $class && in_array($type, [
                     T_CLASS,
                     T_INTERFACE,
                     T_TRAIT,
                 ])) {
-                $type = $tokens[$i][0];
+
                 $tCount = count($tokens);
-
-                if ($tokens[$i-1][0] == T_DOUBLE_COLON) {
-                    return [$namespace, null, null,];
-                }
-
                 for ($j = $i + 1; $j < $tCount; $j++) {
                     if (! $class && $tokens[$j] === '{') {
                         $class = $tokens[$i + 2][1];
