@@ -169,10 +169,10 @@ class ParseUseStatement
                 continue;
             } elseif ( $t == T_DOUBLE_COLON ) {
                 // When we reach the ::class syntax.
-                if (! $collect) {
-                    if (!in_array($lastToken[1], ['parent', 'self', 'static'])) {
-                        $classes[$c][] = $lastToken;
-                    }
+                // we do not want to treat: $var::method(), self::method()
+                // as a real class name, so it must be of type T_STRING
+                if (! $collect && ! in_array($lastToken[1], ['parent', 'self', 'static']) && $lastToken[0] == T_STRING) {
+                    $classes[$c][] = $lastToken;
                 }
                 $collect = false;
                 $c++;
