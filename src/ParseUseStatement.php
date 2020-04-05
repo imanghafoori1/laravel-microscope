@@ -75,6 +75,7 @@ class ParseUseStatement
             'bool',
             'array',
             'callable',
+            '::',
         ], true);
     }
 
