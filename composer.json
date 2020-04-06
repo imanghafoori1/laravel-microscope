@@ -1,11 +1,11 @@
 {
-    "name": "imanghafoori/laravel-self-test",
+    "name": "imanghafoori/laravel-microscope",
     "description": "Auto test your laravel application",
     "keywords": [
-        "imanghafoori1",
-        "laravel-self-test"
+        "laravel-testing",
+        "laravel-microscope"
     ],
-    "homepage": "https://github.com/imanghafoori1/laravel-self-test",
+    "homepage": "https://github.com/imanghafoori1/laravel-microscope",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -24,12 +24,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Imanghafoori\\LaravelSelfTest\\": "src"
+            "Imanghafoori\\LaravelMicroscope\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Imanghafoori\\LaravelSelfTest\\Tests\\": "tests"
+            "Imanghafoori\\LaravelMicroscope\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -43,11 +43,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Imanghafoori\\LaravelSelfTest\\LaravelSelfTestServiceProvider"
-            ],
-            "aliases": {
-                "LaravelSelfTest": "Imanghafoori\\LaravelSelfTest\\LaravelSelfTestFacade"
-            }
+                "Imanghafoori\\LaravelMicroscope\\LaravelMicroscopeServiceProvider"
+            ]
         }
     }
 }

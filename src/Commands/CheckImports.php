@@ -1,12 +1,12 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Commands;
+namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelSelfTest\CheckClasses;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
-use Imanghafoori\LaravelSelfTest\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\CheckViewRoute;
 
 class CheckImports extends Command
 {

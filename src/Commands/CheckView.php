@@ -1,16 +1,16 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Commands;
+namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Routing\Controller;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
-use Imanghafoori\LaravelSelfTest\CheckClasses;
-use Imanghafoori\LaravelSelfTest\View\ViewParser;
-use Imanghafoori\LaravelSelfTest\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\View\ViewParser;
+use Imanghafoori\LaravelMicroscope\GetClassProperties;
 
 class CheckView extends Command
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Commands;
+namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 

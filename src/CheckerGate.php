@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest;
+namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Illuminate\Auth\Access\Gate;

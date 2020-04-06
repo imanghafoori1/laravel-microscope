@@ -1,11 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Commands;
+namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 class CheckRoute extends Command

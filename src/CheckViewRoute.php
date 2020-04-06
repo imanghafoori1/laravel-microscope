@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest;
+namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;

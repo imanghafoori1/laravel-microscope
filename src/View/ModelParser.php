@@ -1,10 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\View;
+namespace Imanghafoori\LaravelMicroscope\View;
 
 use ReflectionMethod;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelSelfTest\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\ParseUseStatement;
 
 class ModelParser
 {
