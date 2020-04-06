@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelSelfTest\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckerDispatcher extends Dispatcher
 {
@@ -28,8 +28,8 @@ class CheckerDispatcher extends Dispatcher
 
     protected function validateCallback($event, $listener)
     {
-        if ($this->isLikeClassPath($event) && ! $this->exists($event)) {
-            return $this->error("The Event class: \"$event\" you are listening to does not exist.");
+        if ($isClassyEvent = $this->isLikeClassPath($event) && ! $this->exists($event)) {
+            return $this->error("The event class: \"$event\" you are listening to, does not exist.");
         }
 
         if (! is_string($listener)) {
@@ -52,10 +52,6 @@ class CheckerDispatcher extends Dispatcher
         }
 
         $typeHintClassPath = $this->getTypeHintedClass($listenerObj, $methodName);
-
-        if ($typeHintClassPath && ! $this->exists($typeHintClassPath)) {
-            return $this->error('The '.$typeHintClassPath.' type hint is wrong on the listener: '.$typeHintClassPath);
-        }
 
         $eventName = $this->stringify($event);
 
