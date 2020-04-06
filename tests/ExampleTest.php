@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Orchestra\Testbench\TestCase;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 class ExampleTest extends TestCase
 {

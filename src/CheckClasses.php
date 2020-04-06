@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
 class CheckClasses

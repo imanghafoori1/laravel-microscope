@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
 class DiscoverClasses
@@ -67,7 +67,7 @@ class DiscoverClasses
                     $p->print('Used class does not exist...');
                     $p->print(str_replace(base_path(), '', $absFilePath));
                     $p->print($nonImportedClass['class']);
-                    $p->print('line: ' . $nonImportedClass['line']);
+                    $p->print('line: '.$nonImportedClass['line']);
                     $p->end();
                 }
             }
@@ -83,7 +83,6 @@ class DiscoverClasses
                     ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
                 }
             } catch (ReflectionException $e) {
-
             }
         }
     }
@@ -105,7 +104,7 @@ class DiscoverClasses
             $absFilePath = $classFilePath->getRealPath();
             $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
             if (! self::hasOpeningTag($absFilePath)) {
-                app(ErrorPrinter::class)->print('Skipped file: ' .$classPath);
+                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
 
@@ -117,7 +116,7 @@ class DiscoverClasses
 
             // it means that, there is no class/trait definition found in the file.
             if (! $class) {
-                app(ErrorPrinter::class)->print('skipped file: ' .$classPath);
+                app(ErrorPrinter::class)->print('skipped file: '.$classPath);
                 continue;
             }
 
@@ -129,7 +128,6 @@ class DiscoverClasses
                     self::correctNamespace($absFilePath, $currentNamespace, $correctNamespace);
                 }
             } catch (ReflectionException $e) {
-
             }
         }
     }
@@ -192,7 +190,7 @@ class DiscoverClasses
      */
     protected static function correctNamespace($classFilePath, string $incorrectNamespace, string $correctNamespace)
     {
-        $newline = "namespace ".$correctNamespace.';'.PHP_EOL;
+        $newline = 'namespace '.$correctNamespace.';'.PHP_EOL;
 
         // in case there is no namespace specified in the file:
         if (! $incorrectNamespace) {
@@ -202,7 +200,7 @@ class DiscoverClasses
         $search = ltrim($incorrectNamespace, '\\');
         ReplaceLine::replace($classFilePath, $search, $newline);
 
-        app(ErrorPrinter::class)->print('namespace fixed to:'. $correctNamespace);
+        app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
     }
 
     /**

@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckImports extends Command
 {
