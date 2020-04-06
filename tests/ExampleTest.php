@@ -1,15 +1,15 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Tests;
+namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Orchestra\Testbench\TestCase;
-use Imanghafoori\LaravelSelfTest\LaravelSelfTestServiceProvider;
+use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 
 class ExampleTest extends TestCase
 {
     protected function getPackageProviders($app)
     {
-        return [LaravelSelfTestServiceProvider::class];
+        return [LaravelMicroscopeServiceProvider::class];
     }
 
     /** @test */
