@@ -3,6 +3,9 @@
 ## Give your eyes a rest, this will check it for you.
 ### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
 
+<p align="center">
+    <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
+</p>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-microscope/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope)
