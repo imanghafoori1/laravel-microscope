@@ -1,4 +1,4 @@
-# Auto-test your laravel application
+# Inspects your laravel application code and reports errors
 
 ## Give your eyes a rest, this will check it for you.
 ### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
