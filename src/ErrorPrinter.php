@@ -67,17 +67,17 @@ class ErrorPrinter
         $this->end();
     }
 
-    public function print($msg)
+    function print($msg)
     {
-        $len = 61 - strlen($msg);
+        $len = 81 - strlen($msg);
         if ($len < 0) {
             $len = 0;
         }
         dump('  |    '.$msg.str_repeat(' ', $len).'|  ');
     }
 
-    protected function end(): void
+    function end()
     {
-        dump('  |'.str_repeat('*', 65).'|  ');
+        dump('  |'.str_repeat('*', 85).'|  ');
     }
 }
