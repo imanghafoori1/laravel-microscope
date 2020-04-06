@@ -54,7 +54,7 @@ class ParseUseStatement
                 self::$cache[$name] = [];
             } else {
                 $code = file_get_contents($class->getFileName());
-                self::$cache = self::parseUseStatements(token_get_all($code), $name) + self::$cache;
+                self::$cache = self::parseUseStatements(token_get_all($code), $name)[0] + self::$cache;
             }
         }
 
@@ -87,6 +87,7 @@ class ParseUseStatement
         $force_close = false;
         $lastToken = $secLastToken = [null, null,null];
         $imports = self::parseUseStatements($tokens);
+        $imports = $imports[0] ?: [$imports[1]];
         $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
         while ($token = current($tokens)) {
             next($tokens);
@@ -157,7 +158,7 @@ class ParseUseStatement
                 if ($isDefiningMethod) {
                     $isDefiningMethod = false;
                     $isInsideMethod = true;
-                    $scope = 'method_body';
+//                    $scope = 'method_body';
                 }
                 continue;
             } elseif ( $t == '(' || $t == ')') {
@@ -231,7 +232,7 @@ class ParseUseStatement
 
             // attach the current namespace if it does not begin with '\'
             if ($rows[0][1] != '\\') {
-                $results[$i]['class'] = $namespace .'\\';
+                $results[$i]['class'] = $namespace ? $namespace .'\\' : '';
             }
 
             foreach ($rows as $row) {
@@ -248,7 +249,6 @@ class ParseUseStatement
                 } else {
                     $results[$i]['class'] .= $row[1];
                 }
-
                 $results[$i]['line'] = $row[2];
             }
         }
@@ -342,7 +342,7 @@ class ParseUseStatement
                         $classLevel = $level + 1;
                         $res[$class] = $uses;
                         if ($class === $forClass) {
-                            return $res;
+                            return [$res, $uses];
                         }
                     }
                     break;
@@ -394,7 +394,7 @@ class ParseUseStatement
             }
         }
 
-        return $res;
+        return [$res, $uses];
     }
 
     static function fetch(&$tokens, $take)
