@@ -16,13 +16,13 @@ class ReplaceLine
 
         $replaced = false;
 
-        while (!feof($reading)) {
+        while (! feof($reading)) {
             $line = fgets($reading);
             if (stristr($line, $search)) {
                 $line = $replace;
                 $replaced = true;
             }
-            fputs($writing, $line);
+            fwrite($writing, $line);
         }
         fclose($reading);
         fclose($writing);
@@ -34,4 +34,3 @@ class ReplaceLine
         }
     }
 }
-

@@ -58,16 +58,15 @@ class GetClassProperties
             // if we reach a double colon before a class keyword
             // it means that, it is not a psr-4 class.
             if (! $class && $tokens[$i][0] == T_DOUBLE_COLON) {
-                return [$namespace, null, null,];
+                return [$namespace, null, null];
             }
 
             $type = $tokens[$i][0];
             if (! $class && in_array($type, [
-                    T_CLASS,
-                    T_INTERFACE,
-                    T_TRAIT,
-                ])) {
-
+                T_CLASS,
+                T_INTERFACE,
+                T_TRAIT,
+            ])) {
                 $tCount = count($tokens);
                 for ($j = $i + 1; $j < $tCount; $j++) {
                     if (! $class && $tokens[$j] === '{') {
