@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\View;
+namespace Imanghafoori\LaravelMicroscope\View;
 
 use ReflectionMethod;
 use Illuminate\View\ViewName;

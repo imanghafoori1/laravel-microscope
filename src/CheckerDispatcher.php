@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest;
+namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Contracts\Container\BindingResolutionException;

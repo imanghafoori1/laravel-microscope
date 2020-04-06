@@ -1,11 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest;
+namespace Imanghafoori\LaravelMicroscope;
 
 use ReflectionClass;
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelSelfTest\View\ModelParser;
-use Imanghafoori\LaravelSelfTest\Commands\CheckView;
+use Imanghafoori\LaravelMicroscope\View\ModelParser;
+use Imanghafoori\LaravelMicroscope\Commands\CheckView;
 
 class ModelRelations
 {

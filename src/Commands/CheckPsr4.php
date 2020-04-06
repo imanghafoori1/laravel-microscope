@@ -1,9 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelSelfTest\Commands;
+namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelSelfTest\CheckClasses;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
 
 class CheckPsr4 extends Command
 {
