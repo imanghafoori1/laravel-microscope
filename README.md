@@ -1,4 +1,4 @@
-# Automaticall inspects your laravel application code and finds errors
+# Inspects your laravel application code and finds errors
 
 ## Give your eyes a rest, this will check it for you.
 ### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
