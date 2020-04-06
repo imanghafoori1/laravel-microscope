@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\View;
-use Symfony\Component\Finder\Finder;
 use Illuminate\Routing\Controller;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\View\ViewParser;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\View\ViewParser;
+use Symfony\Component\Finder\Finder;
 
 class CheckView extends Command
 {
@@ -65,7 +65,7 @@ class CheckView extends Command
             $absFilePath = $classFilePath->getRealPath();
             $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
             if (! CheckClasses::hasOpeningTag($absFilePath)) {
-                app(ErrorPrinter::class)->print('Skipped file: ' .$classPath);
+                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
             [
@@ -75,10 +75,8 @@ class CheckView extends Command
             ] = GetClassProperties::fromFilePath($absFilePath);
 
             if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
-
                 self::checkViews($currentNamespace.'\\'.$class);
             }
-
         }
     }
 
@@ -93,7 +91,6 @@ class CheckView extends Command
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->parse()->getChildren();
-
 
             self::checkView($ctrl, $method, $views);
         }
@@ -114,7 +111,7 @@ class CheckView extends Command
         }
     }
 
-    static function get_class_methods(\ReflectionClass $classReflection)
+    public static function get_class_methods(\ReflectionClass $classReflection)
     {
         $className = $classReflection->getName();
         $rm = $classReflection->getMethods(\ReflectionMethod::IS_PUBLIC);

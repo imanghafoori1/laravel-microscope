@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-use ReflectionMethod;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ParseUseStatement;
+use ReflectionMethod;
 
 class ModelParser
 {
@@ -100,9 +100,8 @@ class ModelParser
      */
     protected function extractParametersValueWithinMethod($ref, $content)
     {
-        $tokens = token_get_all('<?php '.implode('',$content));
+        $tokens = token_get_all('<?php '.implode('', $content));
         foreach ($tokens as $i => $token) {
-
             if (! is_array($token)) {
                 continue;
             }
@@ -123,7 +122,7 @@ class ModelParser
 
             $nextToken = $this->getNextToken($tokens, $next);
 
-            if (!$this->isRelation($nextToken)) {
+            if (! $this->isRelation($nextToken)) {
                 continue;
                 $relation[] = 'relation';
                 $relation['relation'] = $nextToken[1];
@@ -154,17 +153,16 @@ class ModelParser
                     break;
                 }
 
-
                 $params[$f][] = $nextToken[1];
             }
 
             foreach ($params as &$param) {
                 if ($param[1] ?? null) {
-                    $param[0] = ParseUseStatement::expandClassName($param[0],$ref);
+                    $param[0] = ParseUseStatement::expandClassName($param[0], $ref);
                 }
             }
-            return $params;
 
+            return $params;
         }
 
         return [];
@@ -238,11 +236,11 @@ class ModelParser
      */
     protected function getNextToken(array $tokens, &$next)
     {
-        ++$next;
+        $next++;
         $nextToken = $tokens[$next];
         if ($nextToken[0] == T_WHITESPACE) {
-            ++$next;
-            $nextToken = $tokens[$next] ;
+            $next++;
+            $nextToken = $tokens[$next];
         }
 
         return $nextToken;
@@ -251,7 +249,8 @@ class ModelParser
     private function isRelation($nextToken)
     {
         $rel = ($nextToken[1] ?? '');
-        return (in_array($rel , [
+
+        return in_array($rel, [
             'hasOne',
             'hasMany',
             'belongsTo',
@@ -261,6 +260,6 @@ class ModelParser
             'morphTo',
             'morphToMany',
             'morphedByMany',
-        ]));
+        ]);
     }
 }

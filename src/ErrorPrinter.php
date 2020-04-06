@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 class ErrorPrinter
 {
-    function view($file, $line, $lineNumber, $name)
+    public function view($file, $line, $lineNumber, $name)
     {
         $this->print($file.', line: '.$lineNumber);
         $this->print(trim($line));
@@ -12,7 +12,7 @@ class ErrorPrinter
         $this->end();
     }
 
-    function bladeImport($class, $blade)
+    public function bladeImport($class, $blade)
     {
         $this->print('Class does not exist:');
         $this->print(trim(str_replace(base_path(), '', $blade->getPathname()), '\\/').'      line: '.$class['line']);
@@ -20,12 +20,12 @@ class ErrorPrinter
         $this->end();
     }
 
-    function authConf()
+    public function authConf()
     {
         $this->print('The model in the "config/auth.php" is not a valid class');
     }
 
-    function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $p)
+    public function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $p)
     {
         $this->print('Wrong model is passed in relation: ');
         $this->print('file: '.$ref->getName().'@'.$method->getShortName());
@@ -37,7 +37,7 @@ class ErrorPrinter
      * @param  string  $err
      * @param $imp
      */
-    function wrongImport(string $err, $imp)
+    public function wrongImport(string $err, $imp)
     {
         $this->print('Wrong import');
         $this->print($err.'  line: '.$imp[1]);
@@ -45,7 +45,7 @@ class ErrorPrinter
         $this->end();
     }
 
-    function wrongUsedClassError($absFilePath, $nonImportedClass)
+    public function wrongUsedClassError($absFilePath, $nonImportedClass)
     {
         $this->print('Class does not exist: ');
         $this->print(trim(str_replace(base_path(), '', $absFilePath), '\\/').'  line: '.$nonImportedClass['line']);
@@ -59,7 +59,7 @@ class ErrorPrinter
      *
      * @return void
      */
-    function badNamespace(string $classPath, string $correctNamespace, $incorrectNamespace)
+    public function badNamespace(string $classPath, string $correctNamespace, $incorrectNamespace)
     {
         $this->print('Incorrect namespace: '.$incorrectNamespace);
         $this->print('At: '.$classPath);
@@ -67,7 +67,7 @@ class ErrorPrinter
         $this->end();
     }
 
-    function print($msg)
+    public function print($msg)
     {
         $len = 81 - strlen($msg);
         if ($len < 0) {
@@ -76,7 +76,7 @@ class ErrorPrinter
         dump('  |    '.$msg.str_repeat(' ', $len).'|  ');
     }
 
-    function end()
+    public function end()
     {
         dump('  |'.str_repeat('*', 85).'|  ');
     }

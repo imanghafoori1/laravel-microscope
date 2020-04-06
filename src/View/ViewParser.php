@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-use ReflectionMethod;
-use Illuminate\View\ViewName;
 use Illuminate\Support\Facades\View;
+use Illuminate\View\ViewName;
+use ReflectionMethod;
 
 class ViewParser
 {
@@ -188,14 +188,15 @@ class ViewParser
                     $view = $this->getFromLine(substr($line, $position), $bladeDirective);
                     $views[] = [
                         'name' => $this->retrieveFirstParamValue($view),
-                        'file' => $parent_view. '.blade.php',
+                        'file' => $parent_view.'.blade.php',
                         'lineNumber' => $lineNumber + 1,
                         'directive' => $bladeDirective,
-                        'line' => $line
+                        'line' => $line,
                     ];
                 }
             }
         }
+
         return $views;
     }
 
@@ -263,7 +264,7 @@ class ViewParser
                 $c = $key;
 
                 /**
-                 *   For such a case when the are multiple lines of white space:
+                 *   For such a case when the are multiple lines of white space:.
                  *
                  * view(
                  *
