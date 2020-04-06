@@ -1,6 +1,10 @@
-# Inspects your laravel application code and finds errors
-
-## Give your eyes a rest, this will check it for you.
+<h1 align="center">
+    Inspects your laravel application code to find errors
+</h1>
+<h2 align="center">
+Give your eyes a rest, this will check it for you.
+</h2>
+    
 ### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
 
 <p align="center">
@@ -12,6 +16,9 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
 
+<h4 align="center">
+Built with :heart: for lazy laravel developers ;)
+</h4>
 This package provides a way to find errors without writing any tests.
 
 ## Key things to know:
@@ -163,7 +170,6 @@ Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
 - https://github.com/imanghafoori1/laravel-terminator
 
-
 ------------
 
 ### Laravel AnyPass
@@ -180,7 +186,6 @@ Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
 - https://github.com/imanghafoori1/eloquent-relativity
 
-
 ----------------
 
 ### 🍌 Reward me a banana 🍌
@@ -194,3 +199,9 @@ Send me as much as a banana costs in your region:
 - Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
 
 --------------
+
+```
+A man will never fail, unless he stops trying.
+
+Albert einstein
+```
