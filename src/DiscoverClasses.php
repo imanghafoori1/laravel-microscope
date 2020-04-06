@@ -63,11 +63,12 @@ class DiscoverClasses
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
             foreach ($nonImportedClasses as $nonImportedClass) {
                 if (! class_exists($nonImportedClass['class']) && ! interface_exists($nonImportedClass['class'])) {
-                    app(ErrorPrinter::class)->print('Used class does not exist...');
-                    app(ErrorPrinter::class)->print($absFilePath);
-                    app(ErrorPrinter::class)->print($nonImportedClass['class']);
-                    app(ErrorPrinter::class)->print('line: ' . $nonImportedClass['line']);
-                    app(ErrorPrinter::class)->print('---------------------');
+                    $p = app(ErrorPrinter::class);
+                    $p->print('Used class does not exist...');
+                    $p->print(str_replace(base_path(), '', $absFilePath));
+                    $p->print($nonImportedClass['class']);
+                    $p->print('line: ' . $nonImportedClass['line']);
+                    $p->end();
                 }
             }
 
