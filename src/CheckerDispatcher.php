@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckerDispatcher extends Dispatcher
 {
