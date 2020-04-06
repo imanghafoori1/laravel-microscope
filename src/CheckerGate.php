@@ -2,17 +2,17 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Illuminate\Auth\Access\Gate;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CheckerGate extends Gate
 {
     public function define($ability, $callback)
     {
         if (! is_string($callback)) {
-            return ;
+            return;
         }
 
         [$class, $method] = Str::parseCallback($callback, '__invoke');
@@ -26,8 +26,6 @@ class CheckerGate extends Gate
         if (! method_exists($policy, $method)) {
             return app(ErrorPrinter::class)->print("The $callback callback for Gate, does not refer to a valid method, for ability: $ability");
         }
-
-        return ;
     }
 
     public function policy($model, $policy)

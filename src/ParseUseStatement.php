@@ -34,6 +34,7 @@ class ParseUseStatement
         $parts = explode('\\', $name, 2);
         if (isset($uses[$parts[0]])) {
             $parts[0] = $uses[$parts[0]];
+
             return $parts[0][0];
         } elseif ($rc->inNamespace()) {
             return $rc->getNamespaceName().'\\'.$name;
@@ -85,7 +86,7 @@ class ParseUseStatement
         $collect = false;
         $classes = [];
         $force_close = false;
-        $lastToken = $secLastToken = [null, null,null];
+        $lastToken = $secLastToken = [null, null, null];
         $imports = self::parseUseStatements($tokens);
         $imports = $imports[0] ?: [$imports[1]];
         $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
@@ -153,7 +154,7 @@ class ParseUseStatement
                 $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
-            } elseif ( $t == '{') {
+            } elseif ($t == '{') {
                 $isMethodSignature = false;
                 if ($isDefiningMethod) {
                     $isDefiningMethod = false;
@@ -161,7 +162,7 @@ class ParseUseStatement
 //                    $scope = 'method_body';
                 }
                 continue;
-            } elseif ( $t == '(' || $t == ')') {
+            } elseif ($t == '(' || $t == ')') {
                 if ($t == '(' && ($isDefiningMethod || $isCatchException)) {
                     $isMethodSignature = true;
                     $collect = true;
@@ -176,7 +177,7 @@ class ParseUseStatement
                 $secLastToken = $lastToken;
                 $lastToken = $token;
                 continue;
-            } elseif ( $t == T_DOUBLE_COLON ) {
+            } elseif ($t == T_DOUBLE_COLON) {
                 // When we reach the ::class syntax.
                 // we do not want to treat: $var::method(), self::method()
                 // as a real class name, so it must be of type T_STRING
@@ -232,7 +233,7 @@ class ParseUseStatement
 
             // attach the current namespace if it does not begin with '\'
             if ($rows[0][1] != '\\') {
-                $results[$i]['class'] = $namespace ? $namespace .'\\' : '';
+                $results[$i]['class'] = $namespace ? $namespace.'\\' : '';
             }
 
             foreach ($rows as $row) {
@@ -265,9 +266,9 @@ class ParseUseStatement
             switch (is_array($token) ? $token[0] : $token) {
                 case T_USE:
                     while (! $class && ($name = self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]))) {
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]))) {
                         $name = ltrim($name, '\\');
                         if (self::fetch($tokens, '{')) {
                             while ($suffix = self::fetch($tokens, [
@@ -328,9 +329,9 @@ class ParseUseStatement
             switch (is_array($token) ? $token[0] : $token) {
                 case T_NAMESPACE:
                     $namespace = ltrim(self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]).'\\', '\\');
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]).'\\', '\\');
                     $uses = [];
                     break;
 
@@ -349,9 +350,9 @@ class ParseUseStatement
 
                 case T_USE:
                     while (! $class && ($name = self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]))) {
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]))) {
                         $name = ltrim($name, '\\');
                         if (self::fetch($tokens, '{')) {
                             while ($suffix = self::fetch($tokens, [
@@ -397,7 +398,7 @@ class ParseUseStatement
         return [$res, $uses];
     }
 
-    static function fetch(&$tokens, $take)
+    public static function fetch(&$tokens, $take)
     {
         $res = null;
         while ($token = current($tokens)) {
@@ -408,7 +409,7 @@ class ParseUseStatement
                 $token,
                 $token,
             ];
-            if (in_array($token, (array)$take, true)) {
+            if (in_array($token, (array) $take, true)) {
                 $res .= $s;
             } elseif (! in_array($token, [
                 T_DOC_COMMENT,

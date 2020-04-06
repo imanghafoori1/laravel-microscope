@@ -2,18 +2,24 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-use Imanghafoori\LaravelMicroscope\Commands\{CheckAll, CheckImports, CheckPsr4, CheckRoute, CheckGate, CheckEvent, CheckView};
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
+use Imanghafoori\LaravelMicroscope\Commands\CheckAll;
+use Imanghafoori\LaravelMicroscope\Commands\CheckEvent;
+use Imanghafoori\LaravelMicroscope\Commands\CheckGate;
+use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
+use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
+use Imanghafoori\LaravelMicroscope\Commands\CheckRoute;
+use Imanghafoori\LaravelMicroscope\Commands\CheckView;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     public function boot()
     {
         if (! $this->app->runningInConsole() || app()->isProduction()) {
-            return ;
+            return;
         }
 
         $this->commands([
@@ -30,7 +36,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     public function register()
     {
         if (! $this->app->runningInConsole() || app()->isProduction()) {
-            return ;
+            return;
         }
 
         app()->singleton(ErrorPrinter::class);

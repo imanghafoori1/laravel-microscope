@@ -17,8 +17,8 @@ class CheckViewRoute
     {
         $hints = View::getFinder()->getHints();
         unset(
-            $hints["notifications"],
-            $hints["pagination"]
+            $hints['notifications'],
+            $hints['pagination']
         );
         foreach ($hints as $nameSpace => $paths) {
             $this->checkPaths($paths);
@@ -28,11 +28,11 @@ class CheckViewRoute
 
     protected function getNextToken(array $tokens, &$next)
     {
-        ++$next;
+        $next++;
         $nextToken = $tokens[$next];
         if ($nextToken[0] == T_WHITESPACE) {
-            ++$next;
-            $nextToken = $tokens[$next] ;
+            $next++;
+            $nextToken = $tokens[$next];
         }
 
         return $nextToken;
@@ -52,14 +52,13 @@ class CheckViewRoute
 
                 $classes = ParseUseStatement::findUseStatements($tokens);
 
-
-                foreach($classes as $class) {
+                foreach ($classes as $class) {
                     if (! class_exists($class[0])) {
-                        app(ErrorPrinter::class)->print('wrong import at: '. $blade->getRealPath());
+                        app(ErrorPrinter::class)->print('wrong import at: '.$blade->getRealPath());
                     }
                 }
 
-                return ;
+                return;
             }
         }
     }
@@ -82,7 +81,7 @@ class CheckViewRoute
                 $tokens = token_get_all(app('blade.compiler')->compileString($content));
                 $classes = ParseUseStatement::findClassReferences($tokens);
 
-                foreach($classes as $class) {
+                foreach ($classes as $class) {
                     if (! class_exists($class['class']) && ! interface_exists($class['class'])) {
                         app(ErrorPrinter::class)->bladeImport($class, $blade);
                     }
@@ -125,16 +124,16 @@ class CheckViewRoute
     protected function checkGlobalFunctionCall($token, string $funcName, array &$tokens, \Closure $handleRoute, SplFileInfo $blade, $next)
     {
         if ($this->isObjectMaking($tokens, $next) || $this->isFunctionDefinition($tokens, $next)) {
-            return ;
+            return;
         }
 
         if (! is_array($token) || $token[1] != $funcName) {
-            return null;
+            return;
         }
 
         $nextToken = $this->getNextToken($tokens, $next);
         if ($nextToken != '(') {
-            return null;
+            return;
         }
 
         $nextToken = $this->getNextToken($tokens, $next);
@@ -143,14 +142,14 @@ class CheckViewRoute
 
     private function isObjectMaking(array $tokens, $next)
     {
-        $pToken = $tokens[$next - 2] ?? [''] ;
+        $pToken = $tokens[$next - 2] ?? [''];
 
         return $pToken[0] === T_NEW;
     }
 
     private function isFunctionDefinition(array $tokens, $next)
     {
-        $pToken = $tokens[$next - 2] ?? [''] ;
+        $pToken = $tokens[$next - 2] ?? [''];
 
         return $pToken[0] === T_FUNCTION;
     }

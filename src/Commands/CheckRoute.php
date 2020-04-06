@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
-use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckRoute extends Command
 {
@@ -47,7 +47,8 @@ class CheckRoute extends Command
             } catch (BindingResolutionException $e) {
                 $this->errorIt($route);
                 app(ErrorPrinter::class)->print('The controller can not be resolved: '.$ctrlClass);
-                return ;
+
+                return;
             }
 
             if (! method_exists($ctrlObject, $method)) {
