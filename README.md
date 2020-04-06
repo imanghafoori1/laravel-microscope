@@ -4,10 +4,10 @@
 ### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
 
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
-[![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope)
-[![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-self-test.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope)
-[![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-self-test.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
+[![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-microscope/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope)
+[![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope)
+[![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
 
 This package provides a way to find errors without writing any tests.
 
@@ -23,7 +23,7 @@ This package provides a way to find errors without writing any tests.
 You can install the package via composer:
 
 ```bash
-composer require imanghafoori/laravel-microscope
+composer require imanghafoori/laravel-microscope --dev
 ```
 
 ## Usage
