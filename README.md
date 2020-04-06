@@ -1,5 +1,5 @@
 <h1 align="center">
-    Find Bugs Before They Bit
+    Find Bugs Before They Bite
 </h1>
 <h2 align="center">
 Give your eyes a rest, this will check it for you.
