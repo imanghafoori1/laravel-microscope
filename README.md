@@ -123,10 +123,6 @@ php artisan check:route
 
 and more features will be added soon. ;)
 
-### Security
-
-If you discover any security related issues, please email imanghafoori1@gmail.com instead of using the issue tracker.
-
 ## Credits
 
 - [Iman](https://github.com/imanghafoori1)
