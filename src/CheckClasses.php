@@ -65,7 +65,7 @@ class CheckClasses
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
-                if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v)) {
+                if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
                 }
             }
