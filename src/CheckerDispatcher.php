@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class CheckerDispatcher extends Dispatcher
 {
     public function listen($events, $listener)
     {
-        $event = (array) $events;
+        $event = (array)$events;
         $this->validateCallback($event[0], $listener);
     }
 
@@ -21,7 +21,7 @@ class CheckerDispatcher extends Dispatcher
 
     private function isLikeClassPath($event)
     {
-        return (count(explode('\\', $event)) > 1) && ! Str::startsWith($event, 'eloquent.');
+        return (count(explode('\\', $event)) > 1) && ! Str::contains($event, [' ', '.', ':', '-', '@']);
     }
 
     protected function validateCallback($event, $listener)
@@ -58,7 +58,7 @@ class CheckerDispatcher extends Dispatcher
         $eventName = $this->stringify($event);
 
         if (class_exists($eventName)) {
-            if ($typeHintClassPath && ! ($eventName == $typeHintClassPath || is_subclass_of($eventName, $typeHintClassPath))) {
+            if ($typeHintClassPath && !($eventName == $typeHintClassPath || is_subclass_of($eventName, $typeHintClassPath))) {
                 return $this->error('The type hint on the listener: '.$listener.' does not match the event class path.');
             }
         }
