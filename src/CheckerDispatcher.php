@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 
 class CheckerDispatcher extends Dispatcher
