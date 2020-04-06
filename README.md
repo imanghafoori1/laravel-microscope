@@ -36,19 +36,32 @@ You can install the package via composer:
 composer require imanghafoori/laravel-microscope --dev
 ```
 
-## Usage
+## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
 You can run:
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:event
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gate
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:view
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4    `(Auto-corrects namespaces)`
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:import  `(checks all the imports at the top and even non-imported inline class usages within .blade.php files, classes to be valid !)`
+</p>
+<p>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all
+</p>
 
-- php artisan check:event
-- php artisan check:gate
-- php artisan check:view
-- php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
-- php artisan check:psr4    `(Auto-corrects namespaces)`
-- php artisan check:import  `(checks all the imports at the top and even non-imported inline class usages within .blade.php files, classes to be valid !)`
-- php artisan check:all
-
-## What the Commands do?
+## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
 Lets start with:
 ```
