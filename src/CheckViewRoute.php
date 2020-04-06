@@ -115,10 +115,11 @@ class CheckViewRoute
      */
     protected function printError($value, SplFileInfo $blade, $nextToken)
     {
-        dump("route name $value does not exist: ");
-        dump('route('.$value.')');
-        dump('file name: '.$blade->getFilename());
-        dump('line: '.$nextToken[2]);
+        $p = app(ErrorPrinter::class);
+        $p->print("route name $value does not exist: ");
+        $p->print('route('.$value.')    <====   is wrong');
+        $p->print('file name: '.$blade->getFilename());
+        $p->print('line: '.$nextToken[2]);
     }
 
     protected function checkGlobalFunctionCall($token, string $funcName, array &$tokens, \Closure $handleRoute, SplFileInfo $blade, $next)
