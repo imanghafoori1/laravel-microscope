@@ -5,28 +5,28 @@
 Give your eyes a rest, this will check it for you.
 </h2>
     
-### This package is created understand laravel magic and be smarter than IDEs or other static analyzers.
+### This package is created in order to understand laravel magic and be smarter than IDEs (like php storm).
 
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
 </p>
+
+<h4 align="center">
+Built with :heart: for lazy laravel developers ;)
+</h4>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-microscope/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope)
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
 
-<h4 align="center">
-Built with :heart: for lazy laravel developers ;)
-</h4>
-This package provides a way to find errors without writing any tests.
 
 ## Key things to know:
 
 - It is created to be smarter than phpstorm and other IDEs in finding errors.
 - It is created to understand laravel run-time and magic.
 - It does not show you stupid false errors, all the errors are really errors.
-
+- If you have written a lot of tests for your app, you may not need this.
 
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
