@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
+use Illuminate\Events\Dispatcher;
+use Imanghafoori\LaravelSelfTest\ErrorPrinter;
 
 class CheckerDispatcher extends Dispatcher
 {
@@ -16,7 +16,9 @@ class CheckerDispatcher extends Dispatcher
 
     private function error(string $string)
     {
-        app(ErrorPrinter::class)->print($string);
+        $p = app(ErrorPrinter::class);
+        $p->print($string);
+        $p->end();
     }
 
     private function isLikeClassPath($event)
