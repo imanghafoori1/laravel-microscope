@@ -95,7 +95,7 @@ class CheckViewRoute
                         }
 
                         $value = $nextToken[1];
-                        $rName = app('router')->getRoutes()->getByName($value);
+                        $rName = app('router')->getRoutes()->getByName(trim($value, '\'\"'));
                         if (is_null($rName)) {
                             $this->printError($value, $blade, $nextToken);
                         }
