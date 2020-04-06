@@ -1,5 +1,5 @@
 <h1 align="center">
-    Inspects your laravel application code to find errors
+    Find Bugs Before They Bit
 </h1>
 <h2 align="center">
 Give your eyes a rest, this will check it for you.
