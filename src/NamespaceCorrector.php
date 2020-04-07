@@ -11,13 +11,14 @@ class NamespaceCorrector
      */
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
-        $newline = 'namespace '.$correctNamespace.';'.PHP_EOL;
-
         // in case there is no namespace specified in the file:
         if (! $incorrectNamespace) {
             $incorrectNamespace = '<?php';
-            $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
+            $newline = '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL;
+        } else {
+            $newline = $correctNamespace;
         }
+
         $search = ltrim($incorrectNamespace, '\\');
         ReplaceLine::replace($classFilePath, $search, $newline);
 

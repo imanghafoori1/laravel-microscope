@@ -19,7 +19,7 @@ class ReplaceLine
         while (! feof($reading)) {
             $line = fgets($reading);
             if (! $isReplaced && strstr($line, $search)) {
-                $line = $replace;
+                $line = str_replace($search, $replace, $line);
                 $isReplaced = true;
             }
             fwrite($tmpFile, $line);
