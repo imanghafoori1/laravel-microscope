@@ -6,10 +6,10 @@ use Illuminate\Console\Command;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\View\ViewParser;
 use Symfony\Component\Finder\Finder;
 
