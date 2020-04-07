@@ -22,6 +22,7 @@ class NamespaceCorrector
         ReplaceLine::replace($classFilePath, $search, $newline);
 
         app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
+        app(ErrorPrinter::class)->end();
     }
 
     public static function calculateCorrectNamespace($classPath, $path, $rootNamespace)

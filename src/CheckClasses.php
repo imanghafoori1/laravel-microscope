@@ -12,25 +12,6 @@ class CheckClasses
     protected static $fixedNamespaces = [];
 
     /**
-     * Get all of the events and listeners by searching the given listener directory.
-     *
-     * @param  string  $psr4Path
-     * @param  string  $psr4Namespace
-     *
-     * @return void
-     */
-    public static function within($psr4Namespace, $psr4Path)
-    {
-        $files = (new Finder)->files()->in(base_path($psr4Path));
-        static::checkAllClasses($files, base_path(), $psr4Path, $psr4Namespace);
-    }
-
-    public static function import($namespace, $path)
-    {
-        static::checkImports((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
-    }
-
-    /**
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $files
@@ -41,7 +22,7 @@ class CheckClasses
      *
      * @return void
      */
-    protected static function checkImports($files, $basePath, $composerPath, $composerNamespace)
+    static function checkImports($files, $basePath, $composerPath, $composerNamespace)
     {
         foreach ($files as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -89,7 +70,7 @@ class CheckClasses
     /**
      * Get all of the listeners and their corresponding events.
      *
-     * @param  iterable  $classes
+     * @param  iterable  $paths
      * @param  string  $basePath
      *
      * @param $composerPath
@@ -97,37 +78,40 @@ class CheckClasses
      *
      * @return void
      */
-    protected static function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
+    static function checkAllClasses($paths, $composerPath, $composerNamespace)
     {
-        foreach ($classes as $classFilePath) {
+        foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
+            // exclude blade files
             if (Str::endsWith($absFilePath, ['.blade.php'])) {
                 continue;
             }
 
-            $migrationDirs = self::migrationPaths();
-
-            if (Str::startsWith($absFilePath, $migrationDirs)) {
+            // exclude migration directories
+            if (Str::startsWith($absFilePath, self::migrationPaths())) {
                 continue;
             }
 
-            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
             if (! self::hasOpeningTag($absFilePath)) {
                 continue;
             }
+
             [
                 $currentNamespace,
                 $class,
                 $type,
             ] = GetClassProperties::fromFilePath($absFilePath);
 
-            // it means that, there is no class/trait definition found in the file.
+            // skip if there is no class/trait/interface definition found.
+            // for example a route file or a config file.
             if (! $class) {
                 continue;
             }
 
-            self::doNamespaceCorrection($composerPath, $composerNamespace, $classPath, $currentNamespace, $absFilePath);
+            $relativePath = self::getRelativePath($absFilePath);
+            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
+            self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
         }
     }
 
@@ -210,23 +194,11 @@ class CheckClasses
         app(ErrorPrinter::class)->print('/********************************************/');
     }
 
-    /**
-     * @param $composerPath
-     * @param $composerNamespace
-     * @param  string  $classPath
-     * @param $currentNamespace
-     * @param $absFilePath
-     */
-    protected static function doNamespaceCorrection($composerPath, $composerNamespace, $classPath, $currentNamespace, $absFilePath)
+    protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
     {
-        try {
-            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
-            if ($currentNamespace !== $correctNamespace) {
-                app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-                NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
-            }
-        } catch (ReflectionException $e) {
-            //
+        if ($currentNamespace !== $correctNamespace) {
+            app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
+            NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
         }
     }
 
@@ -244,5 +216,15 @@ class CheckClasses
         }
 
         return $migrationDirs;
+    }
+
+    static function getAllPhpFiles($psr4Path)
+    {
+        return (new Finder)->files()->name('*.php')->in(base_path($psr4Path));
+    }
+
+    private static function getRelativePath($absFilePath)
+    {
+        return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
     }
 }

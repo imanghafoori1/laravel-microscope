@@ -21,9 +21,9 @@ class ModelRelations
 
         foreach (CheckView::get_class_methods($ref) as $method) {
             $params = (new ModelParser())->retrieveFromMethod($method, $ref);
-            foreach ($params as $p) {
-                if (! class_exists($p[0])) {
-                    app(ErrorPrinter::class)->badRelation($ref, $method, $p);
+            foreach ($params as $param) {
+                if (! class_exists($param[0])) {
+                    app(ErrorPrinter::class)->badRelation($ref, $method, $param);
                 }
             }
         }
