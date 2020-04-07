@@ -22,7 +22,7 @@ class CheckClasses
      *
      * @return void
      */
-    static function checkImports($files, $basePath, $composerPath, $composerNamespace)
+    public static function checkImports($files, $basePath, $composerPath, $composerNamespace)
     {
         foreach ($files as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -78,7 +78,7 @@ class CheckClasses
      *
      * @return void
      */
-    static function checkAllClasses($paths, $composerPath, $composerNamespace)
+    public static function checkAllClasses($paths, $composerPath, $composerNamespace)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -218,7 +218,7 @@ class CheckClasses
         return $migrationDirs;
     }
 
-    static function getAllPhpFiles($psr4Path)
+    public static function getAllPhpFiles($psr4Path)
     {
         return (new Finder)->files()->name('*.php')->in(base_path($psr4Path));
     }
