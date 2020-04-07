@@ -4,9 +4,11 @@ namespace Imanghafoori\LaravelMicroscope;
 
 class ErrorPrinter
 {
+    public $printer;
+
     public function view($file, $line, $lineNumber, $name)
     {
-        $this->print($file.', line: '.$lineNumber);
+        $this->printLink($file, $lineNumber);
         $this->print(trim($line));
         $this->print($name.'.blade.php" does not exist');
         $this->end();
@@ -15,8 +17,9 @@ class ErrorPrinter
     public function bladeImport($class, $blade)
     {
         $this->print('Class does not exist:');
-        $this->print(trim(str_replace(base_path(), '', $blade->getPathname()), '\\/').'      line: '.$class['line']);
         $this->print('"'.$class['class'].'" does not exist');
+        $path = $blade->getPathname();
+        $this->printLink($path, $class['line']);
         $this->end();
     }
 
@@ -28,8 +31,8 @@ class ErrorPrinter
     public function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $p)
     {
         $this->print('Wrong model is passed in relation: ');
-        $this->print('file: '.$ref->getName().'@'.$method->getShortName());
         $this->print(''.$p[0].' does not exist');
+        $this->printLink($ref->getFileName(), 1);
         $this->end();
     }
 
@@ -37,19 +40,19 @@ class ErrorPrinter
      * @param  string  $err
      * @param $imp
      */
-    public function wrongImport(string $err, $imp)
+    public function wrongImport($classReflection, $imp)
     {
         $this->print('Wrong import');
-        $this->print($err.'  line: '.$imp[1]);
         $this->print('use '.$imp[0].';     <==== does not exist. ');
+        $this->printLink($classReflection->getFileName(), $imp[1]);
         $this->end();
     }
 
     public function wrongUsedClassError($absFilePath, $nonImportedClass)
     {
         $this->print('Class does not exist: ');
-        $this->print(trim(str_replace(base_path(), '', $absFilePath), '\\/').'  line: '.$nonImportedClass['line']);
         $this->print($nonImportedClass['class'].'  <==== does not exist.');
+        $this->printLink($absFilePath, $nonImportedClass['line']);
         $this->end();
     }
 
@@ -73,11 +76,18 @@ class ErrorPrinter
         if ($len < 0) {
             $len = 0;
         }
-        dump('  |    '.$msg.str_repeat(' ', $len).'|  ');
+
+        $this->printer->writeln('  |    '.$msg.str_repeat(' ', $len).'|  ');
     }
 
     public function end()
     {
-        dump('  |'.str_repeat('*', 85).'|  ');
+        $this->printer->writeln('  |'.str_repeat('*', 85).'|  ');
+    }
+
+    private function printLink($path, $lineNumber)
+    {
+        $filePath = trim(str_replace(base_path(), '', $path), '\\/');
+        $this->printer->writeln('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>');
     }
 }

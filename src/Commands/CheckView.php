@@ -35,6 +35,8 @@ class CheckView extends Command
      */
     public function handle()
     {
+        app(ErrorPrinter::class)->printer = $this->output;
+
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
         $psr4 = (array) data_get($composer, 'autoload.psr-4');
 

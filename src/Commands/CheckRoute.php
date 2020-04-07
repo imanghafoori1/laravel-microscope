@@ -31,6 +31,8 @@ class CheckRoute extends Command
      */
     public function handle()
     {
+        app(ErrorPrinter::class)->printer = $this->output;
+
         $routes = app(Router::class)->getRoutes()->getRoutes();
         foreach ($routes as $route) {
             if (! is_string($ctrl = $route->getAction()['uses'])) {
