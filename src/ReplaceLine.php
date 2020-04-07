@@ -18,7 +18,7 @@ class ReplaceLine
 
         while (! feof($reading)) {
             $line = fgets($reading);
-            if (!$isReplaced && strstr($line, $search)) {
+            if (! $isReplaced && strstr($line, $search)) {
                 $line = $replace;
                 $isReplaced = true;
             }
