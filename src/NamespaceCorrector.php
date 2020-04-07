@@ -53,7 +53,7 @@ class NamespaceCorrector
 
         return [
             $incorrectNamespace,
-            $newline
+            $newline,
         ];
     }
 }
