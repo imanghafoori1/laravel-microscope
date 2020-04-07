@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
@@ -33,11 +34,11 @@ class CheckImports extends Command
     {
         app(ErrorPrinter::class)->printer = $this->output;
 
-        $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
-        $psr4 = (array) data_get($composer, 'autoload.psr-4');
+        $psr4 = Util::parseComposerJson('autoload.psr-4');
 
-        foreach ($psr4 as $namespace => $path) {
-            CheckClasses::import($namespace, $path);
+        foreach ($psr4 as $psr4Namespace => $psr4Path) {
+            $files = CheckClasses::getAllPhpFiles($psr4Path);
+            CheckClasses::checkImports($files, base_path(), $psr4Path, $psr4Namespace);
         }
 
         (new CheckViewRoute)->check();

@@ -10,6 +10,8 @@ class GetClassProperties
         $type = $class = $namespace = $buffer = '';
         $i = 0;
         while (! $class) {
+
+            // finish when we reached end of file
             if (feof($fp)) {
                 break;
             }
@@ -46,7 +48,7 @@ class GetClassProperties
                     if ($tokens[$j][0] === T_STRING) {
                         $namespace .= '\\'.$tokens[$j][1];
                     } elseif ($tokens[$j] === '{' || $tokens[$j] === ';') {
-                        // go ahead until you reach:
+                        // go ahead and collect until you reach:
                         // 1. an opening curly brace {
                         // 2. or a semi-colon ;
                         break;

@@ -197,8 +197,7 @@ class DiscoverClasses
             $incorrectNamespace = '<?php';
             $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
         }
-        $search = ltrim($incorrectNamespace, '\\');
-        ReplaceLine::replace($classFilePath, $search, $newline);
+        ReplaceLine::replace($classFilePath, ltrim($incorrectNamespace, '\\'), $newline);
 
         app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
     }
