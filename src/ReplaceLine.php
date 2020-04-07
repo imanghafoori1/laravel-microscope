@@ -18,10 +18,14 @@ class ReplaceLine
 
         while (! feof($reading)) {
             $line = fgets($reading);
+
+            // replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
                 $line = str_replace($search, $replace, $line);
                 $isReplaced = true;
             }
+
+            // copy the entire file to the end
             fwrite($tmpFile, $line);
         }
         fclose($reading);
