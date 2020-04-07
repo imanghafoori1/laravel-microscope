@@ -11,15 +11,12 @@ class NamespaceCorrector
      */
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
-        // in case there is no namespace specified in the file:
-        if (! $incorrectNamespace) {
-            $incorrectNamespace = '<?php';
-            $newline = '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL;
-        } else {
-            $newline = $correctNamespace;
-        }
+        [
+            $search,
+            $newline
+        ] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
-        $search = ltrim($incorrectNamespace, '\\');
+        $search = ltrim($search, '\\');
         ReplaceLine::replace($classFilePath, $search, $newline);
 
         app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
@@ -36,5 +33,27 @@ class NamespaceCorrector
         $path = str_replace('/', '\\', $path);
 
         return str_replace(trim($path, '\\'), trim($rootNamespace, '\\/'), $p);
+    }
+
+    /**
+     * @param $incorrectNamespace
+     * @param $correctNamespace
+     *
+     * @return array
+     */
+    private static function getNewLine($incorrectNamespace, $correctNamespace): array
+    {
+        // in case there is no namespace specified in the file:
+        if (! $incorrectNamespace) {
+            $incorrectNamespace = '<?php';
+            $newline = '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL;
+        } else {
+            $newline = $correctNamespace;
+        }
+
+        return [
+            $incorrectNamespace,
+            $newline
+        ];
     }
 }

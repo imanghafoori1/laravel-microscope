@@ -37,7 +37,7 @@ class ErrorPrinter
     }
 
     /**
-     * @param  string  $err
+     * @param $classReflection
      * @param $imp
      */
     public function wrongImport($classReflection, $imp)
@@ -59,25 +59,26 @@ class ErrorPrinter
     /**
      * @param  string  $classPath
      * @param  string  $correctNamespace
+     * @param  string  $incorrectNamespace
      *
      * @return void
      */
     public function badNamespace(string $classPath, string $correctNamespace, $incorrectNamespace)
     {
         $this->print('Incorrect namespace: '.$incorrectNamespace);
-        $this->print('At: '.$classPath);
         $this->print('It should be:   namespace '.$correctNamespace.';  ');
+        $this->printLink($classPath);
         $this->end();
     }
 
-    public function print($msg)
+    public function print($msg, $path = '  |    ', $len = 81)
     {
-        $len = 81 - strlen($msg);
+        $len = $len - strlen($msg);
         if ($len < 0) {
             $len = 0;
         }
 
-        $this->printer->writeln('  |    '.$msg.str_repeat(' ', $len).'|  ');
+        $this->printer->writeln($path.$msg.str_repeat(' ', $len).'|  ');
     }
 
     public function end()
@@ -85,9 +86,9 @@ class ErrorPrinter
         $this->printer->writeln('  |'.str_repeat('*', 85).'|  ');
     }
 
-    private function printLink($path, $lineNumber)
+    public function printLink($path, $lineNumber = 4)
     {
         $filePath = trim(str_replace(base_path(), '', $path), '\\/');
-        $this->printer->writeln('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>');
+        $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
     }
 }
