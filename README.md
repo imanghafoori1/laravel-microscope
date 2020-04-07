@@ -5,7 +5,7 @@
 Give your eyes a rest, this will check it for you.
 </h2>
     
-### This package is created in order to understand laravel magic and be smarter than IDEs (like php storm).
+### This package is created in order to understand laravel magic and be smarter than phpstorm.
 
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
