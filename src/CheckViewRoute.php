@@ -85,7 +85,6 @@ class CheckViewRoute
                     if ((($tokens[$i][1] ?? null) == '$__env') && in_array($tokens[$i + 2][1], ['make', 'first', 'renderWhen'])) {
                         if (($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING && $tokens[$i + 5] == ',') {
                             if (View::exists(trim($tokens[$i + 4][1], '\'\"'))) {
-
                             } else {
                                 app(ErrorPrinter::class)->print('included view does not exist in blade file');
                             }
@@ -93,7 +92,6 @@ class CheckViewRoute
                         }
                     }
                 }
-
 
                 $classes = ParseUseStatement::findClassReferences($tokens);
 
