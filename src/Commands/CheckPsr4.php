@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckPsr4 extends Command
 {
@@ -28,6 +29,7 @@ class CheckPsr4 extends Command
      */
     public function handle()
     {
+        app(ErrorPrinter::class)->printer = $this->output;
         $composer = json_decode(file_get_contents(app()->basePath('composer.json')), true);
         $psr4 = (array) data_get($composer, 'autoload.psr-4');
 

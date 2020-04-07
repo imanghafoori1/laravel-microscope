@@ -78,7 +78,23 @@ class CheckViewRoute
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
                 $content = file_get_contents($blade->getRealPath());
-                $tokens = token_get_all(app('blade.compiler')->compileString($content));
+                $tokens = token_get_all((app('blade.compiler')->compileString($content)));
+
+                $tCount = count($tokens);
+                for ($i = 0; $i < $tCount; $i++) {
+                    if ((($tokens[$i][1] ?? null) == '$__env') && in_array($tokens[$i + 2][1], ['make', 'first', 'renderWhen'])) {
+                        if (($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING && $tokens[$i + 5] == ',') {
+                            if (View::exists(trim($tokens[$i + 4][1], '\'\"'))) {
+
+                            } else {
+                                app(ErrorPrinter::class)->print('included view does not exist in blade file');
+                            }
+                            $i = $i + 5;
+                        }
+                    }
+                }
+
+
                 $classes = ParseUseStatement::findClassReferences($tokens);
 
                 foreach ($classes as $class) {
@@ -95,6 +111,7 @@ class CheckViewRoute
                         }
 
                         $value = $nextToken[1];
+
                         $rName = app('router')->getRoutes()->getByName(trim($value, '\'\"'));
                         if (is_null($rName)) {
                             $this->printError($value, $blade, $nextToken);
@@ -119,6 +136,7 @@ class CheckViewRoute
         $p->print('route('.$value.')    <====   is wrong');
         $p->print('file name: '.$blade->getFilename());
         $p->print('line: '.$nextToken[2]);
+        $p->end();
     }
 
     protected function checkGlobalFunctionCall($token, string $funcName, array &$tokens, \Closure $handleRoute, SplFileInfo $blade, $next)

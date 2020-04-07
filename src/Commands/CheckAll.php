@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckAll extends Command
 {
@@ -27,6 +28,7 @@ class CheckAll extends Command
      */
     public function handle()
     {
+        app(ErrorPrinter::class)->printer = $this->output;
         $this->call('check:view');
         $this->call('check:event');
         $this->call('check:gate');

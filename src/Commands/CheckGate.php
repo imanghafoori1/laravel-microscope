@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckGate extends Command
 {
@@ -22,6 +23,6 @@ class CheckGate extends Command
 
     public function handle()
     {
-        //
+        app(ErrorPrinter::class)->printer = $this->output;
     }
 }

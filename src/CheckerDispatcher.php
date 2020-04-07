@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class CheckerDispatcher extends Dispatcher
 {
@@ -53,7 +54,7 @@ class CheckerDispatcher extends Dispatcher
         $typeHintClassPath = $this->getTypeHintedClass($listenerObj, $methodName);
 
         if ($typeHintClassPath && ! $this->exists($typeHintClassPath)) {
-            return $this->error('The type hint is wrong on the listener: public function '.$methodName.'('.$typeHintClassPath.' $...');
+            return $this->error('The type hint is wrong on the listener: public function '.$methodName.'('.$typeHintClassPath. ' $...');
         }
 
         $eventName = $this->stringify($event);
