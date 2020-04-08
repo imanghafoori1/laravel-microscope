@@ -32,10 +32,10 @@ class CheckViewFilesExistence
         ];
 
         // checks for this syntax: $__env->make('myViewFile', ...
-        return (($tokens[$i][1] ?? null) == '$__env')
-            && in_array(($tokens[$i + 2][1] ?? null), $methods)
-            && (($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING)
-            && (($tokens[$i + 5] ?? null) == ',');
+        return ($tokens[$i][1] ?? null) == '$__env'
+            && in_array($tokens[$i + 2][1] ?? null, $methods)
+            && ($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING
+            && ($tokens[$i + 5] ?? null) == ',';
     }
 
     /**
@@ -46,7 +46,7 @@ class CheckViewFilesExistence
     private function error(array $tokens, $blade, int $i)
     {
         $p = app(ErrorPrinter::class);
-        $p->print('included view: "'.$tokens[$i + 4][1].'" does not exist in blade file');
+        $p->print('included view: '.$tokens[$i + 4][1].' does not exist in blade file');
         $p->printLink($blade->getRealPath(), $tokens[$i + 4][2]);
         $p->end();
     }

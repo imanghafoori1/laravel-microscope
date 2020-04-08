@@ -9,7 +9,7 @@ class CheckClassReferences
 {
     public function check($tokens, $blade)
     {
-        $classes = ParseUseStatement::findClassReferences($tokens);
+        $classes = ParseUseStatement::findClassReferences($tokens, $blade->getPathname());
 
         foreach ($classes as $class) {
             if (! $this->exists($class['class'])) {

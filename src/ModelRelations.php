@@ -22,7 +22,7 @@ class ModelRelations
         foreach (CheckView::get_class_methods($ref) as $method) {
             $params = (new ModelParser())->retrieveFromMethod($method, $ref);
             foreach ($params as $param) {
-                if (! class_exists($param[0])) {
+                if (! class_exists(trim($param[0], '\'\"'))) {
                     app(ErrorPrinter::class)->badRelation($ref, $method, $param);
                 }
             }
