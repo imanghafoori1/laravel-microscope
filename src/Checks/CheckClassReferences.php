@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ParseUseStatement;
 
 class CheckClassReferences
 {
-    function check($tokens, $blade)
+    public function check($tokens, $blade)
     {
         $classes = ParseUseStatement::findClassReferences($tokens);
 

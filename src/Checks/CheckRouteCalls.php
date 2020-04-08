@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Symfony\Component\Finder\SplFileInfo;
 
 class CheckRouteCalls
 {
-    function check(array $tokens, SplFileInfo $blade)
+    public function check(array $tokens, SplFileInfo $blade)
     {
         $handleRoute = function ($nextToken, $blade) {
             if ($nextToken[0] != T_CONSTANT_ENCAPSED_STRING) {
@@ -29,7 +29,6 @@ class CheckRouteCalls
 
         return $tokens;
     }
-
 
     /**
      * @param $value
