@@ -16,7 +16,7 @@ class ErrorPrinter
 
     public function bladeImport($class, $blade)
     {
-        $this->print('Class does not exist:');
+        $this->print('Class does not exist in blade file:');
         $this->print('"'.$class['class'].'" does not exist');
         $path = $blade->getPathname();
         $this->printLink($path, $class['line']);
