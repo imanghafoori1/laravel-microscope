@@ -124,15 +124,16 @@ class DiscoverClasses
                 $correctNamespace = self::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
                 if ($currentNamespace !== $correctNamespace) {
-                    self::errorOut($classPath, $correctNamespace, $currentNamespace);
+                    self::errorOut($absFilePath, $correctNamespace, $currentNamespace);
                     self::correctNamespace($absFilePath, $currentNamespace, $correctNamespace);
                 }
             } catch (ReflectionException $e) {
+                //
             }
         }
     }
 
-    public static function hasOpeningTag(string $file)
+    public static function hasOpeningTag($file)
     {
         $fp = fopen($file, 'r');
 
@@ -197,19 +198,20 @@ class DiscoverClasses
             $incorrectNamespace = '<?php';
             $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
         }
-        ReplaceLine::replace($classFilePath, ltrim($incorrectNamespace, '\\'), $newline);
+        ReplaceLine::replaceFirst($classFilePath, ltrim($incorrectNamespace, '\\'), $newline);
 
         app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
     }
 
     /**
-     * @param  string  $classPath
+     * @param  string  $path
      * @param  string  $correctNamespace
+     * @param  string  $incorrectNamespace
      */
-    protected static function errorOut(string $classPath, string $correctNamespace, $incorrectNamespace)
+    protected static function errorOut($path, $correctNamespace, $incorrectNamespace)
     {
         app(ErrorPrinter::class)->print(' - Incorrect namespace: '.$incorrectNamespace);
-        app(ErrorPrinter::class)->print($classPath);
+        app(ErrorPrinter::class)->printLink($path);
         app(ErrorPrinter::class)->print('It should be:   namespace '.$correctNamespace.';  ');
     }
 
