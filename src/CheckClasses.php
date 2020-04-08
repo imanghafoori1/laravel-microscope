@@ -43,7 +43,7 @@ class CheckClasses
             }
 
             $tokens = token_get_all(file_get_contents($absFilePath));
-            $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
+            $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
                 if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {

@@ -32,7 +32,7 @@ class ErrorPrinter
     {
         $this->print('Wrong model is passed in relation: ');
         $this->print(''.$p[0].' does not exist');
-        $this->printLink($ref->getFileName(), 1);
+        $this->printLink($ref->getFileName(), $method->getStartLine());
         $this->end();
     }
 

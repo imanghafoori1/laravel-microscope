@@ -60,7 +60,7 @@ class DiscoverClasses
             }
 
             $tokens = token_get_all(file_get_contents($absFilePath));
-            $nonImportedClasses = ParseUseStatement::findClassReferences($tokens);
+            $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
             foreach ($nonImportedClasses as $nonImportedClass) {
                 if (! class_exists($nonImportedClass['class']) && ! interface_exists($nonImportedClass['class'])) {
                     $p = app(ErrorPrinter::class);

@@ -41,7 +41,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         app()->singleton(ErrorPrinter::class);
 
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
+//        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
         $command = $_SERVER['argv'][1] ?? null;
 
         if ($command == 'check:event') {
