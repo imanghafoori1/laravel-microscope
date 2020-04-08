@@ -38,7 +38,7 @@ class CheckRouteCalls
     protected function printError($value, SplFileInfo $blade, $nextToken)
     {
         $p = app(ErrorPrinter::class);
-        $p->print("route name '$value' does not exist: ");
+        $p->print("route name $value does not exist: ");
         $p->print("route($value)   <====   is wrong");
         $p->printLink($blade->getPathname(), $nextToken[2]);
         $p->end();
