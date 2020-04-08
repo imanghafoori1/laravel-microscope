@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 
 class CheckViewFilesExistence
 {
-    function check($tokens, $blade)
+    public function check($tokens, $blade)
     {
         $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
@@ -28,7 +28,7 @@ class CheckViewFilesExistence
         $methods = [
             'make',
             'first',
-            'renderWhen'
+            'renderWhen',
         ];
 
         // checks for this syntax: $__env->make('myViewFile', ...

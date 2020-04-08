@@ -7,15 +7,15 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\View\ViewParser;
 use Symfony\Component\Finder\Finder;
-use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 
 class CheckView extends Command
 {
@@ -88,10 +88,9 @@ class CheckView extends Command
             ] = GetClassProperties::fromFilePath($absFilePath);
 
             if ($class) {
-
-            if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
-                self::checkViews($currentNamespace.'\\'.$class);
-            }
+                if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
+                    self::checkViews($currentNamespace.'\\'.$class);
+                }
             }
         }
     }
@@ -118,10 +117,10 @@ class CheckView extends Command
                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
 
-           /* if (Str::contains($_['name'], ['$', '->'])) {
-                app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
-                sleep(1);
-            }*/
+            /* if (Str::contains($_['name'], ['$', '->'])) {
+                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
+                 sleep(1);
+             }*/
         }
     }
 

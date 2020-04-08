@@ -23,7 +23,7 @@ class ViewParser
     /**
      * @var array
      */
-/*    protected $childrenViews = [];*/
+    /*    protected $childrenViews = [];*/
 
     /**
      * @var array
@@ -47,21 +47,21 @@ class ViewParser
     /**
      * @var array
      */
-/*    protected $bladeDirectives = [
-        '@include(',
-        '@includeIf(',
-        '@extends(',
-        'Blade::include(',
-    ];*/
+    /*    protected $bladeDirectives = [
+            '@include(',
+            '@includeIf(',
+            '@extends(',
+            'Blade::include(',
+        ];*/
 
     /**
      * @var array
      */
-/*    protected $statementBladeDirectives = [
-        '@includeWhen(',
-        '@includeUnless(',
-        '@includeFirst(',
-    ];*/
+    /*    protected $statementBladeDirectives = [
+            '@includeWhen(',
+            '@includeUnless(',
+            '@includeFirst(',
+        ];*/
 
     public function __construct($action)
     {
@@ -72,45 +72,45 @@ class ViewParser
     {
         return $this->retrieveViewsFromMethod();
 
-      /*  if ($this->parent) {
-            $this->retrieveChildrenFromNestedViews();
-        }*/
+        /*  if ($this->parent) {
+              $this->retrieveChildrenFromNestedViews();
+          }*/
 
         return $this;
     }
 
-  /*  public function retrieveChildrenFromNestedViews()
-    {
-        $this->children = $this->loopForNestedViews($this->parent);
-    }*/
+    /*  public function retrieveChildrenFromNestedViews()
+      {
+          $this->children = $this->loopForNestedViews($this->parent);
+      }*/
 
     /**
      * @param  array  $children
      */
-/*    public function resolveChildrenHierarchy(array $children)
-    {
-        collect($children)->each(function ($value, $key) {
-            if (is_string($key)) {
-                $this->childrenViews[] = $key;
+    /*    public function resolveChildrenHierarchy(array $children)
+        {
+            collect($children)->each(function ($value, $key) {
+                if (is_string($key)) {
+                    $this->childrenViews[] = $key;
+                }
+
+                return $this->resolveChildrenHierarchy($value);
+            });
+        }*/
+
+    /*    public function loopForNestedViews($views)
+        {
+            $generated = [];
+
+            if (! is_array($views)) {
+                return $this->loopForNestedViews($this->retrieveNestedViews($views));
+            }
+            foreach ($views as $view) {
+                $generated[$view['name']] = $view + ['children' => $this->loopForNestedViews($view['name'])];
             }
 
-            return $this->resolveChildrenHierarchy($value);
-        });
-    }*/
-
-/*    public function loopForNestedViews($views)
-    {
-        $generated = [];
-
-        if (! is_array($views)) {
-            return $this->loopForNestedViews($this->retrieveNestedViews($views));
-        }
-        foreach ($views as $view) {
-            $generated[$view['name']] = $view + ['children' => $this->loopForNestedViews($view['name'])];
-        }
-
-        return $generated;
-    }*/
+            return $generated;
+        }*/
 
     /**
      * @param  \ReflectionMethod  $method
@@ -125,7 +125,7 @@ class ViewParser
         return array_slice(file($method->getFileName()), $start, $length);
     }
 
-    function retrieveViewsFromMethod()
+    public function retrieveViewsFromMethod()
     {
         $content = $this->readContent($this->action);
 
@@ -176,29 +176,29 @@ class ViewParser
      *
      * @return array
      */
- /*   protected function retrieveNestedViews(string $parent_view)
-    {
-        $views = [];
-        $lines = (array) $this->getViewContent($parent_view);
+    /*   protected function retrieveNestedViews(string $parent_view)
+       {
+           $views = [];
+           $lines = (array) $this->getViewContent($parent_view);
 
-        foreach ($lines as $lineNumber => $line) {
-            foreach ($this->bladeDirectives as $key => $bladeDirective) {
-                $positions = $this->getPositionOfBladeDirectives($bladeDirective, $line);
-                foreach ($positions as $position) {
-                    $view = $this->getFromLine(substr($line, $position), $bladeDirective);
-                    $views[] = [
-                        'name' => $this->retrieveFirstParamValue($view),
-                        'file' => $parent_view.'.blade.php',
-                        'lineNumber' => $lineNumber + 1,
-                        'directive' => $bladeDirective,
-                        'line' => $line,
-                    ];
-                }
-            }
-        }
+           foreach ($lines as $lineNumber => $line) {
+               foreach ($this->bladeDirectives as $key => $bladeDirective) {
+                   $positions = $this->getPositionOfBladeDirectives($bladeDirective, $line);
+                   foreach ($positions as $position) {
+                       $view = $this->getFromLine(substr($line, $position), $bladeDirective);
+                       $views[] = [
+                           'name' => $this->retrieveFirstParamValue($view),
+                           'file' => $parent_view.'.blade.php',
+                           'lineNumber' => $lineNumber + 1,
+                           'directive' => $bladeDirective,
+                           'line' => $line,
+                       ];
+                   }
+               }
+           }
 
-        return $views;
-    }*/
+           return $views;
+       }*/
 
     /**
      * @param  string  $bladeDirective
@@ -206,36 +206,36 @@ class ViewParser
      *
      * @return array
      */
- /*   protected function getPositionOfBladeDirectives(string $bladeDirective, $content)
-    {
-        $positions = [];
+    /*   protected function getPositionOfBladeDirectives(string $bladeDirective, $content)
+       {
+           $positions = [];
 
-        $lastPos = 0;
+           $lastPos = 0;
 
-        while (($lastPos = strpos($content, $bladeDirective, $lastPos)) !== false) {
-            $positions[] = $lastPos;
-            $lastPos = $lastPos + strlen($bladeDirective);
-        }
+           while (($lastPos = strpos($content, $bladeDirective, $lastPos)) !== false) {
+               $positions[] = $lastPos;
+               $lastPos = $lastPos + strlen($bladeDirective);
+           }
 
-        return $positions;
-    }*/
+           return $positions;
+       }*/
 
     /**
      * @param  string  $view
      *
      * @return string
      */
-/*    public function getViewContent(string $view)
-    {
-        $view = ViewName::normalize($view);
-        try {
-            $path = View::getFinder()->find($view);
+    /*    public function getViewContent(string $view)
+        {
+            $view = ViewName::normalize($view);
+            try {
+                $path = View::getFinder()->find($view);
 
-            return file($path);
-        } catch (\InvalidArgumentException $e) {
-            return '';
-        }
-    }*/
+                return file($path);
+            } catch (\InvalidArgumentException $e) {
+                return '';
+            }
+        }*/
 
     /**
      * @return array
