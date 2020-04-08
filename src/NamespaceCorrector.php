@@ -17,7 +17,7 @@ class NamespaceCorrector
         ] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
         $search = ltrim($search, '\\');
-        ReplaceLine::replace($classFilePath, $search, $newline);
+        ReplaceLine::replaceFirst($classFilePath, $search, $newline);
 
         app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
         app(ErrorPrinter::class)->end();
@@ -41,7 +41,7 @@ class NamespaceCorrector
      *
      * @return array
      */
-    private static function getNewLine($incorrectNamespace, $correctNamespace): array
+    private static function getNewLine($incorrectNamespace, $correctNamespace)
     {
         // in case there is no namespace specified in the file:
         if (! $incorrectNamespace) {

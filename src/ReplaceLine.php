@@ -9,7 +9,7 @@ class ReplaceLine
      * @param  string  $search
      * @param  string  $replace
      */
-    public static function replace($file, $search, $replace = '')
+    public static function replaceFirst($file, $search, $replace = '')
     {
         $reading = fopen($file, 'r');
         $tmpFile = fopen($file.'._tmp', 'w');
