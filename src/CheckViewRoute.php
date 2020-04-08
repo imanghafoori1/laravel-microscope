@@ -13,29 +13,21 @@ class CheckViewRoute
      *
      * @return void
      */
-    public function check()
+    public function check($methods)
     {
-        $hints = View::getFinder()->getHints();
-        unset(
-            $hints['notifications'],
-            $hints['pagination']
-        );
-        foreach ($hints as $nameSpace => $paths) {
-            $this->checkPaths($paths);
+        $hints = $this->getNamespacedPaths();
+        $hints['1'] = View::getFinder()->getPaths();
+        foreach ($hints as $paths) {
+            $this->checkPaths($paths, $methods);
         }
-        $this->checkPaths(View::getFinder()->getPaths());
     }
 
-    protected function getNextToken(array $tokens, &$next)
+    private function getNamespacedPaths()
     {
-        $next++;
-        $nextToken = $tokens[$next];
-        if ($nextToken[0] == T_WHITESPACE) {
-            $next++;
-            $nextToken = $tokens[$next];
-        }
+        $hints = View::getFinder()->getHints();
+        unset($hints['notifications'], $hints['pagination']);
 
-        return $nextToken;
+        return $hints;
     }
 
     public function checkConfigPaths($paths)
@@ -66,9 +58,11 @@ class CheckViewRoute
     /**
      * @param $paths
      *
+     * @param $methods
+     *
      * @return int|string
      */
-    public function checkPaths($paths)
+    public function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
             $files = (new Finder)->files()->in($path);
@@ -80,92 +74,10 @@ class CheckViewRoute
                 $content = file_get_contents($blade->getRealPath());
                 $tokens = token_get_all((app('blade.compiler')->compileString($content)));
 
-                $tCount = count($tokens);
-                for ($i = 0; $i < $tCount; $i++) {
-                    if ((($tokens[$i][1] ?? null) == '$__env') && in_array($tokens[$i + 2][1], ['make', 'first', 'renderWhen'])) {
-                        if (($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING && $tokens[$i + 5] == ',') {
-                            if (View::exists(trim($tokens[$i + 4][1], '\'\"'))) {
-                            } else {
-                                app(ErrorPrinter::class)->print('included view does not exist in blade file');
-                            }
-                            $i = $i + 5;
-                        }
-                    }
-                }
-
-                $classes = ParseUseStatement::findClassReferences($tokens);
-
-                foreach ($classes as $class) {
-                    if (! class_exists($class['class']) && ! interface_exists($class['class'])) {
-                        app(ErrorPrinter::class)->bladeImport($class, $blade);
-                    }
-                }
-
-                foreach ($tokens as $i => $token) {
-                    $next = $i;
-                    $handleRoute = function ($nextToken, $blade) {
-                        if ($nextToken[0] != T_CONSTANT_ENCAPSED_STRING) {
-                            return;
-                        }
-
-                        $value = $nextToken[1];
-
-                        $rName = app('router')->getRoutes()->getByName(trim($value, '\'\"'));
-                        if (is_null($rName)) {
-                            $this->printError($value, $blade, $nextToken);
-                        }
-                    };
-
-                    $this->checkGlobalFunctionCall($token, 'route', $tokens, $handleRoute, $blade, $next);
+                foreach($methods as $method) {
+                    call_user_func_array($method, [$tokens, $blade]);
                 }
             }
         }
-    }
-
-    /**
-     * @param $value
-     * @param  \Symfony\Component\Finder\SplFileInfo  $blade
-     * @param $nextToken
-     */
-    protected function printError($value, SplFileInfo $blade, $nextToken)
-    {
-        $p = app(ErrorPrinter::class);
-        $p->print("route name '$value' does not exist: ");
-        $p->print("route($value)   <====   is wrong");
-        $p->printLink($blade->getPathname(), $nextToken[2]);
-        $p->end();
-    }
-
-    protected function checkGlobalFunctionCall($token, string $funcName, array &$tokens, \Closure $handleRoute, SplFileInfo $blade, $next)
-    {
-        if ($this->isObjectMaking($tokens, $next) || $this->isFunctionDefinition($tokens, $next)) {
-            return;
-        }
-
-        if (! is_array($token) || $token[1] != $funcName) {
-            return;
-        }
-
-        $nextToken = $this->getNextToken($tokens, $next);
-        if ($nextToken != '(') {
-            return;
-        }
-
-        $nextToken = $this->getNextToken($tokens, $next);
-        $handleRoute($nextToken, $blade);
-    }
-
-    private function isObjectMaking(array $tokens, $next)
-    {
-        $pToken = $tokens[$next - 2] ?? [''];
-
-        return $pToken[0] === T_NEW;
-    }
-
-    private function isFunctionDefinition(array $tokens, $next)
-    {
-        $pToken = $tokens[$next - 2] ?? [''];
-
-        return $pToken[0] === T_FUNCTION;
     }
 }
