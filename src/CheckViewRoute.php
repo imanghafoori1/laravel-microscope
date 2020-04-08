@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class CheckViewRoute
 {
@@ -74,7 +73,7 @@ class CheckViewRoute
                 $content = file_get_contents($blade->getRealPath());
                 $tokens = token_get_all((app('blade.compiler')->compileString($content)));
 
-                foreach($methods as $method) {
+                foreach ($methods as $method) {
                     call_user_func_array($method, [$tokens, $blade]);
                 }
             }
