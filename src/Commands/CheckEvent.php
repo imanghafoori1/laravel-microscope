@@ -4,9 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckEvent extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -24,14 +26,16 @@ class CheckEvent extends Command
     /**
      * Execute the console command.
      *
+     * @param  ErrorPrinter  $errorPrinter
+     *
      * @return mixed
      */
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking events ...');
 
-        app(ErrorPrinter::class)->printer = $this->output;
+        $errorPrinter->printer = $this->output;
 
-        $this->info('All your events are correct!');
+        $this->finishCommand($errorPrinter);
     }
 }
