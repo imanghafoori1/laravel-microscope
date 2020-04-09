@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ParseUseStatement;
 use ReflectionMethod;
@@ -53,7 +52,7 @@ class ModelParser
     {
         $content = $this->readContent($method);
 
-        if (!$content) {
+        if (! $content) {
             return [];
         }
 
@@ -105,14 +104,14 @@ class ModelParser
     {
         $tokens = token_get_all('<?php '.implode('', $content));
         foreach ($tokens as $i => $token) {
-            if (!is_array($token)) {
+            if (! is_array($token)) {
                 continue;
             }
 
             $next = $i;
             $relation = [];
 
-            if (!$this->isThis($token)) {
+            if (! $this->isThis($token)) {
                 continue;
             }
 
@@ -125,7 +124,7 @@ class ModelParser
 
             $nextToken = $this->getNextToken($tokens, $next);
 
-            if (!$this->isRelation($nextToken)) {
+            if (! $this->isRelation($nextToken)) {
                 continue;
                 $relation[] = 'relation';
                 $relation['relation'] = $nextToken[1];
@@ -165,7 +164,7 @@ class ModelParser
                 }
             }
 
-            if (!$params[0][0]) {
+            if (! $params[0][0]) {
                 $tempArray = $params[0];
 
                 array_shift($tempArray); //remove the first empty space
@@ -173,9 +172,9 @@ class ModelParser
                 array_pop($tempArray);
 
                 $params[0] = [
-                    implode("", $tempArray),
+                    implode('', $tempArray),
                     '::',
-                    'class'
+                    'class',
                 ];
             }
 
