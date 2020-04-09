@@ -81,8 +81,8 @@ class ErrorPrinter
      */
     public function badNamespace($classPath, $correctNamespace, $incorrectNamespace)
     {
-        $this->printHeader('Incorrect namespace: '.$this->yellow($incorrectNamespace));
-        $this->print('It should be:   '.$this->yellow("namespace $correctNamespace;"));
+        $this->printHeader('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"));
+        $this->print('Correct namespace:   '.$this->yellow("namespace $correctNamespace;"));
         $this->printLink($classPath);
         $this->end();
         $this->counts['badNamespace']++;
@@ -106,7 +106,7 @@ class ErrorPrinter
     {
         $this->print('');
         $number = ++$this->counts['total'];
-        $number = '<fg=yellow>'.$number.' </>';
+        $number = '<fg=yellow>'.$number.'  </>';
         $path = "  | $number";
 
         $this->print($msg, $path);
@@ -122,5 +122,12 @@ class ErrorPrinter
     {
         $filePath = trim(str_replace(base_path(), '', $path), '\\/');
         $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
+    }
+
+    public function fixedNameSpace($correctNamespace)
+    {
+        $msg = $this->yellow("namespace $correctNamespace;");
+        $this->print('namespace fixed to: '.$msg);
+        $this->end();
     }
 }

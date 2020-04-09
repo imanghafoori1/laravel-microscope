@@ -19,8 +19,7 @@ class NamespaceCorrector
         $search = ltrim($search, '\\');
         ReplaceLine::replaceFirst($classFilePath, $search, $newline);
 
-        app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
-        app(ErrorPrinter::class)->end();
+        app(ErrorPrinter::class)->fixedNameSpace($correctNamespace);
     }
 
     public static function calculateCorrectNamespace($classPath, $path, $rootNamespace)
