@@ -24,7 +24,7 @@ class CheckView extends Command
      *
      * @var string
      */
-    protected $signature = 'check:view';
+    protected $signature = 'check:views';
 
     /**
      * The console command description.
