@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ParseUseStatement;
 use ReflectionMethod;
 
