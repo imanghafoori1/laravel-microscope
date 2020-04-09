@@ -77,6 +77,9 @@ class ParseUseStatement
             'array',
             'callable',
             '::',
+            'self',
+            'static',
+            'parent',
         ], true);
     }
 
