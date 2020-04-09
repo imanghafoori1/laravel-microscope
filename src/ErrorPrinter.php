@@ -2,38 +2,37 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Imanghafoori\LaravelMicroscope\PendingObjects\PendingError;
+
 class ErrorPrinter
 {
     public $counts
         = [
-            'view'                => 0,
+            'view'                => [],
             'total'               => 0,
-            'bladeImport'         => 0,
-            'badRelation'         => 0,
-            'wrongImport'         => 0,
-            'wrongUsedClassError' => 0,
-            'badNamespace'        => 0,
+            'bladeImport'         => [],
+            'badRelation'         => [],
+            'wrongImport'         => [],
+            'wrongUsedClassError' => [],
+            'badNamespace'        => [],
         ];
 
     public $printer;
 
     public function view($path, $lineContent, $lineNumber, $fileName)
     {
-        $this->printHeader($this->yellow($fileName.'.blade.php').' does not exist');
-        $this->print(trim($lineContent));
-        $this->printLink($path, $lineNumber);
-        $this->end();
-        $this->counts['view']++;
+        array_push($this->counts['view'], (new PendingError('view'))
+            ->header($this->yellow($fileName.'.blade.php').' does not exist')
+            ->errorData(trim($lineContent))
+            ->link($path, $lineNumber));
     }
 
     public function bladeImport($class, $blade)
     {
-        $this->printHeader('Class does not exist in blade file:');
-        $this->print($this->yellow($class['class']).' <==== does not exist');
-        $this->printLink($blade->getPathname(), $class['line']);
-
-        $this->end();
-        $this->counts['bladeImport']++;
+        array_push($this->counts['bladeImport'], (new PendingError('bladeImport'))
+            ->header('Class does not exist in blade file:')
+            ->errorData($this->yellow($class['class']).' <==== does not exist')
+            ->link($blade->getPathname(), $class['line']));
     }
 
     public function authConf()
@@ -43,29 +42,26 @@ class ErrorPrinter
 
     public function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $relatedModel)
     {
-        $this->printHeader('Wrong model is passed in relation:');
-        $this->print($this->yellow($relatedModel).'   <==== does not exist');
-        $this->printLink($ref->getFileName(), $method->getStartLine() + 1);
-        $this->end();
-        $this->counts['badRelation']++;
+        array_push($this->counts['badRelation'], (new PendingError('badRelation'))
+            ->header('Wrong model is passed in relation:')
+            ->errorData($this->yellow($relatedModel).'   <==== does not exist')
+            ->link($ref->getFileName(), $method->getStartLine() + 1));
     }
 
     public function wrongImport($classReflection, $class, $line)
     {
-        $this->printHeader('Wrong import:');
-        $this->print($this->yellow("use $class;").'   <==== does not exist. ');
-        $this->printLink($classReflection->getFileName(), $line);
-        $this->end();
-        $this->counts['wrongImport']++;
+        array_push($this->counts['wrongImport'], (new PendingError('wrongImport'))
+            ->header('Wrong import:')
+            ->errorData($this->yellow("use $class;").'   <==== does not exist. ')
+            ->link($classReflection->getFileName(), $line));
     }
 
     public function wrongUsedClassError($absFilePath, $nonImportedClass)
     {
-        $this->printHeader('Class does not exist:');
-        $this->print($this->yellow($nonImportedClass['class']).'  <==== does not exist.');
-        $this->printLink($absFilePath, $nonImportedClass['line']);
-        $this->end();
-        $this->counts['wrongUsedClassError']++;
+        array_push($this->counts['wrongUsedClassError'], (new PendingError('wrongUsedClassError'))
+            ->header('Class does not exist:')
+            ->errorData($this->yellow($nonImportedClass['class']).'  <==== does not exist.')
+            ->link($absFilePath, $nonImportedClass['line']));
     }
 
     public function yellow($msg)
@@ -141,8 +137,28 @@ class ErrorPrinter
     {
         $errorsCollection = collect($this->counts);
 
-        return $errorsCollection->filter(function ($action) {
-            return $action > 0;
-        })->count();
+        return $errorsCollection
+            ->flatten()
+            ->filter(function ($action) {
+                return $action instanceof PendingError;
+            })->count();
+    }
+
+    /**
+     * Logs the errors to the console.
+     */
+    public function logErrors()
+    {
+        $errorsCollection = collect($this->counts)
+            ->except('total')
+            ->flatten()
+            ->each(function ($error) {
+                if ($error instanceof PendingError) {
+                    $this->printHeader($error->getHeader());
+                    $this->print($error->getErrorData());
+                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+                    $this->end();
+                }
+            });
     }
 }
