@@ -4,9 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckGate extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -21,8 +23,12 @@ class CheckGate extends Command
      */
     protected $description = 'Checks the validity of gate definitions';
 
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
-        app(ErrorPrinter::class)->printer = $this->output;
+        $this->info('Checking gates...');
+
+        $errorPrinter->printer = $this->output;
+
+        $this->finishCommand($errorPrinter);
     }
 }
