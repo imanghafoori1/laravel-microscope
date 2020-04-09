@@ -7,9 +7,11 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoute extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -27,13 +29,15 @@ class CheckRoute extends Command
     /**
      * Execute the console command.
      *
+     * @param  ErrorPrinter  $errorPrinter
+     *
      * @return mixed
      */
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking routes ...');
 
-        app(ErrorPrinter::class)->printer = $this->output;
+        $errorPrinter->printer = $this->output;
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
         foreach ($routes as $route) {
@@ -61,7 +65,7 @@ class CheckRoute extends Command
             }
         }
 
-        $this->info('Your routes are correct!');
+        $this->finishCommand($errorPrinter);
     }
 
     public function errorIt($route)

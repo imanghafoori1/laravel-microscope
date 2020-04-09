@@ -8,10 +8,12 @@ use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Util;
 
 class CheckImports extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -29,13 +31,15 @@ class CheckImports extends Command
     /**
      * Execute the console command.
      *
+     * @param  ErrorPrinter  $errorPrinter
+     *
      * @return mixed
      */
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking imports ...');
 
-        app(ErrorPrinter::class)->printer = $this->output;
+        $errorPrinter->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
@@ -51,7 +55,7 @@ class CheckImports extends Command
 
         $this->checkConfig();
 
-        $this->info('Your imports are correct!');
+        $this->finishCommand($errorPrinter);
     }
 
     protected function checkConfig()
