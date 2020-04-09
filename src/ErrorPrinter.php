@@ -4,15 +4,16 @@ namespace Imanghafoori\LaravelMicroscope;
 
 class ErrorPrinter
 {
-    public $counts = [
-        'view' => 0,
-        'total' => 0,
-        'bladeImport' => 0,
-        'badRelation' => 0,
-        'wrongImport' => 0,
-        'wrongUsedClassError' => 0,
-        'badNamespace' => 0,
-    ];
+    public $counts
+        = [
+            'view'                => 0,
+            'total'               => 0,
+            'bladeImport'         => 0,
+            'badRelation'         => 0,
+            'wrongImport'         => 0,
+            'wrongUsedClassError' => 0,
+            'badNamespace'        => 0,
+        ];
 
     public $printer;
 
@@ -129,5 +130,19 @@ class ErrorPrinter
         $msg = $this->yellow("namespace $correctNamespace;");
         $this->print('namespace fixed to: '.$msg);
         $this->end();
+    }
+
+    /**
+     * Checks for errors for the run command.
+     *
+     * @return int
+     */
+    public function hasErrors()
+    {
+        $errorsCollection = collect($this->counts);
+
+        return $errorsCollection->filter(function ($action) {
+            return $action > 0;
+        })->count();
     }
 }

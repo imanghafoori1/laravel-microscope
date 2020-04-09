@@ -5,10 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Util;
 
 class CheckPsr4 extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -26,11 +28,15 @@ class CheckPsr4 extends Command
     /**
      * Execute the console command.
      *
+     * @param  ErrorPrinter  $errorPrinter
+     *
      * @return mixed
      */
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
-        app(ErrorPrinter::class)->printer = $this->output;
+        $this->info('Checking PSR-4 ...');
+
+        $errorPrinter->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
@@ -38,5 +44,7 @@ class CheckPsr4 extends Command
             $files = CheckClasses::getAllPhpFiles($psr4Path);
             CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace);
         }
+
+        $this->finishCommand($errorPrinter);
     }
 }

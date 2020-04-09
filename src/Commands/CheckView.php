@@ -13,12 +13,14 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\View\ViewParser;
 use Symfony\Component\Finder\Finder;
 
 class CheckView extends Command
 {
+    use LogsErrors;
     /**
      * The name and signature of the console command.
      *
@@ -36,11 +38,15 @@ class CheckView extends Command
     /**
      * Execute the console command.
      *
+     * @param  ErrorPrinter  $errorPrinter
+     *
      * @return mixed
      */
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
-        app(ErrorPrinter::class)->printer = $this->output;
+        $this->info('Checking views ...');
+
+        $errorPrinter->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
@@ -54,6 +60,8 @@ class CheckView extends Command
             [new CheckRouteCalls, 'check'],
         ];
         (new CheckViewRoute)->check($methods);
+
+        $this->finishCommand($errorPrinter);
     }
 
     public static function within($namespace, $path)
