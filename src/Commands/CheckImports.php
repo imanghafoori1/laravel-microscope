@@ -17,7 +17,7 @@ class CheckImports extends Command
      *
      * @var string
      */
-    protected $signature = 'check:import';
+    protected $signature = 'check:imports';
 
     /**
      * The console command description.
