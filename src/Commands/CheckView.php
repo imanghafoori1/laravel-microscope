@@ -40,6 +40,8 @@ class CheckView extends Command
      */
     public function handle()
     {
+        $this->info('Checking views ...');
+
         app(ErrorPrinter::class)->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
@@ -54,6 +56,8 @@ class CheckView extends Command
             [new CheckRouteCalls, 'check'],
         ];
         (new CheckViewRoute)->check($methods);
+
+        $this->info('Your routes are correct!');
     }
 
     public static function within($namespace, $path)

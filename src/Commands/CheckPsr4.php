@@ -30,6 +30,8 @@ class CheckPsr4 extends Command
      */
     public function handle()
     {
+        $this->info('Checking PSR-4 ...');
+
         app(ErrorPrinter::class)->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
@@ -38,5 +40,7 @@ class CheckPsr4 extends Command
             $files = CheckClasses::getAllPhpFiles($psr4Path);
             CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace);
         }
+
+        $this->info('Your PSR-4 is in place');
     }
 }
