@@ -64,10 +64,9 @@ class DiscoverClasses
             foreach ($nonImportedClasses as $nonImportedClass) {
                 if (! class_exists($nonImportedClass['class']) && ! interface_exists($nonImportedClass['class'])) {
                     $p = app(ErrorPrinter::class);
-                    $p->print('Used class does not exist...');
-                    $p->print(str_replace(base_path(), '', $absFilePath));
+                    $p->printHeader('Used class does not exist...');
                     $p->print($nonImportedClass['class']);
-                    $p->print('line: '.$nonImportedClass['line']);
+                    $p->printLink($absFilePath, $nonImportedClass['line']);
                     $p->end();
                 }
             }

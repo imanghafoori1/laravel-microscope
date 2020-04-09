@@ -161,7 +161,7 @@ class CheckClasses
         $imports = ParseUseStatement::getUseStatements($classReflection);
         foreach ($imports as $i => $import) {
             if (self::exists($import[0])) {
-                app(ErrorPrinter::class)->wrongImport($classReflection, $import);
+                app(ErrorPrinter::class)->wrongImport($classReflection, $import[0], $import[1]);
             }
         }
     }
