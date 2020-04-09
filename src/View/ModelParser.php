@@ -25,17 +25,6 @@ class ModelParser
         ];
 
     /**
-     * @var array
-     */
-    protected $ignoredStrings
-        = [
-            '(',
-            ')',
-            ';',
-            "'",
-        ];
-
-    /**
      * @param  \ReflectionMethod  $method
      *
      * @return array
@@ -59,44 +48,9 @@ class ModelParser
         return $this->extractParametersValueWithinMethod($ref, $content);
     }
 
-    protected function getFromLine($line, $viewAlias)
-    {
-        $line = trim($line);
-
-        if (strpos($line, $viewAlias) === false) {
-            return $line;
-        }
-
-        return trim(substr($line, strpos($line, $viewAlias) + strlen($viewAlias) + 1), ' (');
-    }
-
     /**
-     * @param  string  $parameters
-     * @param  int  $n
-     *
-     * @return string
-     */
-    protected function retrieveFirstParamValue(string $parameters, $n = 0)
-    {
-        if (strpos($parameters, ')') !== false) {
-            $parameters = substr($parameters, 0, strpos($parameters, ')'));
-        }
-
-        if (($position = strpos($parameters, ',')) !== false) {
-            $parameters = substr($parameters, 0, $position);
-        }
-
-        foreach ($this->ignoredStrings as $string) {
-            $parameters = str_replace($string, '', $parameters);
-        }
-
-        return trim($parameters);
-    }
-
-    /**
-     * @param $method
+     * @param $ref
      * @param  array  $content
-     * @param  array  $search
      *
      * @return array
      */
@@ -144,14 +98,21 @@ class ModelParser
 
                 if ($nextToken == ',' || $nextToken == ')') {
                     $f++;
+                    // for now we only collect the first parameter
+                    // so we break; here instead of 'continue;'
                     break;
                 }
 
                 // in case we have something like:
-                //
                 // $this->hasMany(Passport::clientModel());
                 if ($nextToken == '(') {
                     unset($params[$f]);
+                    break;
+                }
+
+                if (($nextToken[1] ?? null) == 'class') {
+                    // remove '::' from the end of the array.
+                    array_pop($params[$f]);
                     break;
                 }
 
@@ -159,69 +120,23 @@ class ModelParser
             }
 
             foreach ($params as &$param) {
-                if ($param[1] ?? null) {
-                    $param[0] = ParseUseStatement::expandClassName($param[0], $ref);
+                $tmp = implode('', $param);
+
+                if ($tmp[0] == "'" || $tmp[0] == '"') {
+                    // in case a hard-coded string is passed.
+                    $tmp = trim($tmp, '\'\"');
+                } else {
+                    // in case the class is passed by ::class
+                    $tmp = ParseUseStatement::expandClassName($tmp, $ref);
                 }
-            }
 
-            if (! $params[0][0]) {
-                $tempArray = $params[0];
-
-                array_shift($tempArray); //remove the first empty space
-                array_pop($tempArray);
-                array_pop($tempArray);
-
-                $params[0] = [
-                    implode('', $tempArray),
-                    '::',
-                    'class',
-                ];
+                $param[0] = $tmp;
             }
 
             return $params;
         }
 
         return [];
-    }
-
-    protected function extractParametersValueWithinMethod2($method, array $content, array $search)
-    {
-        $results = [];
-        foreach ($content as $key => $line) {
-            foreach ($search as $methodName) {
-                if (strpos($line, $methodName) === false) {
-                    continue;
-                }
-                if ($method->class == 'Illuminate\Database\Eloquent\Model') {
-                    continue;
-                }
-                $methodParameter = $this->getFromLine($line, $methodName);
-
-                $c = $key;
-
-                while (empty($methodParameter)) {
-                    $methodParameter = $this->getFromLine($content[$c], $methodName);
-                    $c++;
-                }
-                unset($c);
-
-                $name = $this->retrieveFirstParamValue($methodParameter);
-
-                if (Str::contains($name, ['$', '::class'])) {
-                    continue;
-                }
-
-                $results[] = [
-                    'name'       => $this->retrieveFirstParamValue($methodParameter),
-                    'lineNumber' => $method->getStartLine() + $key,
-                    'directive'  => $methodName,
-                    'file'       => $method->class,
-                    'line'       => $line,
-                ];
-            }
-        }
-
-        return $results;
     }
 
     /**
