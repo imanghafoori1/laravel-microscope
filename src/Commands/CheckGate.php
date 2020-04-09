@@ -23,6 +23,10 @@ class CheckGate extends Command
 
     public function handle()
     {
+        $this->info('Checking gates...');
+
         app(ErrorPrinter::class)->printer = $this->output;
+
+        $this->info('Your gates are correct !');
     }
 }

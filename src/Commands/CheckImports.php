@@ -33,6 +33,8 @@ class CheckImports extends Command
      */
     public function handle()
     {
+        $this->info('Checking imports ...');
+
         app(ErrorPrinter::class)->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
@@ -48,6 +50,8 @@ class CheckImports extends Command
         (new CheckViewRoute)->check($methods);
 
         $this->checkConfig();
+
+        $this->info('Your imports are correct!');
     }
 
     protected function checkConfig()
