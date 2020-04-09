@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ParseUseStatement;
 use ReflectionMethod;
@@ -11,27 +12,29 @@ class ModelParser
     /**
      * @var array
      */
-    protected $methods = [
-        '->hasMany',
-        '->hasOne',
-        '->belongsTo',
-        '->belongsToMany',
-        '->belongsToOne',
-        '->hasManyThrough',
-        '->morphTo',
-        '->morphToMany',
-        '->morphedByMany',
-    ];
+    protected $methods
+        = [
+            '->hasMany',
+            '->hasOne',
+            '->belongsTo',
+            '->belongsToMany',
+            '->belongsToOne',
+            '->hasManyThrough',
+            '->morphTo',
+            '->morphToMany',
+            '->morphedByMany',
+        ];
 
     /**
      * @var array
      */
-    protected $ignoredStrings = [
-        '(',
-        ')',
-        ';',
-        "'",
-    ];
+    protected $ignoredStrings
+        = [
+            '(',
+            ')',
+            ';',
+            "'",
+        ];
 
     /**
      * @param  \ReflectionMethod  $method
@@ -50,7 +53,7 @@ class ModelParser
     {
         $content = $this->readContent($method);
 
-        if (! $content) {
+        if (!$content) {
             return [];
         }
 
@@ -102,14 +105,14 @@ class ModelParser
     {
         $tokens = token_get_all('<?php '.implode('', $content));
         foreach ($tokens as $i => $token) {
-            if (! is_array($token)) {
+            if (!is_array($token)) {
                 continue;
             }
 
             $next = $i;
             $relation = [];
 
-            if (! $this->isThis($token)) {
+            if (!$this->isThis($token)) {
                 continue;
             }
 
@@ -122,7 +125,7 @@ class ModelParser
 
             $nextToken = $this->getNextToken($tokens, $next);
 
-            if (! $this->isRelation($nextToken)) {
+            if (!$this->isRelation($nextToken)) {
                 continue;
                 $relation[] = 'relation';
                 $relation['relation'] = $nextToken[1];
@@ -162,6 +165,20 @@ class ModelParser
                 }
             }
 
+            if (!$params[0][0]) {
+                $tempArray = $params[0];
+
+                array_shift($tempArray); //remove the first empty space
+                array_pop($tempArray);
+                array_pop($tempArray);
+
+                $params[0] = [
+                    implode("", $tempArray),
+                    '::',
+                    'class'
+                ];
+            }
+
             return $params;
         }
 
@@ -196,11 +213,11 @@ class ModelParser
                 }
 
                 $results[] = [
-                    'name' => $this->retrieveFirstParamValue($methodParameter),
+                    'name'       => $this->retrieveFirstParamValue($methodParameter),
                     'lineNumber' => $method->getStartLine() + $key,
-                    'directive' => $methodName,
-                    'file' => $method->class,
-                    'line' => $line,
+                    'directive'  => $methodName,
+                    'file'       => $method->class,
+                    'line'       => $line,
                 ];
             }
         }
