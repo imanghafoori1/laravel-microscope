@@ -90,7 +90,7 @@ class ParseUseStatement
             $lastToken = $secLastToken = [null, null, null];
             $imports = self::parseUseStatements($tokens);
             $imports = $imports[0] ?: [$imports[1]];
-            $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
+            $isDefiningFunction = $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
             while ($token = current($tokens)) {
                 next($tokens);
                 $t = is_array($token) ? $token[0] : $token;
@@ -117,19 +117,22 @@ class ParseUseStatement
                     $force_close = false;
                     $collect = true;
                 } elseif ($t == T_FUNCTION) {
+                    $isDefiningFunction = true;
                     if ($isInSideClass and ! $isInsideMethod) {
                         $isDefiningMethod = true;
                     }
                 } elseif ($t == T_VARIABLE) {
-                    // we do not want to collect variables
-                    if ($isMethodSignature) {
+                    if ($isDefiningFunction) {
+                        $c++;
                         $collect = false;
-                        $secLastToken = $lastToken;
-                        $lastToken = $token;
                     }
+                    $secLastToken = $lastToken;
+                    $lastToken = $token;
+                    // we do not want to collect variables
                     continue;
                 } elseif ($t == T_WHITESPACE) {
-                    $lastToken = $token;
+                    // we do not want to keep track of
+                    // white spaces or collect them
                     continue;
                 } elseif ($t == ';' || $t == '}') {
                     $isMethodSignature = false;
@@ -171,6 +174,7 @@ class ParseUseStatement
                         $collect = false;
                     }
                     if ($t == ')') {
+                        $isDefiningFunction = false;
                         $isCatchException = false;
                     }
                     $c++;
@@ -181,7 +185,12 @@ class ParseUseStatement
                     // When we reach the ::class syntax.
                     // we do not want to treat: $var::method(), self::method()
                     // as a real class name, so it must be of type T_STRING
-                    if (! $collect && ! in_array($lastToken[1], ['parent', 'self', 'static']) && $lastToken[0] == T_STRING && ($secLastToken[1] ?? null) !== '->') {
+                    if (
+                        ! $collect &&
+                        ! in_array($lastToken[1], ['parent', 'self', 'static']) &&
+                        $lastToken[0] == T_STRING &&
+                        ($secLastToken[1] ?? null) !== '->'
+                    ) {
                         $classes[$c][] = $lastToken;
                     }
                     $collect = false;
@@ -221,47 +230,49 @@ class ParseUseStatement
             $results = [];
             $namespace = '';
             foreach ($classes as $i => $rows) {
-                if ($rows[0][0] == T_NAMESPACE) {
-                    unset($rows[0]);
-                    foreach ($rows as $row) {
-                        $namespace .= $row[1];
-                    }
-                    continue;
-                }
-
-                $results[$i]['class'] = '';
-
-                // attach the current namespace if it does not begin with '\'
-                if ($rows[0][1] != '\\') {
-                    $results[$i]['class'] = $namespace ? $namespace.'\\' : '';
-                }
-
-                foreach ($rows as $row) {
-                    if (self::isBuiltinType($row[1])) {
-                        unset($results[$i]);
+                    if ($rows[0][0] == T_NAMESPACE) {
+                        unset($rows[0]);
+                        foreach ($rows as $row) {
+                            $namespace .= $row[1];
+                        }
                         continue;
                     }
+
+                    $results[$i]['class'] = '';
+
+                    // attach the current namespace if it does not begin with '\'
                     if ($rows[0][1] != '\\') {
-                        if (isset(array_values($imports)[0][$rows[0][1]][0])) {
-                            $results[$i]['class'] = array_values($imports)[0][$rows[0][1]][0];
+                        $results[$i]['class'] = $namespace ? $namespace.'\\' : '';
+                    }
+
+                    foreach ($rows as $row) {
+                        if (self::isBuiltinType($row[1])) {
+                            unset($results[$i]);
+                            continue;
+                        }
+                        if ($rows[0][1] != '\\') {
+                            if (isset(array_values($imports)[0][$rows[0][1]][0])) {
+                                $results[$i]['class'] = array_values($imports)[0][$rows[0][1]][0];
+                            } else {
+                                $results[$i]['class'] .= $row[1];
+                            }
                         } else {
                             $results[$i]['class'] .= $row[1];
                         }
-                    } else {
-                        $results[$i]['class'] .= $row[1];
+                        $results[$i]['line'] = $row[2];
                     }
-                    $results[$i]['line'] = $row[2];
                 }
-            }
 
             return $results;
         } catch (\ErrorException $e) {
-            dump('==============================');
+            dump('=====================================');
             dump('was not able to properly parse the: '.$absFilePath.' file.');
             dump('Please open up an issue on the github repo');
+            dump('https://github.com/imanghafoori1/laravel-microscope/issues');
             dump('and also send the content of the file to the maintainer to fix the issue.');
-            dump('==============================');
-            sleep(2);
+            dump(compact('token', 'lastToken', 'secLastToken'));
+            dump('=============== Thanks ===============');
+            sleep(3);
 
             return [];
         }

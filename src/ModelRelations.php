@@ -23,7 +23,7 @@ class ModelRelations
             $params = (new ModelParser())->retrieveFromMethod($method, $ref);
             foreach ($params as $param) {
                 if (! class_exists(trim($param[0], '\'\"'))) {
-                    app(ErrorPrinter::class)->badRelation($ref, $method, $param);
+                    app(ErrorPrinter::class)->badRelation($ref, $method, $param[0]);
                 }
             }
         }
