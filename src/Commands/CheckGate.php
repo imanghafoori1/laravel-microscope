@@ -12,7 +12,7 @@ class CheckGate extends Command
      *
      * @var string
      */
-    protected $signature = 'check:gate';
+    protected $signature = 'check:gates';
 
     /**
      * The console command description.

@@ -15,7 +15,7 @@ class CheckRoute extends Command
      *
      * @var string
      */
-    protected $signature = 'check:route';
+    protected $signature = 'check:routes';
 
     /**
      * The console command description.
