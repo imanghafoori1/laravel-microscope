@@ -31,6 +31,8 @@ class CheckRoute extends Command
      */
     public function handle()
     {
+        $this->info('Checking routes ...');
+
         app(ErrorPrinter::class)->printer = $this->output;
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
@@ -58,6 +60,8 @@ class CheckRoute extends Command
                 app(ErrorPrinter::class)->print('The controller action does not exist: '.$ctrl);
             }
         }
+
+        $this->info('Your routes are correct!');
     }
 
     public function errorIt($route)

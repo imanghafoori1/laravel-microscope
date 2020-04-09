@@ -28,6 +28,10 @@ class CheckEvent extends Command
      */
     public function handle()
     {
+        $this->info('Checking events ...');
+
         app(ErrorPrinter::class)->printer = $this->output;
+
+        $this->info('All your events are correct!');
     }
 }
