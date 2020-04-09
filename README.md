@@ -40,22 +40,22 @@ composer require imanghafoori/laravel-microscope --dev
 
 You can run:
 <p>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:event
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
 </p>
 <p>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gate
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gates
 </p>
 <p>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:view
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:views
 </p>
 <p>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:route   `(checks controller class and method also the blade files path to be correct)`
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:routes   `(checks controller class and method also the blade files path to be correct)`
 </p>
 <p>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4    `(Auto-corrects namespaces)`
 </p>
 <p>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:import  `(checks all the imports at the top and even non-imported inline class usages within .blade.php files, classes to be valid !)`
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:imports  `(checks all the imports at the top and even non-imported inline class usages within .blade.php files, classes to be valid !)`
 </p>
 <p>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all
@@ -65,7 +65,7 @@ You can run:
 
 Lets start with:
 ```
-php artisan check:event
+php artisan check:events
 ```
 
 For example consider:
@@ -93,7 +93,7 @@ This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
 - Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
 
 ```
-php artisan check:gate
+php artisan check:gates
 ```
 
 It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
@@ -118,7 +118,7 @@ php artisan check:psr4
 - It automatically corrects namespaces (according to PSR-4 rules)
 
 ```
-php artisan check:import
+php artisan check:imports
 ```
 
 - It check all the imports (`use` statements) to be valid.
@@ -126,7 +126,7 @@ php artisan check:import
 
 
 ``` php
-php artisan check:route
+php artisan check:routes
 ```
 
 - It check that your routes refer to valid controller classes and methods.
