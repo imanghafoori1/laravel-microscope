@@ -19,7 +19,9 @@ trait LogsErrors
         $commandType = strtolower($commandType);
 
         if ($errorCount = $errorPrinter->hasErrors()) {
-            $this->error($errorCount . ' errors found for ' . $commandType);
-        } else $this->info('All '.$commandType.' are correct!');
+            $this->error($errorCount.' errors found for '.$commandType);
+        } else {
+            $this->info('All '.$commandType.' are correct!');
+        }
     }
 }
