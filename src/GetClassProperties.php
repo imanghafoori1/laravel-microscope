@@ -30,7 +30,7 @@ class GetClassProperties
             ltrim($namespace, '\\'),
             $class,
             $type,
-            $parent
+            $parent,
         ];
     }
 
@@ -53,10 +53,10 @@ class GetClassProperties
 
             // when we reach the first "class", or "interface" or "trait" keyword
             if (! $class && in_array($tokens[$i][0], [
-                    T_CLASS,
-                    T_INTERFACE,
-                    T_TRAIT,
-                ])) {
+                T_CLASS,
+                T_INTERFACE,
+                T_TRAIT,
+            ])) {
                 $class = $tokens[$i + 2][1];
                 $type = $tokens[$i + 2][0];
                 $i = $i + 2;
@@ -108,7 +108,7 @@ class GetClassProperties
 
         return [
             $i,
-            $namespace
+            $namespace,
         ];
     }
 }
