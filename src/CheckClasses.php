@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
@@ -20,11 +21,17 @@ class CheckClasses
      * @param $composerPath
      * @param $composerNamespace
      *
+     * @param  FileCheckContract  $fileCheckContract
+     *
      * @return void
      */
-    public static function checkImports($files, $basePath, $composerPath, $composerNamespace)
+    public static function checkImports($files, $basePath, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
+
+            if($fileCheckContract)
+                $fileCheckContract->onFileTap($classFilePath);
+
             $absFilePath = $classFilePath->getRealPath();
 
             if (! self::hasOpeningTag($absFilePath)) {
