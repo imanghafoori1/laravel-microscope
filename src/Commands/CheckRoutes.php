@@ -55,7 +55,7 @@ class CheckRoutes extends Command
             } catch (BindingResolutionException $e) {
                 $errorIt = $this->errorIt($route);
                 $errorCtrlClass = 'The controller can not be resolved: ';
-                app(ErrorPrinter::class)->route($ctrlClass, $errorIt, $errorCtrlClass);
+                $errorPrinter->route($ctrlClass, $errorIt, $errorCtrlClass);
 
                 return;
             }
@@ -63,7 +63,7 @@ class CheckRoutes extends Command
             if (! method_exists($ctrlObject, $method)) {
                 $errorIt = $this->errorIt($route);
                 $errorCtrl = 'The controller action does not exist: ';
-                app(ErrorPrinter::class)->route($ctrl, $errorIt, $errorCtrl);
+                $errorPrinter->route($ctrl, $errorIt, $errorCtrl);
             }
         }
 
