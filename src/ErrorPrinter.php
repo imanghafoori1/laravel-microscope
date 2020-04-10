@@ -27,12 +27,12 @@ class ErrorPrinter
             ->link($path, $lineNumber));
     }
 
-    public function route($path, $errorIt, $errorTxt)
+    public function route($path, $errorIt, $errorTxt, $linkPath = null, $linkLineNum = 0)
     {
         array_push($this->counts['route'], (new PendingError('route'))
             ->header($errorIt)
             ->errorData($errorTxt.$this->yellow($path))
-            ->link());
+            ->link($linkPath, $linkLineNum));
     }
 
     public function bladeImport($class, $blade)
