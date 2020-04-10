@@ -53,16 +53,17 @@ class CheckRoute extends Command
             try {
                 $ctrlObject = app()->make($ctrlClass);
             } catch (BindingResolutionException $e) {
-                $errorIt=$this->errorIt($route);
-                $errorCtrlClass='The controller can not be resolved: ';
-                app(ErrorPrinter::class)->route($ctrlClass,$errorIt,$errorCtrlClass);
+                $errorIt = $this->errorIt($route);
+                $errorCtrlClass = 'The controller can not be resolved: ';
+                app(ErrorPrinter::class)->route($ctrlClass, $errorIt, $errorCtrlClass);
+
                 return;
             }
 
             if (! method_exists($ctrlObject, $method)) {
-                $errorIt=$this->errorIt($route);
-                $errorCtrl='The controller action does not exist: ';
-                app(ErrorPrinter::class)->route($ctrl,$errorIt,$errorCtrl);
+                $errorIt = $this->errorIt($route);
+                $errorCtrl = 'The controller action does not exist: ';
+                app(ErrorPrinter::class)->route($ctrl, $errorIt, $errorCtrl);
             }
         }
 
