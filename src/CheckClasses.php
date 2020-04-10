@@ -28,9 +28,9 @@ class CheckClasses
     public static function checkImports($files, $basePath, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
-
-            if($fileCheckContract)
+            if ($fileCheckContract) {
                 $fileCheckContract->onFileTap($classFilePath);
+            }
 
             $absFilePath = $classFilePath->getRealPath();
 
@@ -97,8 +97,9 @@ class CheckClasses
     public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
-            if($fileCheckContract)
+            if ($fileCheckContract) {
                 $fileCheckContract->onFileTap($classFilePath);
+            }
 
             $absFilePath = $classFilePath->getRealPath();
 

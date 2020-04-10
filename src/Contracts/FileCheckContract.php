@@ -11,5 +11,5 @@ interface FileCheckContract
      *
      * @return mixed
      */
-    function onFileTap($file);
+    public function onFileTap($file);
 }
