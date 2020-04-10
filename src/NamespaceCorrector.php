@@ -39,12 +39,11 @@ class NamespaceCorrector
 
         $composerPath = str_replace('/', '\\', $composerPath);
 
-
         // replace composer base_path with composer namespace
         /**
          *  "psr-4": {
          *      "App\\": "app/"
-         *  }
+         *  }.
          */
         return str_replace(trim($composerPath, '\\'), trim($rootNamespace, '\\/'), $p);
     }
