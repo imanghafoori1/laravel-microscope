@@ -7,12 +7,12 @@ use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Imanghafoori\LaravelMicroscope\Commands\CheckAll;
-use Imanghafoori\LaravelMicroscope\Commands\CheckEvent;
-use Imanghafoori\LaravelMicroscope\Commands\CheckGate;
+use Imanghafoori\LaravelMicroscope\Commands\CheckEvents;
+use Imanghafoori\LaravelMicroscope\Commands\CheckGates;
 use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
 use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
-use Imanghafoori\LaravelMicroscope\Commands\CheckRoute;
-use Imanghafoori\LaravelMicroscope\Commands\CheckView;
+use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
+use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
@@ -23,10 +23,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            CheckEvent::class,
-            CheckGate::class,
-            CheckRoute::class,
-            CheckView::class,
+            CheckEvents::class,
+            CheckGates::class,
+            CheckRoutes::class,
+            CheckViews::class,
             CheckPsr4::class,
             CheckImports::class,
             CheckAll::class,
