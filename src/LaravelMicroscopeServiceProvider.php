@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\Commands\CheckEvents;
 use Imanghafoori\LaravelMicroscope\Commands\CheckGates;
 use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
 use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
-use Imanghafoori\LaravelMicroscope\Commands\CheckRoute;
+use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->commands([
             CheckEvents::class,
             CheckGates::class,
-            CheckRoute::class,
+            CheckRoutes::class,
             CheckViews::class,
             CheckPsr4::class,
             CheckImports::class,
@@ -44,7 +44,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 //        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
         $command = $_SERVER['argv'][1] ?? null;
 
-        if ($command == 'check:event') {
+        if ($command == 'check:events') {
             $this->app->singleton('events', function ($app) {
                 return (new CheckerDispatcher($app))->setQueueResolver(function () use ($app) {
                     return $app->make(QueueFactoryContract::class);
@@ -53,7 +53,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             Event::clearResolvedInstance('events');
         }
 
-        if ($command == 'check:gate') {
+        if ($command == 'check:gates') {
             $this->app->singleton(GateContract::class, function ($app) {
                 return new CheckerGate($app, function () use ($app) {
                     return call_user_func($app['auth']->userResolver());
