@@ -6,16 +6,15 @@ use Imanghafoori\LaravelMicroscope\PendingObjects\PendingError;
 
 class ErrorPrinter
 {
-    public $counts
-        = [
-            'view'                => [],
-            'total'               => 0,
-            'bladeImport'         => [],
-            'badRelation'         => [],
-            'wrongImport'         => [],
-            'wrongUsedClassError' => [],
-            'badNamespace'        => [],
-        ];
+    public $counts = [
+        'view' => [],
+        'total' => 0,
+        'bladeImport' => [],
+        'badRelation' => [],
+        'wrongImport' => [],
+        'wrongUsedClassError' => [],
+        'badNamespace' => [],
+    ];
 
     public $printer;
 

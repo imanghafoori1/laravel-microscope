@@ -167,6 +167,12 @@ class ParseUseStatement
                         $isDefiningMethod = false;
                         $isInsideMethod = true;
                     }
+                    // After "extends \Some\other\Class_v"
+                    // we need to switch to the next level.
+                    if ($collect) {
+                        $c++;
+                        $collect = false;
+                    }
                     continue;
                 } elseif ($t == '(' || $t == ')') {
                     if ($t == '(' && ($isDefiningMethod || $isCatchException)) {
