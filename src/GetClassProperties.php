@@ -11,20 +11,27 @@ class GetClassProperties
         $tokens = token_get_all($buffer.'/**/');
 
         if (strpos($buffer, '{') === false) {
-            return [
-                null,
-                null,
-                null,
-                null,
-            ];
+            return [null, null, null, null];
         }
 
-        [
-            $namespace,
-            $type,
-            $class,
-            $parent
-        ] = self::readClassDefinition($tokens);
+        try {
+            [
+                $namespace,
+                $type,
+                $class,
+                $parent,
+            ] = self::readClassDefinition($tokens);
+        } catch (\ErrorException $e) {
+            dump('=====================================');
+            dump('was not able to properly parse the: '.$filePath.' file.');
+            dump('Please open up an issue on the github repo');
+            dump('https://github.com/imanghafoori1/laravel-microscope/issues');
+            dump('and also send the content of the file to the maintainer to fix the issue.');
+            dump('=============== Thanks ===============');
+            sleep(3);
+
+            return [null, null, null, null];
+        }
 
         return [
             ltrim($namespace, '\\'),
@@ -64,7 +71,7 @@ class GetClassProperties
             }
 
             if (! $parent) {
-                [$i, $parent] = self::collectForKeyWord($tokens, $i, T_EXTENDS);
+                [$i, $parent] = self::collectForKeyWord($tokens, $i, T_EXTENDS, [T_IMPLEMENTS]);
             }
         }
 
@@ -81,10 +88,13 @@ class GetClassProperties
      * @param  int  $i
      * @param  int  $target
      *
+     * @param  array  $until
+     *
      * @return array
      */
-    protected static function collectForKeyWord($tokens, int $i, $target)
+    protected static function collectForKeyWord($tokens, int $i, $target, $until = [])
     {
+        $until = ['{', ';'] + $until;
         $namespace = '';
         if ($tokens[$i][0] === $target) {
             while (true) {
@@ -94,7 +104,7 @@ class GetClassProperties
                     continue;
                 }
 
-                if ($tokens[$i] === '{' || $tokens[$i] === ';' || ! isset($tokens[$i])) {
+                if (in_array($tokens[$i][0], $until) || ! isset($tokens[$i])) {
                     // we go ahead and collect until we reach:
                     // 1. an opening curly brace {
                     // 2. or a semi-colon ;
