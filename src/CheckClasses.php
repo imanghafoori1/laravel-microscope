@@ -35,8 +35,8 @@ class CheckClasses
                 $currentNamespace,
                 $class,
                 $type,
+                $parent
             ] = GetClassProperties::fromFilePath($absFilePath);
-
             // It means that, there is no class/trait definition found in the file.
             if (! $class) {
                 continue;
@@ -52,15 +52,26 @@ class CheckClasses
             }
 
             try {
-                $classPath = self::relativePath($basePath, $absFilePath);
+//                $classPath = self::relativePath($basePath, $absFilePath);
+//                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
-                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+                if ($currentNamespace) {
+                    $namespacedClassName = $currentNamespace.'\\'.$class;
+                } else {
+                    $namespacedClassName = $class;
+                }
 
-                $ref = new ReflectionClass($correctNamespace.'\\'.$class);
-                self::checkImportedClasses($ref);
-                ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
+                $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
+                self::checkImportedClasses($imports, $absFilePath);
+
+                if ($currentNamespace) {
+                    $ref = new ReflectionClass($currentNamespace.'\\'.$class);
+                    ModelRelations::checkModelsRelations($currentNamespace.'\\'.$class, $ref);
+                } else {
+                    // @todo show skipped file...
+                }
             } catch (ReflectionException $e) {
-                //
+                // @todo show skipped file...
             }
         }
     }
@@ -154,12 +165,11 @@ class CheckClasses
         return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
-    private static function checkImportedClasses(ReflectionClass $classReflection)
+    private static function checkImportedClasses($imports, $absPath)
     {
-        $imports = ParseUseStatement::getUseStatements($classReflection);
         foreach ($imports as $i => $import) {
             if (self::exists($import[0])) {
-                app(ErrorPrinter::class)->wrongImport($classReflection, $import[0], $import[1]);
+                app(ErrorPrinter::class)->wrongImport($absPath, $import[0], $import[1]);
             }
         }
     }
@@ -172,24 +182,6 @@ class CheckClasses
     private static function exists($imp)
     {
         return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
-    }
-
-    /**
-     * @param $basePath
-     * @param $path
-     * @param $rootNamespace
-     * @param $_path
-     * @param $incorrectNamespace
-     */
-    protected static function handleMissingClass($basePath, $path, $rootNamespace, $_path, $incorrectNamespace)
-    {
-
-        /*static::$fixedNamespaces[$incorrectNamespace] = [
-            'class' => $class,
-            'correct_namespace' => $correctNamespace
-        ];*/
-
-        app(ErrorPrinter::class)->print('/********************************************/');
     }
 
     protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
@@ -224,10 +216,5 @@ class CheckClasses
     private static function getRelativePath($absFilePath)
     {
         return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
-    }
-
-    private static function relativePath($basePath, $absFilePath)
-    {
-        return trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
     }
 }

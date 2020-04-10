@@ -48,10 +48,9 @@ class CheckImports extends Command
             CheckClasses::checkImports($files, base_path(), $psr4Path, $psr4Namespace);
         }
 
-        $methods = [
+        (new CheckViewRoute)->check([
             [new CheckClassReferences, 'check'],
-        ];
-        (new CheckViewRoute)->check($methods);
+        ]);
 
         $this->checkConfig();
 
