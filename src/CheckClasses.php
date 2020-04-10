@@ -87,16 +87,19 @@ class CheckClasses
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $paths
-     * @param  string  $basePath
-     *
      * @param $composerPath
      * @param $composerNamespace
      *
+     * @param  FileCheckContract  $fileCheckContract
+     *
      * @return void
      */
-    public static function checkAllClasses($paths, $composerPath, $composerNamespace)
+    public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
+            if($fileCheckContract)
+                $fileCheckContract->onFileTap($classFilePath);
+
             $absFilePath = $classFilePath->getRealPath();
 
             // exclude blade files
