@@ -56,7 +56,7 @@ class PendingError
      *
      * @return $this
      */
-    public function link($path=null, $lineNumber = 4)
+    public function link($path = null, $lineNumber = 4)
     {
         $this->linkPath = $path;
         $this->linkLineNumber = $lineNumber;

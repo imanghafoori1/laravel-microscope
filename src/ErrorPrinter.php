@@ -27,7 +27,7 @@ class ErrorPrinter
             ->link($path, $lineNumber));
     }
 
-    public function route($path,$errorIt,$errorTxt)
+    public function route($path, $errorIt, $errorTxt)
     {
         array_push($this->counts['route'], (new PendingError('route'))
             ->header($errorIt)
@@ -125,8 +125,7 @@ class ErrorPrinter
 
     public function printLink($path, $lineNumber = 4)
     {
-        if($path)
-        {
+        if ($path) {
             $filePath = trim(str_replace(base_path(), '', $path), '\\/');
             $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
         }
