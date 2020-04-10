@@ -18,7 +18,7 @@ trait LogsErrors
         $commandType = Str::after($commandName, 'Check');
         $commandType = strtolower($commandType);
 
-        if($errorPrinter->logErrors){
+        if ($errorPrinter->logErrors) {
             if ($errorCount = $errorPrinter->hasErrors()) {
                 $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
                 $errorPrinter->logErrors();
