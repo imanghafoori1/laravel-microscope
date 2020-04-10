@@ -19,10 +19,10 @@ trait LogsErrors
         $commandType = strtolower($commandType);
 
         if ($errorCount = $errorPrinter->hasErrors()) {
-            $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+            $this->error($errorCount.' errors found for '.$commandType);
             $errorPrinter->logErrors();
         } else {
-            $this->info(PHP_EOL.'All '.$commandType.' are correct!');
+            $this->info('All '.$commandType.' are correct!');
         }
     }
 }

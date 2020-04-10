@@ -8,6 +8,7 @@ class ErrorPrinter
 {
     public $counts = [
         'view' => [],
+        'route'=>[],
         'total' => 0,
         'bladeImport' => [],
         'badRelation' => [],
@@ -24,6 +25,14 @@ class ErrorPrinter
             ->header($this->yellow($fileName.'.blade.php').' does not exist')
             ->errorData(trim($lineContent))
             ->link($path, $lineNumber));
+    }
+
+    public function route($path, $errorIt, $errorTxt)
+    {
+        array_push($this->counts['route'], (new PendingError('route'))
+            ->header($errorIt)
+            ->errorData($errorTxt.$this->yellow($path))
+            ->link());
     }
 
     public function bladeImport($class, $blade)
@@ -116,8 +125,10 @@ class ErrorPrinter
 
     public function printLink($path, $lineNumber = 4)
     {
-        $filePath = trim(str_replace(base_path(), '', $path), '\\/');
-        $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
+        if ($path) {
+            $filePath = trim(str_replace(base_path(), '', $path), '\\/');
+            $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
+        }
     }
 
     public function fixedNameSpace($correctNamespace)

@@ -40,13 +40,7 @@ class CheckRoute extends Command
         $errorPrinter->printer = $this->output;
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
-
-        $bar = $this->output->createProgressBar(count($routes));
-        $bar->start();
-
         foreach ($routes as $route) {
-            $bar->advance();
-
             if (! is_string($ctrl = $route->getAction()['uses'])) {
                 continue;
             }
@@ -59,30 +53,29 @@ class CheckRoute extends Command
             try {
                 $ctrlObject = app()->make($ctrlClass);
             } catch (BindingResolutionException $e) {
-                $this->errorIt($route);
-                app(ErrorPrinter::class)->print('The controller can not be resolved: '.$ctrlClass);
+                $errorIt = $this->errorIt($route);
+                $errorCtrlClass = 'The controller can not be resolved: ';
+                app(ErrorPrinter::class)->route($ctrlClass, $errorIt, $errorCtrlClass);
 
                 return;
             }
 
             if (! method_exists($ctrlObject, $method)) {
-                $this->errorIt($route);
-                app(ErrorPrinter::class)->print('The controller action does not exist: '.$ctrl);
+                $errorIt = $this->errorIt($route);
+                $errorCtrl = 'The controller action does not exist: ';
+                app(ErrorPrinter::class)->route($ctrl, $errorIt, $errorCtrl);
             }
         }
-
-        $bar->finish();
 
         $this->finishCommand($errorPrinter);
     }
 
     public function errorIt($route)
     {
-        $p = app(ErrorPrinter::class);
         if ($routeName = $route->getName()) {
-            $p->print('Error on route name: '.$routeName);
+            return 'Error on route name: '.$routeName;
         } else {
-            $p->print('Error on route url: '.$route->uri());
+            return 'Error on route url: '.$route->uri();
         }
     }
 }

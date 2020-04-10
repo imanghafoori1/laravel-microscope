@@ -18,7 +18,7 @@ use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\View\ViewParser;
 use Symfony\Component\Finder\Finder;
 
-class CheckView extends Command
+class CheckViews extends Command
 {
     use LogsErrors;
     /**
