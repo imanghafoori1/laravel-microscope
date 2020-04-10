@@ -50,15 +50,9 @@ class CheckView extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
-        $bar = $this->output->createProgressBar(count($psr4));
-        $bar->start();
-
         foreach ($psr4 as $namespace => $path) {
-            self::within($namespace, $path);
-            $bar->advance();
+            $this->within($namespace, $path);
         }
-
-        $bar->finish();
 
         $methods = [
             [new CheckViewFilesExistence, 'check'],
@@ -70,9 +64,9 @@ class CheckView extends Command
         $this->finishCommand($errorPrinter);
     }
 
-    public static function within($namespace, $path)
+    public function within($namespace, $path)
     {
-        static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
+        $this->checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
     /**
@@ -86,12 +80,12 @@ class CheckView extends Command
      *
      * @return void
      */
-    protected static function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
+    protected function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 //            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
-            if (! CheckClasses::hasOpeningTag($absFilePath)) {
+            if (!CheckClasses::hasOpeningTag($absFilePath)) {
 //                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
@@ -99,11 +93,12 @@ class CheckView extends Command
                 $currentNamespace,
                 $class,
                 $type,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            ]
+                = GetClassProperties::fromFilePath($absFilePath);
 
             if ($class) {
                 if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
-                    self::checkViews($currentNamespace.'\\'.$class);
+                    $this->checkViews($currentNamespace.'\\'.$class);
                 }
             }
         }
@@ -113,13 +108,13 @@ class CheckView extends Command
      * @param $method
      * @param $ctrl
      */
-    protected static function checkViews($ctrl)
+    protected function checkViews($ctrl)
     {
         $methods = self::get_class_methods(new \ReflectionClass($ctrl));
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->retrieveViewsFromMethod();
-
+            $this->line("Scanning {$method->name} on $method->class");
             self::checkView($ctrl, $method, $views);
         }
     }
@@ -127,10 +122,9 @@ class CheckView extends Command
     protected static function checkView($ctrl, $method, array $views)
     {
         foreach ($views as $view => $_) {
-            if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
+            if (!Str::contains($_['name'], ['$', '->', ' ']) && !View::exists($_['name'])) {
                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
-
             /* if (Str::contains($_['name'], ['$', '->'])) {
                  app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
                  sleep(1);
