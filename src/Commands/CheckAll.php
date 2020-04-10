@@ -15,7 +15,7 @@ class CheckAll extends Command
      *
      * @var string
      */
-    protected $signature = 'check:all';
+    protected $signature = 'check:all {--d|detailed : Show files being checked}';
 
     /**
      * The console command description.
@@ -38,11 +38,12 @@ class CheckAll extends Command
         //turns off error logging.
         $errorPrinter->logErrors = false;
 
-        $this->call('check:view');
-        $this->call('check:event');
-        $this->call('check:gate');
-        $this->call('check:import');
-        $this->call('check:route');
+        $this->call('check:views', ['--detailed' => $this->option('detailed')]);
+        $this->call('check:events');
+        $this->call('check:gates');
+        $this->call('check:psr4', ['--detailed' => $this->option('detailed')]);
+        $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
+        $this->call('check:routes');
 
         //turns on error logging.
         $errorPrinter->logErrors = true;
