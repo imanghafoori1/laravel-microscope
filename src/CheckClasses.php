@@ -52,15 +52,13 @@ class CheckClasses
             }
 
             try {
-                $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
+                $classPath = self::relativePath($basePath, $absFilePath);
 
                 $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
-                if (self::hasOpeningTag($absFilePath)) {
-                    $ref = new ReflectionClass($correctNamespace.'\\'.$class);
-                    self::checkImportedClasses($ref);
-                    ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
-                }
+                $ref = new ReflectionClass($correctNamespace.'\\'.$class);
+                self::checkImportedClasses($ref);
+                ModelRelations::checkModelsRelations($correctNamespace.'\\'.$class, $ref);
             } catch (ReflectionException $e) {
                 //
             }
@@ -226,5 +224,10 @@ class CheckClasses
     private static function getRelativePath($absFilePath)
     {
         return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
+    }
+
+    private static function relativePath($basePath, $absFilePath)
+    {
+        return trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
     }
 }
