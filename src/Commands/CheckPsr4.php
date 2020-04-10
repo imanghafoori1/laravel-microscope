@@ -40,10 +40,17 @@ class CheckPsr4 extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
+        $bar = $this->output->createProgressBar(count($psr4));
+        $bar->start();
+
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = CheckClasses::getAllPhpFiles($psr4Path);
             CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace);
+
+            $bar->advance();
         }
+
+        $bar->finish();
 
         $this->finishCommand($errorPrinter);
     }
