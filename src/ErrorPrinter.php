@@ -19,6 +19,8 @@ class ErrorPrinter
 
     public $printer;
 
+    public $logErrors = true;
+
     public function view($path, $lineContent, $lineNumber, $fileName)
     {
         array_push($this->counts['view'], (new PendingError('view'))
