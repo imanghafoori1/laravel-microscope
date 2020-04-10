@@ -144,6 +144,9 @@ class ParseUseStatement
                     $lastToken = $token;
                     // we do not want to collect variables
                     continue;
+                } elseif ($t == T_IMPLEMENTS) {
+                    $c++;
+                    continue;
                 } elseif ($t == T_WHITESPACE) {
                     // we do not want to keep track of
                     // white spaces or collect them
