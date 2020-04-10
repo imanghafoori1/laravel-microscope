@@ -11,27 +11,10 @@ class GetClassProperties
         $tokens = token_get_all($buffer.'/**/');
 
         if (strpos($buffer, '{') === false) {
-            return [null, null, null, null];
+            return [null, null, null, null,];
         }
 
-        try {
-            [
-                $namespace,
-                $type,
-                $class,
-                $parent,
-            ] = self::readClassDefinition($tokens);
-        } catch (\ErrorException $e) {
-            dump('=====================================');
-            dump('was not able to properly parse the: '.$filePath.' file.');
-            dump('Please open up an issue on the github repo');
-            dump('https://github.com/imanghafoori1/laravel-microscope/issues');
-            dump('and also send the content of the file to the maintainer to fix the issue.');
-            dump('=============== Thanks ===============');
-            sleep(3);
-
-            return [null, null, null, null];
-        }
+        [$namespace, $type, $class, $parent,] = self::readClassDefinition($tokens);
 
         return [
             ltrim($namespace, '\\'),
@@ -49,7 +32,7 @@ class GetClassProperties
         $namespace = null;
         for ($i = 0; $i < $allTokensCount; $i++) {
             if (! $namespace) {
-                [$i, $namespace] = self::collectForKeyWord($tokens, $i, T_NAMESPACE);
+                [$i, $namespace,] = self::collectForKeyWord($tokens, $i, T_NAMESPACE);
             }
 
             // if we reach a double colon before a class keyword
@@ -59,11 +42,7 @@ class GetClassProperties
             }
 
             // when we reach the first "class", or "interface" or "trait" keyword
-            if (! $class && in_array($tokens[$i][0], [
-                T_CLASS,
-                T_INTERFACE,
-                T_TRAIT,
-            ])) {
+            if (! $class && in_array($tokens[$i][0], [T_CLASS, T_INTERFACE, T_TRAIT,])) {
                 $class = $tokens[$i + 2][1];
                 $type = $tokens[$i + 2][0];
                 $i = $i + 2;
@@ -87,14 +66,15 @@ class GetClassProperties
      * @param $tokens
      * @param  int  $i
      * @param  int  $target
-     *
-     * @param  array  $until
+     * @param  array  $terminators
      *
      * @return array
      */
-    protected static function collectForKeyWord($tokens, int $i, $target, $until = [])
+    protected static function collectForKeyWord($tokens, int $i, $target, $terminators = [])
     {
-        $until = ['{', ';'] + $until;
+        $terminators[] = ';';
+        $terminators[] = '{';
+
         $namespace = '';
         if ($tokens[$i][0] === $target) {
             while (true) {
@@ -104,21 +84,20 @@ class GetClassProperties
                     continue;
                 }
 
-                if (in_array($tokens[$i][0], $until) || ! isset($tokens[$i])) {
+                if (in_array($tokens[$i][0], $terminators) || ! isset($tokens[$i])) {
                     // we go ahead and collect until we reach:
                     // 1. an opening curly brace {
                     // 2. or a semi-colon ;
                     // 3. end of tokens.
-                    break;
+                    $i++;
+
+                    return [$i, $namespace,];
                 }
 
                 $namespace .= $tokens[$i][1];
             }
         }
 
-        return [
-            $i,
-            $namespace,
-        ];
+        return [$i, $namespace,];
     }
 }
