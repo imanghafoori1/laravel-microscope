@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
-class CheckRoutes extends Command
+class CheckRoute extends Command
 {
     use LogsErrors;
     /**
