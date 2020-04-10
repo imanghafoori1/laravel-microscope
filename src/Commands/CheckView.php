@@ -114,7 +114,7 @@ class CheckView extends Command
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->retrieveViewsFromMethod();
-            $this->line("Scanning {$method->name} on $method->class");
+            $this->line("Checking {$method->name} on $method->class");
             self::checkView($ctrl, $method, $views);
         }
     }

@@ -12,6 +12,6 @@ trait ScansFiles
      */
     function onFileTouch($file)
     {
-        $this->line("Scanning {$file->getRelativePathname()}");
+        $this->line("Checking {$file->getRelativePathname()}");
     }
 }
