@@ -138,8 +138,8 @@ class ParseUseStatement
                 } elseif ($t == T_VARIABLE) {
                     if ($isDefiningFunction) {
                         $c++;
-                        $collect = false;
                     }
+                    $collect = false;
                     $secLastToken = $lastToken;
                     $lastToken = $token;
                     // we do not want to collect variables
