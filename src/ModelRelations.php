@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelMicroscope\Commands\CheckView;
+use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\View\ModelParser;
 use ReflectionClass;
 
@@ -19,7 +19,7 @@ class ModelRelations
             return;
         }
         $p = app(ErrorPrinter::class);
-        foreach (CheckView::get_class_methods($ref) as $method) {
+        foreach (CheckViews::get_class_methods($ref) as $method) {
             $params = (new ModelParser())->retrieveFromMethod($method, $ref);
             foreach ($params as $param) {
                 $model = trim($param[0], '\'\"');

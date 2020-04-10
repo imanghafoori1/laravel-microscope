@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
-class CheckEvent extends Command
+class CheckGates extends Command
 {
     use LogsErrors;
     /**
@@ -14,25 +14,18 @@ class CheckEvent extends Command
      *
      * @var string
      */
-    protected $signature = 'check:events';
+    protected $signature = 'check:gates';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Checks the validity of event listeners';
+    protected $description = 'Checks the validity of gate definitions';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return mixed
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking events ...');
+        $this->info('Checking gates...');
 
         $errorPrinter->printer = $this->output;
 
