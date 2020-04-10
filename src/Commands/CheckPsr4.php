@@ -4,13 +4,17 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 use Imanghafoori\LaravelMicroscope\Util;
 
-class CheckPsr4 extends Command
+class CheckPsr4 extends Command implements FileCheckContract
 {
     use LogsErrors;
+    use ScansFiles;
+
     /**
      * The name and signature of the console command.
      *
@@ -40,17 +44,10 @@ class CheckPsr4 extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
-        $bar = $this->output->createProgressBar(count($psr4));
-        $bar->start();
-
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = CheckClasses::getAllPhpFiles($psr4Path);
-            CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace);
-
-            $bar->advance();
+            CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace, $this);
         }
-
-        $bar->finish();
 
         $this->finishCommand($errorPrinter);
     }
