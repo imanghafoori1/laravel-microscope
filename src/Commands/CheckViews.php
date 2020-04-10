@@ -85,7 +85,7 @@ class CheckViews extends Command
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 //            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
-            if (!CheckClasses::hasOpeningTag($absFilePath)) {
+            if (! CheckClasses::hasOpeningTag($absFilePath)) {
 //                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
@@ -126,7 +126,7 @@ class CheckViews extends Command
     protected static function checkView($ctrl, $method, array $views)
     {
         foreach ($views as $view => $_) {
-            if (!Str::contains($_['name'], ['$', '->', ' ']) && !View::exists($_['name'])) {
+            if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
             /* if (Str::contains($_['name'], ['$', '->'])) {
