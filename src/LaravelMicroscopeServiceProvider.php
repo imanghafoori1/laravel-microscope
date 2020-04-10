@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\Commands\CheckEvents;
 use Imanghafoori\LaravelMicroscope\Commands\CheckGates;
 use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
 use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
-use Imanghafoori\LaravelMicroscope\Commands\CheckRoute;
+use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->commands([
             CheckEvents::class,
             CheckGates::class,
-            CheckRoute::class,
+            CheckRoutes::class,
             CheckViews::class,
             CheckPsr4::class,
             CheckImports::class,
