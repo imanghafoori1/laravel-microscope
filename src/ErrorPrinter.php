@@ -47,12 +47,12 @@ class ErrorPrinter
             ->link($ref->getFileName(), $method->getStartLine() + 1));
     }
 
-    public function wrongImport($classReflection, $class, $line)
+    public function wrongImport($absPath, $class, $line)
     {
         array_push($this->counts['wrongImport'], (new PendingError('wrongImport'))
             ->header('Wrong import:')
             ->errorData($this->yellow("use $class;").'   <==== does not exist. ')
-            ->link($classReflection->getFileName(), $line));
+            ->link($absPath, $line));
     }
 
     public function wrongUsedClassError($absFilePath, $nonImportedClass)
@@ -102,7 +102,7 @@ class ErrorPrinter
     {
         $this->print('');
         $number = ++$this->counts['total'];
-        $number = '<fg=yellow>'.$number.'  </>';
+        $number = '<fg=yellow>'.$number.' </>';
         $path = "  | $number";
 
         $this->print($msg, $path);

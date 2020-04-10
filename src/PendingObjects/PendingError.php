@@ -50,15 +50,16 @@ class PendingError
 
     /**
      * Sets the link to the source error.
+     *
      * @param $path
-     * @param  int  $linenumber
+     * @param  int  $lineNumber
      *
      * @return $this
      */
-    public function link($path, $linenumber = 4)
+    public function link($path, $lineNumber = 4)
     {
         $this->linkPath = $path;
-        $this->linkLineNumber = $linenumber;
+        $this->linkLineNumber = $lineNumber;
 
         return $this;
     }

@@ -62,6 +62,17 @@ class ParseUseStatement
         return self::$cache[$name];
     }
 
+    public static function getUseStatementsByPath($namespacedClassName, $absPath)
+    {
+        if (! isset(self::$cache[$namespacedClassName])) {
+            $code = file_get_contents($absPath);
+
+            self::$cache = self::parseUseStatements(token_get_all($code), $namespacedClassName)[0] + self::$cache;
+        }
+
+        return self::$cache[$namespacedClassName];
+    }
+
     /**
      * @param  string  $type
      *
@@ -167,7 +178,7 @@ class ParseUseStatement
                         $isDefiningMethod = false;
                         $isInsideMethod = true;
                     }
-                    // After "extends \Some\other\Class_v"
+                    // after "extends \Some\other\Class_v"
                     // we need to switch to the next level.
                     if ($collect) {
                         $c++;
