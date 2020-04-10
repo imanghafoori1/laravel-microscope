@@ -21,6 +21,8 @@ use Symfony\Component\Finder\Finder;
 class CheckViews extends Command
 {
     use LogsErrors;
+
+    private $errorPrinter;
     /**
      * The name and signature of the console command.
      *
@@ -47,11 +49,12 @@ class CheckViews extends Command
         $this->info('Checking views ...');
 
         $errorPrinter->printer = $this->output;
+        $this->errorPrinter = $errorPrinter;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
         foreach ($psr4 as $namespace => $path) {
-            self::within($namespace, $path);
+            $this->within($namespace, $path);
         }
 
         $methods = [
@@ -61,12 +64,12 @@ class CheckViews extends Command
         ];
         (new CheckViewRoute)->check($methods);
 
-        $this->finishCommand($errorPrinter);
+        $this->finishCommand($this->errorPrinter);
     }
 
-    public static function within($namespace, $path)
+    public function within($namespace, $path)
     {
-        static::checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
+        $this->checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
     /**
@@ -80,12 +83,12 @@ class CheckViews extends Command
      *
      * @return void
      */
-    protected static function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
+    protected function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 //            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
-            if (! CheckClasses::hasOpeningTag($absFilePath)) {
+            if (!CheckClasses::hasOpeningTag($absFilePath)) {
 //                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
@@ -93,11 +96,12 @@ class CheckViews extends Command
                 $currentNamespace,
                 $class,
                 $type,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            ]
+                = GetClassProperties::fromFilePath($absFilePath);
 
             if ($class) {
                 if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
-                    self::checkViews($currentNamespace.'\\'.$class);
+                    $this->checkViews($currentNamespace.'\\'.$class);
                 }
             }
         }
@@ -107,24 +111,23 @@ class CheckViews extends Command
      * @param $method
      * @param $ctrl
      */
-    protected static function checkViews($ctrl)
+    protected function checkViews($ctrl)
     {
         $methods = self::get_class_methods(new \ReflectionClass($ctrl));
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->retrieveViewsFromMethod();
 
-            self::checkView($ctrl, $method, $views);
+            $this->checkView($ctrl, $method, $views);
         }
     }
 
-    protected static function checkView($ctrl, $method, array $views)
+    protected function checkView($ctrl, $method, array $views)
     {
         foreach ($views as $view => $_) {
-            if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
-                app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
+            if (!Str::contains($_['name'], ['$', '->', ' ']) && !View::exists($_['name'])) {
+               $this->errorPrinter->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
-
             /* if (Str::contains($_['name'], ['$', '->'])) {
                  app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
                  sleep(1);
