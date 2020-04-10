@@ -50,9 +50,15 @@ class CheckView extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
+        $bar = $this->output->createProgressBar(count($psr4));
+        $bar->start();
+
         foreach ($psr4 as $namespace => $path) {
             self::within($namespace, $path);
+            $bar->advance();
         }
+
+        $bar->finish();
 
         $methods = [
             [new CheckViewFilesExistence, 'check'],

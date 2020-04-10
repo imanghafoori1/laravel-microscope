@@ -43,10 +43,17 @@ class CheckImports extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
+        $bar = $this->output->createProgressBar(count($psr4));
+        $bar->start();
+
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = CheckClasses::getAllPhpFiles($psr4Path);
             CheckClasses::checkImports($files, base_path(), $psr4Path, $psr4Namespace);
+
+            $bar->advance();
         }
+
+        $bar->finish();
 
         (new CheckViewRoute)->check([
             [new CheckClassReferences, 'check'],
