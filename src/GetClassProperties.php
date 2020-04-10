@@ -11,7 +11,7 @@ class GetClassProperties
         $tokens = token_get_all($buffer.'/**/');
 
         if (strpos($buffer, '{') === false) {
-            return [null, null, null, null,];
+            return [null, null, null, null];
         }
 
         [$namespace, $type, $class, $parent,] = self::readClassDefinition($tokens);
@@ -42,7 +42,7 @@ class GetClassProperties
             }
 
             // when we reach the first "class", or "interface" or "trait" keyword
-            if (! $class && in_array($tokens[$i][0], [T_CLASS, T_INTERFACE, T_TRAIT,])) {
+            if (! $class && in_array($tokens[$i][0], [T_CLASS, T_INTERFACE, T_TRAIT])) {
                 $class = $tokens[$i + 2][1];
                 $type = $tokens[$i + 2][0];
                 $i = $i + 2;
@@ -91,13 +91,13 @@ class GetClassProperties
                     // 3. end of tokens.
                     $i++;
 
-                    return [$i, $namespace,];
+                    return [$i, $namespace];
                 }
 
                 $namespace .= $tokens[$i][1];
             }
         }
 
-        return [$i, $namespace,];
+        return [$i, $namespace];
     }
 }
