@@ -40,7 +40,13 @@ class CheckRoute extends Command
         $errorPrinter->printer = $this->output;
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
+
+        $bar = $this->output->createProgressBar(count($routes));
+        $bar->start();
+
         foreach ($routes as $route) {
+            $bar->advance();
+
             if (! is_string($ctrl = $route->getAction()['uses'])) {
                 continue;
             }
@@ -66,6 +72,8 @@ class CheckRoute extends Command
                 app(ErrorPrinter::class)->route($ctrl, $errorIt, $errorCtrl);
             }
         }
+
+        $bar->finish();
 
         $this->finishCommand($errorPrinter);
     }
