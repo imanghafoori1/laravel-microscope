@@ -27,7 +27,8 @@ class GetClassProperties
                 $namespace,
                 $type,
                 $class,
-            ] = self::getImports($i, $tokens, $namespace);
+                $parent
+            ] = self::readClassDefinition($tokens);
         }
 
         return [
@@ -37,24 +38,31 @@ class GetClassProperties
         ];
     }
 
-    protected static function getImports($i, $tokens, $namespace)
+    protected static function readClassDefinition($tokens)
     {
+        $namespace = '';
         $type = $class = null;
         $allTokensCount = count($tokens);
-        for (; $i < $allTokensCount; $i++) {
+        $parent = null;
+        for ($i = 0; $i < $allTokensCount; $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
-                $tCount = count($tokens);
-                for ($j = $i + 1; $j < $tCount; $j++) {
-                    if ($tokens[$j][0] === T_STRING) {
-                        $namespace .= '\\'.$tokens[$j][1];
-                    } elseif ($tokens[$j] === '{' || $tokens[$j] === ';') {
-                        // go ahead and collect until you reach:
+                while (true) {
+                    $i++;
+                    // ignore white spaces
+                    if ($tokens[$i][0] === T_WHITESPACE) {
+                        continue;
+                    }
+
+                    if ($tokens[$i] === '{' || $tokens[$i] === ';' || ! isset($tokens[$i])) {
+                        // we go ahead and collect until we reach:
                         // 1. an opening curly brace {
                         // 2. or a semi-colon ;
+                        // 3. end of tokens.
                         break;
                     }
+
+                    $namespace .= '\\'.$tokens[$i][1];
                 }
-                unset($tCount);
             }
 
             // if we reach a double colon before a class keyword
@@ -63,19 +71,20 @@ class GetClassProperties
                 return [$namespace, null, null];
             }
 
-            $type = $tokens[$i][0];
+            // when we reach the first "class", or "interface" or "trait" keyword
             if (! $class && in_array($type, [
-                T_CLASS,
-                T_INTERFACE,
-                T_TRAIT,
-            ])) {
-                $tCount = count($tokens);
-                for ($j = $i + 1; $j < $tCount; $j++) {
-                    if (! $class && $tokens[$j] === '{') {
-                        $class = $tokens[$i + 2][1];
-                        break;
-                    }
-                }
+                    T_CLASS,
+                    T_INTERFACE,
+                    T_TRAIT,
+                ])) {
+                $class = $tokens[$i + 2][1];
+                $type = $tokens[$i + 2][0];
+                $i = $i + 3;
+                continue;
+            }
+
+            if ($type == T_EXTENDS) {
+                $parent = $tokens[$i + 2];
             }
         }
 
@@ -83,6 +92,7 @@ class GetClassProperties
             $namespace,
             $type,
             $class,
+            $parent,
         ];
     }
 }
