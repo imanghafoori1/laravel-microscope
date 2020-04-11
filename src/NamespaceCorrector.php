@@ -19,8 +19,6 @@ class NamespaceCorrector
 
         $oldLine = ltrim($oldLine, '\\');
         ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
-
-        app(ErrorPrinter::class)->fixedNameSpace($correctNamespace);
     }
 
     /**
@@ -35,6 +33,7 @@ class NamespaceCorrector
         // remove the filename.php from the end of the string
         $p = explode(DIRECTORY_SEPARATOR, $relativeClassPath);
         array_pop($p);
+        // ensure back slashes.
         $p = implode('\\', $p);
 
         $composerPath = str_replace('/', '\\', $composerPath);
