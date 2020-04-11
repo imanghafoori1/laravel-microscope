@@ -211,7 +211,6 @@ class CheckClasses
 
         // maybe a listener for: 'microscope.namespace_fixed' event.
         app(ErrorPrinter::class)->fixedNamespace($correctNamespace);
-
     }
 
     private static function migrationPaths()

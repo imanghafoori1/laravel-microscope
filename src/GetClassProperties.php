@@ -17,7 +17,7 @@ class GetClassProperties
         return self::readClassDefinition($tokens);
     }
 
-    static function readClassDefinition($tokens)
+    public static function readClassDefinition($tokens)
     {
         $type = $class = null;
         $allTokensCount = count($tokens);
