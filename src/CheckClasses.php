@@ -28,6 +28,10 @@ class CheckClasses
     public static function checkImports($files, FileCheckContract $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
+            if ($fileCheckContract) {
+                $fileCheckContract->onFileTap($classFilePath);
+            }
+
             $absFilePath = $classFilePath->getRealPath();
 
             $tokens = token_get_all(file_get_contents($absFilePath));
@@ -102,6 +106,10 @@ class CheckClasses
     public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
+            if ($fileCheckContract) {
+                $fileCheckContract->onFileTap($classFilePath);
+            }
+
             $absFilePath = $classFilePath->getRealPath();
 
             // exclude blade files
