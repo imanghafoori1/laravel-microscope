@@ -49,7 +49,7 @@ class CheckImports extends Command implements FileCheckContract
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = CheckClasses::getAllPhpFiles($psr4Path);
-            CheckClasses::checkImports($files, base_path(), $psr4Path, $psr4Namespace, $this);
+            CheckClasses::checkImports($files, $this);
         }
 
         (new CheckViewRoute)->check([
