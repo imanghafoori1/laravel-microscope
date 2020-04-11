@@ -310,9 +310,9 @@ class ParseUseStatement
             switch (is_array($token) ? $token[0] : $token) {
                 case T_USE:
                     while (! $class && ($name = self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]))) {
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]))) {
                         $name = ltrim($name, '\\');
                         if (self::fetch($tokens, '{')) {
                             while ($suffix = self::fetch($tokens, [
@@ -373,9 +373,9 @@ class ParseUseStatement
             switch (is_array($token) ? $token[0] : $token) {
                 case T_NAMESPACE:
                     $namespace = ltrim(self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]).'\\', '\\');
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]).'\\', '\\');
                     $uses = [];
                     break;
 
@@ -394,9 +394,9 @@ class ParseUseStatement
 
                 case T_USE:
                     while (! $class && ($name = self::fetch($tokens, [
-                            T_STRING,
-                            T_NS_SEPARATOR,
-                        ]))) {
+                        T_STRING,
+                        T_NS_SEPARATOR,
+                    ]))) {
                         $name = ltrim($name, '\\');
                         if (self::fetch($tokens, '{')) {
                             while ($suffix = self::fetch($tokens, [
