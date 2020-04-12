@@ -10,7 +10,6 @@ use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
-use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -80,7 +79,7 @@ class CheckViews extends Command
      *
      * @return void
      */
-    protected function checkAllClasses($classes, $basePath, $composerPath, $composerNamespace)
+    protected function checkAllClasses($classes)
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -129,10 +128,6 @@ class CheckViews extends Command
             if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
-            /* if (Str::contains($_['name'], ['$', '->'])) {
-                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
-                 sleep(1);
-             }*/
         }
     }
 
