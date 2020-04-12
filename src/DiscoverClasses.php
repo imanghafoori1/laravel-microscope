@@ -45,7 +45,7 @@ class DiscoverClasses
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
-            if (! self::hasOpeningTag($absFilePath)) {
+            if (!self::hasOpeningTag($absFilePath)) {
                 continue;
             }
 
@@ -53,21 +53,20 @@ class DiscoverClasses
                 $currentNamespace,
                 $class,
                 $type,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            ]
+                = GetClassProperties::fromFilePath($absFilePath);
             // it means that, there is no class/trait definition found in the file.
-            if (! $class) {
+            if (!$class) {
                 continue;
             }
 
             $tokens = token_get_all(file_get_contents($absFilePath));
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
             foreach ($nonImportedClasses as $nonImportedClass) {
-                if (! class_exists($nonImportedClass['class']) && ! interface_exists($nonImportedClass['class'])) {
-                    $p = app(ErrorPrinter::class);
-                    $p->printHeader('Used class does not exist...');
-                    $p->print($nonImportedClass['class']);
-                    $p->printLink($absFilePath, $nonImportedClass['line']);
-                    $p->end();
+                if (!class_exists($nonImportedClass['class']) && !interface_exists($nonImportedClass['class'])) {
+                    app(ErrorPrinter::class)
+                        ->others($nonImportedClass['class'], 'Used class does not exist...', $absFilePath,
+                            $nonImportedClass['line']);
                 }
             }
 
@@ -102,7 +101,7 @@ class DiscoverClasses
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
             $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
-            if (! self::hasOpeningTag($absFilePath)) {
+            if (!self::hasOpeningTag($absFilePath)) {
                 app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
@@ -111,10 +110,11 @@ class DiscoverClasses
                 $currentNamespace,
                 $class,
                 $type,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            ]
+                = GetClassProperties::fromFilePath($absFilePath);
 
             // it means that, there is no class/trait definition found in the file.
-            if (! $class) {
+            if (!$class) {
                 app(ErrorPrinter::class)->print('skipped file: '.$classPath);
                 continue;
             }
@@ -193,7 +193,7 @@ class DiscoverClasses
         $newline = 'namespace '.$correctNamespace.';'.PHP_EOL;
 
         // in case there is no namespace specified in the file:
-        if (! $incorrectNamespace) {
+        if (!$incorrectNamespace) {
             $incorrectNamespace = '<?php';
             $newline = '<?php'.PHP_EOL.PHP_EOL.$newline;
         }
@@ -230,7 +230,7 @@ class DiscoverClasses
      */
     private static function exists($imp)
     {
-        return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
+        return !class_exists($imp) && !interface_exists($imp) && !trait_exists($imp);
     }
 
     /**
@@ -254,7 +254,6 @@ class DiscoverClasses
      */
     protected static function handleMissingClass($basePath, $path, $rootNamespace, $_path, $incorrectNamespace)
     {
-
         /*static::$fixedNamespaces[$incorrectNamespace] = [
             'class' => $class,
             'correct_namespace' => $correctNamespace
