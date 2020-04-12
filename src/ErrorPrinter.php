@@ -6,17 +6,18 @@ use Imanghafoori\LaravelMicroscope\PendingObjects\PendingError;
 
 class ErrorPrinter
 {
-    public $counts = [
-        'view' => [],
-        'route'=>[],
-        'total' => 0,
-        'bladeImport' => [],
-        'badRelation' => [],
-        'wrongImport' => [],
-        'wrongUsedClassError' => [],
-        'badNamespace' => [],
-        'others' =>[]
-    ];
+    public $counts
+        = [
+            'view'                => [],
+            'route'               => [],
+            'total'               => 0,
+            'bladeImport'         => [],
+            'badRelation'         => [],
+            'wrongImport'         => [],
+            'wrongUsedClassError' => [],
+            'badNamespace'        => [],
+            'others'              => [],
+        ];
 
     public $printer;
 
@@ -30,11 +31,12 @@ class ErrorPrinter
             ->link($path, $lineNumber));
     }
 
-    public function others($error)
+    public function others($error, $header = null, $linkPath = null, $linkLineNum = 0)
     {
         array_push($this->counts['others'], (new PendingError('others'))
-        ->header(null)
-        ->errorData($error));
+            ->header($header)
+            ->errorData($error)
+            ->link($linkPath, $linkLineNum));
     }
 
     public function route($path, $errorIt, $errorTxt, $linkPath = null, $linkLineNum = 0)
