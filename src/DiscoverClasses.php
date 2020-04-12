@@ -102,7 +102,7 @@ class DiscoverClasses
             $absFilePath = $classFilePath->getRealPath();
             $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
             if (!self::hasOpeningTag($absFilePath)) {
-                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
+                app(ErrorPrinter::class)->others('Skipped file: '.$classPath);
                 continue;
             }
 
@@ -115,7 +115,7 @@ class DiscoverClasses
 
             // it means that, there is no class/trait definition found in the file.
             if (!$class) {
-                app(ErrorPrinter::class)->print('skipped file: '.$classPath);
+                app(ErrorPrinter::class)->others('skipped file: '.$classPath);
                 continue;
             }
 
@@ -199,7 +199,7 @@ class DiscoverClasses
         }
         ReplaceLine::replaceFirst($classFilePath, ltrim($incorrectNamespace, '\\'), $newline);
 
-        app(ErrorPrinter::class)->print('namespace fixed to:'.$correctNamespace);
+        app(ErrorPrinter::class)->others('namespace fixed to:'.$correctNamespace);
     }
 
     /**
@@ -209,9 +209,9 @@ class DiscoverClasses
      */
     protected static function errorOut($path, $correctNamespace, $incorrectNamespace)
     {
-        app(ErrorPrinter::class)->print(' - Incorrect namespace: '.$incorrectNamespace);
-        app(ErrorPrinter::class)->printLink($path);
-        app(ErrorPrinter::class)->print('It should be:   namespace '.$correctNamespace.';  ');
+        app(ErrorPrinter::class)
+            ->others('It should be:   namespace '
+                .$correctNamespace.';  ', ' - Incorrect namespace: '.$incorrectNamespace, $path);
     }
 
     protected static function calculateCorrectNamespace($classPath, $path, $rootNamespace)
@@ -239,10 +239,11 @@ class DiscoverClasses
      */
     private static function wrongImport(string $err, $imp)
     {
-        app(ErrorPrinter::class)->print(' - Wrong import');
-        app(ErrorPrinter::class)->print($err);
-        app(ErrorPrinter::class)->print('line: '.$imp[1].'     use '.$imp[0].';');
-        app(ErrorPrinter::class)->print('/********************************************/');
+        app(ErrorPrinter::class)
+            ->others($err.
+                PHP_EOL.'line: '.$imp[1].'     use '.$imp[0].';'.
+                PHP_EOL.'/********************************************/',
+                ' - Wrong import');
     }
 
     /**
@@ -259,6 +260,6 @@ class DiscoverClasses
             'correct_namespace' => $correctNamespace
         ];*/
 
-        app(ErrorPrinter::class)->print('/********************************************/');
+        app(ErrorPrinter::class)->others('/********************************************/');
     }
 }
