@@ -11,12 +11,12 @@ class CheckViewFilesExistence
     {
         $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
-            if (! $this->isEnvMake($tokens, $i)) {
+            if (!$this->isEnvMake($tokens, $i)) {
                 continue;
             }
 
             $viewName = trim($tokens[$i + 4][1], '\'\"');
-            if (! View::exists($viewName)) {
+            if (!View::exists($viewName)) {
                 $this->error($tokens, $blade, $i);
             }
             $i = $i + 5;
@@ -45,9 +45,8 @@ class CheckViewFilesExistence
      */
     private function error(array $tokens, $blade, int $i)
     {
-        $p = app(ErrorPrinter::class);
-        $p->print('included view: '.$tokens[$i + 4][1].' does not exist in blade file');
-        $p->printLink($blade->getRealPath(), $tokens[$i + 4][2]);
-        $p->end();
+        $p = app(ErrorPrinter::class)
+            ->others('included view: '.$tokens[$i + 4][1].' does not exist in blade file',
+                null, $blade->getRealPath(), $tokens[$i + 4][2]);
     }
 }
