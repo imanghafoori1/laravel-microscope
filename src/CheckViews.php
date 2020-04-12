@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;
 
-class CheckViewRoute
+class CheckViews
 {
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -27,31 +27,6 @@ class CheckViewRoute
         unset($hints['notifications'], $hints['pagination']);
 
         return $hints;
-    }
-
-    public function checkConfigPaths($paths)
-    {
-        foreach ($paths as $path) {
-            $files = (new Finder)->files()->in($path);
-
-            foreach ($files as $blade) {
-                /**
-                 * @var \Symfony\Component\Finder\SplFileInfo $blade
-                 */
-                $content = file_get_contents($blade->getRealPath());
-                $tokens = token_get_all($content);
-
-                $classes = ParseUseStatement::findUseStatements($tokens);
-
-                foreach ($classes as $class) {
-                    if (! class_exists($class[0])) {
-                        app(ErrorPrinter::class)->print('wrong import at: '.$blade->getRealPath());
-                    }
-                }
-
-                return;
-            }
-        }
     }
 
     /**

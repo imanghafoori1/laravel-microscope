@@ -62,7 +62,7 @@ class ParseUseStatement
         return self::$cache[$name];
     }
 
-    public static function getUseStatementsByPath($namespacedClassName, $absPath)
+    public static function getUseStatementsByPath($namespacedClassName, $absPath = null)
     {
         if (! isset(self::$cache[$namespacedClassName])) {
             $code = file_get_contents($absPath);
