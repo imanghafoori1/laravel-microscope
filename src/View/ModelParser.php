@@ -4,11 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\View;
 
 class ModelParser
 {
-    function extractParametersValueWithinMethod($tokens)
+    public function extractParametersValueWithinMethod($tokens)
     {
         $relations = [];
         $i = 0;
-        while(true) {
+        while (true) {
             if (! isset($tokens[$i])) {
                 break;
             }
@@ -36,7 +36,7 @@ class ModelParser
             }
 
             // continues ahead
-            while(true) {
+            while (true) {
                 $token = $this->getNextToken($tokens, $i);
 
                 if ($this->isThis($token)) {
@@ -51,7 +51,7 @@ class ModelParser
                     }
                     $isRelation = false;
                     break;
-                } elseif($token == '}') {
+                } elseif ($token == '}') {
                     $isRelation = false;
                     break;
                 } elseif ($token[0] == T_RETURN) {
@@ -160,7 +160,7 @@ class ModelParser
     {
         $i++;
         if (! isset($tokens[$i])) {
-            return null;
+            return;
         }
         $nextToken = $tokens[$i];
         if ($nextToken[0] == T_WHITESPACE) {
