@@ -4,9 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Composer;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -37,6 +39,7 @@ class CheckImports extends Command implements FileCheckContract
      *
      * @param  ErrorPrinter  $errorPrinter
      *
+     * @throws \ErrorException
      * @return mixed
      */
     public function handle(ErrorPrinter $errorPrinter)
@@ -48,11 +51,19 @@ class CheckImports extends Command implements FileCheckContract
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = CheckClasses::getAllPhpFiles($psr4Path);
-            CheckClasses::checkImports($files, base_path(), $psr4Path, $psr4Namespace, $this);
+            try {
+                $files = CheckClasses::getAllPhpFiles($psr4Path);
+                CheckClasses::checkImports($files, $this);
+            } catch (\ErrorException $e) {
+                if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
+                    throw $e;
+                }
+
+                $this->warnDumping($e->getMessage());
+            }
         }
 
-        (new CheckViewRoute)->check([
+        (new CheckViews)->check([
             [new CheckClassReferences, 'check'],
         ]);
 
@@ -67,5 +78,13 @@ class CheckImports extends Command implements FileCheckContract
         if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
             resolve(ErrorPrinter::class)->authConf();
         }
+    }
+
+    protected function warnDumping($msg)
+    {
+        $this->info('It seems composer has some trouble with autoload...');
+        $this->info($msg);
+        $this->info('Running "composer dump-autoload" command...');
+        resolve(Composer::class)->dumpAutoloads();
     }
 }

@@ -2,30 +2,32 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\View\ModelParser;
-use ReflectionClass;
 
 class ModelRelations
 {
-    /**
-     * @param  string  $class
-     * @param  ReflectionClass  $ref
-     */
-    public static function checkModelsRelations(string $class, ReflectionClass $ref)
+    public static function checkModelRelations(array $tokens, $currentNamespace, $class, $absFilePath)
     {
-        if (! is_subclass_of($class, Model::class)) {
-            return;
-        }
+        $relations = (new ModelParser())->extractParametersValueWithinMethod($tokens);
         $p = app(ErrorPrinter::class);
-        foreach (CheckViews::get_class_methods($ref) as $method) {
-            $params = (new ModelParser())->retrieveFromMethod($method, $ref);
-            foreach ($params as $param) {
-                $model = trim($param[0], '\'\"');
-                if (! class_exists($model)) {
-                    $p->badRelation($ref, $method, $model);
+        foreach ($relations as $relation) {
+            // check parameters
+            foreach ($relation['params'] as $param) {
+                if ($param) {
+                    $uses = ParseUseStatement::getUseStatementsByPath($currentNamespace.'\\'.$class);
+                    $param = $uses[$param][0] ?? $param;
+                    if (in_array($param[0], ["'", '"']) && ! class_exists(trim($param, '\'\"'))) {
+                        $p->badRelation($absFilePath, $relation['line'], $param);
+                    }
+                } else {
+                    // todo warn if there was no parameter passed.
                 }
+                // todo check the rest of the parameters if needed for some types of relations.
+                break;
+            }
+            // check has return
+            if (! $relation['hasReturn']) {
+                // todo print error that the relation should have return
             }
         }
     }

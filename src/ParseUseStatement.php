@@ -62,7 +62,7 @@ class ParseUseStatement
         return self::$cache[$name];
     }
 
-    public static function getUseStatementsByPath($namespacedClassName, $absPath)
+    public static function getUseStatementsByPath($namespacedClassName, $absPath = null)
     {
         if (! isset(self::$cache[$namespacedClassName])) {
             $code = file_get_contents($absPath);
@@ -98,7 +98,7 @@ class ParseUseStatement
     {
         try {
             $c = 0;
-            $collect = false;
+            $implements = $collect = false;
             $classes = [];
             $force_close = false;
             $lastToken = $secLastToken = [null, null, null];
@@ -138,18 +138,22 @@ class ParseUseStatement
                 } elseif ($t == T_VARIABLE) {
                     if ($isDefiningFunction) {
                         $c++;
-                        $collect = false;
                     }
+                    $collect = false;
                     $secLastToken = $lastToken;
                     $lastToken = $token;
                     // we do not want to collect variables
+                    continue;
+                } elseif ($t == T_IMPLEMENTS) {
+                    $implements = true;
+                    $c++;
                     continue;
                 } elseif ($t == T_WHITESPACE) {
                     // we do not want to keep track of
                     // white spaces or collect them
                     continue;
                 } elseif ($t == ';' || $t == '}') {
-                    $isMethodSignature = false;
+                    $implements = $isMethodSignature = false;
                     $force_close = false;
                     if ($collect) {
                         $c++;
@@ -160,15 +164,15 @@ class ParseUseStatement
                     $lastToken = $token;
                     continue;
                 } elseif ($t == ',') {
-                    if ($isMethodSignature) {
+                    if ($isMethodSignature || $implements) {
                         $collect = true;
                     } else {
+                        // for method calls: foo(new Hello, $var);
+                        // we do not want to collect after comma.
                         $collect = false;
                     }
                     $force_close = false;
-                    if ($collect) {
-                        $c++;
-                    }
+                    $c++;
                     $secLastToken = $lastToken;
                     $lastToken = $token;
                     continue;
@@ -231,6 +235,7 @@ class ParseUseStatement
                     }
                 } elseif ($t == T_NEW) {
                     // we start to collect tokens after the new keyword.
+                    // unless we reach a variable name.
                     $collect = true;
                     $secLastToken = $lastToken;
                     $lastToken = $token;
