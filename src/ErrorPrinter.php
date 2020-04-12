@@ -15,6 +15,7 @@ class ErrorPrinter
         'wrongImport' => [],
         'wrongUsedClassError' => [],
         'badNamespace' => [],
+        'others' =>[]
     ];
 
     public $printer;
@@ -27,6 +28,13 @@ class ErrorPrinter
             ->header($this->yellow($fileName.'.blade.php').' does not exist')
             ->errorData(trim($lineContent))
             ->link($path, $lineNumber));
+    }
+
+    public function others($error)
+    {
+        array_push($this->counts['others'], (new PendingError('others'))
+        ->header(null)
+        ->errorData($error));
     }
 
     public function route($path, $errorIt, $errorTxt, $linkPath = null, $linkLineNum = 0)
