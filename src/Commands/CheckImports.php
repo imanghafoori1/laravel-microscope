@@ -8,7 +8,7 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -63,7 +63,7 @@ class CheckImports extends Command implements FileCheckContract
             }
         }
 
-        (new CheckViewRoute)->check([
+        (new CheckViews)->check([
             [new CheckClassReferences, 'check'],
         ]);
 

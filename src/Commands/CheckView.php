@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
-use Imanghafoori\LaravelMicroscope\CheckViewRoute;
+use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -59,7 +59,7 @@ class CheckView extends Command
             [new CheckClassReferences, 'check'],
             [new CheckRouteCalls, 'check'],
         ];
-        (new CheckViewRoute)->check($methods);
+        (new CheckViews)->check($methods);
 
         $this->finishCommand($errorPrinter);
     }
