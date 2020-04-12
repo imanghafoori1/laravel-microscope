@@ -45,7 +45,7 @@ class CheckViewRoute
 
                 foreach ($classes as $class) {
                     if (! class_exists($class[0])) {
-                        app(ErrorPrinter::class)->print('wrong import at: '.$blade->getRealPath());
+                        app(ErrorPrinter::class)->others('wrong import at: '.$blade->getRealPath());
                     }
                 }
 
