@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Support\Composer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Composer;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\CheckViewRoute;
