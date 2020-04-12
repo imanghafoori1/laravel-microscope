@@ -143,7 +143,7 @@ class ErrorPrinter
         }
     }
 
-    public function fixedNameSpace($correctNamespace)
+    public function fixedNamespace($correctNamespace)
     {
         $msg = $this->yellow("namespace $correctNamespace;");
         $this->print('namespace fixed to: '.$msg);

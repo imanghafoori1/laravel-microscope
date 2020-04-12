@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
 
@@ -25,16 +25,15 @@ class CheckClasses
      *
      * @return void
      */
-    public static function checkImports($files, $basePath, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
+    public static function checkImports($files, FileCheckContract $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
-            if ($fileCheckContract) {
-                $fileCheckContract->onFileTap($classFilePath);
-            }
-
             $absFilePath = $classFilePath->getRealPath();
 
-            if (! self::hasOpeningTag($absFilePath)) {
+            $tokens = token_get_all(file_get_contents($absFilePath));
+
+            // If file is empty or does not begin with <?php
+            if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
                 continue;
             }
 
@@ -42,15 +41,22 @@ class CheckClasses
                 $currentNamespace,
                 $class,
                 $type,
-                $parent
-            ] = GetClassProperties::fromFilePath($absFilePath);
+                $parent,
+                $interfaces
+            ] = GetClassProperties::readClassDefinition($tokens);
+
             // It means that, there is no class/trait definition found in the file.
             if (! $class) {
                 continue;
             }
 
+            event('laravel_microscope.checking_file', [$absFilePath]);
+            // @todo better to do it an event listener.
+            $fileCheckContract->onFileTap($classFilePath);
+
             $tokens = token_get_all(file_get_contents($absFilePath));
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
                 if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {
@@ -72,8 +78,9 @@ class CheckClasses
                 self::checkImportedClasses($imports, $absFilePath);
 
                 if ($currentNamespace) {
-                    $ref = new ReflectionClass($currentNamespace.'\\'.$class);
-                    ModelRelations::checkModelsRelations($currentNamespace.'\\'.$class, $ref);
+                    if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
+                        ModelRelations::checkModelRelations($tokens, $currentNamespace, $class, $absFilePath);
+                    }
                 } else {
                     // @todo show skipped file...
                 }
@@ -97,10 +104,6 @@ class CheckClasses
     public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
-            if ($fileCheckContract) {
-                $fileCheckContract->onFileTap($classFilePath);
-            }
-
             $absFilePath = $classFilePath->getRealPath();
 
             // exclude blade files
@@ -117,21 +120,28 @@ class CheckClasses
                 continue;
             }
 
+            if ($fileCheckContract) {
+                $fileCheckContract->onFileTap($classFilePath);
+            }
+
             [
                 $currentNamespace,
                 $class,
                 $type,
+                $parent
             ] = GetClassProperties::fromFilePath($absFilePath);
 
             // skip if there is no class/trait/interface definition found.
             // for example a route file or a config file.
-            if (! $class) {
+            if (! $class || $parent == 'Migration') {
                 continue;
             }
 
             $relativePath = self::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
-            self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
+            if ($currentNamespace !== $correctNamespace) {
+                self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
+            }
         }
     }
 
@@ -144,12 +154,9 @@ class CheckClasses
         }
 
         $buffer = fread($fp, 20);
-
-        $result = strpos($buffer, '<?php') !== false;
-
         fclose($fp);
 
-        return $result;
+        return Str::startsWith($buffer, '<?php');
     }
 
     /**
@@ -185,11 +192,6 @@ class CheckClasses
         }
     }
 
-    /**
-     * @param $imp
-     *
-     * @return bool
-     */
     private static function exists($imp)
     {
         return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
@@ -197,14 +199,20 @@ class CheckClasses
 
     protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
     {
-        if ($currentNamespace !== $correctNamespace) {
-            app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-            NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
-        }
+        // maybe an event listener
+        app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
+
+        event('laravel_microscope.namespace_fixing', get_defined_vars());
+        NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
+        event('laravel_microscope.namespace_fixed', get_defined_vars());
+
+        // maybe a listener for: 'microscope.namespace_fixed' event.
+        app(ErrorPrinter::class)->fixedNamespace($correctNamespace);
     }
 
     private static function migrationPaths()
     {
+        // normalize the migration paths
         $migrationDirs = [];
         foreach (app('migrator')->paths() as $path) {
             $migrationDirs[] = str_replace([
@@ -215,6 +223,14 @@ class CheckClasses
                 DIRECTORY_SEPARATOR,
             ], $path);
         }
+
+        /*foreach ($migrationDirs as $dir) {
+            $parts = explode(DIRECTORY_SEPARATOR, $dir);
+
+            foreach($parts as $part) {
+
+            }
+        }*/
 
         return $migrationDirs;
     }
