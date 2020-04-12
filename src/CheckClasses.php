@@ -2,9 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelMicroscope\View\ModelParser;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;

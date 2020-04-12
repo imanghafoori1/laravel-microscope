@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\View\ModelParser;
 
 class ModelRelations
 {
-    static function checkModelRelations(array $tokens, $currentNamespace, $class, $absFilePath)
+    public static function checkModelRelations(array $tokens, $currentNamespace, $class, $absFilePath)
     {
         $relations = (new ModelParser())->extractParametersValueWithinMethod($tokens);
         $p = app(ErrorPrinter::class);
