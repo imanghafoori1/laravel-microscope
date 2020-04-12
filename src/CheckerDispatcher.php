@@ -17,8 +17,7 @@ class CheckerDispatcher extends Dispatcher
     private function error(string $string)
     {
         $p = app(ErrorPrinter::class);
-        $p->print($string);
-        $p->end();
+        $p->others($string);
     }
 
     private function isLikeClassPath($event)
