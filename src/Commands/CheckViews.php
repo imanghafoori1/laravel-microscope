@@ -58,7 +58,7 @@ class CheckViews extends Command
             [new CheckClassReferences, 'check'],
             [new CheckRouteCalls, 'check'],
         ];
-        (new self)->check($methods);
+        (new \Imanghafoori\LaravelMicroscope\CheckViews())->check($methods);
 
         $this->finishCommand($errorPrinter);
     }
