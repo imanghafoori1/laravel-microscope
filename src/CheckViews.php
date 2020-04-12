@@ -10,6 +10,8 @@ class CheckViews
     /**
      * Define your route model bindings, pattern filters, etc.
      *
+     * @param $methods
+     *
      * @return void
      */
     public function check($methods)
