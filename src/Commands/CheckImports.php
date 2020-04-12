@@ -2,18 +2,18 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
+use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
+use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelMicroscope\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\CheckViewRoute;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\CheckViewRoute;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Util;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -39,6 +39,7 @@ class CheckImports extends Command implements FileCheckContract
      *
      * @param  ErrorPrinter  $errorPrinter
      *
+     * @throws \ErrorException
      * @return mixed
      */
     public function handle(ErrorPrinter $errorPrinter)
@@ -81,9 +82,9 @@ class CheckImports extends Command implements FileCheckContract
 
     protected function warnDumping($msg)
     {
-        dump('It seems composer has some trouble with autoload...');
-        dump($msg);
-        dump('Running "composer dump-autoload" command...');
+        $this->info('It seems composer has some trouble with autoload...');
+        $this->info($msg);
+        $this->info('Running "composer dump-autoload" command...');
         resolve(Composer::class)->dumpAutoloads();
     }
 }
