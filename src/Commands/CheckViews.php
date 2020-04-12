@@ -59,7 +59,7 @@ class CheckViews extends Command
             [new CheckClassReferences, 'check'],
             [new CheckRouteCalls, 'check'],
         ];
-        (new CheckViews)->check($methods);
+        (new self)->check($methods);
 
         $this->finishCommand($errorPrinter);
     }
