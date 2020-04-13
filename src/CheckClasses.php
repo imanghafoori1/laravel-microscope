@@ -5,9 +5,8 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use ReflectionException;
-use Symfony\Component\Finder\Finder;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Symfony\Component\Finder\Finder;
 
 class CheckClasses
 {
@@ -64,7 +63,6 @@ class CheckClasses
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
                 }
             }
-
 
 //                $classPath = self::relativePath($basePath, $absFilePath);
 //                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
