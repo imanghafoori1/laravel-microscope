@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
 {
@@ -64,27 +65,24 @@ class CheckClasses
                 }
             }
 
-            try {
+
 //                $classPath = self::relativePath($basePath, $absFilePath);
 //                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
-                if ($currentNamespace) {
-                    $namespacedClassName = $currentNamespace.'\\'.$class;
-                } else {
-                    $namespacedClassName = $class;
-                }
+            if ($currentNamespace) {
+                $namespacedClassName = $currentNamespace.'\\'.$class;
+            } else {
+                $namespacedClassName = $class;
+            }
 
-                $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
-                self::checkImportedClasses($imports, $absFilePath);
+            $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
+            self::checkImportedClasses($imports, $absFilePath);
 
-                if ($currentNamespace) {
-                    if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
-                        ModelRelations::checkModelRelations($tokens, $currentNamespace, $class, $absFilePath);
-                    }
-                } else {
-                    // @todo show skipped file...
+            if ($currentNamespace) {
+                if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
+                    ModelRelations::checkModelRelations($tokens, $currentNamespace, $class, $absFilePath);
                 }
-            } catch (ReflectionException $e) {
+            } else {
                 // @todo show skipped file...
             }
         }

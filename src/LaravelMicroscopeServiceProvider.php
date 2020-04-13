@@ -13,6 +13,7 @@ use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
 use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
 use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {

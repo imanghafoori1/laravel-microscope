@@ -1,8 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
-
-use Imanghafoori\LaravelMicroscope\PendingObjects\PendingError;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class ErrorPrinter
 {
@@ -50,12 +48,12 @@ class ErrorPrinter
         $this->print('The model in the "config/auth.php" is not a valid class');
     }
 
-    public function badRelation(\ReflectionClass $ref, \ReflectionMethod $method, $relatedModel)
+    public function badRelation($path, $lineNumber, $relatedModel)
     {
         array_push($this->counts['badRelation'], (new PendingError('badRelation'))
             ->header('Wrong model is passed in relation:')
             ->errorData($this->yellow($relatedModel).'   <==== does not exist')
-            ->link($ref->getFileName(), $method->getStartLine() + 1));
+            ->link($path, $lineNumber));
     }
 
     public function wrongImport($absPath, $class, $line)

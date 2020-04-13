@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\Gate;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckerGate extends Gate
 {

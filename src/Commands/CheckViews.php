@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Util;

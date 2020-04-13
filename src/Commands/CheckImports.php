@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 use Imanghafoori\LaravelMicroscope\Util;
@@ -55,6 +55,7 @@ class CheckImports extends Command implements FileCheckContract
                 $files = CheckClasses::getAllPhpFiles($psr4Path);
                 CheckClasses::checkImports($files, $this);
             } catch (\ErrorException $e) {
+                // in case a file is moved or deleted...
                 if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
                     throw $e;
                 }

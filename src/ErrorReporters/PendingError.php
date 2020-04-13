@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\PendingObjects;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class PendingError
 {
@@ -99,7 +99,7 @@ class PendingError
     /**
      * @return int
      */
-    public function getLinkLineNumber(): int
+    public function getLinkLineNumber()
     {
         return $this->linkLineNumber;
     }
