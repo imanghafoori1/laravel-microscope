@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Imanghafoori\LaravelMicroscope\View\ModelParser;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\View\ModelParser;
 
 class ModelRelations
 {

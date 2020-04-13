@@ -66,7 +66,7 @@ class ModelParser
     {
         $i++;
         if (! isset($tokens[$i])) {
-            return null;
+            return;
         }
         $nextToken = $tokens[$i];
         if ($nextToken[0] == T_WHITESPACE) {
