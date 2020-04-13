@@ -11,12 +11,12 @@ class CheckViewFilesExistence
     {
         $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
-            if (!$this->isEnvMake($tokens, $i)) {
+            if (! $this->isEnvMake($tokens, $i)) {
                 continue;
             }
 
             $viewName = trim($tokens[$i + 4][1], '\'\"');
-            if (!View::exists($viewName)) {
+            if (! View::exists($viewName)) {
                 $this->error($tokens, $blade, $i);
             }
             $i = $i + 5;
