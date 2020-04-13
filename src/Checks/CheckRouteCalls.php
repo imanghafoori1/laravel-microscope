@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Symfony\Component\Finder\SplFileInfo;
 
 class CheckRouteCalls

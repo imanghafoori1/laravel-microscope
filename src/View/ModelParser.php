@@ -22,42 +22,15 @@ class ModelParser
             $i = $i + 2;
             $method = $tokens[$i];
 
-            $relation = [
-                'name' => $method[1],
-                'line' => $method[2],
-                'hasReturn' => false,
-            ];
             $i++;
 
             if (! $isRelation) {
                 continue;
             }
 
-            // continues ahead
-            while (true) {
-                $token = $this->getNextToken($tokens, $i);
+            $relation = $this->containersRelationDefinition($tokens, $method, $i);
 
-                if ($this->is([T_VARIABLE, '$this'], $token)) {
-                    $token = $this->getNextToken($tokens, $i);
-                    if ($this->is([T_OBJECT_OPERATOR, '->'], $token)) {
-                        $token = $this->getNextToken($tokens, $i);
-                        if ($this->isRelation($token)) {
-                            $relation['type'] = $token[1];
-                            $isRelation = true;
-                            break;
-                        }
-                    }
-                    $isRelation = false;
-                    break;
-                } elseif ($token == '}') {
-                    $isRelation = false;
-                    break;
-                } elseif ($token[0] == T_RETURN) {
-                    $relation['hasReturn'] = true;
-                }
-            }
-
-            if (! $isRelation) {
+            if (! $relation) {
                 continue;
             }
 
@@ -85,11 +58,11 @@ class ModelParser
 
     /**
      * @param  array  $tokens
-     * @param $i
+     * @param  int  $i
      *
      * @return mixed
      */
-    protected function getNextToken(array $tokens, &$i)
+    protected function getNextToken($tokens, &$i)
     {
         $i++;
         if (! isset($tokens[$i])) {
@@ -205,5 +178,47 @@ class ModelParser
         }
 
         return [$params, $i];
+    }
+
+    /**
+     * @param  array  $tokens
+     * @param  array  $method
+     * @param  int  $i
+     *
+     * @return array|bool
+     */
+    protected function containersRelationDefinition($tokens, $method, &$i)
+    {
+        $relation = [
+            'name' => $method[1],
+            'line' => $method[2],
+            'hasReturn' => false,
+        ];
+        // continues ahead
+        while (true) {
+            $token = $this->getNextToken($tokens, $i);
+
+            if ($this->is([T_VARIABLE, '$this'], $token)) {
+                $token = $this->getNextToken($tokens, $i);
+                if (! $this->is([T_OBJECT_OPERATOR, '->'], $token)) {
+                    continue;
+                }
+
+                $token = $this->getNextToken($tokens, $i);
+                if (! $this->isRelation($token)) {
+                    continue;
+                }
+
+                $relation['type'] = $token[1];
+
+                return $relation;
+            } elseif ($token == '}') {
+                return false;
+            } elseif ($token[0] == T_RETURN) {
+                $relation['hasReturn'] = true;
+            }
+        }
+
+        return false;
     }
 }

@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckViewFilesExistence
 {

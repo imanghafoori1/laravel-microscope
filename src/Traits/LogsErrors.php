@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Traits;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 trait LogsErrors
 {
