@@ -12,24 +12,22 @@ class ModelParser
             if (! isset($tokens[$i])) {
                 break;
             }
-            $token = $tokens[$i];
 
             // discover public function
-            if ($tokens[$i][0] == T_FUNCTION && ! in_array($token[0], [T_PRIVATE, T_PROTECTED]) && $tokens[$i + 2][0] == T_STRING) {
-                $isRelation = true;
-                $i = $i + 2;
-                $methodName = $tokens[$i];
-
-                $relation = [
-                    'name' => $methodName[1],
-                    'line' => $methodName[2],
-                    'hasReturn' => false,
-                ];
-                $i = $i + 1;
-            } else {
+            if (! $this->isPublicMethodDeclaration($tokens, $i)) {
                 $i++;
                 continue;
             }
+            $isRelation = true;
+            $i = $i + 2;
+            $method = $tokens[$i];
+
+            $relation = [
+                'name' => $method[1],
+                'line' => $method[2],
+                'hasReturn' => false,
+            ];
+            $i++;
 
             if (! $isRelation) {
                 continue;
@@ -39,12 +37,12 @@ class ModelParser
             while (true) {
                 $token = $this->getNextToken($tokens, $i);
 
-                if ($this->isThis($token)) {
+                if ($this->is([T_VARIABLE, '$this'], $token)) {
                     $token = $this->getNextToken($tokens, $i);
-                    if ($this->isArrow($token)) {
+                    if ($this->is([T_OBJECT_OPERATOR, '->'], $token)) {
                         $token = $this->getNextToken($tokens, $i);
                         if ($this->isRelation($token)) {
-                            $relationType = $token[1];
+                            $relation['type'] = $token[1];
                             $isRelation = true;
                             break;
                         }
@@ -70,59 +68,9 @@ class ModelParser
                 continue;
             }
 
-            $params = [];
             // collect parameters
-            $c = 0;
-            $collect = true;
-            while (true) {
-                $token = $this->getNextToken($tokens, $i);
-                // in case we have something like:
-                // $this->hasMany(Passport::clientModel());
-                if ($token == '(') {
-                    // forget
-                    unset($params[$c]);
-                    $collect = false;
-                    continue;
-                }
-                if ($token == ')') {
-                    $collect = true;
-                    continue;
-                }
-                if (! $collect) {
-                    continue;
-                }
-
-                if ($token == ',') {
-                    if (! isset($params[$c])) {
-                        $params[$c] = [];
-                    }
-                    $params[$c] = implode('', $params[$c]);
-                    $c++;
-                    continue;
-                }
-
-                if (($token[1] ?? null) == 'class') {
-                    // remove '::' from the end of the array.
-                    array_pop($params[$c]);
-                    continue;
-                }
-
-                // in case of method chain on the relation...
-                // $this->hasMany(...)->orderBy(...);
-                if ($token == ';' || $token[0] == T_OBJECT_OPERATOR) {
-                    if (! isset($params[$c])) {
-                        $params[$c] = [];
-                    }
-                    $params[$c] = implode('', $params[$c]);
-                    break;
-                }
-
-                if ($collect) {
-                    $params[$c][] = $token[1];
-                }
-            }
+            [$params, $i] = $this->readPassedParameters($tokens, $i);
             $relation['params'] = $params;
-            $relation['type'] = $relationType;
 
             $relations[] = $relation;
         }
@@ -130,24 +78,9 @@ class ModelParser
         return $relations;
     }
 
-    /**
-     * @param  array  $token
-     *
-     * @return bool
-     */
-    protected function isThis($token)
+    private function is($type, $token)
     {
-        return $token[0] == T_VARIABLE and $token[1] == '$this';
-    }
-
-    /**
-     * @param $nextToken
-     *
-     * @return bool
-     */
-    protected function isArrow($nextToken)
-    {
-        return $nextToken[0] == T_OBJECT_OPERATOR and $nextToken[1] == '->';
+        return $token[0] == $type[0] and $token[1] == $type[1];
     }
 
     /**
@@ -160,7 +93,7 @@ class ModelParser
     {
         $i++;
         if (! isset($tokens[$i])) {
-            return;
+            return null;
         }
         $nextToken = $tokens[$i];
         if ($nextToken[0] == T_WHITESPACE) {
@@ -187,5 +120,90 @@ class ModelParser
             'morphToMany',
             'morphedByMany',
         ]);
+    }
+
+    /**
+     * @param  $tokens
+     * @param  $i
+     *
+     * @return bool
+     */
+    protected function isPublicMethodDeclaration($tokens, $i)
+    {
+        // it is "function" keyword && not private && ensure is not an anonymous function
+        return $tokens[$i][0] == T_FUNCTION && ! in_array($tokens[$i][0], [T_PRIVATE, T_PROTECTED]) && $tokens[$i + 2][0] == T_STRING;
+    }
+
+    /**
+     * @param $tokens
+     * @param $i
+     *
+     * @return array
+     */
+    protected function readPassedParameters($tokens, $i)
+    {
+        $calls = 1;
+        $paramCount = 0;
+        $collect = true;
+        $params = [];
+        while (true) {
+            $token = $this->getNextToken($tokens, $i);
+            // in case we have something like:
+            // $this->hasMany(Passport::clientModel());
+            if ($token == '(') {
+                // Forget what we have collected as a parameter
+                $params[$paramCount] = [];
+                $calls++;
+                // and stop collecting until we reach a the next parameter or end.
+                $collect = false;
+                continue;
+            }
+
+            if ($token == ')') {
+                $calls--;
+
+                // end of method call for hasMany(...)
+                if ($calls == 0) {
+                    $params[$paramCount] = implode('', $params[$paramCount]);
+                    break;
+                } else {
+                    continue;
+                }
+            }
+
+            if (($token[0] == T_DOUBLE_COLON && $tokens[$i + 1][0] != T_CLASS) || $token[0] == T_VARIABLE || $token[0] == T_OBJECT_OPERATOR) {
+                // Forget what we have collected as a parameter
+                $params[$paramCount] = [];
+                // and stop collecting until we reach a the next parameter or end.
+                $collect = false;
+                continue;
+            }
+
+            if ($token == ',') {
+                // we are dealing the the next parameter of hasMany
+                if ($calls == 1) {
+                    // $this->hasMany(Passport::clientModel(1, 2));
+                    // For commas within inline method calls,
+                    // we do not want to count up or anything
+                    $params[$paramCount] = implode('', $params[$paramCount]);
+                    $paramCount++;
+                    $collect = true;
+                }
+                continue;
+            }
+
+            // When we reach ::class
+            if ($token[0] == T_CLASS) {
+                // remove '::' from the end of the array.
+                array_pop($params[$paramCount]);
+                continue;
+            }
+
+            if ($collect) {
+                $params[$paramCount][] = $token[1];
+            }
+        }
+
+        return [$params, $i];
     }
 }
