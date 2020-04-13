@@ -9,6 +9,7 @@ class ModelParser
         $relations = [];
         $i = 0;
         while (true) {
+            // goes until the end of tokens
             if (! isset($tokens[$i])) {
                 break;
             }
@@ -18,32 +19,19 @@ class ModelParser
                 $i++;
                 continue;
             }
-            $isRelation = true;
             $i = $i + 2;
             $method = $tokens[$i];
 
-            $i++;
-
-            if (! $isRelation) {
-                continue;
-            }
-
-            $relation = $this->containersRelationDefinition($tokens, $method, $i);
+            $relation = $this->containsRelationDefinition($tokens, $method, $i);
 
             if (! $relation) {
                 continue;
             }
 
-            $token = $this->getNextToken($tokens, $i);
-
-            if ($token !== '(') {
-                $isRelation == false;
-                continue;
-            }
+            $this->getNextToken($tokens, $i);
 
             // collect parameters
-            [$params, $i] = $this->readPassedParameters($tokens, $i);
-            $relation['params'] = $params;
+            $relation['params'] = $this->readPassedParameters($tokens, $i);
 
             $relations[] = $relation;
         }
@@ -113,7 +101,7 @@ class ModelParser
      *
      * @return array
      */
-    protected function readPassedParameters($tokens, $i)
+    protected function readPassedParameters($tokens, &$i)
     {
         $calls = 1;
         $paramCount = 0;
@@ -177,7 +165,7 @@ class ModelParser
             }
         }
 
-        return [$params, $i];
+        return $params;
     }
 
     /**
@@ -187,7 +175,7 @@ class ModelParser
      *
      * @return array|bool
      */
-    protected function containersRelationDefinition($tokens, $method, &$i)
+    protected function containsRelationDefinition($tokens, $method, &$i)
     {
         $relation = [
             'name' => $method[1],
