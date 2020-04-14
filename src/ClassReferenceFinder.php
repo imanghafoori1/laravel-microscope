@@ -4,6 +4,11 @@ namespace Imanghafoori\LaravelMicroscope;
 
 class ClassReferenceFinder
 {
+    private static $lastToken = [null, null, null];
+
+    private static $secLastToken = [null, null, null];
+
+    private static $token = [null, null, null];
     /**
      * @param  string  $type
      *
@@ -83,12 +88,11 @@ class ClassReferenceFinder
         $classes = [];
         $c = 0;
         $force_close = $implements = $collect = false;
-        $lastToken = $secLastToken = [null, null, null];
         $isDefiningFunction = $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
 
-        while ($token = current($tokens)) {
+        while (self::$token = current($tokens)) {
             next($tokens);
-            $t = is_array($token) ? $token[0] : $token;
+            $t = self::$token[0];
 
             if ($t == T_USE) {
                 // Since we don't want to collect use statements (imports)
@@ -99,8 +103,7 @@ class ClassReferenceFinder
                 } else {
                     $collect = true;
                 }
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
                 $isInSideClass = true;
@@ -122,8 +125,7 @@ class ClassReferenceFinder
                     $c++;
                 }
                 $collect = false;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 // we do not want to collect variables
                 continue;
             } elseif ($t == T_IMPLEMENTS) {
@@ -141,8 +143,7 @@ class ClassReferenceFinder
                 }
                 $collect = false;
 
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == ',') {
                 if ($isMethodSignature || $implements) {
@@ -154,16 +155,14 @@ class ClassReferenceFinder
                 }
                 $force_close = false;
                 $c++;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == ']') {
                 // for method calls: foo(new Hello, $var);
                 // we do not want to collect after comma.
                 $force_close = $collect = false;
                 $c++;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == '{') {
                 $implements = $isMethodSignature = false;
@@ -179,6 +178,7 @@ class ClassReferenceFinder
                 }
                 continue;
             } elseif ($t == '(' || $t == ')') {
+                // wrong...
                 if ($t == '(' && ($isDefiningMethod || $isCatchException)) {
                     $isMethodSignature = true;
                     $collect = true;
@@ -191,20 +191,18 @@ class ClassReferenceFinder
                     $isCatchException = false;
                 }
                 $c++;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == T_DOUBLE_COLON) {
                 // When we reach the ::class syntax.
                 // we do not want to treat: $var::method(), self::method()
                 // as a real class name, so it must be of type T_STRING
-                if (! $collect && ! in_array($lastToken[1], ['parent', 'self', 'static']) && $lastToken[0] == T_STRING && ($secLastToken[1] ?? null) !== '->') {
-                    $classes[$c][] = $lastToken;
+                if (! $collect && ! in_array(self::$lastToken[1], ['parent', 'self', 'static']) && self::$lastToken[0] == T_STRING && (self::$secLastToken[1] ?? null) !== '->') {
+                    $classes[$c][] = self::$lastToken;
                 }
                 $collect = false;
                 $c++;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
                 continue;
             } elseif ($t == T_NS_SEPARATOR) {
                 if (! $force_close) {
@@ -214,27 +212,31 @@ class ClassReferenceFinder
                 // Add the previous token,
                 // In case the namespace does not start with '\'
                 // like: App\User::where(...
-                if ($lastToken[0] == T_STRING && $collect && ! isset($classes[$c])) {
-                    $classes[$c][] = $lastToken;
+                if (self::$lastToken[0] == T_STRING && $collect && ! isset($classes[$c])) {
+                    $classes[$c][] = self::$lastToken;
                 }
             } elseif ($t == T_NEW) {
                 // we start to collect tokens after the new keyword.
                 // unless we reach a variable name.
                 $collect = true;
-                $secLastToken = $lastToken;
-                $lastToken = $token;
+                self::forward();
 
                 // we do not want to collect the new keyword itself
                 continue;
             }
 
             if ($collect) {
-                $classes[$c][] = $token;
+                $classes[$c][] = self::$token;
             }
-            $secLastToken = $lastToken;
-            $lastToken = $token;
+            self::forward();
         }
 
         return $classes;
+    }
+
+    protected static function forward()
+    {
+        self::$secLastToken = self::$lastToken;
+        self::$lastToken = self::$token;
     }
 }
