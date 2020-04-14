@@ -60,7 +60,7 @@ class ClassReferenceFinder
                 $implements = true;
                 $c++;
                 continue;
-            } elseif ($t == T_WHITESPACE) {
+            } elseif ($t == T_WHITESPACE || $t == '&') {
                 // we do not want to keep track of
                 // white spaces or collect them
                 continue;
