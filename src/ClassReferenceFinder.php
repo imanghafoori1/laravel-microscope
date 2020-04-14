@@ -97,11 +97,10 @@ class ClassReferenceFinder
                 $lastToken = $token;
                 continue;
             } elseif ($t == '{') {
-                $isMethodSignature = false;
                 if ($isDefiningMethod) {
-                    $isDefiningMethod = false;
                     $isInsideMethod = true;
                 }
+                $isMethodSignature = $isDefiningMethod = false;
                 // after "extends \Some\other\Class_v"
                 // we need to switch to the next level.
                 if ($collect) {
