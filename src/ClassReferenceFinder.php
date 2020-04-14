@@ -42,6 +42,7 @@ class ClassReferenceFinder
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
+            // continue;   // why we do not continue?? (0_o)
             } elseif ($t == T_FUNCTION) {
                 $isDefiningFunction = true;
                 if ($isInSideClass and ! $isInsideMethod) {
@@ -57,7 +58,7 @@ class ClassReferenceFinder
                 // we do not want to collect variables
                 continue;
             } elseif ($t == T_IMPLEMENTS) {
-                $implements = true;
+                $collect = $implements = true;
                 $c++;
                 continue;
             } elseif ($t == T_WHITESPACE || $t == '&') {
@@ -65,7 +66,6 @@ class ClassReferenceFinder
                 // white spaces or collect them
                 continue;
             } elseif ($t == ';' || $t == '}') {
-                $implements = $isMethodSignature = false;
                 $force_close = false;
                 if ($collect) {
                     $c++;
@@ -97,10 +97,11 @@ class ClassReferenceFinder
                 $lastToken = $token;
                 continue;
             } elseif ($t == '{') {
+                $implements = $isMethodSignature = false;
                 if ($isDefiningMethod) {
+                    $isDefiningMethod = false;
                     $isInsideMethod = true;
                 }
-                $isMethodSignature = $isDefiningMethod = false;
                 // after "extends \Some\other\Class_v"
                 // we need to switch to the next level.
                 if ($collect) {
