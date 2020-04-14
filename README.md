@@ -19,6 +19,7 @@ Built with :heart: for lazy laravel developers ;)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-self-test) 
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope) 
+[![Daily Downloads](https://poser.pugx.org/imanghafoori/laravel-microscope/d/daily)](https://packagist.org/packages/imanghafoori/laravel-microscope)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg?style=round-square)](LICENSE.md)
 
