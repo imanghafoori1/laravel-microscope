@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use ReflectionClass;
-
 class ParseUseStatement
 {
     /** @var array */
