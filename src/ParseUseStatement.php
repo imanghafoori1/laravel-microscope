@@ -176,6 +176,14 @@ class ParseUseStatement
                     $secLastToken = $lastToken;
                     $lastToken = $token;
                     continue;
+                } elseif ($t == ']') {
+                    // for method calls: foo(new Hello, $var);
+                    // we do not want to collect after comma.
+                    $force_close = $collect = false;
+                    $c++;
+                    $secLastToken = $lastToken;
+                    $lastToken = $token;
+                    continue;
                 } elseif ($t == '{') {
                     $isMethodSignature = false;
                     if ($isDefiningMethod) {
