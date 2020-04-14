@@ -15,10 +15,12 @@ Give your eyes a rest, this will check it for you.
 Built with :heart: for lazy laravel developers ;)
 </h4>
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
-[![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-microscope/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope)
-[![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope)
-[![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope)
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope) 
+[![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-microscope/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-microscope) 
+[![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope) 
+[![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori1/laravel-microscope) 
+[![Software License](https://img.shields.io/badge/license-MIT-blue.svg?style=round-square)](LICENSE.md)
 
 
 ## Key things to know:
@@ -92,7 +94,9 @@ This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
 
 - Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
 
-```
+----------------------
+
+``` php
 php artisan check:gates
 ```
 
@@ -111,19 +115,24 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 3 - It checks the  `someMethod` to exist.
 
+----------------------
+
 ``` php
 php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
 
-```
+----------------------
+
+``` php
 php artisan check:imports
 ```
 
 - It check all the imports (`use` statements) to be valid.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
+----------------------
 
 ``` php
 php artisan check:routes
