@@ -148,7 +148,7 @@ class ParseUseStatement
     /**
      * @param $absFilePath
      */
-    protected static function requestIssue($absFilePath): void
+    protected static function requestIssue($absFilePath)
     {
         dump('=====================================');
         dump('was not able to properly parse the: '.$absFilePath.' file.');
