@@ -9,6 +9,7 @@ class ClassReferenceFinder
     private static $secLastToken = [null, null, null];
 
     private static $token = [null, null, null];
+
     /**
      * @param  string  $type
      *
