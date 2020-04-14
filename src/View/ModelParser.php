@@ -132,7 +132,10 @@ class ModelParser
                 }
             }
 
-            if (($token[0] == T_DOUBLE_COLON && $tokens[$i + 1][0] != T_CLASS) || $token[0] == T_VARIABLE || $token[0] == T_OBJECT_OPERATOR) {
+            if (($token[0] == T_DOUBLE_COLON && $tokens[$i + 1][0] != T_CLASS)
+                || $token[0] == T_VARIABLE
+                || $token[0] == T_OBJECT_OPERATOR
+                || $token[0] == '"') {
                 // Forget what we have collected as a parameter
                 $params[$paramCount] = [];
                 // and stop collecting until we reach a the next parameter or end.
