@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 class ClassReferenceFinder
 {
-
     /**
      * @param  string  $type
      *
@@ -25,13 +24,14 @@ class ClassReferenceFinder
             'parent',
         ], true);
     }
+
     /**
      * @param  array  $classes
      * @param  array  $imports
      *
      * @return array
      */
-    static function expendReferences($classes, $imports)
+    public static function expendReferences($classes, $imports)
     {
         // Here we implode the tokens to form the full namespaced class path
         $results = [];
@@ -111,7 +111,7 @@ class ClassReferenceFinder
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
-                // continue;   // why we do not continue?? (0_o)
+            // continue;   // why we do not continue?? (0_o)
             } elseif ($t == T_FUNCTION) {
                 $isDefiningFunction = true;
                 if ($isInSideClass and ! $isInsideMethod) {
