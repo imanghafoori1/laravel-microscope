@@ -10,8 +10,6 @@ use Symfony\Component\Finder\Finder;
 
 class CheckClasses
 {
-    protected static $fixedNamespaces = [];
-
     /**
      * Get all of the listeners and their corresponding events.
      *
@@ -195,15 +193,14 @@ class CheckClasses
 
     protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
     {
-        // maybe an event listener
-        app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
 
         event('laravel_microscope.namespace_fixing', get_defined_vars());
         NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
         event('laravel_microscope.namespace_fixed', get_defined_vars());
 
-        // maybe a listener for: 'microscope.namespace_fixed' event.
-        app(ErrorPrinter::class)->fixedNamespace($correctNamespace);
+        // maybe an event listener
+        app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
+
     }
 
     private static function migrationPaths()
