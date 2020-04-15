@@ -8,6 +8,8 @@ class ReplaceLine
      * @param  string  $file
      * @param  string  $search
      * @param  string  $replace
+     *
+     * @return bool|int
      */
     public static function replaceFirst($file, $search, $replace = '')
     {
@@ -16,13 +18,15 @@ class ReplaceLine
 
         $isReplaced = false;
 
+        $lineNum = 0;
         while (! feof($reading)) {
+            $lineNum++;
             $line = fgets($reading);
 
             // replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
                 $line = str_replace($search, $replace, $line);
-                $isReplaced = true;
+                $isReplaced = $lineNum;
             }
 
             // copy the entire file to the end
@@ -36,5 +40,7 @@ class ReplaceLine
         } else {
             unlink($file.'._tmp');
         }
+
+        return $isReplaced;
     }
 }
