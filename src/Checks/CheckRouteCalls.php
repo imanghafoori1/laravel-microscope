@@ -2,29 +2,28 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Imanghafoori\LaravelMicroscope\Analyzer\GlobalFunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Symfony\Component\Finder\SplFileInfo;
 
 class CheckRouteCalls
 {
-    public function check(array $tokens, SplFileInfo $blade)
+    public function check($tokens, $absFilePath)
     {
-        $handleRoute = function ($nextToken, $blade) {
-            if ($nextToken[0] != T_CONSTANT_ENCAPSED_STRING) {
-                return;
-            }
-
-            $value = $nextToken[1];
-
-            $rName = app('router')->getRoutes()->getByName(trim($value, '\'\"'));
-            if (is_null($rName)) {
-                $this->printError($value, $blade, $nextToken);
+        $handleRoute = function ($line, $routeName, $absPath) {
+            $matchedRoute = app('router')->getRoutes()->getByName(trim($routeName, '\'\"'));
+            if (is_null($matchedRoute)) {
+                $this->printError($routeName, $absPath, $line);
             }
         };
 
-        foreach ($tokens as $i => $token) {
-            $next = $i;
-            $this->checkGlobalFunctionCall($token, 'route', $tokens, $handleRoute, $blade, $next);
+        // we skip the very first tokens: '<?php '
+        $i = 4;
+        // we skip the very end of the file.
+        $total = count($tokens) - 3;
+        while ($i < $total) {
+            [$param1, $matchedToken] = GlobalFunctionCall::detect('route', $tokens, $i);
+            $param1 && $handleRoute($matchedToken[2], $param1, $absFilePath);
+            $i++;
         }
 
         return $tokens;
@@ -32,57 +31,12 @@ class CheckRouteCalls
 
     /**
      * @param $value
-     * @param  \Symfony\Component\Finder\SplFileInfo  $blade
-     * @param $nextToken
+     * @param $absPath
+     * @param $lineNumber
      */
-    protected function printError($value, SplFileInfo $blade, $nextToken)
+    protected function printError($value, $absPath, $lineNumber)
     {
         $p = app(ErrorPrinter::class);
-        $p->route(null, "route name $value does not exist: ", "route($value)   <====   is wrong", $blade->getPathname(), $nextToken[2]);
-    }
-
-    protected function checkGlobalFunctionCall($token, string $funcName, array &$tokens, \Closure $handleRoute, SplFileInfo $blade, $next)
-    {
-        if ($this->isObjectMaking($tokens, $next) || $this->isFunctionDefinition($tokens, $next)) {
-            return;
-        }
-
-        if (! is_array($token) || $token[1] != $funcName) {
-            return;
-        }
-
-        $nextToken = $this->getNextToken($tokens, $next);
-        if ($nextToken != '(') {
-            return;
-        }
-
-        $nextToken = $this->getNextToken($tokens, $next);
-        $handleRoute($nextToken, $blade);
-    }
-
-    private function isObjectMaking(array $tokens, $next)
-    {
-        $pToken = $tokens[$next - 2] ?? [''];
-
-        return $pToken[0] === T_NEW;
-    }
-
-    private function isFunctionDefinition(array $tokens, $next)
-    {
-        $pToken = $tokens[$next - 2] ?? [''];
-
-        return $pToken[0] === T_FUNCTION;
-    }
-
-    protected function getNextToken(array $tokens, &$next)
-    {
-        $next++;
-        $nextToken = $tokens[$next];
-        if ($nextToken[0] == T_WHITESPACE) {
-            $next++;
-            $nextToken = $tokens[$next];
-        }
-
-        return $nextToken;
+        $p->route(null, "route name $value does not exist: ", "route($value)   <====   is wrong", $absPath, $lineNumber);
     }
 }

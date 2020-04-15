@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Symfony\Component\Finder\Finder;
 
 class CheckViews
@@ -21,6 +22,8 @@ class CheckViews
         foreach ($hints as $paths) {
             $this->checkPaths($paths, $methods);
         }
+
+        $this->checkClassesRouteCalls();
     }
 
     private function getNamespacedPaths()
@@ -53,6 +56,20 @@ class CheckViews
                 foreach ($methods as $method) {
                     call_user_func_array($method, [$tokens, $blade]);
                 }
+            }
+        }
+    }
+
+    protected function checkClassesRouteCalls()
+    {
+        $psr4 = Util::parseComposerJson('autoload.psr-4');
+
+        foreach ($psr4 as $psr4Namespace => $psr4Path) {
+            $files = CheckClasses::getAllPhpFiles($psr4Path);
+            foreach ($files as $classFilePath) {
+                $absFilePath = $classFilePath->getRealPath();
+                $tokens = token_get_all(file_get_contents($absFilePath));
+                (new CheckRouteCalls())->check($tokens, $absFilePath);
             }
         }
     }
