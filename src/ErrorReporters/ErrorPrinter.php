@@ -84,13 +84,14 @@ class ErrorPrinter
      *
      * @return void
      */
-    public function badNamespace($classPath, $correctNamespace, $incorrectNamespace)
+    public function badNamespace($classPath, $correctNamespace, $incorrectNamespace ,$linkLineNum = 4)
     {
-        $this->printHeader('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"));
-        $this->print('Correct namespace:   '.$this->yellow("namespace $correctNamespace;"));
-        $this->printLink($classPath);
-        $this->end();
-        $this->counts['badNamespace']++;
+
+        array_push($this->counts['badNamespace'], (new PendingError('badNamespace'))
+            ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
+            ->errorData('namespace fixed to: '.$this->yellow("namespace $correctNamespace;"))
+            ->link($classPath,$linkLineNum));
+
     }
 
     public function print($msg, $path = '  |    ', $len = 81)
@@ -131,12 +132,6 @@ class ErrorPrinter
         }
     }
 
-    public function fixedNamespace($correctNamespace)
-    {
-        $msg = $this->yellow("namespace $correctNamespace;");
-        $this->print('namespace fixed to: '.$msg);
-        $this->end();
-    }
 
     /**
      * Checks for errors for the run command.
