@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Imanghafoori\LaravelMicroscope\Commands\ClassifyStrings;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +32,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckPsr4::class,
             CheckImports::class,
             CheckAll::class,
+            ClassifyStrings::class,
         ]);
     }
 
