@@ -193,14 +193,12 @@ class CheckClasses
 
     protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
     {
-
         event('laravel_microscope.namespace_fixing', get_defined_vars());
         NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
         event('laravel_microscope.namespace_fixed', get_defined_vars());
 
         // maybe an event listener
         app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-
     }
 
     private static function migrationPaths()
