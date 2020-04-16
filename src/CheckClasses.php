@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Symfony\Component\Finder\Finder;
 
@@ -14,16 +14,11 @@ class CheckClasses
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $files
-     * @param  string  $basePath
-     *
-     * @param $composerPath
-     * @param $composerNamespace
-     *
-     * @param  FileCheckContract  $fileCheckContract
+     * @param  FileCheckContractAlias  $fileCheckContract
      *
      * @return void
      */
-    public static function checkImports($files, FileCheckContract $fileCheckContract)
+    public static function checkImports($files, FileCheckContractAlias $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -91,11 +86,11 @@ class CheckClasses
      * @param $composerPath
      * @param $composerNamespace
      *
-     * @param  FileCheckContract  $fileCheckContract
+     * @param  FileCheckContractAlias  $fileCheckContract
      *
      * @return void
      */
-    public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
+    public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContractAlias $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
