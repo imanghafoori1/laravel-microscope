@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckViewFilesExistence
 {
-    public function check($tokens, $blade)
+    public function check($tokens, $absPath)
     {
         $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
@@ -17,7 +17,7 @@ class CheckViewFilesExistence
 
             $viewName = trim($tokens[$i + 4][1], '\'\"');
             if (! View::exists($viewName)) {
-                $this->error($tokens, $blade, $i);
+                $this->error($tokens, $absPath, $i);
             }
             $i = $i + 5;
         }
@@ -40,14 +40,14 @@ class CheckViewFilesExistence
 
     /**
      * @param  array  $tokens
-     * @param $blade
+     * @param $absPath
      * @param  int  $i
      */
-    private function error(array $tokens, $blade, int $i)
+    private function error($tokens, $absPath, $i)
     {
         $p = app(ErrorPrinter::class);
         $p->print('included view: '.$tokens[$i + 4][1].' does not exist in blade file');
-        $p->printLink($blade->getRealPath(), $tokens[$i + 4][2]);
+        $p->printLink($absPath, $tokens[$i + 4][2]);
         $p->end();
     }
 }

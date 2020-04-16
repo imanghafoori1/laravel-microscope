@@ -19,28 +19,28 @@ class ErrorPrinter
 
     public $logErrors = true;
 
-    public function view($path, $lineContent, $lineNumber, $fileName)
+    public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
         array_push($this->counts['view'], (new PendingError('view'))
             ->header($this->yellow($fileName.'.blade.php').' does not exist')
             ->errorData(trim($lineContent))
-            ->link($path, $lineNumber));
+            ->link($absPath, $lineNumber));
     }
 
-    public function route($path, $errorIt, $errorTxt, $linkPath = null, $linkLineNum = 0)
+    public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNum = 0)
     {
         array_push($this->counts['route'], (new PendingError('route'))
             ->header($errorIt)
             ->errorData($errorTxt.$this->yellow($path))
-            ->link($linkPath, $linkLineNum));
+            ->link($absPath, $lineNum));
     }
 
-    public function bladeImport($class, $blade)
+    public function bladeImport($class, $absPath)
     {
         array_push($this->counts['bladeImport'], (new PendingError('bladeImport'))
-            ->header('Class does not exist in blade file:')
+            ->header('Class does not exist:')
             ->errorData($this->yellow($class['class']).' <==== does not exist')
-            ->link($blade->getPathname(), $class['line']));
+            ->link($absPath, $class['line']));
     }
 
     public function authConf()

@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
@@ -42,6 +43,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->spyRouter();
         app()->singleton(ErrorPrinter::class);
 
 //        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
@@ -63,5 +65,14 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
                 });
             });
         }
+    }
+
+    private function spyRouter()
+    {
+        $router = new SpyRouter(app('events'), app());
+        $this->app->singleton('router', function ($app) use ($router) {
+            return $router;
+        });
+        Route::swap($router);
     }
 }
