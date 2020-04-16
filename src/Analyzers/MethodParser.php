@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class MethodParser
 {
-    public static function extractParametersValueWithinMethod($tokens, $relationNames)
+    public static function extractParametersValueWithinMethod($tokens, $methodNames)
     {
         $relations = [];
         $i = 0;
@@ -22,7 +22,7 @@ class MethodParser
             $i = $i + 2;
             $method = $tokens[$i];
 
-            $relation = self::containsRelationDefinition($tokens, $method, $i, $relationNames);
+            $relation = self::containsRelationDefinition($tokens, $method, $i, $methodNames);
 
             if (! $relation) {
                 continue;
@@ -151,7 +151,7 @@ class MethodParser
             }
 
             if ($collect) {
-                $params[$paramCount][] = $token[1];
+                $params[$paramCount][] = $token[1] ?? $token[0];
             }
         }
 

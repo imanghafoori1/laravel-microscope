@@ -55,7 +55,7 @@ class CheckViews
                 $tokens = token_get_all((app('blade.compiler')->compileString($content)));
 
                 foreach ($methods as $method) {
-                    call_user_func_array($method, [$tokens, $blade]);
+                    call_user_func_array($method, [$tokens, $blade->getPathname()]);
                 }
             }
         }
