@@ -3,12 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 
 class CheckPsr4 extends Command implements FileCheckContract
 {
