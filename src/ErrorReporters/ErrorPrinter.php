@@ -64,12 +64,12 @@ class ErrorPrinter
             ->link($absPath, $line));
     }
 
-    public function wrongUsedClassError($absFilePath, $nonImportedClass)
+    public function wrongUsedClassError($absFilePath, $class, $lineNum)
     {
         array_push($this->counts['wrongUsedClassError'], (new PendingError('wrongUsedClassError'))
             ->header('Class does not exist:')
-            ->errorData($this->yellow($nonImportedClass['class']).'  <==== does not exist.')
-            ->link($absFilePath, $nonImportedClass['line']));
+            ->errorData($this->yellow($class).'  <==== does not exist.')
+            ->link($absFilePath, $lineNum));
     }
 
     public function yellow($msg)
