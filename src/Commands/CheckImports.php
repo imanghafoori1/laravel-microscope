@@ -6,17 +6,15 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassReferenceFinder;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -97,44 +95,42 @@ class CheckImports extends Command implements FileCheckContract
     private function getApplicationProviders($psr4)
     {
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-           foreach(config('app.providers') as $provider) {
-               if (! Str::startsWith($provider, $psr4Namespace)) {
-                   continue;
-               }
+            foreach (config('app.providers') as $provider) {
+                if (! Str::startsWith($provider, $psr4Namespace)) {
+                    continue;
+                }
 
-               $absPath = $this->getFileAbsPath($psr4Namespace, $psr4Path, $provider).'.php';
-               $tokens = token_get_all(file_get_contents($absPath));
-               $methodCalls = MethodParser::extractParametersValueWithinMethod($tokens, ['loadRoutesFrom']);
+                $absPath = $this->getFileAbsPath($psr4Namespace, $psr4Path, $provider).'.php';
+                $tokens = token_get_all(file_get_contents($absPath));
+                $methodCalls = MethodParser::extractParametersValueWithinMethod($tokens, ['loadRoutesFrom']);
 
-               foreach ($methodCalls as $calls) {
-                   $namespace = trim(str_replace(class_basename($provider), '', $provider), '\\');
-                   $dir = (str_replace($psr4Namespace, $psr4Path, $namespace));
-                   $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
+                foreach ($methodCalls as $calls) {
+                    $namespace = trim(str_replace(class_basename($provider), '', $provider), '\\');
+                    $dir = (str_replace($psr4Namespace, $psr4Path, $namespace));
+                    $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
 
-                   $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
-                   $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-                   $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $firstParam);
+                    $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
+                    $firstParam = str_replace('__DIR__.', $dir, $firstParam);
+                    $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $firstParam);
 
-                   $sections = explode(DIRECTORY_SEPARATOR, $dir);
+                    $sections = explode(DIRECTORY_SEPARATOR, $dir);
 
-                   $res = [];
-                   foreach ($sections as $i => $section) {
+                    $res = [];
+                    foreach ($sections as $i => $section) {
+                        if ($section == '..') {
+                            array_pop($res);
+                        } else {
+                            $res[] = $section;
+                        }
+                    }
 
-                       if ($section == '..') {
-                           array_pop($res);
-                       } else {
-                           $res[] = $section;
-                       }
-                   }
+                    $filePath = implode(DIRECTORY_SEPARATOR, $res);
+                    $tokens = token_get_all(file_get_contents($filePath));
 
-                   $filePath = implode(DIRECTORY_SEPARATOR, $res);
-                   $tokens = token_get_all(file_get_contents($filePath));
-
-                   (new CheckClassReferences)->check($tokens, $filePath);
-               }
-           }
+                    (new CheckClassReferences)->check($tokens, $filePath);
+                }
+            }
         }
-
     }
 
     /**
