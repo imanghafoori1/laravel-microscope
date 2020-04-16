@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
