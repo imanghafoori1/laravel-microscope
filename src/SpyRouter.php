@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Closure;
-use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteFileRegistrar;
+use Illuminate\Routing\Router;
 
 class SpyRouter extends Router
 {

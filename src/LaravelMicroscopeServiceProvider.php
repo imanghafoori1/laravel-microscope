@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Imanghafoori\LaravelMicroscope\Commands\CheckAll;
 use Imanghafoori\LaravelMicroscope\Commands\CheckEvents;
