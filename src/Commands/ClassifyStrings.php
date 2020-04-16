@@ -40,17 +40,16 @@ class ClassifyStrings extends Command
 
                 $tokens = token_get_all(file_get_contents($absFilePath));
                 foreach ($tokens as $token) {
-                    if ($token[0] == T_CONSTANT_ENCAPSED_STRING &&
-                        Str::contains($token[1], ['\\']) &&
-                        class_exists(trim($token[1], '\'\"'))) {
-                        $errorPrinter->printLink($absFilePath, $token[2]);
-                        $this->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-                        $answer = $this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
-                        if ($answer) {
-                            dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($token));
-                            ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($token));
-                            dump('====================================');
-                        }
+                    if (! $this->isStringyClass($token)) {
+                        continue;
+                    }
+                    $errorPrinter->printLink($absFilePath, $token[2]);
+                    $this->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
+                    $answer = $this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
+                    if ($answer) {
+                        dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($token));
+                        ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($token));
+                        dump('====================================');
                     }
                 }
             }
@@ -65,4 +64,14 @@ class ClassifyStrings extends Command
 
         return $string;
     }
+
+    /**
+     * @param $token
+     *
+     * @return bool
+     */
+    protected function isStringyClass($token): bool
+    {
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::contains($token[1], ['\\']) && class_exists(trim($token[1], '\'\"'));
+}
 }
