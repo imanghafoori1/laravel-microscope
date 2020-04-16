@@ -41,9 +41,9 @@ class CheckAll extends Command
 
         $this->call('check:psr4', ['--detailed' => $this->option('detailed')]);
         app(Composer::class)->dumpAutoloads();
-        $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
         $this->call('check:events');
         $this->call('check:gates');
+        $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
         $this->call('check:routes');
 

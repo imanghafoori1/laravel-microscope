@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -247,15 +248,24 @@ class CheckClasses
         return $namespacedClassName;
     }
 
-    private static function checkAtSignStrings(array $tokens, $absFilePath): void
+    private static function checkAtSignStrings($tokens, $absFilePath)
     {
         foreach ($tokens as $token) {
-            if ($token[0] == T_CONSTANT_ENCAPSED_STRING && substr_count($token[1], '@') == 1) {
-                $res = explode('@', trim($token[1], '\'\"'));
-                if (substr_count($res[0], '\\') > 0) {
-                    if (! class_exists($res[0]) && ! interface_exists($res[0])) {
-                        app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
-                    }
+            if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
+                continue;
+            }
+
+            [$class, $method] = explode('@', $trimmed = trim($token[1], '\'\"'));
+
+            if (substr_count($class, '\\') <= 0) {
+                continue;
+            }
+
+            if (! class_exists($class)) {
+                app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+            } else {
+                if (! method_exists($class, $method)) {
+                    app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
                 }
             }
         }

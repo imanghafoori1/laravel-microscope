@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\View;
+namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class MethodParser
 {
@@ -39,7 +39,7 @@ class MethodParser
         return $relations;
     }
 
-    private function is($type, $token)
+    private static function is($type, $token)
     {
         return $token[0] == $type[0] and $token[1] == $type[1];
     }

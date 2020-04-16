@@ -72,6 +72,14 @@ class ErrorPrinter
             ->link($absFilePath, $lineNum));
     }
 
+    public function wrongMethodError($absFilePath, $class, $lineNum)
+    {
+        array_push($this->counts['wrongUsedClassError'], (new PendingError('wrongUsedClassError'))
+            ->header('Method does not exist:')
+            ->errorData($this->yellow($class).' <=== does not exist.')
+            ->link($absFilePath, $lineNum));
+    }
+
     public function yellow($msg)
     {
         return "<fg=yellow>$msg</>";

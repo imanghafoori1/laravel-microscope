@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\Analyzer\GlobalFunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\GlobalFunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRouteCalls
