@@ -4,11 +4,11 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Symfony\Component\Finder\Finder;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 
 class CheckClasses
 {
@@ -244,5 +244,5 @@ class CheckClasses
         }
 
         return $namespacedClassName;
-}
+    }
 }
