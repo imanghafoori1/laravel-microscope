@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzer;
+namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class GlobalFunctionCall
 {
@@ -54,23 +54,11 @@ class GlobalFunctionCall
         return $token;
     }
 
-    /**
-     * @param $prev1
-     *
-     * @return bool
-     */
     protected static function isAfterWhiteSpace($prev1)
     {
         return $prev1 == T_WHITESPACE;
     }
 
-    /**
-     * @param $prev1
-     * @param $prev2
-     * @param  array  $operators
-     *
-     * @return bool
-     */
     protected static function isAfterOp($prev1, $prev2, $operators)
     {
         if (in_array($prev1, $operators)) {

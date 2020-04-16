@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 
 class CheckClasses
 {
@@ -57,17 +59,13 @@ class CheckClasses
                 }
             }
 
-//                $classPath = self::relativePath($basePath, $absFilePath);
-//                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+//          $classPath = self::relativePath($basePath, $absFilePath);
+//          $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
-            if ($currentNamespace) {
-                $namespacedClassName = $currentNamespace.'\\'.$class;
-            } else {
-                $namespacedClassName = $class;
-            }
+            $namespacedClassName = self::fullNamespace($currentNamespace, $class);
 
             $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
-            self::checkImportedClasses($imports, $absFilePath);
+            self::checkImportedClassesExist($imports, $absFilePath);
 
             if ($currentNamespace) {
                 if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
@@ -172,7 +170,7 @@ class CheckClasses
         return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
-    private static function checkImportedClasses($imports, $absPath)
+    private static function checkImportedClassesExist($imports, $absPath)
     {
         foreach ($imports as $i => $import) {
             if (self::exists($import[0])) {
@@ -230,4 +228,21 @@ class CheckClasses
     {
         return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
     }
+
+    /**
+     * @param $currentNamespace
+     * @param $class
+     *
+     * @return string
+     */
+    protected static function fullNamespace($currentNamespace, $class): string
+    {
+        if ($currentNamespace) {
+            $namespacedClassName = $currentNamespace.'\\'.$class;
+        } else {
+            $namespacedClassName = $class;
+        }
+
+        return $namespacedClassName;
+}
 }

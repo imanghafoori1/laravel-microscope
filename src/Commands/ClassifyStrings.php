@@ -3,11 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ReplaceLine;
-use Imanghafoori\LaravelMicroscope\Util;
 
 class ClassifyStrings extends Command
 {
@@ -40,9 +38,10 @@ class ClassifyStrings extends Command
 
                 $tokens = token_get_all(file_get_contents($absFilePath));
                 foreach ($tokens as $token) {
-                    if (! $this->isStringyClass($token)) {
+                    if (! $this->isClassyString($token)) {
                         continue;
                     }
+
                     $errorPrinter->printLink($absFilePath, $token[2]);
                     $this->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
                     $answer = $this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
@@ -70,8 +69,8 @@ class ClassifyStrings extends Command
      *
      * @return bool
      */
-    protected function isStringyClass($token): bool
+    protected function isClassyString($token)
     {
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::contains($token[1], ['\\']) && class_exists(trim($token[1], '\'\"'));
-}
+    }
 }

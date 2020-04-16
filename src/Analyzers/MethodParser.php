@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-class ModelParser
+class MethodParser
 {
-    public function extractParametersValueWithinMethod($tokens)
+    public static function extractParametersValueWithinMethod($tokens, $relationNames)
     {
         $relations = [];
         $i = 0;
@@ -15,23 +15,23 @@ class ModelParser
             }
 
             // discover public function
-            if (! $this->isPublicMethodDeclaration($tokens, $i)) {
+            if (! self::isPublicMethodDeclaration($tokens, $i)) {
                 $i++;
                 continue;
             }
             $i = $i + 2;
             $method = $tokens[$i];
 
-            $relation = $this->containsRelationDefinition($tokens, $method, $i);
+            $relation = self::containsRelationDefinition($tokens, $method, $i, $relationNames);
 
             if (! $relation) {
                 continue;
             }
 
-            $this->getNextToken($tokens, $i);
+            self::getNextToken($tokens, $i);
 
             // collect parameters
-            $relation['params'] = $this->readPassedParameters($tokens, $i);
+            $relation['params'] = self::readPassedParameters($tokens, $i);
 
             $relations[] = $relation;
         }
@@ -50,7 +50,7 @@ class ModelParser
      *
      * @return mixed
      */
-    protected function getNextToken($tokens, &$i)
+    protected static function getNextToken($tokens, &$i)
     {
         $i++;
         if (! isset($tokens[$i])) {
@@ -65,22 +65,9 @@ class ModelParser
         return $nextToken;
     }
 
-    private function isRelation($nextToken)
+    private static function isMethodName($token, $methods)
     {
-        $rel = ($nextToken[1] ?? '');
-
-        return in_array($rel, [
-            'hasOne',
-            'hasMany',
-            'belongsTo',
-            'belongsToMany',
-            'belongsToOne',
-            'hasManyThrough',
-            // This can work even with no parameter, so we ignore it.
-            // 'morphTo',
-            'morphToMany',
-            'morphedByMany',
-        ]);
+        return ($token[0] == T_STRING) && in_array($token[1], $methods);
     }
 
     /**
@@ -89,7 +76,7 @@ class ModelParser
      *
      * @return bool
      */
-    protected function isPublicMethodDeclaration($tokens, $i)
+    protected static function isPublicMethodDeclaration($tokens, $i)
     {
         // it is "function" keyword && not private && ensure is not an anonymous function
         return $tokens[$i][0] == T_FUNCTION && ! in_array($tokens[$i][0], [T_PRIVATE, T_PROTECTED]) && $tokens[$i + 2][0] == T_STRING;
@@ -101,16 +88,16 @@ class ModelParser
      *
      * @return array
      */
-    protected function readPassedParameters($tokens, &$i)
+    protected static function readPassedParameters($tokens, &$i)
     {
         $calls = 1;
         $paramCount = 0;
         $collect = true;
         $params = [];
         while (true) {
-            $token = $this->getNextToken($tokens, $i);
+            $token = self::getNextToken($tokens, $i);
             // in case we have something like:
-            // $this->hasMany(Passport::clientModel());
+            // self::hasMany(Passport::clientModel());
             if ($token == '(') {
                 // Forget what we have collected as a parameter
                 $params[$paramCount] = [];
@@ -146,7 +133,7 @@ class ModelParser
             if ($token == ',') {
                 // we are dealing the the next parameter of hasMany
                 if ($calls == 1) {
-                    // $this->hasMany(Passport::clientModel(1, 2));
+                    // self::hasMany(Passport::clientModel(1, 2));
                     // For commas within inline method calls,
                     // we do not want to count up or anything
                     $params[$paramCount] = implode('', $params[$paramCount]);
@@ -176,9 +163,11 @@ class ModelParser
      * @param  array  $method
      * @param  int  $i
      *
+     * @param $relations
+     *
      * @return array|bool
      */
-    protected function containsRelationDefinition($tokens, $method, &$i)
+    protected static function containsRelationDefinition($tokens, $method, &$i, $relations)
     {
         $relation = [
             'name' => $method[1],
@@ -187,16 +176,16 @@ class ModelParser
         ];
         // continues ahead
         while (true) {
-            $token = $this->getNextToken($tokens, $i);
+            $token = self::getNextToken($tokens, $i);
 
-            if ($this->is([T_VARIABLE, '$this'], $token)) {
-                $token = $this->getNextToken($tokens, $i);
-                if (! $this->is([T_OBJECT_OPERATOR, '->'], $token)) {
+            if (self::is([T_VARIABLE, '$this'], $token)) {
+                $token = self::getNextToken($tokens, $i);
+                if (! self::is([T_OBJECT_OPERATOR, '->'], $token)) {
                     continue;
                 }
 
-                $token = $this->getNextToken($tokens, $i);
-                if (! $this->isRelation($token)) {
+                $token = self::getNextToken($tokens, $i);
+                if (! self::isMethodName($token, $relations)) {
                     continue;
                 }
 
