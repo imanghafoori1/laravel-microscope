@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class GetClassProperties
 {

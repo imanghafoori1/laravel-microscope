@@ -13,7 +13,7 @@ use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Util;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -55,12 +55,14 @@ class CheckImports extends Command implements FileCheckContract
                 $files = CheckClasses::getAllPhpFiles($psr4Path);
                 CheckClasses::checkImports($files, $this);
             } catch (\ErrorException $e) {
-                // in case a file is moved or deleted...
+                // In case a file is moved or deleted...
+                // composer will need a dump autoload.
                 if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
                     throw $e;
                 }
 
                 $this->warnDumping($e->getMessage());
+                resolve(Composer::class)->dumpAutoloads();
             }
         }
 
@@ -86,6 +88,5 @@ class CheckImports extends Command implements FileCheckContract
         $this->info('It seems composer has some trouble with autoload...');
         $this->info($msg);
         $this->info('Running "composer dump-autoload" command...');
-        resolve(Composer::class)->dumpAutoloads();
     }
 }

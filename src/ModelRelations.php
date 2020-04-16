@@ -2,14 +2,29 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Imanghafoori\LaravelMicroscope\View\MethodParser;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\View\ModelParser;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 
 class ModelRelations
 {
+    public static $relations = [
+        'hasOne',
+        'hasMany',
+        'belongsTo',
+        'belongsToMany',
+        'belongsToOne',
+        'hasManyThrough',
+        // This can work even with no parameter, so we ignore it.
+        // 'morphTo',
+        'morphToMany',
+        'morphedByMany',
+    ];
+
     public static function checkModelRelations(array $tokens, $currentNamespace, $class, $absFilePath)
     {
-        $relations = (new ModelParser())->extractParametersValueWithinMethod($tokens);
+        $relations = MethodParser::extractParametersValueWithinMethod($tokens, self::$relations);
         $p = app(ErrorPrinter::class);
         foreach ($relations as $relation) {
             // check parameters
