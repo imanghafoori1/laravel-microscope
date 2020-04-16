@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Symfony\Component\Finder\Finder;
 
