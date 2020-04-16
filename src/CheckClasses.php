@@ -248,7 +248,7 @@ class CheckClasses
         return $namespacedClassName;
     }
 
-    private static function checkAtSignStrings($tokens, $absFilePath)
+    public static function checkAtSignStrings($tokens, $absFilePath)
     {
         foreach ($tokens as $token) {
             if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
