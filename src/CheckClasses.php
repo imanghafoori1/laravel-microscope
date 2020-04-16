@@ -31,7 +31,6 @@ class CheckClasses
             if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
                 continue;
             }
-
             [
                 $currentNamespace,
                 $class,
@@ -50,12 +49,15 @@ class CheckClasses
             $fileCheckContract->onFileTap($classFilePath);
 
             $tokens = token_get_all(file_get_contents($absFilePath));
+
+            self::checkAtSignStrings($tokens, $absFilePath);
+
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
                 if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {
-                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
+                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
                 }
             }
 
@@ -83,7 +85,6 @@ class CheckClasses
      * @param  iterable  $paths
      * @param $composerPath
      * @param $composerNamespace
-     *
      * @param  FileCheckContractAlias  $fileCheckContract
      *
      * @return void
@@ -235,7 +236,7 @@ class CheckClasses
      *
      * @return string
      */
-    protected static function fullNamespace($currentNamespace, $class): string
+    protected static function fullNamespace($currentNamespace, $class)
     {
         if ($currentNamespace) {
             $namespacedClassName = $currentNamespace.'\\'.$class;
@@ -244,5 +245,19 @@ class CheckClasses
         }
 
         return $namespacedClassName;
+    }
+
+    private static function checkAtSignStrings(array $tokens, $absFilePath): void
+    {
+        foreach ($tokens as $token) {
+            if ($token[0] == T_CONSTANT_ENCAPSED_STRING && substr_count($token[1], '@') == 1) {
+                $res = explode('@', trim($token[1], '\'\"'));
+                if (substr_count($res[0], '\\') > 0) {
+                    if (! class_exists($res[0]) && ! interface_exists($res[0])) {
+                        app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    }
+                }
+            }
+        }
     }
 }
