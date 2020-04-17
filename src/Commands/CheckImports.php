@@ -116,7 +116,7 @@ class CheckImports extends Command implements FileCheckContract
                     $tokens = token_get_all(file_get_contents($filePath));
 
                     CheckClassReferences::check($tokens, $filePath);
-                    CheckClasses::checkAtSignStrings($tokens, $filePath);
+                    CheckClasses::checkAtSignStrings($tokens, $filePath, true);
                 }
             }
         }
