@@ -139,11 +139,23 @@ class ViewParser
     {
         $line = trim($line);
 
-        if (strpos($line, $viewAlias) === false) {
+        $pos = strpos($line, $viewAlias);
+        if ($pos === false) {
             return $line;
         }
 
-        return trim(substr($line, strpos($line, $viewAlias) + strlen($viewAlias) + 1), ' (');
+        // to exclude commented lines...
+        $c1 = strpos($line, '//');
+        $c1 = ($c1 === false) ? 10000 : $c1;
+
+        $c2 = strpos($line, '*');
+        $c2 = ($c2 === false) ? 10000 : $c2;
+
+        if ($c1 < $pos || $c2 < $pos) {
+            return $line;
+        }
+
+        return trim(substr($line, $pos + strlen($viewAlias) + 1), ' (');
     }
 
     /**
@@ -280,7 +292,7 @@ class ViewParser
                 $results[] = [
                     'name' => $this->retrieveFirstParamValue($methodParameter),
                     'lineNumber' => $this->action->getStartLine() + $key,
-                    'directive' => 'view(',
+                    'directive' => $viewAlias,
                     'file' => $this->action->getFileName(),
                     'line' => $line,
                 ];
