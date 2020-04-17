@@ -43,7 +43,7 @@ class CheckViews extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking views ...');
+        $this->info('Checking views...');
 
         $errorPrinter->printer = $this->output;
 

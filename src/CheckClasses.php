@@ -129,7 +129,15 @@ class CheckClasses
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
             if ($currentNamespace !== $correctNamespace) {
-                self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
+                $p = app(ErrorPrinter::class);
+                $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
+                $p->print('namespace fixed to: '.$p->yellow("namespace $correctNamespace;"));
+                $p->printLink($relativePath, 4);
+
+                $answer = $fileCheckContract->getOutput()->confirm('Do you want to replace the namespace of: '.$relativePath, true);
+                if ($answer) {
+                    self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
+                }
             }
         }
     }
