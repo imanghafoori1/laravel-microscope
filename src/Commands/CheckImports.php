@@ -2,19 +2,20 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
+use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\CheckViews;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -54,7 +55,7 @@ class CheckImports extends Command implements FileCheckContract
         $this->getApplicationProviders($psr4);
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
-                $files = CheckClasses::getAllPhpFiles($psr4Path);
+                $files = FilePath::getAllPhpFiles($psr4Path);
                 CheckClasses::checkImports($files, $this);
             } catch (\ErrorException $e) {
                 // In case a file is moved or deleted...
@@ -111,7 +112,7 @@ class CheckImports extends Command implements FileCheckContract
 
                     $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
                     $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-                    $filePath = $this->normalizePath($firstParam);
+                    $filePath = FilePath::normalize($firstParam);
                     $tokens = token_get_all(file_get_contents($filePath));
 
                     CheckClassReferences::check($tokens, $filePath);
@@ -131,28 +132,5 @@ class CheckImports extends Command implements FileCheckContract
     private function getFileAbsPath($psr4Namespace, $psr4Path, $provider)
     {
         return base_path(str_replace($psr4Namespace, $psr4Path, $provider));
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function normalizePath($path)
-    {
-        $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
-
-        $sections = explode(DIRECTORY_SEPARATOR, $dir);
-
-        $res = [];
-        foreach ($sections as $i => $section) {
-            if ($section == '..') {
-                array_pop($res);
-            } else {
-                $res[] = $section;
-            }
-        }
-
-        return implode(DIRECTORY_SEPARATOR, $res);
     }
 }

@@ -7,18 +7,18 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClassReferences
 {
-    public function check($tokens, $pathName)
+    public static function check($tokens, $absPath)
     {
-        $classes = ParseUseStatement::findClassReferences($tokens, $pathName);
+        $classes = ParseUseStatement::findClassReferences($tokens, $absPath);
 
         foreach ($classes as $class) {
-            if (! $this->exists($class['class'])) {
-                app(ErrorPrinter::class)->bladeImport($class, $pathName);
+            if (! self::exists($class['class'])) {
+                app(ErrorPrinter::class)->bladeImport($class['class'], $absPath, $class['line']);
             }
         }
     }
 
-    private function exists($class)
+    private static function exists($class)
     {
         return class_exists($class) || interface_exists($class);
     }

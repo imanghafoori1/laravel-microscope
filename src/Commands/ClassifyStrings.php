@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ClassifyStrings extends Command
@@ -33,7 +33,7 @@ class ClassifyStrings extends Command
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = CheckClasses::getAllPhpFiles($psr4Path);
+            $files = FilePath::getAllPhpFiles($psr4Path);
 
             foreach ($files as $file) {
                 $absFilePath = $file->getRealPath();
