@@ -35,12 +35,12 @@ class ErrorPrinter
             ->link($absPath, $lineNum));
     }
 
-    public function bladeImport($class, $absPath)
+    public function bladeImport($class, $absPath, $lineNum)
     {
         array_push($this->counts['bladeImport'], (new PendingError('bladeImport'))
             ->header('Class does not exist:')
-            ->errorData($this->yellow($class['class']).' <==== does not exist')
-            ->link($absPath, $class['line']));
+            ->errorData($this->yellow($class).' <==== does not exist')
+            ->link($absPath, $lineNum));
     }
 
     public function authConf()

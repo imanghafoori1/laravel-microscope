@@ -54,9 +54,9 @@ class CheckViews extends Command
         }
 
         $methods = [
-            [new CheckViewFilesExistence, 'check'],
-            [new CheckClassReferences, 'check'],
-            [new CheckRouteCalls, 'check'],
+            [CheckViewFilesExistence::class, 'check'],
+            [CheckClassReferences::class, 'check'],
+            [CheckRouteCalls::class, 'check'],
         ];
         (new \Imanghafoori\LaravelMicroscope\CheckViews())->check($methods);
 
