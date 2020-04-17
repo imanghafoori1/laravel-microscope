@@ -21,7 +21,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        if (! $this->app->runningInConsole() || app()->isProduction()) {
+        if (! $this->canRun()) {
             return;
         }
 
@@ -39,32 +39,24 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if (! $this->app->runningInConsole() || app()->isProduction()) {
+        if (! $this->canRun()) {
             return;
         }
 
+//        $this->loadConfig();
+
+        // we spy the router in order to have a list of route files.
         $this->spyRouter();
+
         app()->singleton(ErrorPrinter::class);
 
-//        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
+        // we need to start spying before the boot process starts.
+
         $command = $_SERVER['argv'][1] ?? null;
 
-        if ($command == 'check:events') {
-            $this->app->singleton('events', function ($app) {
-                return (new CheckerDispatcher($app))->setQueueResolver(function () use ($app) {
-                    return $app->make(QueueFactoryContract::class);
-                });
-            });
-            Event::clearResolvedInstance('events');
-        }
+        ($command == 'check:events') && $this->spyEvents();
 
-        if ($command == 'check:gates') {
-            $this->app->singleton(GateContract::class, function ($app) {
-                return new CheckerGate($app, function () use ($app) {
-                    return call_user_func($app['auth']->userResolver());
-                });
-            });
-        }
+        ($command == 'check:gates') && $this->spyGates();
     }
 
     private function spyRouter()
@@ -74,5 +66,34 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return $router;
         });
         Route::swap($router);
+    }
+
+    private function spyGates()
+    {
+        $this->app->singleton(GateContract::class, function ($app) {
+            return new CheckerGate($app, function () use ($app) {
+                return call_user_func($app['auth']->userResolver());
+            });
+        });
+    }
+
+    private function spyEvents()
+    {
+        $this->app->singleton('events', function ($app) {
+            return (new CheckerDispatcher($app))->setQueueResolver(function () use ($app) {
+                return $app->make(QueueFactoryContract::class);
+            });
+        });
+        Event::clearResolvedInstance('events');
+    }
+
+    private function loadConfig()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
+    }
+
+    private function canRun()
+    {
+        return $this->app->runningInConsole() && ! app()->isProduction();
     }
 }
