@@ -69,7 +69,7 @@ class CheckImports extends Command implements FileCheckContract
         }
 
         (new CheckViews)->check([
-            [new CheckClassReferences, 'check'],
+            [CheckClassReferences::class, 'check'],
         ]);
 
         $this->checkConfig();
@@ -111,23 +111,10 @@ class CheckImports extends Command implements FileCheckContract
 
                     $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
                     $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-                    $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $firstParam);
-
-                    $sections = explode(DIRECTORY_SEPARATOR, $dir);
-
-                    $res = [];
-                    foreach ($sections as $i => $section) {
-                        if ($section == '..') {
-                            array_pop($res);
-                        } else {
-                            $res[] = $section;
-                        }
-                    }
-
-                    $filePath = implode(DIRECTORY_SEPARATOR, $res);
+                    $filePath = $this->normalizePath($firstParam);
                     $tokens = token_get_all(file_get_contents($filePath));
 
-                    (new CheckClassReferences)->check($tokens, $filePath);
+                    CheckClassReferences::check($tokens, $filePath);
                     CheckClasses::checkAtSignStrings($tokens, $filePath);
                 }
             }
@@ -144,5 +131,28 @@ class CheckImports extends Command implements FileCheckContract
     private function getFileAbsPath($psr4Namespace, $psr4Path, $provider)
     {
         return base_path(str_replace($psr4Namespace, $psr4Path, $provider));
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    private function normalizePath($path)
+    {
+        $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+
+        $sections = explode(DIRECTORY_SEPARATOR, $dir);
+
+        $res = [];
+        foreach ($sections as $i => $section) {
+            if ($section == '..') {
+                array_pop($res);
+            } else {
+                $res[] = $section;
+            }
+        }
+
+        return implode(DIRECTORY_SEPARATOR, $res);
     }
 }
