@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
-use Symfony\Component\Finder\Finder;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Symfony\Component\Finder\Finder;
 
 class CheckViews
 {

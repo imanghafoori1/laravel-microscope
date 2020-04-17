@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ClassifyStrings extends Command

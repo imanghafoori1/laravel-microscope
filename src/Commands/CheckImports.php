@@ -2,20 +2,20 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Support\Composer;
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelMicroscope\CheckViews;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
+use Illuminate\Support\Composer;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 
 class CheckImports extends Command implements FileCheckContract
 {
