@@ -3,9 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 
 class CheckViews
 {
@@ -45,7 +46,7 @@ class CheckViews
     public function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
-            $files = (new Finder)->files()->in($path);
+            $files = (new Finder)->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {
                 /**
@@ -66,7 +67,7 @@ class CheckViews
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = CheckClasses::getAllPhpFiles($psr4Path);
+            $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
                 $absFilePath = $classFilePath->getRealPath();
                 $tokens = token_get_all(file_get_contents($absFilePath));

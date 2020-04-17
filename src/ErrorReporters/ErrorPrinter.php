@@ -159,7 +159,7 @@ class ErrorPrinter
      */
     public function logErrors()
     {
-        $errorsCollection = collect($this->counts)
+        collect($this->counts)
             ->except('total')
             ->flatten()
             ->each(function ($error) {

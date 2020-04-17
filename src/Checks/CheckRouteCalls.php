@@ -7,12 +7,12 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRouteCalls
 {
-    public function check($tokens, $absFilePath)
+    public static function check($tokens, $absFilePath)
     {
         $handleRoute = function ($line, $routeName, $absPath) {
             $matchedRoute = app('router')->getRoutes()->getByName(trim($routeName, '\'\"'));
             if (is_null($matchedRoute)) {
-                $this->printError($routeName, $absPath, $line);
+                self::printError($routeName, $absPath, $line);
             }
         };
 
@@ -34,7 +34,7 @@ class CheckRouteCalls
      * @param $absPath
      * @param $lineNumber
      */
-    protected function printError($value, $absPath, $lineNumber)
+    public static function printError($value, $absPath, $lineNumber)
     {
         $p = app(ErrorPrinter::class);
         $p->route(null, "route name $value does not exist: ", "route($value)   <====   is wrong", $absPath, $lineNumber);

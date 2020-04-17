@@ -2,14 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Symfony\Component\Finder\Finder;
 
 class CheckClasses
 {
@@ -90,7 +90,7 @@ class CheckClasses
      *
      * @return void
      */
-    public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContractAlias $fileCheckContract)
+    public static function forNamespace($paths, $composerPath, $composerNamespace, FileCheckContractAlias $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -126,7 +126,7 @@ class CheckClasses
                 continue;
             }
 
-            $relativePath = self::getRelativePath($absFilePath);
+            $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
             if ($currentNamespace !== $correctNamespace) {
                 self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
@@ -200,35 +200,12 @@ class CheckClasses
     {
         // normalize the migration paths
         $migrationDirs = [];
+
         foreach (app('migrator')->paths() as $path) {
-            $migrationDirs[] = str_replace([
-                '\\',
-                '/',
-            ], [
-                DIRECTORY_SEPARATOR,
-                DIRECTORY_SEPARATOR,
-            ], $path);
+            $migrationDirs[] = FilePath::normalize($path);
         }
 
-        /*foreach ($migrationDirs as $dir) {
-            $parts = explode(DIRECTORY_SEPARATOR, $dir);
-
-            foreach($parts as $part) {
-
-            }
-        }*/
-
         return $migrationDirs;
-    }
-
-    public static function getAllPhpFiles($psr4Path)
-    {
-        return (new Finder)->files()->name('*.php')->in(base_path($psr4Path));
-    }
-
-    private static function getRelativePath($absFilePath)
-    {
-        return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
     }
 
     /**

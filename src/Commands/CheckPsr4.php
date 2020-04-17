@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -37,15 +38,15 @@ class CheckPsr4 extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking PSR-4 ...');
+        $this->info('Checking PSR-4 Namespaces...');
 
         $errorPrinter->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = CheckClasses::getAllPhpFiles($psr4Path);
-            CheckClasses::checkAllClasses($files, $psr4Path, $psr4Namespace, $this);
+            $files = FilePath::getAllPhpFiles($psr4Path);
+            CheckClasses::forNamespace($files, $psr4Path, $psr4Namespace, $this);
         }
 
         $this->finishCommand($errorPrinter);

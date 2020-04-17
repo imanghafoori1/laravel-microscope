@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\View;
 
-use Illuminate\Support\Facades\View;
-use Illuminate\View\ViewName;
 use ReflectionMethod;
 
 class ViewParser
