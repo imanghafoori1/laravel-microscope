@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use ReflectionException;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Routing\Router;
@@ -59,7 +60,7 @@ class CheckRoutes extends Command
 
             try {
                 $ctrlObject = app()->make($ctrlClass);
-            } catch (BindingResolutionException $e) {
+            } catch (ReflectionException $e) {
                 $errorIt = $this->errorIt($route);
                 $errorCtrlClass = 'The controller can not be resolved: ';
                 $errorPrinter->route($ctrlClass, $errorIt, $errorCtrlClass);
