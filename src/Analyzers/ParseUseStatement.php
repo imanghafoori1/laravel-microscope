@@ -150,12 +150,12 @@ class ParseUseStatement
      */
     protected static function requestIssue($absFilePath)
     {
-        dump('=====================================');
+        dump('===========================================================');
         dump('was not able to properly parse the: '.$absFilePath.' file.');
         dump('Please open up an issue on the github repo');
         dump('https://github.com/imanghafoori1/laravel-microscope/issues');
-        dump('and also send the content of the file to the maintainer to fix the issue.');
-        dump('=============== Thanks ===============');
+        dump('and also send the content of the file to fix the issue.');
+        dump('========================== Thanks ==========================');
         sleep(3);
     }
 }
