@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use ReflectionException;
 
 class CheckRoutes extends Command
 {
@@ -59,12 +59,12 @@ class CheckRoutes extends Command
 
             try {
                 $ctrlObject = app()->make($ctrlClass);
-            } catch (ReflectionException $e) {
+            } catch (Exception $e) {
                 $errorIt = $this->errorIt($route);
                 $errorCtrlClass = 'The controller can not be resolved: ';
                 $errorPrinter->route($ctrlClass, $errorIt, $errorCtrlClass);
 
-                return;
+                continue;
             }
 
             if (! method_exists($ctrlObject, $method)) {
