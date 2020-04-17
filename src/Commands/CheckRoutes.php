@@ -35,7 +35,7 @@ class CheckRoutes extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking routes ...');
+        $this->info('Checking routes...');
 
         $errorPrinter->printer = $this->output;
 

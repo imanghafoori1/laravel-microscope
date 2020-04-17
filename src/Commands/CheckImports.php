@@ -46,7 +46,7 @@ class CheckImports extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking imports ...');
+        $this->info('Checking imports...');
 
         $errorPrinter->printer = $this->output;
 

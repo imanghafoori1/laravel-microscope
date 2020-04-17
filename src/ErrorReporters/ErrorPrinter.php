@@ -115,7 +115,7 @@ class ErrorPrinter
     {
         $this->print('');
         $number = ++$this->counts['total'];
-        $number = '<fg=yellow>'.$number.' </>';
+        $number = '<fg=yellow>'.$number.'  </>';
         $path = "  | $number";
 
         $this->print($msg, $path);
