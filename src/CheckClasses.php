@@ -2,14 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
 {
@@ -233,7 +233,7 @@ class CheckClasses
             }
             $trimmed = trim($token[1], '\'\"');
 
-            if ($onlyAbsClassPath && $trimmed[0] !== "\\") {
+            if ($onlyAbsClassPath && $trimmed[0] !== '\\') {
                 continue;
             }
 

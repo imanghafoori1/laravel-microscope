@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
