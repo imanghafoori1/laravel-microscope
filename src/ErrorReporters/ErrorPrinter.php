@@ -12,6 +12,7 @@ class ErrorPrinter
         'badRelation' => [],
         'wrongImport' => [],
         'wrongUsedClassError' => [],
+        'wrongMethodError' => [],
         'badNamespace' => [],
     ];
 
@@ -27,20 +28,17 @@ class ErrorPrinter
             ->link($absPath, $lineNumber));
     }
 
-    public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNum = 0)
+    public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
         array_push($this->counts['route'], (new PendingError('route'))
             ->header($errorIt)
             ->errorData($errorTxt.$this->yellow($path))
-            ->link($absPath, $lineNum));
+            ->link($absPath, $lineNumber));
     }
 
-    public function bladeImport($class, $absPath, $lineNum)
+    public function bladeImport($class, $absPath, $lineNumber)
     {
-        array_push($this->counts['bladeImport'], (new PendingError('bladeImport'))
-            ->header('Class does not exist:')
-            ->errorData($this->yellow($class).' <==== does not exist')
-            ->link($absPath, $lineNum));
+        $this->pendError($absPath, $lineNumber, $class, 'bladeImport', 'Class does not exist:');
     }
 
     public function authConf()
@@ -48,36 +46,34 @@ class ErrorPrinter
         $this->print('The model in the "config/auth.php" is not a valid class');
     }
 
-    public function badRelation($path, $lineNumber, $relatedModel)
+    public function badRelation($absPath, $lineNumber, $relatedModel)
     {
-        array_push($this->counts['badRelation'], (new PendingError('badRelation'))
-            ->header('Wrong model is passed in relation:')
-            ->errorData($this->yellow($relatedModel).'   <==== does not exist')
+        $header = 'Wrong model is passed in relation:';
+
+        $this->pendError($absPath, $lineNumber, $relatedModel, 'badRelation', $header);
+    }
+
+    public function pendError($path, $lineNumber, $absent, $key, $header)
+    {
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header($header)
+            ->errorData($this->yellow($absent).'   <==== does not exist')
             ->link($path, $lineNumber));
     }
 
-    public function wrongImport($absPath, $class, $line)
+    public function wrongImport($absPath, $class, $lineNumber)
     {
-        array_push($this->counts['wrongImport'], (new PendingError('wrongImport'))
-            ->header('Wrong import:')
-            ->errorData($this->yellow("use $class;").'   <==== does not exist. ')
-            ->link($absPath, $line));
+        $this->pendError($absPath, $lineNumber, "use $class;", 'wrongImport', 'Wrong import:');
     }
 
-    public function wrongUsedClassError($absFilePath, $class, $lineNum)
+    public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
-        array_push($this->counts['wrongUsedClassError'], (new PendingError('wrongUsedClassError'))
-            ->header('Class does not exist:')
-            ->errorData($this->yellow($class).'  <==== does not exist.')
-            ->link($absFilePath, $lineNum));
+        $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'Class does not exist:');
     }
 
-    public function wrongMethodError($absFilePath, $class, $lineNum)
+    public function wrongMethodError($absPath, $class, $lineNumber)
     {
-        array_push($this->counts['wrongUsedClassError'], (new PendingError('wrongUsedClassError'))
-            ->header('Method does not exist:')
-            ->errorData($this->yellow($class).' <=== does not exist.')
-            ->link($absFilePath, $lineNum));
+        $this->pendError($absPath, $lineNumber, $class, 'wrongMethodError', 'Method does not exist:');
     }
 
     public function yellow($msg)
@@ -86,18 +82,19 @@ class ErrorPrinter
     }
 
     /**
-     * @param  string  $classPath
+     * @param  string  $absPath
      * @param  string  $correctNamespace
      * @param  string  $incorrectNamespace
+     * @param  int  $lineNumber
      *
      * @return void
      */
-    public function badNamespace($classPath, $correctNamespace, $incorrectNamespace, $linkLineNum = 4)
+    public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
         array_push($this->counts['badNamespace'], (new PendingError('badNamespace'))
             ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
             ->errorData('namespace fixed to: '.$this->yellow("namespace $correctNamespace;"))
-            ->link($classPath, $linkLineNum));
+            ->link($absPath, $lineNumber));
     }
 
     public function print($msg, $path = '  |    ', $len = 81)
