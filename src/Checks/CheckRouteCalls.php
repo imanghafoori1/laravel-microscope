@@ -33,7 +33,8 @@ class CheckRouteCalls
         $p->route(null, "route name $value does not exist: ", "route($value)   <====   is wrong", $absPath, $lineNumber);
     }
 
-    public static function checkRouteExists($line, $routeName, $absPath) {
+    public static function checkRouteExists($line, $routeName, $absPath)
+    {
         $matchedRoute = app('router')->getRoutes()->getByName(trim($routeName, '\'\"'));
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
     }
