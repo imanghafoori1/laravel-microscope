@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class GlobalFunctionCall
 {
-    public static function detect($funcName, array &$tokens, $i)
+    public static function detect($funcName, &$tokens, $i)
     {
         $token = $tokens[$i];
 
@@ -12,8 +12,9 @@ class GlobalFunctionCall
             return [null, null];
         }
 
-        $nextToken = self::getNextToken($tokens, $i);
-        $isFunctionCall = true;
+        [$nextToken, $c] = self::getNextToken($tokens, $i);
+        [$nextToken2] = self::getNextToken($tokens, $c);
+
         $token = self::getPrevToken($tokens, $i);
 
         $prev1 = $tokens[$i - 1][0];
@@ -23,7 +24,9 @@ class GlobalFunctionCall
         }
 
         $param1 = null;
-        if ($isFunctionCall && $nextToken[0] == T_CONSTANT_ENCAPSED_STRING) {
+
+        // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+        if (self::isSolidString($nextToken, $nextToken2)) {
             $param1 = $nextToken[1];
         }
 
@@ -39,7 +42,7 @@ class GlobalFunctionCall
             $nextToken = $tokens[$i];
         }
 
-        return $nextToken;
+        return [$nextToken, $i];
     }
 
     protected static function getPrevToken($tokens, &$i)
@@ -70,5 +73,10 @@ class GlobalFunctionCall
         }
 
         return false;
+    }
+
+    private static function isSolidString($nextToken, $nextToken2)
+    {
+        return $nextToken[0] == T_CONSTANT_ENCAPSED_STRING && $nextToken2 !== '.';
     }
 }
