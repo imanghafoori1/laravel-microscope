@@ -88,7 +88,7 @@ You can run:
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
 Lets start with:
-```
+```php
 php artisan check:events
 ```
 
@@ -98,27 +98,31 @@ For example consider:
 Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 ```
 
-1 - It checks the  `MyEvent` class path to be valid.
+1 - It checks the  `\App\Listeners\MyListener` class path to be valid.
 
-2 - It checks the  `MyListener` class path to be valid.
+2 - It checks the  `myMethod` to exist on the `MyListener` class
 
-3 - It checks the  `myMethod` to exist.
-
-4 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
+3 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
 ```php
-public function myMethod(NotExistsEvent $e) // <---- notice type-hint here
+public function myMethod(OtherEvent $e) // <---- notice type-hint here
 {
     //
 }
 ```
-This is a wrong type-hint and will be reported to you. very cool, isn't it ??!
+This is a valid but wrong type-hint, and will be reported to you. Very cool, isn't it ??!
 
 
-- Note that it does not matter how you are setting your event listener, 1- in the `EventServiceProvider`, 2- by `Event::listen` facade,  3- by Subscriber class... or any other way. The error would be found. :)
+- Note that it does not matter how you are setting your event listener, 
+
+1- in the `EventServiceProvider`, 
+
+2- By `Event::listen` facade, 
+
+3- By Subscriber class... or any other way. The error would be found. :)
 
 ----------------------
 
-``` php
+```php
 php artisan check:gates
 ```
 
@@ -139,7 +143,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 ----------------------
 
-``` php
+```php
 php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
@@ -147,7 +151,7 @@ php artisan check:psr4
 
 ----------------------
 
-``` php
+```php
 php artisan check:imports
 ```
 
