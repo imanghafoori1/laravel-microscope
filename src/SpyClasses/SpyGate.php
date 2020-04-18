@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class CheckerGate extends Gate
+class SpyGate extends Gate
 {
     public function define($ability, $callback)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Closure;
 use Illuminate\Routing\RouteFileRegistrar;
