@@ -2,10 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +16,9 @@ use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\Commands\ClassifyStrings;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
