@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
@@ -50,22 +50,18 @@ class CheckViews extends Command
         $psr4 = Util::parseComposerJson('autoload.psr-4');
 
         foreach ($psr4 as $namespace => $path) {
-            $this->within($namespace, $path);
+            $this->checkAllClasses(FilePath::getAllPhpFiles($path));
         }
 
-        $methods = [
+        $checks = [
             [CheckViewFilesExistence::class, 'check'],
             [CheckClassReferences::class, 'check'],
             [CheckRouteCalls::class, 'check'],
         ];
-        (new \Imanghafoori\LaravelMicroscope\CheckViews())->check($methods);
+
+        CheckBladeFiles::applyChecks($checks);
 
         $this->finishCommand($errorPrinter);
-    }
-
-    public function within($namespace, $path)
-    {
-        $this->checkAllClasses(FilePath::getAllPhpFiles($path));
     }
 
     /**
@@ -79,35 +75,35 @@ class CheckViews extends Command
      *
      * @return void
      */
-    protected function checkAllClasses($classes)
+    public function checkAllClasses($classes)
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
-//            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
+
             if (! CheckClasses::hasOpeningTag($absFilePath)) {
 //                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
+
             [
                 $currentNamespace,
                 $class,
                 $type,
-            ]
-                = GetClassProperties::fromFilePath($absFilePath);
+            ] = GetClassProperties::fromFilePath($absFilePath);
 
             if ($class) {
-                $this->checkViews($currentNamespace.'\\'.$class);
+                $this->checkViewsMake($currentNamespace.'\\'.$class);
             }
         }
     }
 
     /**
      * @param $method
-     * @param $ctrl
+     * @param $class
      */
-    protected function checkViews($ctrl)
+    protected function checkViewsMake($class)
     {
-        $methods = self::get_class_methods(new \ReflectionClass($ctrl));
+        $methods = self::get_class_methods(new \ReflectionClass($class));
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->retrieveViewsFromMethod();
@@ -116,26 +112,27 @@ class CheckViews extends Command
                 $this->line("Checking {$method->name} on {$method->class}");
             }
 
-            self::checkView($ctrl, $method, $views);
+            self::checkView($views);
         }
     }
 
-    protected static function checkView($ctrl, $method, array $views)
+    protected static function checkView($views)
     {
         foreach ($views as $view => $_) {
+            // in order to exclude dynamic parameters like: view($myView)
             if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
                 app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
             }
         }
     }
 
-    public static function get_class_methods(\ReflectionClass $classReflection)
+    public static function get_class_methods($classReflection)
     {
         $className = $classReflection->getName();
-        $rm = $classReflection->getMethods();
+        $methods = $classReflection->getMethods();
 
         $functions = [];
-        foreach ($rm as $f) {
+        foreach ($methods as $f) {
             ($f->class === $className) && $functions[] = $f;
         }
 

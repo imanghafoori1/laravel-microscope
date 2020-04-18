@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\CheckViews;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -69,7 +69,7 @@ class CheckImports extends Command implements FileCheckContract
             }
         }
 
-        (new CheckViews)->check([
+        CheckBladeFiles::applyChecks([
             [CheckClassReferences::class, 'check'],
         ]);
 
