@@ -3,12 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Symfony\Component\Finder\Finder;
 
-class CheckViews
+class CheckBladeFiles
 {
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -17,18 +14,16 @@ class CheckViews
      *
      * @return void
      */
-    public function check($methods)
+    public static function applyChecks($methods)
     {
-        $hints = $this->getNamespacedPaths();
+        $hints = self::getNamespacedPaths();
         $hints['1'] = View::getFinder()->getPaths();
         foreach ($hints as $paths) {
-            $this->checkPaths($paths, $methods);
+            self::checkPaths($paths, $methods);
         }
-
-        $this->checkClassesRouteCalls();
     }
 
-    private function getNamespacedPaths()
+    private static function getNamespacedPaths()
     {
         $hints = View::getFinder()->getHints();
         unset($hints['notifications'], $hints['pagination']);
@@ -43,7 +38,7 @@ class CheckViews
      *
      * @return int|string
      */
-    public function checkPaths($paths, $methods)
+    public static function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
             $files = (new Finder)->name('*.blade.php')->files()->in($path);
@@ -58,20 +53,6 @@ class CheckViews
                 foreach ($methods as $method) {
                     call_user_func_array($method, [$tokens, $blade->getPathname()]);
                 }
-            }
-        }
-    }
-
-    protected function checkClassesRouteCalls()
-    {
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
-
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
-                $absFilePath = $classFilePath->getRealPath();
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                CheckRouteCalls::check($tokens, $absFilePath);
             }
         }
     }
