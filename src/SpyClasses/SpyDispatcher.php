@@ -1,13 +1,13 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class CheckerDispatcher extends Dispatcher
+class SpyDispatcher extends Dispatcher
 {
     public function listen($events, $listener)
     {
@@ -24,7 +24,7 @@ class CheckerDispatcher extends Dispatcher
 
     private function isLikeClassPath($event)
     {
-        return (count(explode('\\', $event)) > 1) && ! Str::contains($event, [' ', '.', ':', '-', '@']);
+        return substr_count('\\', $event) > 0 && ! Str::contains($event, [' ', '.', ':', '-', '@']);
     }
 
     protected function validateCallback($event, $listener)

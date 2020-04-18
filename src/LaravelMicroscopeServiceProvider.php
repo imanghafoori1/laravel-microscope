@@ -2,7 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -71,7 +74,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function spyGates()
     {
         $this->app->singleton(GateContract::class, function ($app) {
-            return new CheckerGate($app, function () use ($app) {
+            return new SpyGate($app, function () use ($app) {
                 return call_user_func($app['auth']->userResolver());
             });
         });
@@ -80,7 +83,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function spyEvents()
     {
         $this->app->singleton('events', function ($app) {
-            return (new CheckerDispatcher($app))->setQueueResolver(function () use ($app) {
+            return (new SpyDispatcher($app))->setQueueResolver(function () use ($app) {
                 return $app->make(QueueFactoryContract::class);
             });
         });
