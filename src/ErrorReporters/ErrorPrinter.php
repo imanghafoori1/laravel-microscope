@@ -81,14 +81,6 @@ class ErrorPrinter
         return "<fg=yellow>$msg</>";
     }
 
-    /**
-     * @param  string  $absPath
-     * @param  string  $correctNamespace
-     * @param  string  $incorrectNamespace
-     * @param  int  $lineNumber
-     *
-     * @return void
-     */
     public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
         array_push($this->counts['badNamespace'], (new PendingError('badNamespace'))

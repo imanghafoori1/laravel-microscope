@@ -12,10 +12,7 @@ class NamespaceCorrector
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
-        [
-            $oldLine,
-            $newline
-        ] = self::getNewLine($incorrectNamespace, $correctNamespace);
+        [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
         $oldLine = ltrim($oldLine, '\\');
         ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
@@ -63,9 +60,6 @@ class NamespaceCorrector
             $newline = $correctNamespace;
         }
 
-        return [
-            $incorrectNamespace,
-            $newline,
-        ];
+        return [$incorrectNamespace, $newline,];
     }
 }

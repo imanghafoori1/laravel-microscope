@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;

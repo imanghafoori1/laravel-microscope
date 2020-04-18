@@ -22,11 +22,6 @@ class CheckRouteCalls
         return $tokens;
     }
 
-    /**
-     * @param $value
-     * @param $absPath
-     * @param $lineNumber
-     */
     public static function printError($value, $absPath, $lineNumber)
     {
         $p = app(ErrorPrinter::class);

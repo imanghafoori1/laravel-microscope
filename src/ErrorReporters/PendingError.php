@@ -5,9 +5,13 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 class PendingError
 {
     private $type;
+
     private $header;
+
     private $errorData;
+
     private $linkPath;
+
     private $linkLineNumber = 4;
 
     /**
