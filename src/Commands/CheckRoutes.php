@@ -3,18 +3,19 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Illuminate\Routing\Router;
+use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
 {
     use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *
