@@ -3,14 +3,14 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Support\Str;
-use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
 {

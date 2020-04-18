@@ -60,6 +60,6 @@ class NamespaceCorrector
             $newline = $correctNamespace;
         }
 
-        return [$incorrectNamespace, $newline,];
+        return [$incorrectNamespace, $newline];
     }
 }
