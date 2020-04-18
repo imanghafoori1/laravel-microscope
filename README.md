@@ -15,7 +15,8 @@ This package is created in order to understand laravel magic and be smarter than
 Built with :heart: for lazy laravel developers ;)
 </h4>
 
-
+<p align="center">
+    
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
 [![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-self-test) 
 [![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope) 
@@ -23,6 +24,7 @@ Built with :heart: for lazy laravel developers ;)
 [![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg?style=round-square)](LICENSE.md)
 
+</p>
 
 ## Key things to know:
 
