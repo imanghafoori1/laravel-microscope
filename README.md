@@ -15,16 +15,12 @@ This package is created in order to understand laravel magic and be smarter than
 Built with :heart: for lazy laravel developers ;)
 </h4>
 
-<p align="center">
-    
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
-[![Build Status](https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square)](https://travis-ci.org/imanghafoori1/laravel-self-test) 
-[![Quality Score](https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square)](https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope) 
-[![Daily Downloads](https://poser.pugx.org/imanghafoori/laravel-microscope/d/daily)](https://packagist.org/packages/imanghafoori/laravel-microscope)
-[![Total Downloads](https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square)](https://packagist.org/packages/imanghafoori/laravel-microscope) 
-[![Software License](https://img.shields.io/badge/license-MIT-blue.svg?style=round-square)](LICENSE.md)
-
-</p>
+<p align="center"><a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/8d75e05f4b67de65b51e10772b054f506aa8cfab/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f762f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Latest Version on Packagist" data-canonical-src="https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square" style="max-width:100%;"></a>
+<a href="https://travis-ci.org/imanghafoori1/laravel-self-test" rel="nofollow"><img src="https://camo.githubusercontent.com/63b18ae839896de4604ede21595326389fed0b1f/68747470733a2f2f696d672e736869656c64732e696f2f7472617669732f696d616e676861666f6f7269312f6c61726176656c2d73656c662d746573742f6d61737465722e7376673f7374796c653d666c61742d737175617265" alt="Build Status" data-canonical-src="https://img.shields.io/travis/imanghafoori1/laravel-self-test/master.svg?style=flat-square" style="max-width:100%;"></a>
+<a href="https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/ee6d1b9eee22268201b7e253867c6bb64838651e/68747470733a2f2f696d672e736869656c64732e696f2f7363727574696e697a65722f672f696d616e676861666f6f7269312f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Quality Score" data-canonical-src="https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square" style="max-width:100%;"></a>
+<a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/5441e915afbdb81de92b808965f294b0c7d18c52/68747470733a2f2f706f7365722e707567782e6f72672f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652f642f6461696c79" alt="Daily Downloads" data-canonical-src="https://poser.pugx.org/imanghafoori/laravel-microscope/d/daily" style="max-width:100%;"></a>
+<a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/7f10826df8cf3fb52525fd2494554c0e587b8bb7/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f64742f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Total Downloads" data-canonical-src="https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square" style="max-width:100%;"></a>
+<a href="/imanghafoori1/laravel-microscope/blob/master/LICENSE.md"><img src="https://camo.githubusercontent.com/d885b3999bb863974fb67118174bb0402d089a89/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e7376673f7374796c653d726f756e642d737175617265" alt="Software License" data-canonical-src="https://img.shields.io/badge/license-MIT-blue.svg?style=round-square" style="max-width:100%;"></a></p>
 
 ## Key things to know:
 
