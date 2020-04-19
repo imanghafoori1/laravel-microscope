@@ -154,7 +154,7 @@ class ClassReferenceFinder
                     // we do not want to collect after comma.
                     $collect = false;
                 }
-                $force_close = false;
+                $isInSideClass && $force_close = false;
                 $c++;
                 self::forward();
                 continue;
