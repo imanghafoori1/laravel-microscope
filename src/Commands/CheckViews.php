@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use ReflectionClass;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -17,6 +16,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\View\ViewParser;
+use ReflectionClass;
 
 class CheckViews extends Command
 {
