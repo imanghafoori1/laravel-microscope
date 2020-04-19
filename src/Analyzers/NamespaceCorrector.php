@@ -62,4 +62,12 @@ class NamespaceCorrector
 
         return [$incorrectNamespace, $newline];
     }
+
+    public static function getRelativePathFromNamespace($namespace)
+    {
+        $namespaces = array_keys(Util::parseComposerJson('autoload.psr-4'));
+        $paths = array_values(Util::parseComposerJson('autoload.psr-4'));
+
+        return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, str_replace($namespaces, $paths, $namespace));
+    }
 }
