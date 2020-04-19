@@ -189,7 +189,7 @@ class CheckClasses
         }
     }
 
-    private static function exists($imp)
+    public static function exists($imp)
     {
         return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
     }

@@ -4,13 +4,18 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
 use Imanghafoori\LaravelMicroscope\Analyzers\Util;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class ClassifyStrings extends Command
 {
+    use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *
@@ -32,6 +37,7 @@ class ClassifyStrings extends Command
         $errorPrinter->printer = $this->output;
 
         $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $namespaces = array_keys($psr4);
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
 
@@ -40,7 +46,17 @@ class ClassifyStrings extends Command
 
                 $tokens = token_get_all(file_get_contents($absFilePath));
                 foreach ($tokens as $token) {
-                    if (! $this->isClassyString($token)) {
+                    if (! $this->isPossiblyClassyString($token, $namespaces)) {
+                        continue;
+                    }
+                    $classPath = trim($token[1], '\'\"');
+                    if (CheckClasses::exists($classPath)) {
+                        $relPath = NamespaceCorrector::getRelativePathFromNamespace($classPath);
+                        // Is a correct namespace path, pointing to a directory
+                        if (is_dir(base_path($relPath))) {
+                            continue;
+                        }
+                        $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                         continue;
                     }
 
@@ -48,31 +64,29 @@ class ClassifyStrings extends Command
                     $this->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
                     $answer = $this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
                     if ($answer) {
-                        dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($token));
-                        ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($token));
+                        dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
+                        ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
                         dump('====================================');
                     }
                 }
             }
         }
+
+        $this->finishCommand($errorPrinter);
     }
 
-    protected function getClassyPath($token)
+    protected function getClassyPath($string)
     {
-        $string = trim($token[1], '\'\"');
         ($string[0] !== '\\') && ($string = '\\'.$string);
         $string .= '::class';
 
         return $string;
     }
 
-    /**
-     * @param $token
-     *
-     * @return bool
-     */
-    protected function isClassyString($token)
+    private function isPossiblyClassyString($token, $namespaces)
     {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::contains($token[1], ['\\']) && class_exists(trim($token[1], '\'\"'));
+        $chars = ['@', ' ', ',', ':', '/', '.', '-'];
+
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::contains($token[1], $namespaces) && ! Str::contains($token[1], $chars);
     }
 }
