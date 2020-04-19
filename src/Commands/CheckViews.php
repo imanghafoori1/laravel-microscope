@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use ReflectionClass;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -88,22 +89,25 @@ class CheckViews extends Command
             [
                 $currentNamespace,
                 $class,
-                $type,
             ] = GetClassProperties::fromFilePath($absFilePath);
 
-            if ($class) {
+            if ($class && $currentNamespace) {
                 $this->checkViewsMake($currentNamespace.'\\'.$class);
             }
         }
     }
 
     /**
-     * @param $method
      * @param $class
      */
     protected function checkViewsMake($class)
     {
-        $methods = self::get_class_methods(new \ReflectionClass($class));
+        try {
+            $methods = self::get_class_methods(new ReflectionClass($class));
+        } catch (\ReflectionException $e) {
+            $methods = [];
+        }
+
         foreach ($methods as $method) {
             $vParser = new ViewParser($method);
             $views = $vParser->retrieveViewsFromMethod();
