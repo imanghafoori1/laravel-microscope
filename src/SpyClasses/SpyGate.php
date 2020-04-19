@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use Illuminate\Auth\Access\Gate;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Access\Gate;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyGate extends Gate
