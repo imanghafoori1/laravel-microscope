@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -46,7 +46,7 @@ class CheckPsr4 extends Command implements FileCheckContract
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
-            CheckClasses::forNamespace($files, $psr4Path, $psr4Namespace, $this);
+            CheckNamespaces::forNamespace($files, $psr4Path, $psr4Namespace, $this);
         }
 
         $this->finishCommand($errorPrinter);
