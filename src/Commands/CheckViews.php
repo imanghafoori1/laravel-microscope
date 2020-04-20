@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Imanghafoori\LaravelMicroscope\Analyzers\GlobalFunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -69,10 +70,6 @@ class CheckViews extends Command
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $classes
-     * @param  string  $basePath
-     *
-     * @param $composerPath
-     * @param $composerNamespace
      *
      * @return void
      */
@@ -82,17 +79,14 @@ class CheckViews extends Command
             $absFilePath = $classFilePath->getRealPath();
 
             if (! CheckClasses::hasOpeningTag($absFilePath)) {
-//                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
 
-            [
-                $currentNamespace,
-                $class,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            [$namespace, $class] = GetClassProperties::fromFilePath($absFilePath);
 
-            if ($class && $currentNamespace) {
-                $this->checkViewsMake($currentNamespace.'\\'.$class);
+            if ($class && $namespace) {
+                $this->checkForViewMake($absFilePath);
+                $this->checkViewsMake($namespace.'\\'.$class);
             }
         }
     }
@@ -141,5 +135,32 @@ class CheckViews extends Command
         }
 
         return $functions;
+    }
+
+    private function checkForViewMake($absFilePath)
+    {
+        $tokens = token_get_all(file_get_contents($absFilePath));
+
+        foreach($tokens as $i => $token) {
+            $token = GlobalFunctionCall::isGlobalFunctionCall('view', $tokens, $i);
+
+            if (! $token) {
+                continue;
+            }
+
+            $params = GlobalFunctionCall::readParameters($tokens, $i);
+
+            $param1 = null;
+            // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+            $paramTokens = $params[0] ?? ['_', '_'];
+
+            if(! GlobalFunctionCall::isSolidString($paramTokens)) {
+                continue;
+            }
+
+            $p1 = trim($paramTokens[0][1], '\'\"');
+
+            $p1 && ! View::exists($p1) && app(ErrorPrinter::class)->view($absFilePath, 'view does not exist', $paramTokens[0][2], $p1);
+        }
     }
 }
