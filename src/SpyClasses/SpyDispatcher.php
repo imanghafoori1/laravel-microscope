@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyDispatcher extends Dispatcher
