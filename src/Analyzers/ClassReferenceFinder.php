@@ -147,13 +147,9 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == ',') {
-                if ($isMethodSignature || $implements) {
-                    $collect = true;
-                } else {
-                    // for method calls: foo(new Hello, $var);
-                    // we do not want to collect after comma.
-                    $collect = false;
-                }
+                // for method calls: foo(new Hello, $var);
+                // we do not want to collect after comma.
+                $collect = ($isMethodSignature || $implements) ? true : false;
                 $isInSideClass && $force_close = false;
                 $c++;
                 self::forward();
