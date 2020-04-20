@@ -9,7 +9,7 @@ class FilePath
 {
     public static function normalize($path)
     {
-        $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+        $dir = str_replace(['\\', '/', '//', '\\\\'], DIRECTORY_SEPARATOR, $path);
 
         $sections = explode(DIRECTORY_SEPARATOR, $dir);
 
