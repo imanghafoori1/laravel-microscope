@@ -66,7 +66,7 @@ class ClassifyStrings extends Command
                     if ($answer) {
                         dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
                         ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
-                        dump('====================================');
+                        $this->info('====================================');
                     }
                 }
             }

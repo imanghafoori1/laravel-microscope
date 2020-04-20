@@ -6,7 +6,7 @@ class ErrorPrinter
 {
     public $counts = [
         'view' => [],
-        'route'=>[],
+        'route' => [],
         'total' => 0,
         'bladeImport' => [],
         'badRelation' => [],
@@ -89,8 +89,9 @@ class ErrorPrinter
             ->link($absPath, $lineNumber));
     }
 
-    public function print($msg, $path = '  |    ', $len = 81)
+    public function print($msg, $path = '|  ', $len = null)
     {
+        ! $len && $len = PendingError::$maxLength + 1;
         $msgLen = strlen($msg);
         if (strpos($msg, 'yellow')) {
             $msgLen = $msgLen - 14;
@@ -100,30 +101,32 @@ class ErrorPrinter
             $len = 0;
         }
 
-        $this->printer->writeln($path.$msg.str_repeat(' ', $len).'|  ');
+        $this->printer->writeln($path.$msg.str_repeat(' ', $len).'|');
     }
 
     public function printHeader($msg)
     {
         $this->print('');
         $number = ++$this->counts['total'];
-        $number = '<fg=yellow>'.$number.'  </>';
-        $path = "  | $number";
+        ($number < 10) && $number = " $number";
 
-        $this->print($msg, $path);
+        $number = '<fg=yellow>'.$number.' </>';
+        $path = "| $number";
+
+        $this->print($msg, $path, PendingError::$maxLength -1);
     }
 
     public function end()
     {
         $this->print('');
-        $this->printer->writeln('  |'.str_repeat('*', 85).'|  ');
+        $this->printer->writeln('|'.str_repeat('*', 3 + PendingError::$maxLength).'|  ');
     }
 
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
             $filePath = trim(str_replace(base_path(), '', $path), '\\/');
-            $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', 114);
+            $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
         }
     }
 
@@ -136,11 +139,9 @@ class ErrorPrinter
     {
         $errorsCollection = collect($this->counts);
 
-        return $errorsCollection
-            ->flatten()
-            ->filter(function ($action) {
-                return $action instanceof PendingError;
-            })->count();
+        return $errorsCollection->flatten()->filter(function ($action) {
+            return $action instanceof PendingError;
+        })->count();
     }
 
     /**
@@ -148,16 +149,13 @@ class ErrorPrinter
      */
     public function logErrors()
     {
-        collect($this->counts)
-            ->except('total')
-            ->flatten()
-            ->each(function ($error) {
-                if ($error instanceof PendingError) {
-                    $this->printHeader($error->getHeader());
-                    $this->print($error->getErrorData());
-                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
-                    $this->end();
-                }
-            });
+        collect($this->counts)->except('total')->flatten()->each(function ($error) {
+            if ($error instanceof PendingError) {
+                $this->printHeader($error->getHeader());
+                $this->print($error->getErrorData());
+                $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+                $this->end();
+            }
+        });
     }
 }
