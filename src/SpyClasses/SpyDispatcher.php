@@ -22,25 +22,13 @@ class SpyDispatcher extends Dispatcher
         $p->end();
     }
 
-    private function isLikeClassPath($event)
-    {
-        return substr_count('\\', $event) > 0 && ! Str::contains($event, [' ', '.', ':', '-', '@']);
-    }
-
     protected function validateCallback($event, $listener)
     {
-        if ($this->isLikeClassPath($event) && ! $this->exists($event)) {
-            return $this->error("The Event class: \"$event\" you are listening to does not exist.");
-        }
-
         if (! is_string($listener)) {
             return;
         }
 
-        [
-            $listenerClass,
-            $methodName,
-        ] = $this->parseClassCallable($listener);
+        [$listenerClass, $methodName] = $this->parseClassCallable($listener);
 
         try {
             $listenerObj = app()->make($listenerClass);
@@ -74,11 +62,7 @@ class SpyDispatcher extends Dispatcher
 
     protected function noClass($event, $class, $method)
     {
-        $at = implode('@', [
-            $class,
-            $method,
-        ]);
-
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The class of '.$at.' can not be resolved as a listener for "'.$e.'" event';
@@ -86,26 +70,16 @@ class SpyDispatcher extends Dispatcher
 
     protected function noMethod($event, $class, $method)
     {
-        $at = implode('@', [
-            $class,
-            $method,
-        ]);
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
     }
 
-    private function exists($event)
-    {
-        return class_exists($event) || interface_exists($event);
-    }
-
     protected function getTypeHintedClass($listenerObj, $methodName)
     {
-        $typeHint = (new \ReflectionParameter([
-            $listenerObj,
-            $methodName,
-        ], 0))->getType();
+        $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
+        $typeHint = $ref->getType();
 
         return $typeHint ? $typeHint->getName() : null;
     }
