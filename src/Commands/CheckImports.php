@@ -8,7 +8,7 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
@@ -50,7 +50,7 @@ class CheckImports extends Command implements FileCheckContract
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
 
         $this->getApplicationProviders($psr4);
         foreach ($psr4 as $psr4Namespace => $psr4Path) {

@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -71,7 +71,7 @@ class CheckRoutes extends Command
 
     protected function checkClassesRouteCalls()
     {
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
