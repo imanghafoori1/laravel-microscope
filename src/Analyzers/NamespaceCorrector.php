@@ -65,7 +65,7 @@ class NamespaceCorrector
 
     public static function getRelativePathFromNamespace($namespace)
     {
-        $autoload = Util::parseComposerJson('autoload.psr-4');
+        $autoload = ComposerJson::readKey('autoload.psr-4');
         $namespaces = array_keys($autoload);
         $paths = array_values($autoload);
 

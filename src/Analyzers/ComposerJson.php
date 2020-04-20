@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-class Util
+class ComposerJson
 {
     private static $result = [];
 
-    public static function parseComposerJson($key)
+    public static function readKey($key)
     {
         if (isset(self::$result[$key])) {
             return self::$result[$key];

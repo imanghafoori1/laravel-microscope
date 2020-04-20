@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
-use Imanghafoori\LaravelMicroscope\Analyzers\Util;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
@@ -48,7 +48,7 @@ class CheckViews extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
 
         foreach ($psr4 as $namespace => $path) {
             $this->checkAllClasses(FilePath::getAllPhpFiles($path));
