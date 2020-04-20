@@ -21,7 +21,7 @@ class CheckNamespaces
      *
      * @return void
      */
-    public static function forNamespace($paths, $composerPath, $composerNamespace, FileCheckContractAlias $fileCheckContract)
+    public static function forNamespace($paths, $composerPath, $composerNamespace, $fileCheckContract)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -40,10 +40,6 @@ class CheckNamespaces
                 continue;
             }
 
-            if ($fileCheckContract) {
-                $fileCheckContract->onFileTap($classFilePath);
-            }
-
             [
                 $currentNamespace,
                 $class,
@@ -57,6 +53,8 @@ class CheckNamespaces
                 continue;
             }
 
+            $fileCheckContract->onFileTap($classFilePath);
+
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
             if ($currentNamespace === $correctNamespace) {
@@ -65,7 +63,7 @@ class CheckNamespaces
 
             self::warn($currentNamespace, $relativePath);
 
-            $answer = $fileCheckContract->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
+            $answer = self::ask($fileCheckContract, $correctNamespace);
             if ($answer) {
                 self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
                 // maybe an event listener
@@ -112,5 +110,10 @@ class CheckNamespaces
         }
 
         return $migrationDirs;
+    }
+
+    private static function ask($fileCheckContract, $correctNamespace)
+    {
+        return $fileCheckContract->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
     }
 }
