@@ -101,13 +101,13 @@ class CheckImports extends Command implements FileCheckContract
                     continue;
                 }
 
-                $absPath = $this->getFileAbsPath($psr4Namespace, $psr4Path, $provider).'.php';
+                $absPath = $this->psr4NamespaceToRelPath($psr4Namespace, $psr4Path, $provider).'.php';
                 $tokens = token_get_all(file_get_contents($absPath));
                 $methodCalls = MethodParser::extractParametersValueWithinMethod($tokens, ['loadRoutesFrom']);
 
                 foreach ($methodCalls as $calls) {
                     $namespace = trim(str_replace(class_basename($provider), '', $provider), '\\');
-                    $dir = (str_replace($psr4Namespace, $psr4Path, $namespace));
+                    $dir = str_replace($psr4Namespace, $psr4Path, $namespace);
                     $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
 
                     $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
@@ -122,9 +122,9 @@ class CheckImports extends Command implements FileCheckContract
         }
     }
 
-    private function getFileAbsPath($psr4Namespace, $psr4Path, $provider)
+    private function psr4NamespaceToRelPath($psr4Namespace, $psr4Path, $namespace)
     {
-        $path = str_replace($psr4Namespace, $psr4Path, $provider);
+        $path = str_replace($psr4Namespace, $psr4Path, $namespace);
 
         return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
     }

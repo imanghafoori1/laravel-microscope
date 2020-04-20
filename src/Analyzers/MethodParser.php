@@ -22,18 +22,18 @@ class MethodParser
             $i = $i + 2;
             $method = $tokens[$i];
 
-            $relation = self::containsRelationDefinition($tokens, $method, $i, $methodNames);
+            $callingMethod = self::containsMethodCall($tokens, $method, $i, $methodNames);
 
-            if (! $relation) {
+            if (! $callingMethod) {
                 continue;
             }
 
             self::getNextToken($tokens, $i);
 
             // collect parameters
-            $relation['params'] = self::readPassedParameters($tokens, $i);
+            $callingMethod['params'] = self::readPassedParameters($tokens, $i);
 
-            $relations[] = $relation;
+            $relations[] = $callingMethod;
         }
 
         return $relations;
@@ -167,7 +167,7 @@ class MethodParser
      *
      * @return array|bool
      */
-    protected static function containsRelationDefinition($tokens, $method, &$i, $relations)
+    protected static function containsMethodCall($tokens, $method, &$i, $relations)
     {
         $relation = [
             'name' => $method[1],
