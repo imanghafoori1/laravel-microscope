@@ -16,10 +16,12 @@ use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class CheckImports extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
 
     /**
@@ -52,7 +54,8 @@ class CheckImports extends Command implements FileCheckContract
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
-        $this->getApplicationProviders($psr4);
+        $this->getRouteFiles();
+
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
                 $files = FilePath::getAllPhpFiles($psr4Path);
@@ -93,39 +96,44 @@ class CheckImports extends Command implements FileCheckContract
         $this->info('Running "composer dump-autoload" command...');
     }
 
-    private function getApplicationProviders($psr4)
+    private function getRouteFiles()
     {
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            foreach (config('app.providers') as $provider) {
-                if (! Str::startsWith($provider, $psr4Namespace)) {
-                    continue;
-                }
+        $routePaths = $this->getRoutePaths();
 
-                $absPath = $this->psr4NamespaceToRelPath($psr4Namespace, $psr4Path, $provider).'.php';
-                $tokens = token_get_all(file_get_contents($absPath));
-                $methodCalls = MethodParser::extractParametersValueWithinMethod($tokens, ['loadRoutesFrom']);
-
-                foreach ($methodCalls as $calls) {
-                    $namespace = trim(str_replace(class_basename($provider), '', $provider), '\\');
-                    $dir = str_replace($psr4Namespace, $psr4Path, $namespace);
-                    $dir = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
-
-                    $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
-                    $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-                    $filePath = FilePath::normalize($firstParam);
-                    $tokens = token_get_all(file_get_contents($filePath));
-
-                    CheckClassReferences::check($tokens, $filePath);
-                    CheckClasses::checkAtSignStrings($tokens, $filePath, true);
-                }
-            }
+        foreach($routePaths as $routePath) {
+            $routeFileTokens = token_get_all(file_get_contents($routePath));
+            CheckClassReferences::check($routeFileTokens, $routePath);
+            CheckClasses::checkAtSignStrings($routeFileTokens, $routePath, true);
         }
     }
 
-    private function psr4NamespaceToRelPath($psr4Namespace, $psr4Path, $namespace)
+    private function getRoutePaths()
     {
-        $path = str_replace($psr4Namespace, $psr4Path, $namespace);
+        $routePaths = [];
 
-        return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+        foreach (config('app.providers') as $providerClass) {
+            // we exclude the core or package service providers here.
+            if (! Str::contains($providerClass, array_keys(ComposerJson::readKey('autoload.psr-4')))) {
+                continue;
+            }
+
+            // get tokens by class name
+            $path = NamespaceCorrector::getRelativePathFromNamespace($providerClass);
+            $routeFileTokens = token_get_all(file_get_contents(base_path($path).'.php'));
+
+            $methodCalls = MethodParser::extractParametersValue($routeFileTokens, ['loadRoutesFrom']);
+
+            foreach ($methodCalls as $calls) {
+                $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
+
+                // remove class name from the end of string.
+                $dir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
+
+                $firstParam = str_replace('__DIR__.', $dir, $firstParam);
+                $routePaths[] = FilePath::normalize($firstParam);
+            }
+        }
+
+        return $routePaths;
     }
 }
