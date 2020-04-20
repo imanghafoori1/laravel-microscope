@@ -122,15 +122,10 @@ class CheckImports extends Command implements FileCheckContract
         }
     }
 
-    /**
-     * @param $psr4Namespace
-     * @param $psr4Path
-     * @param $provider
-     *
-     * @return string
-     */
     private function getFileAbsPath($psr4Namespace, $psr4Path, $provider)
     {
-        return base_path(str_replace($psr4Namespace, $psr4Path, $provider));
+        $path = str_replace($psr4Namespace, $psr4Path, $provider);
+
+        return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
     }
 }
