@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
@@ -16,7 +16,6 @@ use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -54,7 +53,7 @@ class CheckImports extends Command implements FileCheckContract
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
-        $this->getRouteFiles();
+        $this->getRouteFiles(RoutePaths::get());
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
@@ -96,44 +95,12 @@ class CheckImports extends Command implements FileCheckContract
         $this->info('Running "composer dump-autoload" command...');
     }
 
-    private function getRouteFiles()
+    private function getRouteFiles($routePaths)
     {
-        $routePaths = $this->getRoutePaths();
-
         foreach($routePaths as $routePath) {
             $routeFileTokens = token_get_all(file_get_contents($routePath));
             CheckClassReferences::check($routeFileTokens, $routePath);
             CheckClasses::checkAtSignStrings($routeFileTokens, $routePath, true);
         }
-    }
-
-    private function getRoutePaths()
-    {
-        $routePaths = [];
-
-        foreach (config('app.providers') as $providerClass) {
-            // we exclude the core or package service providers here.
-            if (! Str::contains($providerClass, array_keys(ComposerJson::readKey('autoload.psr-4')))) {
-                continue;
-            }
-
-            // get tokens by class name
-            $path = NamespaceCorrector::getRelativePathFromNamespace($providerClass);
-            $routeFileTokens = token_get_all(file_get_contents(base_path($path).'.php'));
-
-            $methodCalls = MethodParser::extractParametersValue($routeFileTokens, ['loadRoutesFrom']);
-
-            foreach ($methodCalls as $calls) {
-                $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
-
-                // remove class name from the end of string.
-                $dir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
-
-                $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-                $routePaths[] = FilePath::normalize($firstParam);
-            }
-        }
-
-        return $routePaths;
     }
 }
