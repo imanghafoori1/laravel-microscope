@@ -23,7 +23,7 @@ class ModelRelations
 
     public static function checkModelRelations(array $tokens, $currentNamespace, $class, $absFilePath)
     {
-        $relations = MethodParser::extractParametersValueWithinMethod($tokens, self::$relations);
+        $relations = MethodParser::extractParametersValue($tokens, self::$relations);
         $p = app(ErrorPrinter::class);
         foreach ($relations as $relation) {
             // check parameters

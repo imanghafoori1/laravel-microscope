@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class MethodParser
 {
-    public static function extractParametersValueWithinMethod($tokens, $methodNames)
+    public static function extractParametersValue($tokens, $methodNames)
     {
         $relations = [];
         $i = 0;
