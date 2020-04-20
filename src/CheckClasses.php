@@ -4,9 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -57,13 +55,10 @@ class CheckClasses
 
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
-                if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {
+                if (self::isAbsent($v) && ! function_exists($v)) {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
                 }
             }
-
-//          $classPath = self::relativePath($basePath, $absFilePath);
-//          $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
 
             $namespacedClassName = self::fullNamespace($currentNamespace, $class);
 
@@ -76,68 +71,6 @@ class CheckClasses
                 }
             } else {
                 // @todo show skipped file...
-            }
-        }
-    }
-
-    /**
-     * Get all of the listeners and their corresponding events.
-     *
-     * @param  iterable  $paths
-     * @param $composerPath
-     * @param $composerNamespace
-     * @param  FileCheckContractAlias  $fileCheckContract
-     *
-     * @return void
-     */
-    public static function forNamespace($paths, $composerPath, $composerNamespace, FileCheckContractAlias $fileCheckContract)
-    {
-        foreach ($paths as $classFilePath) {
-            $absFilePath = $classFilePath->getRealPath();
-
-            // exclude blade files
-            if (Str::endsWith($absFilePath, ['.blade.php'])) {
-                continue;
-            }
-
-            // exclude migration directories
-            if (Str::startsWith($absFilePath, self::migrationPaths())) {
-                continue;
-            }
-
-            if (! self::hasOpeningTag($absFilePath)) {
-                continue;
-            }
-
-            if ($fileCheckContract) {
-                $fileCheckContract->onFileTap($classFilePath);
-            }
-
-            [
-                $currentNamespace,
-                $class,
-                $type,
-                $parent
-            ] = GetClassProperties::fromFilePath($absFilePath);
-
-            // skip if there is no class/trait/interface definition found.
-            // for example a route file or a config file.
-            if (! $class || $parent == 'Migration') {
-                continue;
-            }
-
-            $relativePath = FilePath::getRelativePath($absFilePath);
-            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
-            if ($currentNamespace !== $correctNamespace) {
-                $p = app(ErrorPrinter::class);
-                $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
-                $p->print('namespace fixed to: '.$p->yellow("namespace $correctNamespace;"));
-                $p->printLink($relativePath, 4);
-
-                $answer = $fileCheckContract->getOutput()->confirm('Do you want to replace the namespace of: '.$relativePath, true);
-                if ($answer) {
-                    self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
-                }
             }
         }
     }
@@ -161,9 +94,8 @@ class CheckClasses
      *
      * @param  string  $filePath
      * @param  string  $basePath
-     *
-     * @param $path
-     * @param $rootNamespace
+     * @param  string  $path
+     * @param  string  $rootNamespace
      *
      * @return string
      */
@@ -183,45 +115,17 @@ class CheckClasses
     private static function checkImportedClassesExist($imports, $absPath)
     {
         foreach ($imports as $i => $import) {
-            if (self::exists($import[0])) {
+            if (self::isAbsent($import[0])) {
                 app(ErrorPrinter::class)->wrongImport($absPath, $import[0], $import[1]);
             }
         }
     }
 
-    public static function exists($imp)
+    public static function isAbsent($class)
     {
-        return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
+        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class);
     }
 
-    protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
-    {
-        event('laravel_microscope.namespace_fixing', get_defined_vars());
-        NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
-        event('laravel_microscope.namespace_fixed', get_defined_vars());
-
-        // maybe an event listener
-        app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-    }
-
-    private static function migrationPaths()
-    {
-        // normalize the migration paths
-        $migrationDirs = [];
-
-        foreach (app('migrator')->paths() as $path) {
-            $migrationDirs[] = FilePath::normalize($path);
-        }
-
-        return $migrationDirs;
-    }
-
-    /**
-     * @param $currentNamespace
-     * @param $class
-     *
-     * @return string
-     */
     protected static function fullNamespace($currentNamespace, $class)
     {
         if ($currentNamespace) {

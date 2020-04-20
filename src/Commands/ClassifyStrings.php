@@ -50,7 +50,7 @@ class ClassifyStrings extends Command
                         continue;
                     }
                     $classPath = trim($token[1], '\'\"');
-                    if (CheckClasses::exists($classPath)) {
+                    if (CheckClasses::isAbsent($classPath)) {
                         $relPath = NamespaceCorrector::getRelativePathFromNamespace($classPath);
                         // Is a correct namespace path, pointing to a directory
                         if (is_dir(base_path($relPath))) {
