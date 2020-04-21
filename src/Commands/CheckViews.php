@@ -12,7 +12,7 @@ use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
-use Imanghafoori\LaravelMicroscope\Analyzers\GlobalFunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -143,19 +143,19 @@ class CheckViews extends Command
         $tokens = token_get_all(file_get_contents($absFilePath));
 
         foreach($tokens as $i => $token) {
-            $token = GlobalFunctionCall::isGlobalFunctionCall('view', $tokens, $i);
+            $token = FunctionCall::isGlobalFunctionCall('view', $tokens, $i);
 
             if (! $token) {
                 continue;
             }
 
-            $params = GlobalFunctionCall::readParameters($tokens, $i);
+            $params = FunctionCall::readParameters($tokens, $i);
 
             $param1 = null;
             // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
             $paramTokens = $params[0] ?? ['_', '_'];
 
-            if(! GlobalFunctionCall::isSolidString($paramTokens)) {
+            if(! FunctionCall::isSolidString($paramTokens)) {
                 continue;
             }
 

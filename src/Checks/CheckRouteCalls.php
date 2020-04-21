@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\GlobalFunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRouteCalls
@@ -14,18 +14,18 @@ class CheckRouteCalls
         // we skip the very end of the file.
         $total = count($tokens) - 3;
         while ($i < $total) {
-            $token = GlobalFunctionCall::isGlobalFunctionCall('route', $tokens, $i);
+            $token = FunctionCall::isGlobalFunctionCall('route', $tokens, $i);
             if (! $token) {
                 $i++;
                 continue;
             }
 
-            $params = GlobalFunctionCall::readParameters($tokens, $i);
+            $params = FunctionCall::readParameters($tokens, $i);
 
             $param1 = null;
             // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
             $paramTokens = $params[0] ?? ['_', '_'];
-            GlobalFunctionCall::isSolidString($paramTokens) && ($param1 = $params[0]);
+            FunctionCall::isSolidString($paramTokens) && ($param1 = $params[0]);
 
             $param1 && self::checkRouteExists($token[2], $param1[0][1], $absFilePath);
             $i++;

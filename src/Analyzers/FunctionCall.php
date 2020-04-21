@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-class GlobalFunctionCall
+class FunctionCall
 {
     protected static function getNextToken($tokens, $i)
     {
