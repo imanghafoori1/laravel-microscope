@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class FunctionCall
 {
-    protected static function getNextToken($tokens, $i)
+    protected static function getNextToken(&$tokens, $i)
     {
         $i++;
         $nextToken = $tokens[$i] ?? '_';
@@ -16,7 +16,7 @@ class FunctionCall
         return [$nextToken, $i];
     }
 
-    protected static function getPrevToken($tokens, $i)
+    protected static function getPrevToken(&$tokens, $i)
     {
         $i--;
         $token = $tokens[$i];
@@ -28,37 +28,12 @@ class FunctionCall
         return [$token, $i];
     }
 
-    protected static function isAfterWhiteSpace($prev1)
-    {
-        return $prev1 == T_WHITESPACE;
-    }
-
-    protected static function isAfterOp($prev1, $prev2, $operators)
-    {
-        if (in_array($prev1, $operators)) {
-            return true;
-        }
-
-        if ($prev1 == T_WHITESPACE && in_array($prev2, $operators)) {
-            return true;
-        }
-
-        return false;
-    }
-
     static function isSolidString($tokens)
     {
         [$nextToken, $i] = self::getNextToken($tokens, 0);
         return ($tokens[0][0] == T_CONSTANT_ENCAPSED_STRING) && ($nextToken !== '.');
     }
 
-    /**
-     * @param $funcName
-     * @param $tokens
-     * @param $i
-     *
-     * @return array|bool
-     */
     static function isGlobalFunctionCall($funcName, &$tokens, $i)
     {
         $token = $tokens[$i];
@@ -107,13 +82,7 @@ class FunctionCall
         return [$method, $operator, $classToken];
     }
 
-    /**
-     * @param  array  $tokens
-     * @param  int  $i the index of the "(" token.
-     *
-     * @return array
-     */
-    public static function readParameters(&$tokens, $i)
+    static function readParameters(&$tokens, $i)
     {
         $params = [];
         $p = 0;

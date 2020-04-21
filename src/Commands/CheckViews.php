@@ -96,9 +96,9 @@ class CheckViews extends Command
         $tokens = token_get_all(file_get_contents($absFilePath));
 
         foreach($tokens as $i => $token) {
-            $token = FunctionCall::isGlobalFunctionCall('view', $tokens, $i)
+            $token = (FunctionCall::isGlobalFunctionCall('view', $tokens, $i)
             ||
-            $token = FunctionCall::isStaticFunctionCall('make', $tokens, $i, 'View');
+            FunctionCall::isStaticFunctionCall('make', $tokens, $i, 'View'));
 
             if (! $token) {
                 continue;
