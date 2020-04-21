@@ -13,6 +13,7 @@ class ViewParser
      */
     protected $viewAliases = [
         'View::make',
+        'view->make',
     ];
 
     /**

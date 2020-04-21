@@ -33,6 +33,7 @@ class RoutePaths
                 $dir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
 
                 $firstParam = str_replace('__DIR__.', $dir, $firstParam);
+
                 $routePaths[] = FilePath::normalize(base_path($firstParam));
             }
         }

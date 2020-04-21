@@ -38,11 +38,6 @@ class CheckViewFilesExistence
             && ($tokens[$i + 5] ?? null) == ',';
     }
 
-    /**
-     * @param  array  $tokens
-     * @param $absPath
-     * @param  int  $i
-     */
     private static function error($tokens, $absPath, $i)
     {
         $p = app(ErrorPrinter::class);
@@ -56,14 +51,6 @@ class CheckViewFilesExistence
         return ($token[0] == T_VARIABLE) && ($token[1] == $varName);
     }
 
-    /**
-     * @param $tokens
-     * @param $i
-     * @param  string  $varName
-     * @param  array  $methods
-     *
-     * @return bool
-     */
     private static function isMethodCall($tokens, $i, $varName, $methods)
     {
         return self::isVariable($tokens[$i], $varName) && in_array($tokens[$i + 2][1] ?? null, $methods);
