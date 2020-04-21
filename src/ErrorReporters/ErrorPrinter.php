@@ -150,12 +150,12 @@ class ErrorPrinter
     public function logErrors()
     {
         collect($this->counts)->except('total')->flatten()->each(function ($error) {
-            if ($error instanceof PendingError) {
-                $this->printHeader($error->getHeader());
-                $this->print($error->getErrorData());
-                $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
-                $this->end();
-            }
-        });
+                if ($error instanceof PendingError) {
+                    $this->printHeader($error->getHeader());
+                    $this->print($error->getErrorData());
+                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+                    $this->end();
+                }
+            });
     }
 }
