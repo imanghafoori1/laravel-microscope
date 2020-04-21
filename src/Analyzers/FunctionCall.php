@@ -67,16 +67,44 @@ class FunctionCall
             return null;
         }
 
-        [$token, $p] = self::getPrevToken($tokens, $i);
+        [$method, $p] = self::getPrevToken($tokens, $i);
 
-        $prev1 = $tokens[$p - 1][0];
-        $prev2 = $tokens[$p - 2][0];
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
-        if ($token[0] != T_STRING || $token[1] != $funcName || ! self::isAfterWhiteSpace($prev1) || self::isAfterOp($prev1, $prev2, $ops)) {
+        [$prev, $p2] = self::getPrevToken($tokens, $p);
+
+        if ($method[0] != T_STRING || $method[1] != $funcName || in_array($prev, $ops)) {
             return null;
         }
 
-        return $token;
+        return $method;
+    }
+
+    static function isStaticFunctionCall($methodName, &$tokens, $i, $className = null)
+    {
+        $token = $tokens[$i];
+
+        if ($token[0] != '(') {
+            return null;
+        }
+
+        [$method, $p] = self::getPrevToken($tokens, $i);
+        [$operator, $p2] = self::getPrevToken($tokens, $p);
+        [$classToken, $p3] = self::getPrevToken($tokens, $p2);
+
+        if ($method[0] != T_STRING ||
+            $method[1] != $methodName ||
+            $operator[0] != T_DOUBLE_COLON
+        ) {
+            return null;
+        }
+        if ($className &&
+            $classToken[0] != T_STRING ||
+            $classToken[1] != $className
+        ) {
+            return null;
+        }
+
+        return [$method, $operator, $classToken];
     }
 
     /**
