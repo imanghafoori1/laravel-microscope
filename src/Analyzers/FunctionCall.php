@@ -72,7 +72,7 @@ class FunctionCall
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
         [$prev, $p2] = self::getPrevToken($tokens, $p);
 
-        if ($method[0] != T_STRING || $method[1] != $funcName || in_array($prev, $ops)) {
+        if ($method[0] != T_STRING || $method[1] != $funcName || in_array($prev[0], $ops)) {
             return null;
         }
 
