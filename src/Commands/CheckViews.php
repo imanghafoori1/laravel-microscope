@@ -87,55 +87,8 @@ class CheckViews extends Command
 
             if ($class && $namespace) {
                 $this->checkForViewMake($absFilePath);
-                $this->checkViewsMake($namespace.'\\'.$class);
             }
         }
-    }
-
-    /**
-     * @param $class
-     */
-    protected function checkViewsMake($class)
-    {
-        try {
-            $methods = self::get_class_methods(new ReflectionClass($class));
-        } catch (\ReflectionException $e) {
-            $methods = [];
-        }
-
-        foreach ($methods as $method) {
-            $vParser = new ViewParser($method);
-            $views = $vParser->retrieveViewsFromMethod();
-
-            if ($this->option('detailed')) {
-                $this->line("Checking {$method->name} on {$method->class}");
-            }
-
-            self::checkView($views);
-        }
-    }
-
-    protected static function checkView($views)
-    {
-        foreach ($views as $view => $_) {
-            // in order to exclude dynamic parameters like: view($myView)
-            if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
-                app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
-            }
-        }
-    }
-
-    public static function get_class_methods($classReflection)
-    {
-        $className = $classReflection->getName();
-        $methods = $classReflection->getMethods();
-
-        $functions = [];
-        foreach ($methods as $f) {
-            ($f->class === $className) && $functions[] = $f;
-        }
-
-        return $functions;
     }
 
     private function checkForViewMake($absFilePath)
@@ -143,7 +96,9 @@ class CheckViews extends Command
         $tokens = token_get_all(file_get_contents($absFilePath));
 
         foreach($tokens as $i => $token) {
-            $token = FunctionCall::isGlobalFunctionCall('view', $tokens, $i);
+            $token = FunctionCall::isGlobalFunctionCall('view', $tokens, $i)
+            ||
+            $token = FunctionCall::isStaticFunctionCall('make', $tokens, $i, 'View');
 
             if (! $token) {
                 continue;
