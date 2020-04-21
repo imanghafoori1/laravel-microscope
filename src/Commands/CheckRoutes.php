@@ -106,7 +106,7 @@ class CheckRoutes extends Command
 
             if (! method_exists($ctrlObj, $method)) {
                 $msg1 = $this->getRouteId($route);
-                $msg2 = 'The controller action does not exist: ';
+                $msg2 = 'Absent Method: ';
                 $errorPrinter->route($ctrl, $msg1, $msg2);
             }
         }

@@ -22,6 +22,7 @@ use ReflectionClass;
 class CheckViews extends Command
 {
     use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *
