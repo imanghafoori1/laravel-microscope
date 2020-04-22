@@ -14,6 +14,10 @@ class RoutePaths
     {
         $routePaths = [];
 
+        foreach (app('router')->routePaths as $path) {
+            $routePaths[] = FilePath::normalize($path);
+        }
+
         foreach (config('app.providers') as $providerClass) {
             // we exclude the core or package service providers here.
             if (! Str::contains($providerClass, array_keys(ComposerJson::readKey('autoload.psr-4')))) {
