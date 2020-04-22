@@ -68,6 +68,18 @@ class FunctionCall
         return self::checkTokens($expectedTokens, $tokens, $i);
     }
 
+    static function isMethodCallOnThis($methodName, &$tokens, $i)
+    {
+        $expectedTokens = [
+            ['('],
+            [T_STRING, $methodName],
+            [T_OBJECT_OPERATOR, '->'],
+            [T_VARIABLE, '$this'],
+        ];
+
+        return self::checkTokens($expectedTokens, $tokens, $i);
+    }
+
     private static function checkTokens($expectedTokens, &$tokens, $j)
     {
         if ($tokens[$j][0] != '(') {
