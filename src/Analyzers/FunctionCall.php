@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class FunctionCall
 {
-    protected static function getNextToken(&$tokens, $i)
+    protected static function getNextToken($tokens, $i)
     {
         $i++;
         $nextToken = $tokens[$i] ?? '_';
@@ -16,7 +16,7 @@ class FunctionCall
         return [$nextToken, $i];
     }
 
-    protected static function getPrevToken(&$tokens, $i)
+    protected static function getPrevToken($tokens, $i)
     {
         $i--;
         $token = $tokens[$i];
@@ -34,55 +34,68 @@ class FunctionCall
         return ($tokens[0][0] == T_CONSTANT_ENCAPSED_STRING) && ($nextToken !== '.');
     }
 
-    static function isGlobalFunctionCall($funcName, &$tokens, $i)
+    static function isGlobalCall($funcName, &$tokens, $i)
     {
-        $token = $tokens[$i];
+        $expectedTokens = [
+            ['('],
+            [T_STRING, $funcName],
+        ];
 
-        if ($token[0] != '(') {
+        if (empty($indexes = self::checkTokens($expectedTokens, $tokens, $i))) {
             return null;
         }
 
-        [$method, $p] = self::getPrevToken($tokens, $i);
-
+        $index = array_pop($indexes);
+        [$prev, $p2] = self::getPrevToken($tokens, $index);
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
-        [$prev, $p2] = self::getPrevToken($tokens, $p);
 
-        if ($method[0] != T_STRING || $method[1] != $funcName || in_array($prev[0], $ops)) {
+        if (in_array($prev, $ops)) {
             return null;
         }
 
-        return $method;
+        return $index;
     }
 
-    static function isStaticFunctionCall($methodName, &$tokens, $i, $className = null)
+    static function isStaticCall($methodName, &$tokens, $i, $className = null)
     {
-        $token = $tokens[$i];
+        $expectedTokens = [
+            ['('],
+            [T_STRING, $methodName],
+            [T_DOUBLE_COLON, '::'],
+        ];
+        $className && ($tokens[] = [T_STRING, $className]);
 
-        if ($token[0] != '(') {
-            return null;
-        }
-
-        [$method, $p] = self::getPrevToken($tokens, $i);
-        [$operator, $p2] = self::getPrevToken($tokens, $p);
-        [$classToken, $p3] = self::getPrevToken($tokens, $p2);
-
-        if ($method[0] != T_STRING ||
-            $method[1] != $methodName ||
-            $operator[0] != T_DOUBLE_COLON
-        ) {
-            return null;
-        }
-        if ($className &&
-            $classToken[0] != T_STRING ||
-            $classToken[1] != $className
-        ) {
-            return null;
-        }
-
-        return [$method, $operator, $classToken];
+        return self::checkTokens($expectedTokens, $tokens, $i);
     }
 
-    static function readParameters(&$tokens, $i)
+    private static function checkTokens($expectedTokens, &$tokens, $j)
+    {
+        if ($tokens[$j][0] != '(') {
+            return [];
+        }
+        array_shift($expectedTokens); // remove ( from the array.
+
+
+        $results = [];
+        foreach ($expectedTokens as $i => $expectedToken) {
+            [$actualToken, $j] = self::getPrevToken($tokens, $j);
+            if ($expectedToken[0] != $actualToken[0] || ($expectedToken[1] && $expectedToken[1] != $actualToken[1])) {
+                $results = [];
+                break;
+            }
+            $results[] = $j;
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param  array  $tokens
+     * @param  int  $i the index of the "(" token.
+     *
+     * @return array
+     */
+    public static function readParameters(&$tokens, $i)
     {
         $params = [];
         $p = 0;

@@ -14,8 +14,8 @@ class CheckRouteCalls
         // we skip the very end of the file.
         $total = count($tokens) - 3;
         while ($i < $total) {
-            $token = FunctionCall::isGlobalFunctionCall('route', $tokens, $i);
-            if (! $token) {
+            $index = FunctionCall::isGlobalCall('route', $tokens, $i);
+            if (! $index) {
                 $i++;
                 continue;
             }
@@ -27,7 +27,7 @@ class CheckRouteCalls
             $paramTokens = $params[0] ?? ['_', '_'];
             FunctionCall::isSolidString($paramTokens) && ($param1 = $params[0]);
 
-            $param1 && self::checkRouteExists($token[2], $param1[0][1], $absFilePath);
+            $param1 && self::checkRouteExists($tokens[$index][2], $param1[0][1], $absFilePath);
             $i++;
         }
 

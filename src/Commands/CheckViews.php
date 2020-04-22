@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -16,8 +15,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\View\ViewParser;
-use ReflectionClass;
 
 class CheckViews extends Command
 {
@@ -96,11 +93,9 @@ class CheckViews extends Command
         $tokens = token_get_all(file_get_contents($absFilePath));
 
         foreach($tokens as $i => $token) {
-            $token = (FunctionCall::isGlobalFunctionCall('view', $tokens, $i)
-            ||
-            FunctionCall::isStaticFunctionCall('make', $tokens, $i, 'View'));
+            $index = FunctionCall::isGlobalCall('view', $tokens, $i) || FunctionCall::isStaticCall('make', $tokens, $i, 'View');
 
-            if (! $token) {
+            if (! $index) {
                 continue;
             }
 
