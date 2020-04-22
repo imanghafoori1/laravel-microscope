@@ -49,7 +49,7 @@ class FunctionCall
         [$prev, $p2] = self::getPrevToken($tokens, $index);
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
 
-        if (in_array($prev, $ops)) {
+        if (in_array($prev[0], $ops)) {
             return null;
         }
 
