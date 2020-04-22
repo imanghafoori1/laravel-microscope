@@ -23,8 +23,8 @@ class ErrorPrinter
     public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
         array_push($this->counts['view'], (new PendingError('view'))
-            ->header($this->yellow($fileName.'.blade.php').' does not exist')
-            ->errorData(trim($lineContent))
+            ->header(trim($lineContent))
+            ->errorData($this->yellow($fileName.'.blade.php').' does not exist')
             ->link($absPath, $lineNumber));
     }
 
@@ -140,8 +140,8 @@ class ErrorPrinter
         $errorsCollection = collect($this->counts);
 
         return $errorsCollection->flatten()->filter(function ($action) {
-            return $action instanceof PendingError;
-        })->count();
+                return $action instanceof PendingError;
+            })->count();
     }
 
     /**
