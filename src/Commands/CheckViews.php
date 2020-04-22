@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
@@ -48,6 +49,10 @@ class CheckViews extends Command
         $errorPrinter->printer = $this->output;
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
+
+        foreach (RoutePaths::get() as $filePath) {
+            $this->checkForViewMake($filePath);
+        }
 
         foreach ($psr4 as $namespace => $path) {
             $this->checkAllClasses(FilePath::getAllPhpFiles($path));
