@@ -27,14 +27,7 @@ class RoutePaths
             // get tokens by class name
             $path = NamespaceCorrector::getRelativePathFromNamespace($providerClass);
 
-            $providerTokens = token_get_all(file_get_contents(base_path($path).'.php'));
-
-            $methodCalls = [];
-            foreach($providerTokens as $i => $routeFileToken) {
-                FunctionCall::isMethodCallOnThis('loadRoutesFrom', $providerTokens, $i)
-                &&
-                $methodCalls[] = FunctionCall::readParameters($providerTokens, $i);
-            }
+            $methodCalls = self::readLoadedRouteFiles($path);
 
             foreach ($methodCalls as $calls) {
                 $routePaths[] = self::fullPath($calls, $providerClass, $path);
@@ -60,5 +53,17 @@ class RoutePaths
         }
 
         return FilePath::normalize(base_path($path1));
+    }
+
+    private static function readLoadedRouteFiles($path)
+    {
+        $providerTokens = token_get_all(file_get_contents(base_path($path).'.php'));
+
+        $methodCalls = [];
+        foreach ($providerTokens as $i => $routeFileToken) {
+            FunctionCall::isMethodCallOnThis('loadRoutesFrom', $providerTokens, $i) && $methodCalls[] = FunctionCall::readParameters($providerTokens, $i);
+        }
+
+        return $methodCalls;
     }
 }
