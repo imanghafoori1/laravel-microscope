@@ -64,14 +64,6 @@ class CheckClasses
 
             $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
             self::checkImportedClassesExist($imports, $absFilePath);
-
-            if ($currentNamespace) {
-                if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
-                    ModelRelations::checkModelRelations($tokens, $currentNamespace, $class, $absFilePath);
-                }
-            } else {
-                // @todo show skipped file...
-            }
         }
     }
 

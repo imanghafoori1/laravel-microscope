@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\MethodParser;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class RoutePaths
@@ -22,22 +22,39 @@ class RoutePaths
 
             // get tokens by class name
             $path = NamespaceCorrector::getRelativePathFromNamespace($providerClass);
-            $routeFileTokens = token_get_all(file_get_contents(base_path($path).'.php'));
 
-            $methodCalls = MethodParser::extractParametersValue($routeFileTokens, ['loadRoutesFrom']);
+            $providerTokens = token_get_all(file_get_contents(base_path($path).'.php'));
+
+            $methodCalls = [];
+            foreach($providerTokens as $i => $routeFileToken) {
+                FunctionCall::isMethodCallOnThis('loadRoutesFrom', $providerTokens, $i)
+                &&
+                $methodCalls[] = FunctionCall::readParameters($providerTokens, $i);
+            }
 
             foreach ($methodCalls as $calls) {
-                $firstParam = str_replace(["'", '"'], '', $calls['params'][0]);
-
-                // remove class name from the end of string.
-                $dir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
-
-                $firstParam = str_replace('__DIR__.', $dir, $firstParam);
-
-                $routePaths[] = FilePath::normalize(base_path($firstParam));
+                $routePaths[] = self::fullPath($calls, $providerClass, $path);
             }
         }
 
         return $routePaths;
+    }
+
+    private static function fullPath($calls, $providerClass, $path)
+    {
+        $path1 = '';
+        foreach ($calls[0] as $token) {
+            if ($token[0] == T_DIR) {
+                // remove class name from the end of string.
+                $relativeDir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
+
+                $path1 .= $relativeDir;
+            } elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
+                $firstParam = trim($token[1], '\'\"');
+                $path1 .= $firstParam;
+            }
+        }
+
+        return FilePath::normalize(base_path($path1));
     }
 }
