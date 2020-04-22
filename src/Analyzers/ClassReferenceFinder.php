@@ -115,7 +115,7 @@ class ClassReferenceFinder
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
-            // continue;   // why we do not continue?? (0_o)
+                // continue;   // why we do not continue?? (0_o)
             } elseif ($t == T_FUNCTION) {
                 $isDefiningFunction = true;
                 if ($isInSideClass and ! $isInsideMethod) {
@@ -189,6 +189,11 @@ class ClassReferenceFinder
                 }
                 $c++;
                 self::forward();
+                continue;
+            } elseif ($t == '?') {
+//              for a syntax like this:
+//              public function __construct(?Payment $payment) { ... }
+//              we skip collecting
                 continue;
             } elseif ($t == T_DOUBLE_COLON) {
                 // When we reach the ::class syntax.
