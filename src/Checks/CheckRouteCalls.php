@@ -15,6 +15,8 @@ class CheckRouteCalls
         $total = count($tokens) - 3;
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('route', $tokens, $i);
+            $index = $index ?: self::checkForRedirectRoute($tokens, $i);
+
             if (! $index) {
                 $i++;
                 continue;
@@ -44,5 +46,25 @@ class CheckRouteCalls
     {
         $matchedRoute = app('router')->getRoutes()->getByName(trim($routeName, '\'\"'));
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
+    }
+
+    private static function redirectRouteTokens()
+    {
+        return [
+            '(',
+            [T_STRING, 'route'],
+            [T_OBJECT_OPERATOR, '->'],
+            ')',
+            '(',
+            [T_STRING, 'redirect'],
+        ];
+    }
+
+    private static function checkForRedirectRoute($tokens, $i)
+    {
+        $index1 = FunctionCall::checkTokens(self::redirectRouteTokens(), $tokens, $i);
+        $index1 = $index1 ?: FunctionCall::isStaticCall('route', $tokens, $i, 'Redirect');
+
+        return array_pop($index1);
     }
 }
