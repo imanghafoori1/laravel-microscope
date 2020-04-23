@@ -80,7 +80,7 @@ class FunctionCall
         return self::checkTokens($expectedTokens, $tokens, $i);
     }
 
-    private static function checkTokens($expectedTokens, &$tokens, $j)
+    static function checkTokens($expectedTokens, &$tokens, $j)
     {
         if ($tokens[$j][0] != '(') {
             return [];
@@ -91,7 +91,7 @@ class FunctionCall
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
             [$actualToken, $j] = self::getPrevToken($tokens, $j);
-            if ($expectedToken[0] != $actualToken[0] || ($expectedToken[1] && $expectedToken[1] != $actualToken[1])) {
+            if (self::isNot($expectedToken, $actualToken)) {
                 $results = [];
                 break;
             }
@@ -136,5 +136,10 @@ class FunctionCall
         }
 
         return $params;
+    }
+
+    private static function isNot($expectedToken, $actualToken)
+    {
+        return $expectedToken[0] != $actualToken[0] || ($expectedToken[1] && $expectedToken[1] != $actualToken[1]);
     }
 }

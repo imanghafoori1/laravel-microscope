@@ -53,7 +53,7 @@ class CheckRoutes extends Command
 
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
-        $this->checkClassesRouteCalls();
+        $this->checkClassesForRouteCalls();
 
         $bar->finish();
 
@@ -69,7 +69,7 @@ class CheckRoutes extends Command
         }
     }
 
-    protected function checkClassesRouteCalls()
+    protected function checkClassesForRouteCalls()
     {
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
