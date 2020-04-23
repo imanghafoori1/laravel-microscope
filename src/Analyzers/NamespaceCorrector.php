@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class NamespaceCorrector
 {
@@ -12,10 +12,7 @@ class NamespaceCorrector
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
-        [
-            $oldLine,
-            $newline
-        ] = self::getNewLine($incorrectNamespace, $correctNamespace);
+        [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
         $oldLine = ltrim($oldLine, '\\');
         ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
@@ -63,9 +60,15 @@ class NamespaceCorrector
             $newline = $correctNamespace;
         }
 
-        return [
-            $incorrectNamespace,
-            $newline,
-        ];
+        return [$incorrectNamespace, $newline];
+    }
+
+    public static function getRelativePathFromNamespace($namespace)
+    {
+        $autoload = ComposerJson::readKey('autoload.psr-4');
+        $namespaces = array_keys($autoload);
+        $paths = array_values($autoload);
+
+        return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, str_replace($namespaces, $paths, $namespace));
     }
 }

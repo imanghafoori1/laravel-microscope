@@ -1,13 +1,19 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\PendingObjects;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class PendingError
 {
+    static $maxLength = 0;
+
     private $type;
+
     private $header;
+
     private $errorData;
+
     private $linkPath;
+
     private $linkLineNumber = 4;
 
     /**
@@ -43,6 +49,7 @@ class PendingError
      */
     public function errorData($data)
     {
+        $this->setMaxLength(strlen($data));
         $this->errorData = $data;
 
         return $this;
@@ -58,39 +65,28 @@ class PendingError
      */
     public function link($path = null, $lineNumber = 4)
     {
+        $this->setMaxLength(strlen($path) - 13);
         $this->linkPath = $path;
         $this->linkLineNumber = $lineNumber;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * @return mixed
-     */
     public function getHeader()
     {
         return $this->header;
     }
 
-    /**
-     * @return mixed
-     */
     public function getErrorData()
     {
         return $this->errorData;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLinkPath()
     {
         return $this->linkPath;
@@ -99,8 +95,14 @@ class PendingError
     /**
      * @return int
      */
-    public function getLinkLineNumber(): int
+    public function getLinkLineNumber()
     {
         return $this->linkLineNumber;
+    }
+
+    private function setMaxLength($len)
+    {
+        (self::$maxLength < $len) && self::$maxLength = $len;
+        self::$maxLength > 100 && self::$maxLength = 100;
     }
 }

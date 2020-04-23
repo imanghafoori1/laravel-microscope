@@ -6,18 +6,21 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\CheckViews;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Util;
 
 class CheckImports extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
 
     /**
@@ -44,27 +47,32 @@ class CheckImports extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking imports ...');
+        $this->info('Checking imports...');
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
+
+        $this->getRouteFiles(RoutePaths::get());
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
-                $files = CheckClasses::getAllPhpFiles($psr4Path);
+                $files = FilePath::getAllPhpFiles($psr4Path);
                 CheckClasses::checkImports($files, $this);
             } catch (\ErrorException $e) {
+                // In case a file is moved or deleted...
+                // composer will need a dump autoload.
                 if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
                     throw $e;
                 }
 
                 $this->warnDumping($e->getMessage());
+                resolve(Composer::class)->dumpAutoloads();
             }
         }
 
-        (new CheckViews)->check([
-            [new CheckClassReferences, 'check'],
+        CheckBladeFiles::applyChecks([
+            [CheckClassReferences::class, 'check'],
         ]);
 
         $this->checkConfig();
@@ -85,6 +93,14 @@ class CheckImports extends Command implements FileCheckContract
         $this->info('It seems composer has some trouble with autoload...');
         $this->info($msg);
         $this->info('Running "composer dump-autoload" command...');
-        resolve(Composer::class)->dumpAutoloads();
+    }
+
+    private function getRouteFiles($routePaths)
+    {
+        foreach($routePaths as $routePath) {
+            $routeFileTokens = token_get_all(file_get_contents($routePath));
+            CheckClassReferences::check($routeFileTokens, $routePath);
+            CheckClasses::checkAtSignStrings($routeFileTokens, $routePath, true);
+        }
     }
 }
