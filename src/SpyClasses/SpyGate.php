@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Auth\Access\Gate;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -20,7 +19,7 @@ class SpyGate extends Gate
 
         try {
             $policy = app()->make($class);
-        } catch (BindingResolutionException $e) {
+        } catch (\Exception $e) {
             return app(ErrorPrinter::class)->print("The $callback callback for Gate, does not refer to a resolvable class, for ability: $ability");
         }
 
@@ -31,16 +30,8 @@ class SpyGate extends Gate
 
     public function policy($model, $policy)
     {
-        if (! class_exists($model)) {
-            return app(ErrorPrinter::class)->print("The \"$model\" you are trying to define policy for, does not exist as a valid eloquent class.");
-        }
-
         if (! is_subclass_of($model, Model::class)) {
             return app(ErrorPrinter::class)->print("The \"$model\" you are trying to define policy for, is not an eloquent model class.");
-        }
-
-        if (! class_exists($policy)) {
-            return app(ErrorPrinter::class)->print("The \"$policy\" is not a valid class to be used as policy for $model.");
         }
     }
 }
