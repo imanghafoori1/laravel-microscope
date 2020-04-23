@@ -12,11 +12,8 @@ class SpyRouter extends Router
 
     protected function loadRoutes($routes)
     {
-        if ($routes instanceof Closure) {
-            $routes($this);
-        } else {
-            $this->routePaths[] = $routes;
-            (new RouteFileRegistrar($this))->register($routes);
-        }
+        !($routes instanceof Closure) && $this->routePaths[] = $routes;
+
+        parent::loadRoutes($routes);
     }
 }
