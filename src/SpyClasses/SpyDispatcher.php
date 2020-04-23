@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\Dispatcher;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
@@ -31,7 +30,7 @@ class SpyDispatcher extends Dispatcher
 
         try {
             $listenerObj = app()->make($listenerClass);
-        } catch (BindingResolutionException $e) {
+        } catch (\Exception $e) {
             return $this->error($this->noClass($event, $listenerClass, $methodName));
         }
 
