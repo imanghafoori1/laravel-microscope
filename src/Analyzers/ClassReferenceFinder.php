@@ -52,7 +52,7 @@ class ClassReferenceFinder
                 if ($isInSideClass and ! $isInsideMethod) {
                     $isDefiningMethod = true;
                 }
-            } elseif ($t == T_VARIABLE) {
+            } elseif ($t == T_VARIABLE || $t == T_ELLIPSIS) {
                 if ($isDefiningFunction) {
                     $c++;
                 }
