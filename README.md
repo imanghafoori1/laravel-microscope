@@ -58,8 +58,7 @@ You can run:
 <h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:routes 
  </h4>
- 
-`(checks controller class and method also the blade files path to be correct)`
+
 </p>
 <p>
 <h4>
@@ -166,7 +165,12 @@ php artisan check:routes
 
 - It check that your routes refer to valid controller classes and methods.
 - It checks the all the controller methods to have valid type-hints.
-- It scans your controller code and find the `view()` and `View::make()` and reports if they refer to wrong files.
+- it scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+
+``` php
+php artisan check:viewes
+```
+- It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
 
 and more features will be added soon. ;)
