@@ -140,6 +140,6 @@ class FunctionCall
 
     private static function isNot($expectedToken, $actualToken)
     {
-        return $expectedToken[0] != $actualToken[0] || ($expectedToken[1] && $expectedToken[1] != $actualToken[1]);
+        return $expectedToken[0] != $actualToken[0] || ($expectedToken[1] ?? null && $expectedToken[1] != $actualToken[1]);
     }
 }
