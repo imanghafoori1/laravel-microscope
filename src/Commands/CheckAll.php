@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckAll extends Command
@@ -41,11 +41,11 @@ class CheckAll extends Command
 
         $this->call('check:psr4', ['--detailed' => $this->option('detailed')]);
         app(Composer::class)->dumpAutoloads();
-        $this->call('check:routes');
         $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
+        $this->call('check:routes');
 
         //turns on error logging.
         $errorPrinter->logErrors = true;

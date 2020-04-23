@@ -4,28 +4,22 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use ReflectionException;
-use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
 {
-    protected static $fixedNamespaces = [];
-
     /**
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $files
-     * @param  string  $basePath
-     *
-     * @param $composerPath
-     * @param $composerNamespace
-     *
-     * @param  FileCheckContract  $fileCheckContract
+     * @param  FileCheckContractAlias  $fileCheckContract
      *
      * @return void
      */
-    public static function checkImports($files, FileCheckContract $fileCheckContract)
+    public static function checkImports($files, FileCheckContractAlias $fileCheckContract)
     {
         foreach ($files as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -36,7 +30,6 @@ class CheckClasses
             if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
                 continue;
             }
-
             [
                 $currentNamespace,
                 $class,
@@ -55,93 +48,22 @@ class CheckClasses
             $fileCheckContract->onFileTap($classFilePath);
 
             $tokens = token_get_all(file_get_contents($absFilePath));
+
+            self::checkAtSignStrings($tokens, $absFilePath);
+
             $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
             foreach ($nonImportedClasses as $nonImportedClass) {
                 $v = trim($nonImportedClass['class'], '\\');
-                if (! class_exists($v) && ! trait_exists($v) && ! interface_exists($v) && ! function_exists($v)) {
-                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass);
+                if (self::isAbsent($v) && ! function_exists($v)) {
+                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
                 }
             }
 
-            try {
-//                $classPath = self::relativePath($basePath, $absFilePath);
-//                $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($classPath, $composerPath, $composerNamespace);
+            $namespacedClassName = self::fullNamespace($currentNamespace, $class);
 
-                if ($currentNamespace) {
-                    $namespacedClassName = $currentNamespace.'\\'.$class;
-                } else {
-                    $namespacedClassName = $class;
-                }
-
-                $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
-                self::checkImportedClasses($imports, $absFilePath);
-
-                if ($currentNamespace) {
-                    if (is_subclass_of($currentNamespace.'\\'.$class, Model::class)) {
-                        ModelRelations::checkModelRelations($tokens, $currentNamespace, $class, $absFilePath);
-                    }
-                } else {
-                    // @todo show skipped file...
-                }
-            } catch (ReflectionException $e) {
-                // @todo show skipped file...
-            }
-        }
-    }
-
-    /**
-     * Get all of the listeners and their corresponding events.
-     *
-     * @param  iterable  $paths
-     * @param $composerPath
-     * @param $composerNamespace
-     *
-     * @param  FileCheckContract  $fileCheckContract
-     *
-     * @return void
-     */
-    public static function checkAllClasses($paths, $composerPath, $composerNamespace, FileCheckContract $fileCheckContract)
-    {
-        foreach ($paths as $classFilePath) {
-            $absFilePath = $classFilePath->getRealPath();
-
-            // exclude blade files
-            if (Str::endsWith($absFilePath, ['.blade.php'])) {
-                continue;
-            }
-
-            // exclude migration directories
-            if (Str::startsWith($absFilePath, self::migrationPaths())) {
-                continue;
-            }
-
-            if (! self::hasOpeningTag($absFilePath)) {
-                continue;
-            }
-
-            if ($fileCheckContract) {
-                $fileCheckContract->onFileTap($classFilePath);
-            }
-
-            [
-                $currentNamespace,
-                $class,
-                $type,
-                $parent
-            ] = GetClassProperties::fromFilePath($absFilePath);
-
-            // skip if there is no class/trait/interface definition found.
-            // for example a route file or a config file.
-            if (! $class || $parent == 'Migration') {
-                continue;
-            }
-
-            $relativePath = self::getRelativePath($absFilePath);
-            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
-            if ($currentNamespace !== $correctNamespace) {
-                self::doNamespaceCorrection($correctNamespace, $relativePath, $currentNamespace, $absFilePath);
-            }
+            $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
+            self::checkImportedClassesExist($imports, $absFilePath);
         }
     }
 
@@ -164,9 +86,8 @@ class CheckClasses
      *
      * @param  string  $filePath
      * @param  string  $basePath
-     *
-     * @param $path
-     * @param $rootNamespace
+     * @param  string  $path
+     * @param  string  $rootNamespace
      *
      * @return string
      */
@@ -183,65 +104,56 @@ class CheckClasses
         return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
-    private static function checkImportedClasses($imports, $absPath)
+    private static function checkImportedClassesExist($imports, $absPath)
     {
         foreach ($imports as $i => $import) {
-            if (self::exists($import[0])) {
+            if (self::isAbsent($import[0])) {
                 app(ErrorPrinter::class)->wrongImport($absPath, $import[0], $import[1]);
             }
         }
     }
 
-    private static function exists($imp)
+    public static function isAbsent($class)
     {
-        return ! class_exists($imp) && ! interface_exists($imp) && ! trait_exists($imp);
+        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class);
     }
 
-    protected static function doNamespaceCorrection($correctNamespace, $classPath, $currentNamespace, $absFilePath)
+    protected static function fullNamespace($currentNamespace, $class)
     {
-        // maybe an event listener
-        app(ErrorPrinter::class)->badNamespace($classPath, $correctNamespace, $currentNamespace);
-
-        event('laravel_microscope.namespace_fixing', get_defined_vars());
-        NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
-        event('laravel_microscope.namespace_fixed', get_defined_vars());
-
-        // maybe a listener for: 'microscope.namespace_fixed' event.
-        app(ErrorPrinter::class)->fixedNamespace($correctNamespace);
-    }
-
-    private static function migrationPaths()
-    {
-        // normalize the migration paths
-        $migrationDirs = [];
-        foreach (app('migrator')->paths() as $path) {
-            $migrationDirs[] = str_replace([
-                '\\',
-                '/',
-            ], [
-                DIRECTORY_SEPARATOR,
-                DIRECTORY_SEPARATOR,
-            ], $path);
+        if ($currentNamespace) {
+            $namespacedClassName = $currentNamespace.'\\'.$class;
+        } else {
+            $namespacedClassName = $class;
         }
 
-        /*foreach ($migrationDirs as $dir) {
-            $parts = explode(DIRECTORY_SEPARATOR, $dir);
+        return $namespacedClassName;
+    }
 
-            foreach($parts as $part) {
-
+    public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
+    {
+        foreach ($tokens as $token) {
+            if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
+                continue;
             }
-        }*/
+            $trimmed = trim($token[1], '\'\"');
 
-        return $migrationDirs;
-    }
+            if ($onlyAbsClassPath && $trimmed[0] !== '\\') {
+                continue;
+            }
 
-    public static function getAllPhpFiles($psr4Path)
-    {
-        return (new Finder)->files()->name('*.php')->in(base_path($psr4Path));
-    }
+            [$class, $method] = explode('@', $trimmed);
 
-    private static function getRelativePath($absFilePath)
-    {
-        return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
+            if (substr_count($class, '\\') <= 0) {
+                continue;
+            }
+
+            if (! class_exists($class)) {
+                app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+            } else {
+                if (! method_exists($class, $method)) {
+                    app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
+                }
+            }
+        }
     }
 }

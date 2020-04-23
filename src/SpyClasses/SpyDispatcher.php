@@ -1,12 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class CheckerDispatcher extends Dispatcher
+class SpyDispatcher extends Dispatcher
 {
     public function listen($events, $listener)
     {
@@ -20,29 +19,17 @@ class CheckerDispatcher extends Dispatcher
         $p->others($string);
     }
 
-    private function isLikeClassPath($event)
-    {
-        return (count(explode('\\', $event)) > 1) && ! Str::contains($event, [' ', '.', ':', '-', '@']);
-    }
-
     protected function validateCallback($event, $listener)
     {
-        if ($this->isLikeClassPath($event) && ! $this->exists($event)) {
-            return $this->error("The Event class: \"$event\" you are listening to does not exist.");
-        }
-
         if (! is_string($listener)) {
             return;
         }
 
-        [
-            $listenerClass,
-            $methodName,
-        ] = $this->parseClassCallable($listener);
+        [$listenerClass, $methodName] = $this->parseClassCallable($listener);
 
         try {
             $listenerObj = app()->make($listenerClass);
-        } catch (BindingResolutionException $e) {
+        } catch (\Exception $e) {
             return $this->error($this->noClass($event, $listenerClass, $methodName));
         }
 
@@ -72,11 +59,7 @@ class CheckerDispatcher extends Dispatcher
 
     protected function noClass($event, $class, $method)
     {
-        $at = implode('@', [
-            $class,
-            $method,
-        ]);
-
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The class of '.$at.' can not be resolved as a listener for "'.$e.'" event';
@@ -84,26 +67,16 @@ class CheckerDispatcher extends Dispatcher
 
     protected function noMethod($event, $class, $method)
     {
-        $at = implode('@', [
-            $class,
-            $method,
-        ]);
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
     }
 
-    private function exists($event)
-    {
-        return class_exists($event) || interface_exists($event);
-    }
-
     protected function getTypeHintedClass($listenerObj, $methodName)
     {
-        $typeHint = (new \ReflectionParameter([
-            $listenerObj,
-            $methodName,
-        ], 0))->getType();
+        $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
+        $typeHint = $ref->getType();
 
         return $typeHint ? $typeHint->getName() : null;
     }

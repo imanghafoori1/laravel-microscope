@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckEvents extends Command
@@ -32,7 +32,7 @@ class CheckEvents extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking events ...');
+        $this->info((! $errorPrinter->logErrors ? PHP_EOL : '').'Checking events...');
 
         $errorPrinter->printer = $this->output;
 

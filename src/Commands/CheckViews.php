@@ -3,23 +3,24 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Util;
-use Imanghafoori\LaravelMicroscope\View\ViewParser;
-use Symfony\Component\Finder\Finder;
 
 class CheckViews extends Command
 {
     use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *
@@ -43,104 +44,79 @@ class CheckViews extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking views ...');
+        $this->info('Checking views...');
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = Util::parseComposerJson('autoload.psr-4');
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
 
-        foreach ($psr4 as $namespace => $path) {
-            $this->within($namespace, $path);
+        foreach (RoutePaths::get() as $filePath) {
+            $this->checkForViewMake($filePath);
         }
 
-        $methods = [
-            [new CheckViewFilesExistence, 'check'],
-            [new CheckClassReferences, 'check'],
-            [new CheckRouteCalls, 'check'],
+        foreach ($psr4 as $namespace => $path) {
+            $this->checkAllClasses(FilePath::getAllPhpFiles($path));
+        }
+
+        $checks = [
+            [CheckViewFilesExistence::class, 'check'],
+            [CheckClassReferences::class, 'check'],
+            [CheckRouteCalls::class, 'check'],
         ];
-        (new \Imanghafoori\LaravelMicroscope\CheckViews())->check($methods);
+
+        CheckBladeFiles::applyChecks($checks);
 
         $this->finishCommand($errorPrinter);
-    }
-
-    public function within($namespace, $path)
-    {
-        $this->checkAllClasses((new Finder)->files()->in(base_path($path)), base_path(), $path, $namespace);
     }
 
     /**
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $classes
-     * @param  string  $basePath
-     *
-     * @param $composerPath
-     * @param $composerNamespace
      *
      * @return void
      */
-    protected function checkAllClasses($classes)
+    public function checkAllClasses($classes)
     {
         foreach ($classes as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
-//            $classPath = trim(Str::replaceFirst($basePath, '', $absFilePath), DIRECTORY_SEPARATOR);
+
             if (! CheckClasses::hasOpeningTag($absFilePath)) {
-//                app(ErrorPrinter::class)->print('Skipped file: '.$classPath);
                 continue;
             }
-            [
-                $currentNamespace,
-                $class,
-                $type,
-            ]
-                = GetClassProperties::fromFilePath($absFilePath);
 
-            if ($class) {
-                if (is_subclass_of($currentNamespace.'\\'.$class, Controller::class)) {
-                    $this->checkViews($currentNamespace.'\\'.$class);
-                }
+            [$namespace, $class] = GetClassProperties::fromFilePath($absFilePath);
+
+            if ($class && $namespace) {
+                $this->checkForViewMake($absFilePath);
             }
         }
     }
 
-    /**
-     * @param $method
-     * @param $ctrl
-     */
-    protected function checkViews($ctrl)
+    private function checkForViewMake($absFilePath)
     {
-        $methods = self::get_class_methods(new \ReflectionClass($ctrl));
-        foreach ($methods as $method) {
-            $vParser = new ViewParser($method);
-            $views = $vParser->retrieveViewsFromMethod();
+        $tokens = token_get_all(file_get_contents($absFilePath));
 
-            if ($this->option('detailed')) {
-                $this->line("Checking {$method->name} on {$method->class}");
+        foreach($tokens as $i => $token) {
+            $index = FunctionCall::isGlobalCall('view', $tokens, $i) || FunctionCall::isStaticCall('make', $tokens, $i, 'View');
+
+            if (! $index) {
+                continue;
             }
 
-            self::checkView($ctrl, $method, $views);
-        }
-    }
+            $params = FunctionCall::readParameters($tokens, $i);
 
-    protected static function checkView($ctrl, $method, array $views)
-    {
-        foreach ($views as $view => $_) {
-            if (! Str::contains($_['name'], ['$', '->', ' ']) && ! View::exists($_['name'])) {
-                app(ErrorPrinter::class)->view($_['file'], $_['line'], $_['lineNumber'], $_['name']);
+            $param1 = null;
+            // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+            $paramTokens = $params[0] ?? ['_', '_'];
+
+            if(! FunctionCall::isSolidString($paramTokens)) {
+                continue;
             }
+
+            $p1 = trim($paramTokens[0][1], '\'\"');
+
+            $p1 && ! View::exists($p1) && app(ErrorPrinter::class)->view($absFilePath, 'view does not exist', $paramTokens[0][2], $p1);
         }
-    }
-
-    public static function get_class_methods(\ReflectionClass $classReflection)
-    {
-        $className = $classReflection->getName();
-        $rm = $classReflection->getMethods();
-
-        $functions = [];
-        foreach ($rm as $f) {
-            ($f->class === $className) && $functions[] = $f;
-        }
-
-        return $functions;
     }
 }

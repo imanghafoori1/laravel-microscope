@@ -2,23 +2,23 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClassReferences
 {
-    public function check($tokens, $blade)
+    public static function check($tokens, $absPath)
     {
-        $classes = ParseUseStatement::findClassReferences($tokens, $blade->getPathname());
+        $classes = ParseUseStatement::findClassReferences($tokens, $absPath);
 
         foreach ($classes as $class) {
-            if (! $this->exists($class['class'])) {
-                app(ErrorPrinter::class)->bladeImport($class, $blade);
+            if (! self::exists($class['class'])) {
+                app(ErrorPrinter::class)->bladeImport($class['class'], $absPath, $class['line']);
             }
         }
     }
 
-    private function exists($class)
+    private static function exists($class)
     {
         return class_exists($class) || interface_exists($class);
     }
