@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
@@ -15,12 +16,9 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckViews extends Command
 {
-    use LogsErrors;
-
     /**
      * The name and signature of the console command.
      *
@@ -66,7 +64,7 @@ class CheckViews extends Command
 
         CheckBladeFiles::applyChecks($checks);
 
-        $this->finishCommand($errorPrinter);
+        event('microscope.finished.checks', [$this]);
     }
 
     /**
@@ -93,9 +91,9 @@ class CheckViews extends Command
         }
     }
 
-    private function checkForViewMake($absFilePath)
+    private function checkForViewMake($absPath)
     {
-        $tokens = token_get_all(file_get_contents($absFilePath));
+        $tokens = token_get_all(file_get_contents($absPath));
 
         foreach($tokens as $i => $token) {
             $index = FunctionCall::isGlobalCall('view', $tokens, $i) || FunctionCall::isStaticCall('make', $tokens, $i, 'View');
@@ -114,9 +112,11 @@ class CheckViews extends Command
                 continue;
             }
 
-            $p1 = trim($paramTokens[0][1], '\'\"');
+            $viewName = trim($paramTokens[0][1], '\'\"');
 
-            $p1 && ! View::exists($p1) && app(ErrorPrinter::class)->view($absFilePath, 'view does not exist', $paramTokens[0][2], $p1);
+            $viewName &&
+            ! View::exists($viewName) &&
+            BladeFile::isMissing($absPath, $paramTokens[0][2], $viewName);
         }
     }
 }
