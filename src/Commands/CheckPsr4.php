@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -14,6 +15,7 @@ use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 class CheckPsr4 extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
     /**
      * The name and signature of the console command.
@@ -50,5 +52,15 @@ class CheckPsr4 extends Command implements FileCheckContract
         }
 
         $this->finishCommand($errorPrinter);
+        $this->composerDumpIfNeeded($errorPrinter);
+    }
+
+    private function composerDumpIfNeeded($errorPrinter)
+    {
+        if ($errorPrinter->counts['badNamespace']) {
+            $c = count($errorPrinter->counts['badNamespace']);
+            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
+            app(Composer::class)->dumpAutoloads();
+        }
     }
 }

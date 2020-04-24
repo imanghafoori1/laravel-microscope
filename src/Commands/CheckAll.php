@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -40,25 +39,16 @@ class CheckAll extends Command
         $errorPrinter->logErrors = false;
 
         $this->call('check:psr4', ['--detailed' => $this->option('detailed')]);
-        $this->composerDumpIfNeeded($errorPrinter);
         $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
         $this->call('check:routes');
+        $this->call('check:stringy_classes');
 
         //turns on error logging.
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
-    }
-
-    private function composerDumpIfNeeded($errorPrinter)
-    {
-        if ($errorPrinter->counts['badNamespace']) {
-            $c = count($errorPrinter->counts['badNamespace']);
-            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
-            app(Composer::class)->dumpAutoloads();
-        }
     }
 }
