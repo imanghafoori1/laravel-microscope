@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
@@ -19,6 +20,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckAll::class,
             ClassifyStrings::class,
         ]);
+        ConsolePrinterInstaller::boot();
     }
 
     public function register()
@@ -46,7 +49,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-//        $this->loadConfig();
+        //  $this->loadConfig();
 
         // we spy the router in order to have a list of route files.
         $this->spyRouter();
