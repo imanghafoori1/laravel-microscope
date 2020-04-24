@@ -21,11 +21,11 @@ class ConsolePrinterInstaller
             return;
         }
 
-        if (! ($errorCount = $errorPrinter->hasErrors())) {
-            $command->info(PHP_EOL.'All '.$commandType.' are correct!');
-        } else {
-            $command->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+        if ($errorCount = $errorPrinter->hasErrors()) {
+            $command->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
             $errorPrinter->logErrors();
+        } else {
+            $command->info(PHP_EOL.'All '.$commandType.' are correct!');
         }
     }
 
