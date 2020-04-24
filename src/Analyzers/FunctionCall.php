@@ -91,9 +91,8 @@ class FunctionCall
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
             [$actualToken, $j] = self::getPrevToken($tokens, $j);
-            if ($expectedToken[0] != $actualToken[0] || (($expectedToken[1] ?? '') != ($actualToken[1] ?? ''))) {
-                $results = [];
-                break;
+            if (! self::isEqual($expectedToken, $actualToken)) {
+                return [];
             }
             $results[] = $j;
         }
@@ -136,5 +135,10 @@ class FunctionCall
         }
 
         return $params;
+    }
+
+    private static function isEqual($expectedToken, $actualToken): bool
+    {
+        return $expectedToken[0] == $actualToken[0] && ($expectedToken[1] ?? '') == ($actualToken[1] ?? '');
     }
 }
