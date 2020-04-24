@@ -7,10 +7,8 @@ use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
-use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
@@ -44,11 +42,16 @@ class CheckViews extends Command
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
         foreach (RoutePaths::get() as $filePath) {
-            $this->checkForViewMake($filePath);
+            $this->checkForViewMake($filePath, [
+                'View' => ['make', 0],
+                'Route' => ['view', 1],
+            ]);
         }
 
-        foreach ($psr4 as $namespace => $path) {
-            $this->checkAllClasses(FilePath::getAllPhpFiles($path));
+        foreach ($psr4 as $_namespace => $dirPath) {
+            foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
+                $this->checkForViewMake($filePath->getRealPath(), ['View' => ['make', 0]]);
+            }
         }
 
         $checks = [
@@ -62,56 +65,41 @@ class CheckViews extends Command
         event('microscope.finished.checks', [$this]);
     }
 
-    /**
-     * Get all of the listeners and their corresponding events.
-     *
-     * @param  iterable  $classes
-     *
-     * @return void
-     */
-    public function checkAllClasses($classes)
-    {
-        foreach ($classes as $classFilePath) {
-            $absFilePath = $classFilePath->getRealPath();
-
-            if (! CheckClasses::hasOpeningTag($absFilePath)) {
-                continue;
-            }
-
-            [$namespace, $class] = GetClassProperties::fromFilePath($absFilePath);
-
-            if ($class && $namespace) {
-                $this->checkForViewMake($absFilePath);
-            }
-        }
-    }
-
-    private function checkForViewMake($absPath)
+    private function checkForViewMake($absPath, $staticCalls)
     {
         $tokens = token_get_all(file_get_contents($absPath));
 
         foreach($tokens as $i => $token) {
-            $index = FunctionCall::isGlobalCall('view', $tokens, $i) || FunctionCall::isStaticCall('make', $tokens, $i, 'View');
-
-            if (! $index) {
+            if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
+                $this->checkViewParams($absPath, $tokens, $i, 0);
                 continue;
             }
 
-            $params = FunctionCall::readParameters($tokens, $i);
-
-            $param1 = null;
-            // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
-            $paramTokens = $params[0] ?? ['_', '_'];
-
-            if(! FunctionCall::isSolidString($paramTokens)) {
-                continue;
+            foreach ($staticCalls as $class => $method) {
+                if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
+                    $this->checkViewParams($absPath, $tokens, $i, $method[1]);
+                    continue;
+                }
             }
+        }
+    }
 
-            $viewName = trim($paramTokens[0][1], '\'\"');
+    private function checkViewParams($absPath, &$tokens, $i, $index)
+    {
+        $params = FunctionCall::readParameters($tokens, $i);
 
-            $viewName &&
-            ! View::exists($viewName) &&
-            BladeFile::isMissing($absPath, $paramTokens[0][2], $viewName);
+        $param1 = null;
+        // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+        $paramToken = $params[$index] ?? ['_', '_', '_'];
+
+        if (! FunctionCall::isSolidString($paramToken)) {
+            return;
+        }
+
+        $viewName = trim($paramToken[0][1], '\'\"');
+
+        if ($viewName && ! View::exists($viewName)) {
+            BladeFile::isMissing($absPath, $paramToken[0][2], $viewName);
         }
     }
 }
