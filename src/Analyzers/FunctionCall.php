@@ -63,7 +63,7 @@ class FunctionCall
             [T_STRING, $methodName],
             [T_DOUBLE_COLON, '::'],
         ];
-        $className && ($tokens[] = [T_STRING, $className]);
+        $className && ($expectedTokens[] = [T_STRING, $className]);
 
         return self::checkTokens($expectedTokens, $tokens, $i);
     }
