@@ -91,7 +91,7 @@ class FunctionCall
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
             [$actualToken, $j] = self::getPrevToken($tokens, $j);
-            if (self::isNot($expectedToken, $actualToken)) {
+            if ($expectedToken[0] != $actualToken[0] || (($expectedToken[1] ?? '') != ($actualToken[1] ?? ''))) {
                 $results = [];
                 break;
             }
@@ -136,10 +136,5 @@ class FunctionCall
         }
 
         return $params;
-    }
-
-    private static function isNot($expectedToken, $actualToken)
-    {
-        return $expectedToken[0] != $actualToken[0] || ($expectedToken[1] ?? null && $expectedToken[1] != $actualToken[1]);
     }
 }
