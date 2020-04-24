@@ -40,7 +40,11 @@ class CheckAll extends Command
         $errorPrinter->logErrors = false;
 
         $this->call('check:psr4', ['--detailed' => $this->option('detailed')]);
-        app(Composer::class)->dumpAutoloads();
+        if ($errorPrinter->counts['badNamespace']) {
+            $c = count($errorPrinter->counts['badNamespace']);
+            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
+            app(Composer::class)->dumpAutoloads();
+        }
         $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:imports', ['--detailed' => $this->option('detailed')]);
