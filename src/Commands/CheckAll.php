@@ -45,6 +45,7 @@ class CheckAll extends Command
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
         $this->call('check:routes');
         $this->call('check:stringy_classes');
+        $this->call('check:dd');
 
         //turns on error logging.
         $errorPrinter->logErrors = true;
