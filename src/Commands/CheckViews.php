@@ -15,7 +15,6 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckViews extends Command
 {
@@ -36,15 +35,11 @@ class CheckViews extends Command
     /**
      * Execute the console command.
      *
-     * @param  ErrorPrinter  $errorPrinter
-     *
      * @return mixed
      */
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle()
     {
         $this->info('Checking views...');
-
-        $errorPrinter->printer = $this->output;
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
