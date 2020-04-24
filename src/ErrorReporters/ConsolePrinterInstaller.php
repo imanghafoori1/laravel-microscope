@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 
 class ConsolePrinterInstaller
@@ -22,7 +23,7 @@ class ConsolePrinterInstaller
         }
 
         if ($errorCount = $errorPrinter->hasErrors()) {
-            $command->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
+            $command->getOutput()->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
             $errorPrinter->logErrors();
         } else {
             $command->info(PHP_EOL.'All '.$commandType.' are correct!');
@@ -39,7 +40,18 @@ class ConsolePrinterInstaller
                 $data['absPath'],
                 $msg,
                 $data['lineNumber'],
-                $data['viewName']
+                $data['name']
+            );
+        });
+
+        Event::listen(ddFound::class, function (ddFound $event) {
+            $data = $event->data;
+            app(ErrorPrinter::class)->simplePendError(
+                $data['absPath'],
+                $data['lineNumber'],
+                $data['name'],
+                'ddFound',
+                'Debug function found: '
             );
         });
 

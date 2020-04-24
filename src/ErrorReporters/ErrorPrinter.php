@@ -14,6 +14,7 @@ class ErrorPrinter
         'wrongUsedClassError' => [],
         'wrongMethodError' => [],
         'badNamespace' => [],
+        'ddFound' => [],
     ];
 
     public $printer;
@@ -58,6 +59,14 @@ class ErrorPrinter
         array_push($this->counts[$key], (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow($absent).'   <==== does not exist')
+            ->link($path, $lineNumber));
+    }
+
+    public function simplePendError($path, $lineNumber, $absent, $key, $header)
+    {
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header($header)
+            ->errorData($this->yellow($absent))
             ->link($path, $lineNumber));
     }
 

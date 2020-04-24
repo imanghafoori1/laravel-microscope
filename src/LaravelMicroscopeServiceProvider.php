@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Imanghafoori\LaravelMicroscope\Commands\CheckDD;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
@@ -38,6 +39,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckImports::class,
             CheckAll::class,
             ClassifyStrings::class,
+            CheckDD::class,
         ]);
 
         ConsolePrinterInstaller::boot();
