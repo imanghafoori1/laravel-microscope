@@ -64,6 +64,7 @@ class CheckRouteCalls
     {
         $index1 = FunctionCall::checkTokens(self::redirectRouteTokens(), $tokens, $i);
         $index1 = $index1 ?: FunctionCall::isStaticCall('route', $tokens, $i, 'Redirect');
+        $index1 = $index1 ?: FunctionCall::isStaticCall('route', $tokens, $i, 'URL');
 
         return array_pop($index1);
     }
