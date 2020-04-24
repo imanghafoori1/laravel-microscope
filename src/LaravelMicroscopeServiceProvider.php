@@ -40,6 +40,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckAll::class,
             ClassifyStrings::class,
         ]);
+
         ConsolePrinterInstaller::boot();
     }
 
