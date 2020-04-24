@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
@@ -16,18 +17,8 @@ class CheckRoutes extends Command
 {
     use LogsErrors;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:routes';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks the validity of route definitions';
 
     /**
@@ -54,6 +45,10 @@ class CheckRoutes extends Command
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
         $this->checkClassesForRouteCalls();
+
+        CheckBladeFiles::applyChecks([
+            [CheckRouteCalls::class, 'check'],
+        ]);
 
         $bar->finish();
 
