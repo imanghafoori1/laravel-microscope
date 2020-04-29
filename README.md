@@ -1,6 +1,9 @@
 <h1 align="center">
     Find Bugs Before They Bite
 </h1>
+<h1 align="center">
+    Flatten your code with a Single command
+</h1>
 <h2 align="center">
 Give your eyes a rest, this will check it for you.
 </h2>
@@ -28,6 +31,7 @@ Built with :heart: for lazy laravel developers ;)
 - It is created to understand laravel run-time and magic.
 - It does not show you stupid false errors, all the errors are really errors.
 - If you have written a lot of tests for your app, you may not need this.
+- It can refactor your your code, by applying `early returns` automatically.
 
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
@@ -83,12 +87,22 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:early_returns 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
 Lets start with:
+```php
+php artisan check:early_return
+```
+
+----------------------
+
 ```php
 php artisan check:events
 ```
@@ -168,6 +182,8 @@ php artisan check:routes
 - It check that your routes refer to valid controller classes and methods.
 - It checks the all the controller methods to have valid type-hints.
 - it scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+
+----------------------
 
 ``` php
 php artisan check:viewes
