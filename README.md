@@ -1,14 +1,15 @@
 <h1 align="center">
     Find Bugs Before They Bite
 </h1>
-<h1 align="center">
-    Flatten your code with a Single command
-</h1>
 <h2 align="center">
-Give your eyes a rest, this will check it for you.
+    Flatten your code with a single command
 </h2>
+
   <h3 align="center">  
 This package is created in order to understand laravel magic and be smarter than phpstorm.
+</h3>
+<h3 align="center">
+So, Give your eyes a rest, this will check it for you.
 </h3>
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
@@ -98,8 +99,59 @@ You can run:
 
 Lets start with:
 ```php
-php artisan check:early_return
+php artisan check:early_returns
 ```
+
+This will scan all your Psr-4 loaded classes and flattens your functions ans loops by applting the early return rule.
+For example:
+
+```php
+forearch ($products as $product) {
+    if ($someCond) {
+        // A lot of code 1
+        // A lot of code 1
+        // A lot of code 1
+        // A lot of code 1
+        // A lot of code 1
+        if ($someOtherCond) {
+            // A lot more code 2
+            // A lot more code 2
+            // A lot more code 2
+            // A lot more code 2 
+            // A lot more code 2
+        }
+    }
+}
+
+```
+
+Will be discovered and converted into:
+
+```php
+forearch ($products as $product) {
+    if (! $someCond) {
+        continue;
+    }
+    
+    // A lot of code 1
+    // A lot of code 1
+    // A lot of code 1
+    // A lot of code 1
+    // A lot of code 1
+
+    if (! $someOtherCond) {
+        continue;
+    }
+ 
+    // A lot more code 2
+    // A lot more code 2
+    // A lot more code 2
+    // A lot more code 2 
+    // A lot more code 2
+}
+
+```
+
 
 ----------------------
 
