@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Imanghafoori\LaravelMicroscope\Commands\CheckDD;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
@@ -16,6 +17,7 @@ use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
 use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\Commands\ClassifyStrings;
+use Imanghafoori\LaravelMicroscope\Commands\CheckEarlyReturns;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
@@ -40,6 +42,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckAll::class,
             ClassifyStrings::class,
             CheckDD::class,
+            CheckEarlyReturns::class,
         ]);
 
         ConsolePrinterInstaller::boot();
