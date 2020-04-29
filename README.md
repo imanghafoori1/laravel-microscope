@@ -119,8 +119,9 @@ forearch ($products as $product) {
             // A lot more code 2
             // A lot more code 2 
             // A lot more code 2
-        }
-    }
+            //
+        } // <--- closes second if
+    } // <--- closes first if
 }
 
 ```
@@ -152,6 +153,9 @@ forearch ($products as $product) {
 
 ```
 
+The same thing will apply for functions and methods, but with `return`
+
+**Although this type of refactor is totally safe and is gurantied to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
 
 ----------------------
 
