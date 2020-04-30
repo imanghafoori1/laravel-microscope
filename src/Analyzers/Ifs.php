@@ -34,6 +34,12 @@ class Ifs
             return [$refTokens, $i0];
         }
 
+        $afterFirstIf = FunctionCall::getNextToken($refTokens, $if1BodyCloseIndex);
+
+        if (T_ELSE == $afterFirstIf[0][0] || T_ELSEIF == $afterFirstIf[0][0]) {
+            return [$refTokens, $i0];
+        }
+
         $newTokens = [];
         foreach($refTokens as $i => $oldToken) {
             if ($i == $condition1CloseIndex) {
