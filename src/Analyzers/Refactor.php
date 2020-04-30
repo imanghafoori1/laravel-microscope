@@ -6,6 +6,13 @@ class Refactor
 {
     const blocksKeyWords = [T_RETURN, T_THROW, T_CONTINUE, T_BREAK];
 
+    const scopeKeywords = [
+        T_FOREACH => 'continue',
+        T_FUNCTION => 'return',
+        T_WHILE => 'continue',
+        T_FOR => 'continue',
+    ];
+
     static function flatten($tokens)
     {
         $refactored = 0;
@@ -18,7 +25,7 @@ class Refactor
                 break;
             }
 
-            if (! in_array($token[0], [T_FOREACH, T_FUNCTION, T_WHILE, T_FOR])) {
+            if (! in_array($token[0], array_keys(self::scopeKeywords))) {
                 continue;
             }
 
@@ -30,11 +37,18 @@ class Refactor
                 continue;
             }
 
-            // fast-forward to the end of function body
-            [, $methodBodyCloseIndex] = FunctionCall::readBody($refactoredTokens, $methodBodyStartIndex);
+            try {
+                // fast-forward to the end of function body
+                [, $methodBodyCloseIndex] = FunctionCall::readBody($refactoredTokens, $methodBodyStartIndex);
 
-            // get the very last token of function (or foreach) body.
-            [$ifBody, $condition] = FunctionCall::readBackUntil($refactoredTokens, $methodBodyCloseIndex);
+                // get the very last token of function (or foreach) body.
+                [$ifBody, $condition] = FunctionCall::readBackUntil($refactoredTokens, $methodBodyCloseIndex);
+            } catch (\Exception $e) {
+                // this is a work around for tokenizer weird bugs,
+                // which makes it impossible to process the syntax.
+                // so, we just ignore the current scope and continue.
+                continue;
+            }
 
             if (! $ifBody) {
                 continue;
@@ -145,12 +159,7 @@ class Refactor
 
     private static function getKeyword($token)
     {
-        return [
-                   T_FOREACH => 'continue',
-                   T_FUNCTION => 'return',
-                   T_WHILE => 'continue',
-                   T_FOR => 'continue',
-               ][$token];
+        return self::scopeKeywords[$token];
     }
 
     static function toString($refactoredTokens)
