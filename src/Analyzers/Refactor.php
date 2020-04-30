@@ -17,12 +17,25 @@ class Refactor
     {
         $refactored = 0;
         $refactoredTokens = $tokens;
-        $i0 = 1;
+        $i0 = 0;
+
+        $refactored--;
+        do {
+            [$refactoredTokens, $i0] = Ifs::mergeIfs($refactoredTokens, $i0);
+            ($i0 == 0) && $refactored++;
+            $i0++;
+        } while (isset($refactoredTokens[$i0]));
+
+        $i0 = 0;
         while (true) {
             $token = $refactoredTokens[$i0++] ?? null;
 
             if (! $token) {
                 break;
+            }
+
+            if ($i0 == 0) {
+                continue;
             }
 
             if (! in_array($token[0], array_keys(self::scopeKeywords))) {

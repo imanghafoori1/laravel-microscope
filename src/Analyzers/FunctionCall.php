@@ -219,22 +219,23 @@ class FunctionCall
         return [$body, $i];
     }
 
-    public static function readBody(&$tokens, $i)
+    public static function readBody(&$tokens, $i, $until = '}')
     {
         $body = [];
         $level = 0;
         while (true) {
-            [$nextToken, $i] = self::getNextToken($tokens, $i);
-
-            if ($level == 0 && $nextToken == '}') {
-                break;
-            }
-
-            $level = self::level($nextToken, $level);
+            $i++;
+            $nextToken = $tokens[$i] ?? '_';
 
             if ($nextToken == '_') {
                 break;
             }
+
+            if ($level == 0 && $nextToken == $until) {
+                break;
+            }
+
+            $level = self::level($nextToken, $level);
 
             $body[] = $nextToken;
         }
