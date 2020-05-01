@@ -20,8 +20,15 @@ class Refactor
         $i0 = 0;
 
         $refactored--;
+
         do {
             [$refactoredTokens, $i0] = Ifs::mergeIfs($refactoredTokens, $i0);
+            ($i0 == 0) && $refactored++;
+            $i0++;
+        } while (isset($refactoredTokens[$i0]));
+
+        do {
+            [$refactoredTokens, $i0] = Ifs::else_If($refactoredTokens, $i0);
             ($i0 == 0) && $refactored++;
             $i0++;
         } while (isset($refactoredTokens[$i0]));
@@ -185,7 +192,7 @@ class Refactor
         return $stringOutput;
     }
 
-    private static function negate($conditionTokens)
+    static function negate($conditionTokens)
     {
         $found = false;
 
