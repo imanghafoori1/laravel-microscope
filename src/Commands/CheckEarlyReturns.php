@@ -30,26 +30,51 @@ class CheckEarlyReturns extends Command
      */
     public function handle()
     {
-        $this->info('Checking for Early Returns...');
-        $this->warn('This command is going to make changes to your files!');
-        $this->output->confirm('Do you have committed everything in git?', true);
+        $this->startWarning();
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
-        $fixed = 0;
+        $totalNumberOfFixes = $fixedFilesCount = 0;
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $file) {
-                $tokens = token_get_all(file_get_contents($file->getRealPath()));
+                $path = $file->getRealPath();
+                $tokens = token_get_all(file_get_contents($path));
                 [$fixes, $tokens] = $this->refactor($tokens);
 
-                ($fixes > 0)
-                && $this->output->confirm('Do you want to flatten: '.$file->getRealPath(), true)
-                && $this->fix($file, $tokens, $fixes)
-                && $fixed++;
+                if ($fixes <= 0) {
+                    continue;
+                }
+
+                $this->getConfirm($path);
+                $this->fix($path, $tokens, $fixes);
+                $fixedFilesCount++;
+                $totalNumberOfFixes += $fixes;
             }
         }
 
+        $this->printFinalMsg($fixedFilesCount);
+    }
+
+    private function fix($filePath, $tokens, $tries)
+    {
+        Refactor::saveTokens($filePath, $tokens, $this->option('test'));
+
+        $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
+    }
+
+    private function refactor($tokens)
+    {
+        $fixes = 0;
+        do {
+            [$tokens, $refactored] = Refactor::flatten($tokens);
+        } while ($refactored > 0 && $fixes++);
+
+        return [$fixes, $tokens];
+    }
+
+    private function printFinalMsg($fixed)
+    {
         if ($fixed > 0) {
             $msg = 'Hooraay !!!, '.$fixed.' files were flattened by laravel-microscope... ';
         } else {
@@ -59,25 +84,15 @@ class CheckEarlyReturns extends Command
         $this->info('     \(^_^)/    You rock...   \(^_^)/    ');
     }
 
-    private function fix($file, $tokens, $tries)
+    private function getConfirm($filePath)
     {
-        Refactor::saveTokens($file->getRealPath(), $tokens, $this->option('test'));
-
-        $file = class_basename($file->getRealPath());
-        $this->warn(PHP_EOL.$tries.' fixes applied to: '.$file);
-
-        return true;
+        return $this->output->confirm('Do you want to flatten: '.$filePath, true);
     }
 
-    private function refactor($tokens)
+    private function startWarning()
     {
-        $refactored = 1;
-        $fixes = -1;
-        while ($refactored > 0) {
-            $fixes++;
-            [$tokens, $refactored] = Refactor::flatten($tokens);
-        }
-
-        return [$fixes, $tokens];
+        $this->info('Checking for Early Returns...');
+        $this->warn('This command is going to make changes to your files!');
+        $this->output->confirm('Do you have committed everything in git?', true);
     }
 }
