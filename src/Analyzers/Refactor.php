@@ -15,18 +15,17 @@ class Refactor
 
     static function flatten($tokens)
     {
-        $refactored = 0;
         $refactoredTokens = $tokens;
         $i0 = 0;
 
-        $refactored--;
-
+        $refactored = -1;
         do {
             [$refactoredTokens, $i0] = Ifs::mergeIfs($refactoredTokens, $i0);
             ($i0 == 0) && $refactored++;
             $i0++;
         } while (isset($refactoredTokens[$i0]));
 
+        $i0 = 1;
         do {
             [$refactoredTokens, $i0] = Ifs::else_If($refactoredTokens, $i0);
             ($i0 == 0) && $refactored++;
