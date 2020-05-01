@@ -10,25 +10,25 @@ class Ifs
         if ($token[0] !== T_IF) {
             return [$refTokens, $i0];
         }
+
         [, $condition1StartIndex] = FunctionCall::forwardTo($refTokens, $i0, ['(']);
-        [, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, ')');
-        [, $if1BlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{']);
+        [, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, [')']);
+        [, $if1BlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{', ':']);
 
         $if2index = $if1BlockStartIndex;
-        while (in_array($refTokens[++$if2index][0], [T_WHITESPACE, T_COMMENT])) {}
+        while (in_array($refTokens[++$if2index][0], [T_WHITESPACE, T_COMMENT, ';'])) {}
 
         if ($refTokens[$if2index][0] !== T_IF) {
             return [$refTokens, $i0];
         }
 
         [, $condition2StartIndex] = FunctionCall::forwardTo($refTokens, $if2index, ['(']);
-        [, $condition2CloseIndex] = FunctionCall::readBody($refTokens, $condition2StartIndex, ')');
-        [, $if2BodyStartIndex] = FunctionCall::forwardTo($refTokens, $condition2CloseIndex, ['{']);
-        [, $if2BodyCloseIndex] = FunctionCall::readBody($refTokens, $if2BodyStartIndex);
-        [, $if1BlockCloseIndex] = FunctionCall::readBody($refTokens, $if1BlockStartIndex);
-
+        [, $condition2CloseIndex] = FunctionCall::readBody($refTokens, $condition2StartIndex, [')']);
+        [, $if2BodyStartIndex] = FunctionCall::forwardTo($refTokens, $condition2CloseIndex, ['{', ':']);
+        [, $if2BodyCloseIndex] = FunctionCall::readBody($refTokens, $if2BodyStartIndex, ['}', T_ENDIF]);
+        [, $if1BlockCloseIndex] = FunctionCall::readBody($refTokens, $if1BlockStartIndex, ['}', T_ENDIF]);
         $if1closeIndexCandid = $if2BodyCloseIndex;
-        while (in_array($refTokens[++$if1closeIndexCandid][0], [T_WHITESPACE, T_COMMENT])) {}
+        while (in_array($refTokens[++$if1closeIndexCandid][0], [T_WHITESPACE, T_COMMENT, ';'])) {}
 
         if ($if1closeIndexCandid !== $if1BlockCloseIndex) {
             return [$refTokens, $i0];
@@ -36,7 +36,7 @@ class Ifs
 
         $afterFirstIf = FunctionCall::getNextToken($refTokens, $if1BlockCloseIndex);
 
-        if (T_ELSE == $afterFirstIf[0][0] || T_ELSEIF == $afterFirstIf[0][0]) {
+        if (T_ELSEIF == $afterFirstIf[0][0] || T_ELSE == $afterFirstIf[0][0]) {
             return [$refTokens, $i0];
         }
 
@@ -71,19 +71,18 @@ class Ifs
 
 
         [, $condition1StartIndex] = FunctionCall::forwardTo($refTokens, $i0, ['(']);
-        [$condition, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, ')');
-        [, $ifBlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{']);
-        [$ifBody, $ifBlockCloseIndex] = FunctionCall::readBody($refTokens, $ifBlockStartIndex);
+        [$condition, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, [')']);
+        [, $ifBlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{', ':']);
+        [$ifBody, $ifBlockCloseIndex] = FunctionCall::readBody($refTokens, $ifBlockStartIndex, ['}', T_ENDIF, T_ELSEIF, T_ELSE]);
 
         $afterFirstIf = FunctionCall::getNextToken($refTokens, $ifBlockCloseIndex);
 
-        if (T_ELSE !== $afterFirstIf[0][0]) {
-
+        if (T_ELSE !== $afterFirstIf[0][0] && $refTokens[$ifBlockCloseIndex][0] !== T_ELSE) {
             return [$refTokens, $i0];
         }
 
-        [, $elseBodyStartIndex] = FunctionCall::forwardTo($refTokens, $afterFirstIf[1], ['{']);
-        [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($refTokens, $elseBodyStartIndex);
+        [, $elseBodyStartIndex] = FunctionCall::forwardTo($refTokens, $ifBlockCloseIndex, ['{', ':']);
+        [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($refTokens, $elseBodyStartIndex, ['}', T_ENDIF]);
 
         $ifIsBlocky = Refactor::isBlocky($ifBody);
         $elseIsBlocky = Refactor::isBlocky($elseBody);
@@ -116,12 +115,14 @@ class Ifs
                 if ($i > $ifBlockStartIndex && $i < $ifBlockCloseIndex) {
                     continue;
                 }
+
                 // removes:   } else {
-                if ($i > $ifBlockCloseIndex && $i < $elseBodyStartIndex) {
+                if ($i >= $ifBlockCloseIndex && $i < $elseBodyStartIndex) {
                     continue;
                 }
 
                 if ($i == $elseBodyStartIndex) {
+                    $refactoredTokens[] = '}';
                     foreach ($ifBody as $t) {
                         $refactoredTokens[] = $t;
                     }
@@ -133,6 +134,7 @@ class Ifs
 
                 $refactoredTokens[] = $oldToken;
             }
+
             return [$refactoredTokens, 0];
         } elseif ($ifIsBlocky) {
             $refactoredTokens = [];

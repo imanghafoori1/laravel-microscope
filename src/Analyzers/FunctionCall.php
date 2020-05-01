@@ -219,10 +219,11 @@ class FunctionCall
         return [$body, $i];
     }
 
-    public static function readBody(&$tokens, $i, $until = '}')
+    public static function readBody(&$tokens, $i, $until = ['}'])
     {
         $body = [];
         $level = 0;
+        $hasIf = false;
         while (true) {
             $i++;
             $nextToken = $tokens[$i] ?? '_';
@@ -231,11 +232,30 @@ class FunctionCall
                 break;
             }
 
-            if ($level == 0 && $nextToken == $until) {
+            if ($level == 0 && in_array($nextToken[0], $until)) {
                 break;
             }
 
-            $level = self::level($nextToken, $level);
+            if ($nextToken[0] == T_IF) {
+                $hasIf = true;
+            }
+
+            if (($nextToken[0] == ':' && $hasIf) || $nextToken[0] == '{') {
+                $hasIf = false;
+                $level++;
+            }
+
+            if ($nextToken[0] == T_ENDIF) {
+                $level--;
+            }
+
+            if (in_array($nextToken, ['[', '('])) {
+                $level++;
+            }
+
+            if (in_array($nextToken, [']', ')', '}'])) {
+                $level--;
+            }
 
             $body[] = $nextToken;
         }
