@@ -13,6 +13,10 @@ class Ifs
 
         [, $condition1StartIndex] = FunctionCall::forwardTo($refTokens, $i0, ['(']);
         [, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, [')']);
+        [$char,] = FunctionCall::getNextToken($refTokens, $condition1CloseIndex);
+        if (! in_array($char, ['{', ':'])) {
+            return [$refTokens, $i0];
+        }
         [, $if1BlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{', ':']);
 
         $if2index = $if1BlockStartIndex;
@@ -24,6 +28,10 @@ class Ifs
 
         [, $condition2StartIndex] = FunctionCall::forwardTo($refTokens, $if2index, ['(']);
         [, $condition2CloseIndex] = FunctionCall::readBody($refTokens, $condition2StartIndex, [')']);
+        [$char,] = FunctionCall::getNextToken($refTokens, $condition2CloseIndex);
+        if (! in_array($char, ['{', ':'])) {
+            return [$refTokens, $i0];
+        }
         [, $if2BodyStartIndex] = FunctionCall::forwardTo($refTokens, $condition2CloseIndex, ['{', ':']);
         [, $if2BodyCloseIndex] = FunctionCall::readBody($refTokens, $if2BodyStartIndex, ['}', T_ENDIF]);
         [, $if1BlockCloseIndex] = FunctionCall::readBody($refTokens, $if1BlockStartIndex, ['}', T_ENDIF]);
@@ -72,6 +80,10 @@ class Ifs
 
         [, $condition1StartIndex] = FunctionCall::forwardTo($refTokens, $i0, ['(']);
         [$condition, $condition1CloseIndex] = FunctionCall::readBody($refTokens, $condition1StartIndex, [')']);
+        [$char,] = FunctionCall::getNextToken($refTokens, $condition1CloseIndex);
+        if (! in_array($char, ['{', ':'])) {
+            return [$refTokens, $i0];
+        }
         [, $ifBlockStartIndex] = FunctionCall::forwardTo($refTokens, $condition1CloseIndex, ['{', ':']);
         [$ifBody, $ifBlockCloseIndex] = FunctionCall::readBody($refTokens, $ifBlockStartIndex, ['}', T_ENDIF, T_ELSEIF, T_ELSE]);
 
@@ -81,6 +93,10 @@ class Ifs
             return [$refTokens, $i0];
         }
 
+        [$char,] = FunctionCall::getNextToken($refTokens, $ifBlockCloseIndex);
+        if (! in_array($char, ['{', ':'])) {
+            return [$refTokens, $i0];
+        }
         [, $elseBodyStartIndex] = FunctionCall::forwardTo($refTokens, $ifBlockCloseIndex, ['{', ':']);
         [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($refTokens, $elseBodyStartIndex, ['}', T_ENDIF]);
 
