@@ -18,19 +18,27 @@ class Refactor
         $refactoredTokens = $tokens;
 
         $i = 0;
-        $refactored = -1;
+        $changes = 0;
         do {
-            [$refactoredTokens, $i] = Ifs::mergeIfs($refactoredTokens, $i);
-            ($i == 0) && $refactored++;
+            $result = Ifs::mergeIfs($refactoredTokens, $i);
             $i++;
+            if ($result) {
+                $refactoredTokens = $result;
+                $i = 1; // rewind
+                $changes++; // count changes
+            }
         } while (isset($refactoredTokens[$i]));
 
-        $i0 = 1;
+        $i = 1;
         do {
-            [$refactoredTokens, $i0] = Ifs::else_If($refactoredTokens, $i0);
-            ($i0 == 0) && $refactored++;
-            $i0++;
-        } while (isset($refactoredTokens[$i0]));
+            $result = Ifs::else_If($refactoredTokens, $i);
+            $i++;
+            if ($result) {
+                $refactoredTokens = $result;
+                $i = 1; // rewind
+                $changes++; // count changes
+            }
+        } while (isset($refactoredTokens[$i]));
 
         $i0 = 0;
         while (true) {
@@ -86,10 +94,10 @@ class Refactor
                 $methodBodyCloseIndex,
                 self::getKeyword($token[0])
             );
-            $refactored++;
+            $changes++;
         }
 
-        return [$refactoredTokens, $refactored];
+        return [$refactoredTokens, $changes];
     }
 
     static function saveTokens($file, array $refactoredTokens, $test = false)
