@@ -8,21 +8,21 @@ class Ifs
     {
         $token = $tokens[$i];
         if ($token[0] !== T_IF) {
-            return [$tokens, $i];
+            return null;
         }
         [, $condition1StartIndex] = FunctionCall::forwardTo($tokens, $i, ['(']);
         [, $condition1CloseIndex] = FunctionCall::readBody($tokens, $condition1StartIndex, [')']);
         [$char, $if1BlockStartIndex] = FunctionCall::getNextToken($tokens, $condition1CloseIndex);
         // if with no curly brace.
         if (! in_array($char, ['{', ':'])) {
-            return [$tokens, $i];
+            return null;
         }
 
         $if2index = $if1BlockStartIndex;
         while (in_array($tokens[++$if2index][0], [T_WHITESPACE, T_COMMENT, ';'])) {}
 
         if ($tokens[$if2index][0] !== T_IF) {
-            return [$tokens, $i];
+            return null;
         }
 
         [, $condition2StartIndex] = FunctionCall::forwardTo($tokens, $if2index, ['(']);
@@ -30,7 +30,7 @@ class Ifs
         [$char, $if2BodyStartIndex] = FunctionCall::getNextToken($tokens, $condition2CloseIndex);
         // if with no curly brace.
         if (! in_array($char, ['{', ':'])) {
-            return [$tokens, $i];
+            return null;
         }
 
         [, $if2BodyCloseIndex] = FunctionCall::readBody($tokens, $if2BodyStartIndex, ['}', T_ENDIF]);
@@ -39,54 +39,54 @@ class Ifs
         while (in_array($tokens[++$if1closeIndexCandid][0], [T_WHITESPACE, T_COMMENT, ';'])) {}
 
         if ($if1closeIndexCandid !== $if1BlockCloseIndex) {
-            return [$tokens, $i];
+            return null;
         }
 
         $afterFirstIf = FunctionCall::getNextToken($tokens, $if1BlockCloseIndex);
 
         if (T_ELSEIF == $afterFirstIf[0][0] || T_ELSE == $afterFirstIf[0][0]) {
-            return [$tokens, $i];
+            return null;
         }
 
-        $newTokens = self::refctorMergeIf($tokens, $condition1CloseIndex, $condition2StartIndex, $if2BodyCloseIndex);
-
-        return [$newTokens, 0];
+        return self::refactorMergeIf($tokens, $condition1CloseIndex, $condition2StartIndex, $if2BodyCloseIndex);
     }
 
     static function else_If($tokens, $i0)
     {
         $token = $tokens[$i0];
         if ($token[0] !== T_IF) {
-            return [$tokens, $i0];
+            return null;
         }
-
 
         [, $condition1StartIndex] = FunctionCall::forwardTo($tokens, $i0, ['(']);
         [$condition, $condition1CloseIndex] = FunctionCall::readBody($tokens, $condition1StartIndex, [')']);
         [$char, $ifBlockStartIndex] = FunctionCall::getNextToken($tokens, $condition1CloseIndex);
+
         // if with no curly brace.
         if (! in_array($char, ['{', ':'])) {
-            return [$tokens, $i0];
+            return null;
         }
-        [$ifBody, $ifBlockCloseIndex] = FunctionCall::readBody($tokens, $ifBlockStartIndex, ['}', T_ENDIF, T_ELSEIF, T_ELSE]);
+
+        [$ifBody, $ifBlockCloseIndex] = FunctionCall::readBody($tokens, $ifBlockStartIndex, ['}', T_ENDIF,]);
 
         $afterFirstIf = FunctionCall::getNextToken($tokens, $ifBlockCloseIndex);
 
         if (T_ELSE !== $afterFirstIf[0][0] && $tokens[$ifBlockCloseIndex][0] !== T_ELSE) {
-            return [$tokens, $i0];
+            return null;
         }
 
-        [$char, $elseBodyStartIndex] = FunctionCall::getNextToken($tokens, $ifBlockCloseIndex);
+        [$char, $elseBodyStartIndex] = FunctionCall::getNextToken($tokens, $afterFirstIf[1]);
         // if with no curly brace.
         if (! in_array($char, ['{', ':'])) {
-            return [$tokens, $i0];
+            return null;
         }
+
         [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($tokens, $elseBodyStartIndex, ['}', T_ENDIF]);
 
         $ifIsBlocky = Refactor::isBlocky($ifBody);
         $elseIsBlocky = Refactor::isBlocky($elseBody);
 
-        if (((count($elseBody) + 10) < count($ifBody) || count($elseBody) < count($ifBody) * 0.7) && $elseIsBlocky) {
+        if (((count($elseBody) + 10) < count($ifBody) || (count($elseBody) < count($ifBody) * 0.7) && $elseIsBlocky)) {
             $refactoredTokens = [];
             foreach($tokens as $i => $oldToken) {
                 // negate the condition
@@ -133,7 +133,7 @@ class Ifs
                 $refactoredTokens[] = $oldToken;
             }
 
-            return [$refactoredTokens, 0];
+            return $refactoredTokens;
         } elseif ($ifIsBlocky) {
             $refactoredTokens = [];
             foreach($tokens as $i => $oldToken) {
@@ -146,21 +146,13 @@ class Ifs
                 }
                 $refactoredTokens[] = $oldToken;
             }
-            return [$refactoredTokens, 0];
+            return $refactoredTokens;
         } else {
-            return [$tokens, $i0];
+            return null;
         }
     }
 
-    /**
-     * @param $tokens
-     * @param $condition1CloseIndex
-     * @param $condition2StartIndex
-     * @param $if2BodyCloseIndex
-     *
-     * @return array
-     */
-    private static function refctorMergeIf($tokens, $condition1CloseIndex, $condition2StartIndex, $if2BodyCloseIndex): array
+    private static function refactorMergeIf($tokens, $condition1CloseIndex, $condition2StartIndex, $if2BodyCloseIndex)
     {
         $newTokens = [];
         foreach ($tokens as $i => $oldToken) {
@@ -182,5 +174,5 @@ class Ifs
         }
 
         return $newTokens;
-}
+    }
 }

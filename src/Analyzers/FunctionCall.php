@@ -236,11 +236,14 @@ class FunctionCall
                 break;
             }
 
-            if ($nextToken[0] == T_IF) {
-                $hasIf = true;
+            in_array($nextToken[0], [T_IF, T_ELSE, T_ELSEIF]) && $hasIf = true;
+
+            if (in_array($nextToken[0], [T_ELSE, T_ELSEIF])) {
+                [$pToken,] = self::getPrevToken($tokens, $i);
+                ($pToken !== '}') && $level--;
             }
 
-            if (($nextToken[0] == ':' && $hasIf) || $nextToken[0] == '{') {
+            if (($nextToken == ':' && $hasIf) || $nextToken == '{') {
                 $hasIf = false;
                 $level++;
             }
