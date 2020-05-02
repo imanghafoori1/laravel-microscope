@@ -40,9 +40,12 @@ class CheckEarlyReturns extends Command
             foreach ($files as $file) {
                 $path = $file->getRealPath();
                 $tokens = token_get_all(file_get_contents($path));
+                if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
+                    continue;
+                }
                 [$fixes, $tokens] = $this->refactor($tokens);
 
-                if ($fixes <= 0) {
+                if ($fixes == 0) {
                     continue;
                 }
 
