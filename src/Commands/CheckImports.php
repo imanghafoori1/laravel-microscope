@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\FileReaders\ConfigPaths;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -53,7 +54,9 @@ class CheckImports extends Command implements FileCheckContract
 
         $psr4 = ComposerJson::readKey('autoload.psr-4');
 
-        $this->getRouteFiles(RoutePaths::get());
+        $this->checkFilePaths(RoutePaths::get());
+
+        $this->checkFilePaths(ConfigPaths::get());
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
@@ -71,6 +74,7 @@ class CheckImports extends Command implements FileCheckContract
             }
         }
 
+        // checks the blade files for class references.
         CheckBladeFiles::applyChecks([
             [CheckClassReferences::class, 'check'],
         ]);
@@ -95,12 +99,12 @@ class CheckImports extends Command implements FileCheckContract
         $this->info('Running "composer dump-autoload" command...');
     }
 
-    private function getRouteFiles($routePaths)
+    private function checkFilePaths($paths)
     {
-        foreach($routePaths as $routePath) {
-            $routeFileTokens = token_get_all(file_get_contents($routePath));
-            CheckClassReferences::check($routeFileTokens, $routePath);
-            CheckClasses::checkAtSignStrings($routeFileTokens, $routePath, true);
+        foreach($paths as $path) {
+            $tokens = token_get_all(file_get_contents($path));
+            CheckClassReferences::check($tokens, $path);
+            CheckClasses::checkAtSignStrings($tokens, $path, true);
         }
     }
 }

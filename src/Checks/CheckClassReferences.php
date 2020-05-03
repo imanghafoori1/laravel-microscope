@@ -13,7 +13,7 @@ class CheckClassReferences
 
         foreach ($classes as $class) {
             if (! self::exists($class['class'])) {
-                app(ErrorPrinter::class)->bladeImport($class['class'], $absPath, $class['line']);
+                app(ErrorPrinter::class)->wrongUsedClassError($absPath, $class['class'], $class['line']);
             }
         }
     }

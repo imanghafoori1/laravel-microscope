@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
@@ -51,19 +50,9 @@ class CheckClasses
 
             self::checkAtSignStrings($tokens, $absFilePath);
 
-            $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+            self::checkNotImportedClasses($tokens, $absFilePath);
 
-            foreach ($nonImportedClasses as $nonImportedClass) {
-                $v = trim($nonImportedClass['class'], '\\');
-                if (self::isAbsent($v) && ! function_exists($v)) {
-                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
-                }
-            }
-
-            $namespacedClassName = self::fullNamespace($currentNamespace, $class);
-
-            $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absFilePath);
-            self::checkImportedClassesExist($imports, $absFilePath);
+            self::checkImportedClasses($currentNamespace, $class, $absFilePath);
         }
     }
 
@@ -132,6 +121,7 @@ class CheckClasses
     public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
     {
         foreach ($tokens as $token) {
+            // if it is a string containing a single '@'
             if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
                 continue;
             }
@@ -155,5 +145,28 @@ class CheckClasses
                 }
             }
         }
+    }
+
+    private static function checkImportedClasses($currentNamespace, $class, $absPath)
+    {
+        $namespacedClassName = self::fullNamespace($currentNamespace, $class);
+
+        $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absPath);
+
+        self::checkImportedClassesExist($imports, $absPath);
+    }
+
+    private static function checkNotImportedClasses($tokens, $absFilePath)
+    {
+        $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+
+        foreach ($nonImportedClasses as $nonImportedClass) {
+            $v = trim($nonImportedClass['class'], '\\');
+            if (self::isAbsent($v) && ! function_exists($v)) {
+                app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
+            }
+        }
+
+        return $tokens;
     }
 }
