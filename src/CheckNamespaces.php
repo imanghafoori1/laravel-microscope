@@ -53,7 +53,7 @@ class CheckNamespaces
                 continue;
             }
 
-            $fileCheckContract->onFileTap($classFilePath);
+            $fileCheckContract->onFileTap($classFilePath->getRelativePathname());
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);

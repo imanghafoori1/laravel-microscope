@@ -7,11 +7,11 @@ trait ScansFiles
     /**
      * {@inheritdoc}
      */
-    public function onFileTap($file)
+    public function onFileTap($path)
     {
         // @todo better to be an event listener.
         if ($this->option('detailed')) {
-            $this->line("Checking {$file->getRelativePathname()}");
+            $this->line("Checking ".$path);
         }
     }
 }

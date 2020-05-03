@@ -5,23 +5,14 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
 {
-    /**
-     * Get all of the listeners and their corresponding events.
-     *
-     * @param  iterable  $files
-     * @param  FileCheckContractAlias  $fileCheckContract
-     *
-     * @return void
-     */
-    public static function checkImports($files, FileCheckContractAlias $fileCheckContract)
+    public static function checkImports($files, FileCheckContract $fileCheckContract)
     {
-        foreach ($files as $classFilePath) {
-            $absFilePath = $classFilePath->getRealPath();
+        foreach ($files as $absFilePath) {
 
             $tokens = token_get_all(file_get_contents($absFilePath));
 
@@ -44,7 +35,7 @@ class CheckClasses
 
             event('laravel_microscope.checking_file', [$absFilePath]);
             // @todo better to do it an event listener.
-            $fileCheckContract->onFileTap($classFilePath);
+            $fileCheckContract->onFileTap($absFilePath);
 
             $tokens = token_get_all(file_get_contents($absFilePath));
 

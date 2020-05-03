@@ -2,21 +2,19 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
+use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\FileReaders\ConfigPaths;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 
 class CheckImports extends Command implements FileCheckContract
 {
@@ -52,15 +50,41 @@ class CheckImports extends Command implements FileCheckContract
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
-
         $this->checkFilePaths(RoutePaths::get());
+        $this->checkFilePaths(Paths::getPathsList(app()->configPath()));
+        $this->checkFilePaths(Paths::getPathsList(app()->databasePath()));
+        $this->checkPsr4();
 
-        $this->checkFilePaths(ConfigPaths::get());
+        // checks the blade files for class references.
+        CheckBladeFiles::applyChecks([
+            [CheckClassReferences::class, 'check'],
+        ]);
 
+        $this->finishCommand($errorPrinter);
+    }
+
+    protected function warnDumping($msg)
+    {
+        $this->info('It seems composer has some trouble with autoload...');
+        $this->info($msg);
+        $this->info('Running "composer dump-autoload" command...  \(*_*)\  ');
+    }
+
+    private function checkFilePaths($paths)
+    {
+        foreach($paths as $path) {
+            $tokens = token_get_all(file_get_contents($path));
+            CheckClassReferences::check($tokens, $path);
+            CheckClasses::checkAtSignStrings($tokens, $path, true);
+        }
+    }
+
+    private function checkPsr4()
+    {
+        $psr4 = ComposerJson::readKey('autoload.psr-4');
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             try {
-                $files = FilePath::getAllPhpFiles($psr4Path);
+                $files = Paths::getPathsList(base_path($psr4Path));
                 CheckClasses::checkImports($files, $this);
             } catch (\ErrorException $e) {
                 // In case a file is moved or deleted...
@@ -72,39 +96,6 @@ class CheckImports extends Command implements FileCheckContract
                 $this->warnDumping($e->getMessage());
                 resolve(Composer::class)->dumpAutoloads();
             }
-        }
-
-        // checks the blade files for class references.
-        CheckBladeFiles::applyChecks([
-            [CheckClassReferences::class, 'check'],
-        ]);
-
-        $this->checkConfig();
-
-        $this->finishCommand($errorPrinter);
-    }
-
-    protected function checkConfig()
-    {
-        $user = config('auth.providers.users.model');
-        if (! $user || ! class_exists($user) || ! is_subclass_of($user, Model::class)) {
-            resolve(ErrorPrinter::class)->authConf();
-        }
-    }
-
-    protected function warnDumping($msg)
-    {
-        $this->info('It seems composer has some trouble with autoload...');
-        $this->info($msg);
-        $this->info('Running "composer dump-autoload" command...');
-    }
-
-    private function checkFilePaths($paths)
-    {
-        foreach($paths as $path) {
-            $tokens = token_get_all(file_get_contents($path));
-            CheckClassReferences::check($tokens, $path);
-            CheckClasses::checkAtSignStrings($tokens, $path, true);
         }
     }
 }
