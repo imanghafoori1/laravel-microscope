@@ -155,6 +155,30 @@ forearch ($products as $product) {
 
 The same thing will apply for functions and methods, but with `return`
 
+```php
+if ($var1) {
+    if ($var2 > 2) {
+        echo 'Hey Man';
+    }
+}
+
+// will be converted into:
+if ($var1 && $var2 > 2) {
+    echo 'Hey Man';
+}
+
+```
+
+- It also supports the ruby like if():/endif; syntax;
+
+```
+if ($var1):
+    if ($var2 > 2):
+        echo 'Hey Man';
+    endif;
+endif;
+```
+
 **Although this type of refactor is totally safe and is gurantied to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
 
 ----------------------
