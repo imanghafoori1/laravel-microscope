@@ -43,7 +43,13 @@ class CheckEarlyReturns extends Command
                 if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
                     continue;
                 }
-                [$fixes, $tokens] = $this->refactor($tokens);
+
+                try {
+                    [$fixes, $tokens] = $this->refactor($tokens);
+                } catch (\Exception $e) {
+                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (O_o)');
+                    dump('Skipping : '.$path);
+                }
 
                 if ($fixes == 0) {
                     continue;
