@@ -40,16 +40,12 @@ class Refactor
             }
         } while (isset($refactoredTokens[$i]));
 
-        $i0 = 0;
+        $i = 0;
         while (true) {
-            $token = $refactoredTokens[$i0++] ?? null;
+            $token = $refactoredTokens[$i++] ?? null;
 
             if (! $token) {
                 break;
-            }
-
-            if ($i0 == 0) {
-                continue;
             }
 
             if (! in_array($token[0], array_keys(self::scopeKeywords))) {
@@ -57,7 +53,7 @@ class Refactor
             }
 
             // fast-forward to the start of function body
-            [$firstChar, $methodBodyStartIndex] = FunctionCall::forwardTo($refactoredTokens, $i0, ['{', ';']);
+            [$firstChar, $methodBodyStartIndex] = FunctionCall::forwardTo($refactoredTokens, $i, ['{', ';']);
 
             // in order to avoid checking abstract methods and do/while
             if ($firstChar === ';' && $token[0] !== T_FOR) {
@@ -81,7 +77,11 @@ class Refactor
                 continue;
             }
 
-            $i0 = $methodBodyStartIndex;
+            if (in_array(FunctionCall::getNextToken($tokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
+                continue;
+            }
+
+            $i = $methodBodyStartIndex;
 
             if (self::isBigger($methodBodyCloseIndex, $ifBody)) {
                 continue;
