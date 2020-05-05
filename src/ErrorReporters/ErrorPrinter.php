@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Illuminate\Support\Str;
+
 class ErrorPrinter
 {
     public $counts = [
@@ -78,6 +80,11 @@ class ErrorPrinter
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
         $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'Class does not exist:');
+    }
+
+    public function wrongUsedClassCaseError($absPath, $class, $lineNumber)
+    {
+        $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'The class name has to start with Uppercase: '. class_basename(Str::ucfirst($class)));
     }
 
     public function wrongMethodError($absPath, $class, $lineNumber)

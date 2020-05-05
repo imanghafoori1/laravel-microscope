@@ -129,11 +129,14 @@ class CheckClasses
             }
 
             if (! class_exists($class)) {
-                app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
-            } else {
-                if (! method_exists($class, $method)) {
-                    app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
+                // if the class name is typed all in lowercase but has to in camel.
+                if (self::modifiedExtsts($class)) {
+                    app(ErrorPrinter::class)->wrongUsedClassCaseError($absFilePath, $token[1], $token[2]);
+                } else {
+                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
+            } elseif (! method_exists($class, $method)) {
+                app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
         }
     }
@@ -154,10 +157,34 @@ class CheckClasses
         foreach ($nonImportedClasses as $nonImportedClass) {
             $v = trim($nonImportedClass['class'], '\\');
             if (self::isAbsent($v) && ! function_exists($v)) {
-                app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
+                if (self::modifiedExtsts($v) ) {
+                    app(ErrorPrinter::class)->wrongUsedClassCaseError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
+                } else {
+                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
+                }
             }
         }
 
         return $tokens;
     }
+
+    /**
+     * @param $class
+     *
+     * @return bool
+     */
+    private static function modifiedExtsts($class): bool
+    {
+        $r1 = $r2 = explode('\\', $class);
+        $last = count($r1) - 1;
+
+        $r1[$last] = Str::ucfirst($r1[$last]);
+        $class1 = implode('\\', $r1);
+
+        $r2[$last] = Str::camel($r2[$last]);
+        $class2 = implode('\\', $r1);
+        $modifiedExists = class_exists($class1) || class_exists($class2);
+
+        return $modifiedExists;
+}
 }
