@@ -93,7 +93,7 @@ class EarlyReturns
             // negate the condition
             if ($ifOpenParenIndex == $i) {
                 $refactoredTokens[] = '(';
-                $negatedConditionTokens = Refactor::negate($conditionTokens);
+                $negatedConditionTokens = Condition::negate($conditionTokens);
                 foreach ($negatedConditionTokens as $t) {
                     $refactoredTokens[] = $t;
                 }

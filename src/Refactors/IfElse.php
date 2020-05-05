@@ -8,12 +8,9 @@ class IfElse
 {
     public static function refactorElseIf($tokens, $ifBody, $elseBody, $condition)
     {
-        $ifIsBlocky = Refactor::isBlocky($ifBody[1]);
-        $elseIsBlocky = Refactor::isBlocky($elseBody[1]);
-
-        if ($elseIsBlocky && self::shouldBeFlipped(count($elseBody[1]), count($ifBody[1]))) {
+        if (Refactor::isBlocky($elseBody[1]) && self::shouldBeFlipped(count($elseBody[1]), count($ifBody[1]))) {
             return self::flipElseIf($tokens, $condition, $ifBody, $elseBody);
-        } elseif ($ifIsBlocky) {
+        } elseif (Refactor::isBlocky($ifBody[1])) {
             return self::removeTokens($tokens, $ifBody[2], $elseBody[0], $elseBody[2]);
         } else {
             return null;
@@ -56,7 +53,7 @@ class IfElse
             // negate the condition
             if ($conditionStartIndex == $i) {
                 $refactoredTokens[] = '(';
-                $negatedConditionTokens = Refactor::negate($condition);
+                $negatedConditionTokens = Condition::negate($condition);
                 foreach ($negatedConditionTokens as $t) {
                     $refactoredTokens[] = $t;
                 }
