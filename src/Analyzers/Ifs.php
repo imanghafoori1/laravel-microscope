@@ -24,7 +24,7 @@ class Ifs
             return null;
         }
 
-        $condition2 = self::readCondition($tokens, $i);
+        $condition2 = self::readCondition($tokens, $if2index);
 
         $if2Body = self::readBody($tokens, $condition2[2]);
         [, $if1BodyCloseIndex] = FunctionCall::readBody($tokens, $if1BlockStartIndex);
