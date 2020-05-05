@@ -84,6 +84,7 @@ class IfElse
                 continue;
             }
 
+            // close the body and what was in the else block after it.
             if ($i == $elseBodyStartIndex) {
                 $refactoredTokens[] = '}';
                 foreach ($ifBody as $t) {
@@ -91,6 +92,7 @@ class IfElse
                 }
             }
 
+            // ignore the else body.
             if ($i >= $elseBodyStartIndex && $i <= $elseBodyEndIndex) {
                 continue;
             }
