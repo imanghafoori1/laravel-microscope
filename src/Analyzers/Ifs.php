@@ -13,7 +13,7 @@ class Ifs
         $condition1 = self::readCondition($tokens, $i);
         [$char, $if1BlockStartIndex] = FunctionCall::getNextToken($tokens, $condition1[2]);
         // if with no curly brace.
-        if (! in_array($char, ['{', ':'])) {
+        if ($char[0] !== '{') {
             return null;
         }
 
@@ -27,7 +27,7 @@ class Ifs
         $condition2 = self::readCondition($tokens, $i);
 
         $if2Body = self::readBody($tokens, $condition2[2]);
-        [, $if1BodyCloseIndex] = FunctionCall::readBody($tokens, $if1BlockStartIndex, ['}', T_ENDIF]);
+        [, $if1BodyCloseIndex] = FunctionCall::readBody($tokens, $if1BlockStartIndex);
         $if1closeIndexCandid = $if2Body[2];
         while (in_array($tokens[++$if1closeIndexCandid][0], [T_WHITESPACE, T_COMMENT, ';'])) {}
 
@@ -178,10 +178,10 @@ class Ifs
         return ($ifIsLonger || ($elseCount < $ifBody * 0.7));
     }
 
-    private static function readCondition($tokens, $i)
+    public static function readCondition($tokens, $i)
     {
         [, $conditionStartIndex] = FunctionCall::forwardTo($tokens, $i, ['(']);
-        [$condition, $conditionCloseIndex] = FunctionCall::readBody($tokens, $conditionStartIndex, [')']);
+        [$condition, $conditionCloseIndex] = FunctionCall::readBody($tokens, $conditionStartIndex, ')');
 
         return [$conditionStartIndex, $condition, $conditionCloseIndex];
     }
@@ -190,11 +190,11 @@ class Ifs
     {
         [$char, $elseBodyStartIndex] = FunctionCall::getNextToken($tokens, $afterIfIndex);
         // if with no curly brace.
-        if (! in_array($char, ['{', ':'])) {
+        if ($char[0] !== '{') {
             return [null, null, null];
         }
 
-        [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($tokens, $elseBodyStartIndex, ['}', T_ENDIF]);
+        [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($tokens, $elseBodyStartIndex);
 
         return [$elseBodyStartIndex, $elseBody, $elseBodyEndIndex];
     }

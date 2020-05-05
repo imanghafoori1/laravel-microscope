@@ -15,7 +15,7 @@ class Refactor
 
     static function flatten($tokens)
     {
-        $refactoredTokens = $tokens;
+        $refactoredTokens = self::normalizeSyntax($tokens);
 
         $i = 0;
         $changes = 0;
@@ -48,14 +48,14 @@ class Refactor
                 break;
             }
 
-            if (! in_array($token[0], array_keys(self::scopeKeywords))) {
+            if (! in_array($token[0], [T_FOREACH, T_FUNCTION, T_WHILE, T_FOR])) {
                 continue;
             }
 
             // fast-forward to the start of function body
             [$firstChar, $methodBodyStartIndex] = FunctionCall::forwardTo($refactoredTokens, $i, ['{', ';']);
 
-            // in order to avoid checking abstract methods and do/while
+            // in order to avoid checking abstract methods (with no body) and do/while
             if ($firstChar === ';' && $token[0] !== T_FOR) {
                 continue;
             }
@@ -77,7 +77,7 @@ class Refactor
                 continue;
             }
 
-            if (in_array(FunctionCall::getNextToken($tokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
+            if (in_array(FunctionCall::getNextToken($refactoredTokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
                 continue;
             }
 
@@ -138,7 +138,14 @@ class Refactor
             if ($ifCloseParenIndex == $i) {
                 $refactoredTokens[] = '{';
                 $afterIfToken = [];
-                for ($u = $ifBodyIndexes[1] + 1; $u < $closeMethodIndex; $u++) {
+
+                // in order to ignore ; for endif syntax
+                $start = $ifBodyIndexes[1] + 1;
+                if ($tokens[$start] == ';') {
+                    $start++;
+                }
+
+                for ($u = $start; $u < $closeMethodIndex; $u++) {
                     $refactoredTokens[] = $tokens[$u];
                     $afterIfToken[] = $tokens[$u];
                 }
@@ -301,5 +308,34 @@ class Refactor
         }
 
         return $conditionTokens;
+    }
+
+    private static function normalizeSyntax($tokens)
+    {
+        $ends = [T_ENDFOR, T_ENDIF, T_ENDFOREACH, T_ENDWHILE,];
+        $start = [T_FOR, T_IF, T_FOREACH, T_WHILE, T_ELSEIF];
+        $i = 0;
+        $refactoredTokens = [];
+
+        while (count($tokens) > $i) {
+            $t = $tokens[$i];
+            if (in_array($t[0], $ends)) {
+                $refactoredTokens[] = ['}', $t[1]];
+                $i++;
+                continue;
+            }
+            if (in_array($t[0], $start)) {
+                [, , $u] = Ifs::readCondition($tokens, $i);
+                [$next, $u] = FunctionCall::getNextToken($tokens, $u);
+                $next == ':' && $tokens[$u] = ['{', ':'];
+            }
+            if ($t[0] == T_ELSEIF) {
+                $refactoredTokens[] = '}';
+            }
+            $refactoredTokens[] = $t;
+            $i++;
+        }
+
+        return $refactoredTokens;
     }
 }
