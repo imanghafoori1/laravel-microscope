@@ -345,6 +345,15 @@ Send me as much as a banana costs in your region:
 - Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
 
 --------------
+### Todo:
+- Detect Bad code
+- Facadize static method calls
+- Detect return keyword in eloquent relations
+- Detect routeless controller actions
+- Detect wrong action() calls
+- Enhance blocky code detection
+- Fullly decouple the error logger
+
 
 ```
 A man will never fail, unless he stops trying.
