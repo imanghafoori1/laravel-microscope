@@ -337,7 +337,7 @@ class Refactor
             }
 
             if ($t[0] == T_ELSEIF || $t[0] == T_ELSE) {
-                $next == ':' && $refactoredTokens[] = '}';
+                $next == ':' && $refactoredTokens[] = ['}', ''];
             }
 
             $refactoredTokens[] = $t;
