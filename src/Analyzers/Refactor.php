@@ -77,6 +77,7 @@ class Refactor
                 continue;
             }
 
+            // in order to avoid touching the else without curly braces.
             if (in_array(FunctionCall::getNextToken($refactoredTokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
                 continue;
             }
@@ -265,7 +266,7 @@ class Refactor
         $ifBlockLength = $ifBody[1][1] - $ifBody[1][0];
         $afterIfLength = $methodBodyCloseIndex - $ifBody[1][1];
 
-        return (($afterIfLength + 25) > $ifBlockLength);
+        return (($afterIfLength + 20) > $ifBlockLength);
     }
 
     private static function count($conditionTokens, $ops)
@@ -329,9 +330,16 @@ class Refactor
                 [$next, $u] = FunctionCall::getNextToken($tokens, $u);
                 $next == ':' && $tokens[$u] = ['{', ':'];
             }
-            if ($t[0] == T_ELSEIF) {
-                $refactoredTokens[] = '}';
+
+            [$next, $u] = FunctionCall::getNextToken($tokens, $i);
+            if ($t[0] == T_ELSE) {
+                $next == ':' && $tokens[$u] = ['{', ':'];
             }
+
+            if ($t[0] == T_ELSEIF || $t[0] == T_ELSE) {
+                $next == ':' && $refactoredTokens[] = '}';
+            }
+
             $refactoredTokens[] = $t;
             $i++;
         }
