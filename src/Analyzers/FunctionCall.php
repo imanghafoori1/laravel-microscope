@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class FunctionCall
 {
-    static function getNextToken($tokens, $i)
+    public static function getNextToken($tokens, $i)
     {
         $i++;
         $nextToken = $tokens[$i] ?? '_';
@@ -16,11 +16,11 @@ class FunctionCall
         return [$nextToken, $i];
     }
 
-    static function forwardTo($tokens, $i, $tokenType)
+    public static function forwardTo($tokens, $i, $tokenType)
     {
         $i++;
         $nextToken = $tokens[$i] ?? '_';
-        while (! in_array($nextToken, $tokenType)) {
+        while (! in_array($nextToken[0], $tokenType)) {
             $i++;
             $nextToken = $tokens[$i] ?? null;
         }
@@ -28,7 +28,7 @@ class FunctionCall
         return [$nextToken, $i];
     }
 
-    static function getPrevToken($tokens, $i)
+    public static function getPrevToken($tokens, $i)
     {
         $i--;
         $token = $tokens[$i];
@@ -40,13 +40,13 @@ class FunctionCall
         return [$token, $i];
     }
 
-    static function isSolidString($tokens)
+    public static function isSolidString($tokens)
     {
         [$nextToken, $i] = self::getNextToken($tokens, 0);
         return ($tokens[0][0] == T_CONSTANT_ENCAPSED_STRING) && ($nextToken !== '.');
     }
 
-    static function isGlobalCall($funcName, &$tokens, $i)
+    public static function isGlobalCall($funcName, &$tokens, $i)
     {
         $expectedTokens = [
             ['('],
@@ -68,7 +68,7 @@ class FunctionCall
         return $index;
     }
 
-    static function isStaticCall($methodName, &$tokens, $i, $className = null)
+    public static function isStaticCall($methodName, &$tokens, $i, $className = null)
     {
         $expectedTokens = [
             ['('],
@@ -80,7 +80,7 @@ class FunctionCall
         return self::checkTokens($expectedTokens, $tokens, $i);
     }
 
-    static function isMethodCallOnThis($methodName, &$tokens, $i)
+    public static function isMethodCallOnThis($methodName, &$tokens, $i)
     {
         $expectedTokens = [
             ['('],
@@ -92,13 +92,13 @@ class FunctionCall
         return self::checkTokens($expectedTokens, $tokens, $i);
     }
 
-    static function checkTokens($expectedTokens, &$tokens, $j)
+    public static function checkTokens($expectedTokens, &$tokens, $j)
     {
         if ($tokens[$j][0] != '(') {
             return [];
         }
-        array_shift($expectedTokens); // remove ( from the array.
 
+        array_shift($expectedTokens); // remove ( from the array.
 
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
@@ -156,16 +156,14 @@ class FunctionCall
         return [$params, $i];
     }
 
-    public static function readBackUntil(&$tokens, $i, $char = '}')
+    public static function readBackUntil(&$tokens, $i, $chars = ['}'])
     {
         $orphanBlock = [];
         while (true) {
-
             [$token, $i] = self::getPrevToken($tokens, $i);
 
-
             $depth = 0;
-            if ($token == $char) {
+            if (in_array($token[0], $chars)) {
                 [$ifBody, $openIfIndex] = FunctionCall::readBodyBack($tokens, $i);
                 [, $closeParenIndex] = FunctionCall::getPrevToken($tokens, $openIfIndex);
                 [$condition, $openParenIndex] = FunctionCall::readBodyBack($tokens, $closeParenIndex);
@@ -178,7 +176,7 @@ class FunctionCall
                 }
             }
 
-            if ($token == '{') {
+            if ($token[0] == '{') {
                 $depth--;
 
                 if ($depth === -1) {
@@ -199,11 +197,11 @@ class FunctionCall
         while (true) {
             [$token, $i] = self::getPrevToken($tokens, $i);
 
-            if (in_array($token, [']', ')', '}'])) {
+            if (in_array($token[0], [']', ')', '}'])) {
                 $level--;
             }
 
-            $isOpening = in_array($token, ['[', '(', '{']);
+            $isOpening = in_array($token[0], ['[', '(', '{']);
 
             if ($level == 0 && $isOpening) {
                 break;
@@ -219,11 +217,10 @@ class FunctionCall
         return [$body, $i];
     }
 
-    public static function readBody(&$tokens, $i, $until = ['}'])
+    public static function readBody(&$tokens, $i, $until = '}')
     {
         $body = [];
         $level = 0;
-        $hasIf = false;
         while (true) {
             $i++;
             $nextToken = $tokens[$i] ?? '_';
@@ -232,31 +229,24 @@ class FunctionCall
                 break;
             }
 
-            if ($level == 0 && in_array($nextToken[0], $until)) {
+            if ($level == 0 && $nextToken[0] == $until) {
                 break;
             }
 
-            in_array($nextToken[0], [T_IF, T_ELSE, T_ELSEIF]) && $hasIf = true;
-
-            if (in_array($nextToken[0], [T_ELSE, T_ELSEIF])) {
+            /* if (in_array($nextToken[0], [T_ELSE, T_ELSEIF])) {
                 [$pToken,] = self::getPrevToken($tokens, $i);
-                ($pToken !== '}') && $level--;
-            }
-
-            if (($nextToken == ':' && $hasIf) || $nextToken == '{') {
-                $hasIf = false;
-                $level++;
+                ($pToken[0] !== '}') && $level--;
             }
 
             if ($nextToken[0] == T_ENDIF) {
                 $level--;
-            }
+            }*/
 
-            if (in_array($nextToken, ['[', '('])) {
+            if (in_array($nextToken[0], ['[', '(', '{'])) {
                 $level++;
             }
 
-            if (in_array($nextToken, [']', ')', '}'])) {
+            if (in_array($nextToken[0], [']', ')', '}'])) {
                 $level--;
             }
 
@@ -273,11 +263,11 @@ class FunctionCall
 
     private static function level($nextToken, $level)
     {
-        if (in_array($nextToken, ['[', '(', '{'])) {
+        if (in_array($nextToken[0], ['[', '(', '{'])) {
             $level++;
         }
 
-        if (in_array($nextToken, [']', ')', '}'])) {
+        if (in_array($nextToken[0], [']', ')', '}'])) {
             $level--;
         }
 
