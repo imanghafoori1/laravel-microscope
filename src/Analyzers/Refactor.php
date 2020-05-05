@@ -328,16 +328,18 @@ class Refactor
             if (in_array($t[0], $start)) {
                 [, , $u] = Ifs::readCondition($tokens, $i);
                 [$next, $u] = FunctionCall::getNextToken($tokens, $u);
-                $next == ':' && $tokens[$u] = ['{', ':'];
+                if ($next == ':') {
+                    $tokens[$u] = ['{', ':'];
+                    // Adds a closing curly brace "}" before elseif.
+                    $t[0] == T_ELSEIF && $refactoredTokens[] = ['}', ''];
+                }
             }
 
             [$next, $u] = FunctionCall::getNextToken($tokens, $i);
-            if ($t[0] == T_ELSE) {
-                $next == ':' && $tokens[$u] = ['{', ':'];
-            }
 
-            if ($t[0] == T_ELSEIF || $t[0] == T_ELSE) {
-                $next == ':' && $refactoredTokens[] = ['}', ''];
+            if ($next == ':' && $t[0] == T_ELSE) {
+                $tokens[$u] = ['{', ':'];
+                $refactoredTokens[] = ['}', ''];
             }
 
             $refactoredTokens[] = $t;
