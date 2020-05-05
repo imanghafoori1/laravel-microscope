@@ -137,7 +137,7 @@ class FunctionCall
         return $params;
     }
 
-    public static function readConditions(&$tokens, $i)
+   /* public static function readConditions(&$tokens, $i)
     {
         $params = [];
         $level = 1;
@@ -154,7 +154,7 @@ class FunctionCall
         }
 
         return [$params, $i];
-    }
+    }*/
 
     public static function readBackUntil(&$tokens, $i, $chars = ['}'])
     {
@@ -167,7 +167,7 @@ class FunctionCall
                 [$ifBody, $openIfIndex] = FunctionCall::readBodyBack($tokens, $i);
                 [, $closeParenIndex] = FunctionCall::getPrevToken($tokens, $openIfIndex);
                 [$condition, $openParenIndex] = FunctionCall::readBodyBack($tokens, $closeParenIndex);
-                [$ownerOfClosing, $ifIndex] = FunctionCall::getPrevToken($tokens, $openParenIndex);
+                [$ownerOfClosing] = FunctionCall::getPrevToken($tokens, $openParenIndex);
 
                 if ($ownerOfClosing[0] == T_IF) {
                     break;
@@ -180,7 +180,7 @@ class FunctionCall
                 $depth--;
 
                 if ($depth === -1) {
-                    return [null,null];
+                    return [null, null];
                 }
             }
 
@@ -232,15 +232,6 @@ class FunctionCall
             if ($level == 0 && $nextToken[0] == $until) {
                 break;
             }
-
-            /* if (in_array($nextToken[0], [T_ELSE, T_ELSEIF])) {
-                [$pToken,] = self::getPrevToken($tokens, $i);
-                ($pToken[0] !== '}') && $level--;
-            }
-
-            if ($nextToken[0] == T_ENDIF) {
-                $level--;
-            }*/
 
             if (in_array($nextToken[0], ['[', '(', '{'])) {
                 $level++;
