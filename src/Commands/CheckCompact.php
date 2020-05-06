@@ -39,9 +39,9 @@ class CheckCompact extends Command
             if ($tokens[$i][0] != T_FUNCTION) {
                 continue;
             }
-            
+
             $methodBody = $this->readMethodBodyAsTokens($tokens, $i);
-           
+
             if ($methodBody === false) {
                 continue;
             }
@@ -91,7 +91,7 @@ class CheckCompact extends Command
         }
     }
 
-    private function collectSignatureVars(array $tokens, $i): array
+    private function collectSignatureVars($tokens, $i)
     {
         [, $signatures,] = Ifs::readCondition($tokens, $i);
 

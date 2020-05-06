@@ -8,7 +8,7 @@ trait MicroEvent
 
     public static function isMissing($absPath, $lineNumber, $name)
     {
-        $e = new self;
+        $e = new self();
         $e->data = compact('absPath', 'lineNumber', 'name');
         event($e);
     }
