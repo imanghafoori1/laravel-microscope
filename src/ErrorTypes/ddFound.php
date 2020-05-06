@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorTypes;
 
-class ddFound extends BladeFile
+class ddFound
 {
     use MicroEvent;
 }

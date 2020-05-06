@@ -15,6 +15,7 @@ class ErrorPrinter
         'wrongMethodError' => [],
         'badNamespace' => [],
         'ddFound' => [],
+        'CompactCall' => [],
     ];
 
     public $printer;
