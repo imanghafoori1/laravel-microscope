@@ -2,7 +2,7 @@
     Find Bugs Before They Bite
 </h1>
 <h2 align="center">
-    Flatten your code with a single command
+    Flatten your entire project's code by a single artisan command
 </h2>
 
   <h3 align="center">  
