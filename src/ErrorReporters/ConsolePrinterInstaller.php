@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 
 class ConsolePrinterInstaller
 {
@@ -55,8 +56,24 @@ class ConsolePrinterInstaller
             );
         });
 
+        self::compactCall();
+
         Event::listen('microscope.finished.checks', function ($command) {
             self::finishCommand($command);
+        });
+    }
+
+    private static function compactCall()
+    {
+        Event::listen(CompactCall::class, function ($event) {
+            $data = $event->data;
+
+            app(ErrorPrinter::class)->compactError(
+				$data['absPath'],
+				$data['lineNumber'], 
+				$data['name'],
+				'CompactCall',
+                'compact() function call has problems man ! ');
         });
     }
 }

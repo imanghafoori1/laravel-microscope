@@ -75,6 +75,14 @@ class ErrorPrinter
         $this->pendError($absPath, $lineNumber, "use $class;", 'wrongImport', 'Wrong import:');
     }
 
+    public function compactError($path, $lineNumber, $absent, $key, $header)
+    {
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header($header)
+            ->errorData($this->yellow(implode(', ',array_keys($absent))). ' does not exist')
+            ->link($path, $lineNumber));
+    }
+
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
         $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'Class does not exist:');

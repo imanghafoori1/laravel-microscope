@@ -2,21 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Imanghafoori\LaravelMicroscope\Commands\CheckDD;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Imanghafoori\LaravelMicroscope\Commands\CheckAll;
-use Imanghafoori\LaravelMicroscope\Commands\CheckEvents;
-use Imanghafoori\LaravelMicroscope\Commands\CheckGates;
-use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
-use Imanghafoori\LaravelMicroscope\Commands\CheckPsr4;
-use Imanghafoori\LaravelMicroscope\Commands\CheckRoutes;
-use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
-use Imanghafoori\LaravelMicroscope\Commands\ClassifyStrings;
-use Imanghafoori\LaravelMicroscope\Commands\CheckEarlyReturns;
+use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
@@ -32,16 +23,17 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            CheckEvents::class,
-            CheckGates::class,
-            CheckRoutes::class,
-            CheckViews::class,
-            CheckPsr4::class,
-            CheckImports::class,
-            CheckAll::class,
-            ClassifyStrings::class,
-            CheckDD::class,
-            CheckEarlyReturns::class,
+            Commands\CheckEvents::class,
+            Commands\CheckGates::class,
+            Commands\CheckRoutes::class,
+            Commands\CheckViews::class,
+            Commands\CheckPsr4::class,
+            Commands\CheckImports::class,
+            Commands\CheckAll::class,
+            Commands\ClassifyStrings::class,
+            Commands\CheckDD::class,
+            Commands\CheckEarlyReturns::class,
+            Commands\CheckCompact::class,
         ]);
 
         ConsolePrinterInstaller::boot();
