@@ -166,7 +166,7 @@ if ($var1 && $var2 > 2) {
 
 - It also supports the ruby like if():/endif; syntax;
 
-```
+```php
 if ($var1):
     if ($var2 > 2):
         echo 'Hey Man';
@@ -250,7 +250,7 @@ php artisan check:imports
 
 ----------------------
 
-``` php
+```php
 php artisan check:routes
 ```
 
@@ -260,7 +260,7 @@ php artisan check:routes
 
 ----------------------
 
-``` php
+```php
 php artisan check:viewes
 ```
 - It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
@@ -348,7 +348,7 @@ Send me as much as a banana costs in your region:
 - Detect wrong action() calls
 - Enhance blocky code detection
 - Fullly decouple the error logger
-
+- Detect `return abort();`
 
 ```
 A man will never fail, unless he stops trying.
