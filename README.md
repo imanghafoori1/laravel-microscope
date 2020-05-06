@@ -87,6 +87,10 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:compact 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -257,6 +261,14 @@ php artisan check:routes
 - It check that your routes refer to valid controller classes and methods.
 - It checks the all the controller methods to have valid type-hints.
 - it scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+
+----------------------
+
+```php
+php artisan check:compact
+```
+
+- In php 7.3 if you "compact" a non-existant variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
 
 ----------------------
 
