@@ -14,11 +14,7 @@ class CheckViewFilesExistence
             if (! self::isEnvMake($tokens, $i)) {
                 continue;
             }
-
-            $viewName = trim($tokens[$i + 4][1], '\'\"');
-            if (! View::exists($viewName)) {
-                self::error($tokens, $absPath, $i);
-            }
+            View::exists(trim($tokens[$i + 4][1], '\'\"')) || self::error($tokens, $absPath, $i);
             $i = $i + 5;
         }
     }

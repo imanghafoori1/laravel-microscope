@@ -62,9 +62,7 @@ class CheckNamespaces
             }
 
             self::warn($currentNamespace, $relativePath);
-
-            $answer = self::ask($fileCheckContract, $correctNamespace);
-            if ($answer) {
+            if (self::ask($fileCheckContract, $correctNamespace)) {
                 self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
                 // maybe an event listener
                 app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
@@ -114,6 +112,6 @@ class CheckNamespaces
 
     private static function ask($fileCheckContract, $correctNamespace)
     {
-        return $fileCheckContract->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
+        return $fileCheckContract->getOutput()->confirm("Do you want to change it to: {$correctNamespace}", true);
     }
 }

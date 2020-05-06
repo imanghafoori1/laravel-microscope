@@ -62,8 +62,7 @@ class ClassifyStrings extends Command
 
                     $errorPrinter->printLink($absFilePath, $token[2]);
                     $this->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-                    $answer = $this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
-                    if ($answer) {
+                    if ($this->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true)) {
                         dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
                         ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
                         $this->info('====================================');

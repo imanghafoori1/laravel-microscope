@@ -85,11 +85,10 @@ class CheckEarlyReturns extends Command
 
     private function printFinalMsg($fixed)
     {
-        if ($fixed > 0) {
-            $msg = 'Hooraay !!!, '.$fixed.' files were flattened by laravel-microscope... ';
-        } else {
-            $msg = 'Congratulations, your code base does not seems to need any fix';
-        }
+        $msg = $fixed > 0
+        ? 'Hooraay !!!, '.$fixed.' files were flattened by laravel-microscope... '
+        : 'Congratulations, your code base does not seems to need any fix';
+
         $this->info(PHP_EOL.$msg);
         $this->info('     \(^_^)/    You rock...   \(^_^)/    ');
     }
