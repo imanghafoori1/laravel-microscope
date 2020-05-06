@@ -20,10 +20,10 @@ trait LogsErrors
 
         if ($errorPrinter->logErrors) {
             if ($errorCount = $errorPrinter->hasErrors()) {
-                $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+                $this->error(PHP_EOL. "{$errorCount} errors found for {$commandType}");
                 $errorPrinter->logErrors();
             } else {
-                $this->info(PHP_EOL.'All '.$commandType.' are correct!');
+                $this->info(PHP_EOL."All {$commandType} are correct!");
             }
         }
     }
