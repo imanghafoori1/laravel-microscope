@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class CheckRoutes extends Command
 {
@@ -57,11 +58,9 @@ class CheckRoutes extends Command
 
     public function getRouteId($route)
     {
-        if ($routeName = $route->getName()) {
-            return 'Error on route name: '.$routeName;
-        } else {
-            return 'Error on route url: '.$route->uri();
-        }
+        return ($routeName = $route->getName())
+        ? "Error on route name: {$routeName}"
+        : "Error on route url: {$route->uri()}";
     }
 
     protected function checkClassesForRouteCalls()
@@ -72,13 +71,12 @@ class CheckRoutes extends Command
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
                 $absFilePath = $classFilePath->getRealPath();
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                CheckRouteCalls::check($tokens, $absFilePath);
+                CheckRouteCalls::check(token_get_all(file_get_contents($absFilePath)), $absFilePath);
             }
         }
     }
 
-    private function checkRouteDefinitions($errorPrinter, $routes, $bar)
+    private function checkRouteDefinitions(ErrorPrinter $errorPrinter, array $routes, ProgressBar $bar)
     {
         foreach ($routes as $route) {
             $bar->advance();
@@ -92,18 +90,11 @@ class CheckRoutes extends Command
             try {
                 $ctrlObj = app()->make($ctrlClass);
             } catch (Exception $e) {
-                $msg1 = $this->getRouteId($route);
-                $msg2 = 'The controller can not be resolved: ';
-                $errorPrinter->route($ctrlClass, $msg1, $msg2);
-
+                $errorPrinter->route($ctrlClass, $this->getRouteId($route), 'The controller can not be resolved: ');
                 continue;
             }
 
-            if (! method_exists($ctrlObj, $method)) {
-                $msg1 = $this->getRouteId($route);
-                $msg2 = 'Absent Method: ';
-                $errorPrinter->route($ctrl, $msg1, $msg2);
-            }
+            method_exists($ctrlObj, $method) || $errorPrinter->route($ctrl, $this->getRouteId($route), 'Absent Method: ');
         }
     }
 }
