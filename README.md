@@ -273,7 +273,7 @@ php artisan check:compact
 ----------------------
 
 ```php
-php artisan check:viewes
+php artisan check:views
 ```
 - It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
