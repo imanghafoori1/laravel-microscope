@@ -93,8 +93,14 @@ class ErrorPrinter
         $routeName = $route1->getName();
         if ($routeName) {
             $routeName = $this->yellow($routeName);
-            $msg = 'Route name: '.$routeName.' is overridden by ';
+            $msg = 'Route name: '.$routeName;
+        } else {
+            $routeUri = $route1->uri();
+            $routeUri = $this->yellow($routeUri);
+            $msg = 'Route uri: '.$routeUri;
         }
+        $msg .= ' is overridden by ';
+
         $routeName = $route2->getName();
         if ($routeName) {
             $routeName = $this->yellow($routeName);
