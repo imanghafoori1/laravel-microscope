@@ -5,9 +5,6 @@
     Flatten your entire project's code by a single artisan command
 </h2>
 
-  <h3 align="center">  
-This package is created in order to understand laravel magic and be smarter than phpstorm.
-</h3>
 <h3 align="center">
 So, Give your eyes a rest, this will check it for you.
 </h3>
@@ -28,11 +25,11 @@ Built with :heart: for lazy laravel developers ;)
 
 ## Key things to know:
 
-- It is created to be smarter than phpstorm and other IDEs in finding errors.
-- It is created to understand laravel run-time and magic.
-- It does not show you stupid false errors, all the errors are really errors.
+- It is created to be **smarter than phpstorm** and other IDEs in finding errors.
+- It is created to **understand laravel run-time** and magic.
+- It does **not show you stupid false errors**, all the errors are really errors.
 - If you have written a lot of tests for your app, you may not need this.
-- It can refactor your your code, by applying `early returns` automatically.
+- **It can refactor your your code**, by applying `early returns` automatically.
 
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
