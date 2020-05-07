@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Illuminate\Routing\Route;
+
 class ErrorPrinter
 {
     public $counts = [
@@ -16,6 +18,7 @@ class ErrorPrinter
         'badNamespace' => [],
         'ddFound' => [],
         'CompactCall' => [],
+        'routeDefinitionConflict' => [],
     ];
 
     public $printer;
@@ -82,6 +85,27 @@ class ErrorPrinter
             ->header($header)
             ->errorData($this->yellow(implode(', ',array_keys($absent))). ' does not exist')
             ->link($path, $lineNumber));
+    }
+
+    public function routeDefinitionConflict($route1 , $route2)
+    {
+        $key = 'routeDefinitionConflict';
+        $routeName = $route1->getName();
+        if ($routeName) {
+            $routeName = $this->yellow($routeName);
+            $msg = 'Route name: '.$routeName.' is overridden by ';
+        }
+        $routeName = $route2->getName();
+        if ($routeName) {
+            $routeName = $this->yellow($routeName);
+            $msg .= 'route name: '.$routeName;
+        } else {
+            $msg .= 'an other route with same uri.';
+        }
+
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header('Route with uri: '.$this->yellow($route1->uri()).' is overridden.')
+            ->errorData($msg));
     }
 
     public function wrongUsedClassError($absPath, $class, $lineNumber)

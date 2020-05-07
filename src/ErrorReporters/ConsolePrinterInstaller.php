@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
 
 class ConsolePrinterInstaller
 {
@@ -58,6 +59,13 @@ class ConsolePrinterInstaller
 
         self::compactCall();
 
+        Event::listen(RouteDefinitionConflict::class, function ($e) {
+            app(ErrorPrinter::class)->routeDefinitionConflict(
+                $e->data['poorRoute'],
+                $e->data['bullyRoute']
+            );
+        });
+
         Event::listen('microscope.finished.checks', function ($command) {
             self::finishCommand($command);
         });
@@ -70,7 +78,7 @@ class ConsolePrinterInstaller
 
             app(ErrorPrinter::class)->compactError(
 				$data['absPath'],
-				$data['lineNumber'], 
+				$data['lineNumber'],
 				$data['name'],
 				'CompactCall',
                 'compact() function call has problems man ! ');
