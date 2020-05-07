@@ -103,9 +103,11 @@ class ErrorPrinter
             $msg .= 'an other route with same uri.';
         }
 
-        array_push($this->counts[$key], (new PendingError($key))
-            ->header('Route with uri: '.$this->yellow($route1->uri()).' is overridden.')
-            ->errorData($msg));
+        $methods = implode(',', $route1->methods());
+
+        $this->counts[$key][$methods] = (new PendingError($key))
+            ->header('Route with uri: '.$this->yellow($methods.': /'.$route1->uri()).' is overridden.')
+            ->errorData($msg);
     }
 
     public function wrongUsedClassError($absPath, $class, $lineNumber)
