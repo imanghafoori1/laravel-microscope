@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Illuminate\Routing\Route;
-
 class ErrorPrinter
 {
     public $counts = [
@@ -19,6 +17,7 @@ class ErrorPrinter
         'ddFound' => [],
         'CompactCall' => [],
         'routeDefinitionConflict' => [],
+        'routelessCtrl' => [],
     ];
 
     public $printer;
@@ -64,6 +63,15 @@ class ErrorPrinter
             ->header($header)
             ->errorData($this->yellow($absent).'   <==== does not exist')
             ->link($path, $lineNumber));
+    }
+
+    public function routelessAction($absPath, $lineNumber, $action)
+    {
+        $key = 'routelessCtrl';
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header('No route is defined for controller action:')
+            ->errorData($this->yellow($action))
+            ->link($absPath, $lineNumber));
     }
 
     public function simplePendError($path, $lineNumber, $absent, $key, $header)
@@ -190,8 +198,8 @@ class ErrorPrinter
         $errorsCollection = collect($this->counts);
 
         return $errorsCollection->flatten()->filter(function ($action) {
-                return $action instanceof PendingError;
-            })->count();
+            return $action instanceof PendingError;
+        })->count();
     }
 
     /**
@@ -200,12 +208,12 @@ class ErrorPrinter
     public function logErrors()
     {
         collect($this->counts)->except('total')->flatten()->each(function ($error) {
-                if ($error instanceof PendingError) {
-                    $this->printHeader($error->getHeader());
-                    $this->print($error->getErrorData());
-                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
-                    $this->end();
-                }
-            });
+            if ($error instanceof PendingError) {
+                $this->printHeader($error->getHeader());
+                $this->print($error->getErrorData());
+                $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+                $this->end();
+            }
+        });
     }
 }
