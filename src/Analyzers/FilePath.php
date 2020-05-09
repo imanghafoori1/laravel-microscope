@@ -30,6 +30,11 @@ class FilePath
         return trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
     }
 
+    /**
+     * @param $path
+     *
+     * @return \Symfony\Component\Finder\Finder
+     */
     public static function getAllPhpFiles($path)
     {
         return (new Finder)->files()->name('*.php')->in(base_path($path));
