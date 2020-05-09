@@ -77,8 +77,21 @@ class CheckRoutes extends Command
                 $absFilePath = $classFilePath->getRealPath();
                 $tokens = token_get_all(file_get_contents($absFilePath));
 
-                $class = ClassMethods::read($tokens);
-                $this->checkActionHasRoute($errorPrinter, $class, $absFilePath, $psr4Path, $psr4Namespace);
+                $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+
+                if ($this->isLaravelController($fullNamespace)) {
+                    $class = ClassMethods::read($tokens);
+
+                    $methods = $this->getControllerActions($class['methods']);
+
+                    foreach ($methods as $method) {
+                        $classAtMethod = trim($fullNamespace, '\\').'@'.$method['name'][1];
+                        if (! app('router')->getRoutes()->getByAction($classAtMethod)) {
+                            $line = $method['name'][2];
+                            $errorPrinter->routelessAction($absFilePath, $line, $classAtMethod);
+                        }
+                    }
+                }
 
                 CheckRouteCalls::check($tokens, $absFilePath);
             }
@@ -114,28 +127,63 @@ class CheckRoutes extends Command
         }
     }
 
-    protected function checkActionHasRoute($errorPrinter, $class, $absFilePath, $psr4Path, $psr4Namespace)
+    private function getControllerActions($methods)
     {
-        if (! ($class['name'])) {
-            return;
-        }
-
-        $relativePath = str_replace(base_path(), '', $absFilePath);
-        $namespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $psr4Path, $psr4Namespace);
-
-        $isController = is_subclass_of($namespace.'\\'.$class['name'][1], Controller::class);
-        foreach ($class['methods'] as $method) {
-            // we exclude __construct and non-public methods
-            if ($method['visibility'][0] !== T_PUBLIC || $method['name'][1] == '__construct') {
+        $orphanMethods = [];
+        foreach ($methods as $method) {
+            // we exclude non-public methods
+            if ($method['visibility'][0] !== T_PUBLIC) {
                 continue;
             }
 
-            $methodName = $method['name'][1] == '__invoke' ? '' : '@'.$method['name'][1];
-            try {
-                $isController && app('url')->action($namespace.'\\'.$class['name'][1].$methodName);
-            } catch (\Exception $e) {
-                $errorPrinter->routelessAction($absFilePath, $method['name'][2], $class['name'][1].$methodName);
+            $methodName = $method['name'][1];
+            // we exclude __construct
+            if ($methodName == '__construct') {
+                continue;
             }
+
+            ($methodName == '__invoke') && ($methodName = '');
+
+            $methodName && ($methodName = '@'.$methodName);
+
+            $orphanMethods[] = $method;
         }
+
+        return $orphanMethods;
+    }
+
+    protected function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
+    {
+        $absFilePath = $classFilePath->getRealPath();
+        $className = $classFilePath->getFilename();
+        $relativePath = str_replace(base_path(), '', $absFilePath);
+        $namespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $psr4Path, $psr4Namespace);
+
+        return $namespace.'\\'.$className;
+    }
+
+    protected function isLaravelController($fullNamespace)
+    {
+        try {
+            return is_subclass_of($fullNamespace, Controller::class);
+        } catch (\Throwable $r) {
+            // it means the file does not contain a class or interface.
+            return false;
+        }
+    }
+
+    /**
+     * @param $classFilePath
+     * @param $psr4Path
+     * @param $psr4Namespace
+     *
+     * @return string
+     */
+    protected function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
+    {
+        $fullNamespace = $this->getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
+        $fullNamespace = trim($fullNamespace, '.php');
+
+        return $fullNamespace;
     }
 }
