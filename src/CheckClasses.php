@@ -3,46 +3,65 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
 {
-    public static function checkImports($files, FileCheckContract $fileCheckContract)
+    public static function check($tokens, $absFilePath)
     {
-        foreach ($files as $absFilePath) {
-
-            $tokens = token_get_all(file_get_contents($absFilePath));
-
-            // If file is empty or does not begin with <?php
-            if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
-                continue;
-            }
-            [
-                $currentNamespace,
-                $class,
-                $type,
-                $parent,
-                $interfaces
-            ] = GetClassProperties::readClassDefinition($tokens);
-
-            // It means that, there is no class/trait definition found in the file.
-            if (! $class) {
-                continue;
+        try {
+            self::checkImports($tokens, $absFilePath);
+        } catch (\ErrorException $e) {
+            // In case a file is moved or deleted...
+            // composer will need a dump autoload.
+            if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
+                throw $e;
             }
 
-            event('laravel_microscope.checking_file', [$absFilePath]);
-            // @todo better to do it an event listener.
-            $fileCheckContract->onFileTap($absFilePath);
-
-            self::checkAtSignStrings($tokens, $absFilePath);
-
-            self::checkNotImportedClasses($tokens, $absFilePath);
-
-            self::checkImportedClasses($currentNamespace, $class, $absFilePath);
+            self::warnDumping($e->getMessage());
+            resolve(Composer::class)->dumpAutoloads();
         }
+    }
+
+    public static function warnDumping($msg)
+    {
+        $p = resolve(ErrorPrinter::class)->printer;
+        $p->info('It seems composer has some trouble with autoload...');
+        $p->info($msg);
+        $p->info('Running "composer dump-autoload" command...  \(*_*)\  ');
+    }
+
+    private static function checkImports($tokens, $absFilePath)
+    {
+        // If file is empty or does not begin with <?php
+        if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
+            return ;
+        }
+
+        [
+            $currentNamespace,
+            $class,
+            $type,
+            $parent,
+            $interfaces
+        ] = GetClassProperties::readClassDefinition($tokens);
+
+        // It means that, there is no class/trait definition found in the file.
+        if (! $class) {
+            return ;
+        }
+
+        event('laravel_microscope.checking_file', [$absFilePath]);
+        // @todo better to do it an event listener.
+
+        self::checkAtSignStrings($tokens, $absFilePath);
+
+        self::checkNotImportedClasses($tokens, $absFilePath);
+
+        self::checkImportedClasses($currentNamespace, $class, $absFilePath);
     }
 
     /**

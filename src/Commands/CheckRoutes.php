@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
@@ -43,8 +44,10 @@ class CheckRoutes extends Command
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
         $this->info('Searching for route-less controller actions...');
-        (new RoutelessActions())->check($errorPrinter);
+        Psr4Classes::check([RoutelessActions::class]);
+
         $this->info('Checking route names exists...');
+        Psr4Classes::check([CheckRouteCalls::class]);
         CheckBladeFiles::applyChecks([
             [CheckRouteCalls::class, 'check'],
         ]);
@@ -52,7 +55,7 @@ class CheckRoutes extends Command
         $this->finishCommand($errorPrinter);
         $t4 = microtime(true);
 
-        $this->info('total elapsed time:'.(($t4 - $t1)).' seconds');
+        $this->info('Total elapsed time:'.(($t4 - $t1)).' seconds');
     }
 
     private function getRouteId($route)

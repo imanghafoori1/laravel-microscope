@@ -6,29 +6,11 @@ use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class RoutelessActions
 {
-    public function check($errorPrinter)
-    {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
-
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
-                $absFilePath = $classFilePath->getRealPath();
-                $tokens = token_get_all(file_get_contents($absFilePath));
-
-                $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
-
-                $this->checkControllerActionsForRoutes($errorPrinter, $fullNamespace, $tokens, $absFilePath);
-
-                CheckRouteCalls::check($tokens, $absFilePath);
-            }
-        }
-    }
-
     private function getControllerActions($methods)
     {
         $orphanMethods = [];
@@ -96,8 +78,16 @@ class RoutelessActions
         return $routelessActions;
     }
 
-    private function checkControllerActionsForRoutes($errorPrinter, $fullNamespace, $tokens, $absFilePath)
+    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
     {
+        (new self())->checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
+    }
+
+    public function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
+    {
+        $errorPrinter = resolve(ErrorPrinter::class);
+        $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+
         if ($this->isLaravelController($fullNamespace)) {
             $actions = $this->checkActions($tokens, $fullNamespace);
 

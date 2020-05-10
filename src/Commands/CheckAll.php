@@ -33,6 +33,7 @@ class CheckAll extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
+        $t1 = microtime(true);
         $errorPrinter->printer = $this->output;
 
         //turns off error logging.
@@ -51,5 +52,6 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
+        $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
     }
 }

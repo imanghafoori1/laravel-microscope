@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
+use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
@@ -46,6 +47,7 @@ class CheckImports extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
+        $t1 = microtime(true);
         $this->info('Checking imports...');
 
         $errorPrinter->printer = $this->output;
@@ -53,7 +55,7 @@ class CheckImports extends Command implements FileCheckContract
         $this->checkFilePaths(RoutePaths::get());
         $this->checkFilePaths(Paths::getPathsList(app()->configPath()));
         $this->checkFilePaths(Paths::getPathsList(app()->databasePath()));
-        $this->checkPsr4();
+        Psr4Classes::check([CheckClasses::class]);
 
         // checks the blade files for class references.
         CheckBladeFiles::applyChecks([
@@ -61,13 +63,7 @@ class CheckImports extends Command implements FileCheckContract
         ]);
 
         $this->finishCommand($errorPrinter);
-    }
-
-    protected function warnDumping($msg)
-    {
-        $this->info('It seems composer has some trouble with autoload...');
-        $this->info($msg);
-        $this->info('Running "composer dump-autoload" command...  \(*_*)\  ');
+        $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
     }
 
     private function checkFilePaths($paths)
@@ -83,18 +79,10 @@ class CheckImports extends Command implements FileCheckContract
     {
         $psr4 = ComposerJson::readKey('autoload.psr-4');
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            try {
-                $files = Paths::getPathsList(base_path($psr4Path));
-                CheckClasses::checkImports($files, $this);
-            } catch (\ErrorException $e) {
-                // In case a file is moved or deleted...
-                // composer will need a dump autoload.
-                if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
-                    throw $e;
-                }
-
-                $this->warnDumping($e->getMessage());
-                resolve(Composer::class)->dumpAutoloads();
+            $files = Paths::getPathsList(base_path($psr4Path));
+            foreach ($files as $absFilePath) {
+                $tokens = token_get_all(file_get_contents($absFilePath));
+                CheckClasses::check($tokens, $absFilePath);
             }
         }
     }
