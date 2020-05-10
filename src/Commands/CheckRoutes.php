@@ -48,9 +48,7 @@ class CheckRoutes extends Command
 
         $this->info('Checking route names exists...');
         Psr4Classes::check([CheckRouteCalls::class]);
-        CheckBladeFiles::applyChecks([
-            [CheckRouteCalls::class, 'check'],
-        ]);
+        CheckBladeFiles::applyChecks([CheckRouteCalls::class]);
 
         $this->finishCommand($errorPrinter);
         $t4 = microtime(true);

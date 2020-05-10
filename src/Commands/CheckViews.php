@@ -95,8 +95,6 @@ class CheckViews extends Command
 
     private function checkBladeFiles()
     {
-        CheckBladeFiles::applyChecks([
-            [CheckViewFilesExistence::class, 'check'],
-        ]);
+        CheckBladeFiles::applyChecks([CheckViewFilesExistence::class]);
     }
 }

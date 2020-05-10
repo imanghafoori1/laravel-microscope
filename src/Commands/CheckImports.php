@@ -56,9 +56,7 @@ class CheckImports extends Command implements FileCheckContract
         Psr4Classes::check([CheckClasses::class]);
 
         // checks the blade files for class references.
-        CheckBladeFiles::applyChecks([
-            [CheckClassReferences::class, 'check'],
-        ]);
+        CheckBladeFiles::applyChecks([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
         $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');

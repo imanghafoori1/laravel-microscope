@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 class CheckEvents extends Command
 {
     use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *
@@ -32,7 +33,8 @@ class CheckEvents extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info((! $errorPrinter->logErrors ? PHP_EOL : '').'Checking events...');
+        /*(! $errorPrinter->logErrors ? PHP_EOL : '').*/
+        $this->info('Checking events...');
 
         $errorPrinter->printer = $this->output;
 

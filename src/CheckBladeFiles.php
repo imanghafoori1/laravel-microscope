@@ -31,13 +31,6 @@ class CheckBladeFiles
         return $hints;
     }
 
-    /**
-     * @param $paths
-     *
-     * @param $methods
-     *
-     * @return int|string
-     */
     public static function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
@@ -51,7 +44,7 @@ class CheckBladeFiles
                 $tokens = token_get_all(app('blade.compiler')->compileString($content));
 
                 foreach ($methods as $method) {
-                    call_user_func_array($method, [$tokens, $blade->getPathname()]);
+                    call_user_func_array([$method, 'check'], [$tokens, $blade->getPathname()]);
                 }
             }
         }
