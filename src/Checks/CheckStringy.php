@@ -37,9 +37,9 @@ class CheckStringy
             }
 
             $errorPrinter->printLink($absFilePath, $token[2]);
-            $command = resolve('current.command');
-            $command->output->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-            $answer =$command->output->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
+            $command = app('current.command');
+            $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
+            $answer = $command->getOutput()->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
             if ($answer) {
                 dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
                 ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));

@@ -35,24 +35,12 @@ class ClassifyStrings extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking strings...');
-
-        app()->singleton('current.command', $this);
-
+        app()->singleton('current.command', function () {
+            return $this;
+        });
         $errorPrinter->printer = $this->output;
-
-        /* $psr4 = ComposerJson::readKey('autoload.psr-4');
-
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-
-            foreach ($files as $file) {
-                $absFilePath = $file->getRealPath();
-
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                CheckStringy::check($tokens, $absFilePath);
-            }
-        }*/
         Psr4Classes::check([CheckStringy::class]);
+
 
         $this->finishCommand($errorPrinter);
     }
