@@ -6,16 +6,11 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
-use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class CheckRoutes extends Command
 {
@@ -34,28 +29,30 @@ class CheckRoutes extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $this->info('Checking routes...');
+        $t1 = microtime(true);
+        $this->info('Checking route definitions...');
 
         $errorPrinter->printer = $this->output;
 
-        $routes = app(Router::class)->getRoutes()->getRoutes();
-
 //        $bar = $this->output->createProgressBar(count($routes));
 //        $bar->start();
-
+        $routes = app(Router::class)->getRoutes()->getRoutes();
         $this->checkRouteDefinitions($errorPrinter, $routes);
+//        $bar->finish();
 
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
+        $this->info('Searching for route-less controller actions...');
         (new RoutelessActions())->check($errorPrinter);
-
+        $this->info('Checking route names exists...');
         CheckBladeFiles::applyChecks([
             [CheckRouteCalls::class, 'check'],
         ]);
 
-//        $bar->finish();
-
         $this->finishCommand($errorPrinter);
+        $t4 = microtime(true);
+
+        $this->info('total elapsed time:'.(($t4 - $t1)).' seconds');
     }
 
     private function getRouteId($route)

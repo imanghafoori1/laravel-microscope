@@ -44,10 +44,6 @@ class RoutelessActions
                 continue;
             }
 
-            ($methodName == '__invoke') && ($methodName = '');
-
-            $methodName && ($methodName = '@'.$methodName);
-
             $orphanMethods[] = $method;
         }
 
@@ -89,7 +85,8 @@ class RoutelessActions
         $methods = $this->getControllerActions($class['methods']);
         $routelessActions = [];
         foreach ($methods as $method) {
-            $classAtMethod = trim($fullNamespace, '\\').'@'.$method['name'][1];
+            $classAtMethod = $this->classAtMethod($fullNamespace, $method['name'][1]);
+
             if (! app('router')->getRoutes()->getByAction($classAtMethod)) {
                 $line = $method['name'][2];
                 $routelessActions[] = [$line, $classAtMethod];
@@ -108,5 +105,12 @@ class RoutelessActions
                 $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
             }
         }
+    }
+
+    private function classAtMethod($fullNamespace, $methodName)
+    {
+        ($methodName == '__invoke') ? ($methodName = '') : ($methodName = '@'.$methodName);
+
+        return trim($fullNamespace, '\\').$methodName;
     }
 }
