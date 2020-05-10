@@ -1,5 +1,5 @@
 filter:
-    excluded_paths: [tests/*]
+    excluded_paths: [tests/*, src/Analyzers/ClassReferenceFinder.php]
 
 checks:
     php:
