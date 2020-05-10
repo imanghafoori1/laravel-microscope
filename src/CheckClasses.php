@@ -37,28 +37,12 @@ class CheckClasses
             // @todo better to do it an event listener.
             $fileCheckContract->onFileTap($absFilePath);
 
-            $tokens = token_get_all(file_get_contents($absFilePath));
-
             self::checkAtSignStrings($tokens, $absFilePath);
 
             self::checkNotImportedClasses($tokens, $absFilePath);
 
             self::checkImportedClasses($currentNamespace, $class, $absFilePath);
         }
-    }
-
-    public static function hasOpeningTag($file)
-    {
-        $fp = fopen($file, 'r');
-
-        if (feof($fp)) {
-            return false;
-        }
-
-        $buffer = fread($fp, 20);
-        fclose($fp);
-
-        return Str::startsWith($buffer, '<?php');
     }
 
     /**
@@ -130,10 +114,8 @@ class CheckClasses
 
             if (! class_exists($class)) {
                 app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
-            } else {
-                if (! method_exists($class, $method)) {
-                    app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
-                }
+            } elseif (! method_exists($class, $method)) {
+                app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
         }
     }
@@ -157,7 +139,5 @@ class CheckClasses
                 app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $nonImportedClass['class'], $nonImportedClass['line']);
             }
         }
-
-        return $tokens;
     }
 }

@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract as FileCheckContractAlias;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckNamespaces
@@ -15,13 +15,13 @@ class CheckNamespaces
      * Get all of the listeners and their corresponding events.
      *
      * @param  iterable  $paths
-     * @param $composerPath
-     * @param $composerNamespace
-     * @param  FileCheckContractAlias  $fileCheckContract
+     * @param  $composerPath
+     * @param  $composerNamespace
+     * @param  $command
      *
      * @return void
      */
-    public static function forNamespace($paths, $composerPath, $composerNamespace, $fileCheckContract)
+    public static function forNamespace($paths, $composerPath, $composerNamespace, $command)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -32,7 +32,7 @@ class CheckNamespaces
             }
 
             // exclude migration directories
-            if (Str::startsWith($absFilePath, self::migrationPaths())) {
+            if (Str::startsWith($absFilePath, MigrationPaths::get())) {
                 continue;
             }
 
@@ -53,7 +53,7 @@ class CheckNamespaces
                 continue;
             }
 
-            $fileCheckContract->onFileTap($classFilePath->getRelativePathname());
+            $command->onFileTap($classFilePath->getRelativePathname());
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
@@ -63,7 +63,7 @@ class CheckNamespaces
 
             self::warn($currentNamespace, $relativePath);
 
-            $answer = self::ask($fileCheckContract, $correctNamespace);
+            $answer = self::ask($command, $correctNamespace);
             if ($answer) {
                 self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
                 // maybe an event listener
@@ -100,20 +100,8 @@ class CheckNamespaces
         event('laravel_microscope.namespace_fixed', get_defined_vars());
     }
 
-    private static function migrationPaths()
+    private static function ask($command, $correctNamespace)
     {
-        // normalize the migration paths
-        $migrationDirs = [];
-
-        foreach (app('migrator')->paths() as $path) {
-            $migrationDirs[] = FilePath::normalize($path);
-        }
-
-        return $migrationDirs;
-    }
-
-    private static function ask($fileCheckContract, $correctNamespace)
-    {
-        return $fileCheckContract->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
+        return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
     }
 }

@@ -70,7 +70,7 @@ class GetClassProperties
      *
      * @return array
      */
-    protected static function collectAfterKeyword($tokens, int $i, $target, $terminators = [], $separator = null)
+    protected static function collectAfterKeyword($tokens, $i, $target, $terminators = [], $separator = null)
     {
         $terminators[] = ';';
         $terminators[] = '{';

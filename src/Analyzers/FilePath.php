@@ -9,6 +9,7 @@ class FilePath
 {
     public static function normalize($path)
     {
+        // for a path like:  '/usr/laravel/app\Http\..\..\database';
         $dir = str_replace(['\\', '/', '//', '\\\\'], DIRECTORY_SEPARATOR, $path);
 
         $sections = explode(DIRECTORY_SEPARATOR, $dir);
@@ -37,6 +38,6 @@ class FilePath
      */
     public static function getAllPhpFiles($path)
     {
-        return (new Finder)->files()->name('*.php')->in(base_path($path));
+        return Finder::create()->files()->name('*.php')->in(base_path($path));
     }
 }
