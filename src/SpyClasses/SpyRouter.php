@@ -16,6 +16,7 @@ class SpyRouter extends Router
 
     protected function loadRoutes($routes)
     {
+        // This is needed to collect the route paths to tokenize and run inspections.
         !($routes instanceof Closure) && $this->routePaths[] = $routes;
 
         parent::loadRoutes($routes);

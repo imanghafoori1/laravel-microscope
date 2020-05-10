@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
-use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
@@ -35,12 +35,8 @@ class CheckRoutes extends Command
 
         $errorPrinter->printer = $this->output;
 
-//        $bar = $this->output->createProgressBar(count($routes));
-//        $bar->start();
         $routes = app(Router::class)->getRoutes()->getRoutes();
         $this->checkRouteDefinitions($errorPrinter, $routes);
-//        $bar->finish();
-
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
         $this->info('Searching for route-less controller actions...');
@@ -48,8 +44,7 @@ class CheckRoutes extends Command
 
         $this->info('Checking route names exists...');
         Psr4Classes::check([CheckRouteCalls::class]);
-        CheckBladeFiles::applyChecks([CheckRouteCalls::class]);
-
+        BladeFiles::check([CheckRouteCalls::class]);
         $this->finishCommand($errorPrinter);
         $t4 = microtime(true);
 
@@ -68,8 +63,6 @@ class CheckRoutes extends Command
     private function checkRouteDefinitions($errorPrinter, $routes)
     {
         foreach ($routes as $route) {
-//            $bar->advance();
-
             if (! is_string($ctrl = $route->getAction()['uses'])) {
                 continue;
             }

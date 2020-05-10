@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 
@@ -95,6 +95,6 @@ class CheckViews extends Command
 
     private function checkBladeFiles()
     {
-        CheckBladeFiles::applyChecks([CheckViewFilesExistence::class]);
+        BladeFiles::check([CheckViewFilesExistence::class]);
     }
 }

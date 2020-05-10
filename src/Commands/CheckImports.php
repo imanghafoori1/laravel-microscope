@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\CheckBladeFiles;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
@@ -53,10 +53,11 @@ class CheckImports extends Command implements FileCheckContract
         $this->checkFilePaths(RoutePaths::get());
         $this->checkFilePaths(Paths::getPathsList(app()->configPath()));
         $this->checkFilePaths(Paths::getPathsList(app()->databasePath()));
+
         Psr4Classes::check([CheckClasses::class]);
 
         // checks the blade files for class references.
-        CheckBladeFiles::applyChecks([CheckClassReferences::class]);
+        BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
         $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
@@ -68,18 +69,6 @@ class CheckImports extends Command implements FileCheckContract
             $tokens = token_get_all(file_get_contents($path));
             CheckClassReferences::check($tokens, $path);
             CheckClasses::checkAtSignStrings($tokens, $path, true);
-        }
-    }
-
-    private function checkPsr4()
-    {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = Paths::getPathsList(base_path($psr4Path));
-            foreach ($files as $absFilePath) {
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                CheckClasses::check($tokens, $absFilePath);
-            }
         }
     }
 }

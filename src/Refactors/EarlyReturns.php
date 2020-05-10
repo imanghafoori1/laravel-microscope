@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 
 class EarlyReturns
 {
-
     const scopeKeywords = [
         T_FOREACH => 'continue',
         T_FUNCTION => 'return',
@@ -69,7 +68,7 @@ class EarlyReturns
             $changes++;
         }
 
-        return array($tokens, $changes);
+        return [$tokens, $changes];
     }
 
     private static function getKeyword($token)

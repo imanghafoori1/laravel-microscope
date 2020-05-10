@@ -18,13 +18,15 @@ trait LogsErrors
         $commandType = Str::after($commandName, 'Check');
         $commandType = strtolower($commandType);
 
-        if ($errorPrinter->logErrors) {
-            if ($errorCount = $errorPrinter->hasErrors()) {
-                $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
-                $errorPrinter->logErrors();
-            } else {
-                $this->info(PHP_EOL.'All '.$commandType.' are correct!');
-            }
+        if (! $errorPrinter->logErrors) {
+            return;
+        }
+
+        if ($errorCount = $errorPrinter->hasErrors()) {
+            $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+            $errorPrinter->logErrors();
+        } else {
+            $this->info(PHP_EOL.'All '.$commandType.' are correct!');
         }
     }
 }

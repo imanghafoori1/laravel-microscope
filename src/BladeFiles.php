@@ -5,16 +5,9 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;
 
-class CheckBladeFiles
+class BladeFiles
 {
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @param $methods
-     *
-     * @return void
-     */
-    public static function applyChecks($methods)
+    public static function check($methods)
     {
         $hints = self::getNamespacedPaths();
         $hints['1'] = View::getFinder()->getPaths();
@@ -34,7 +27,7 @@ class CheckBladeFiles
     public static function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
-            $files = (new Finder)->name('*.blade.php')->files()->in($path);
+            $files = (new Finder())->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {
                 /**
