@@ -57,11 +57,13 @@ class RoutePaths
 
     private static function readLoadedRouteFiles($path)
     {
-        $providerTokens = token_get_all(file_get_contents(base_path($path).'.php'));
+        $tokens = token_get_all(file_get_contents(base_path($path).'.php'));
 
         $methodCalls = [];
-        foreach ($providerTokens as $i => $routeFileToken) {
-            FunctionCall::isMethodCallOnThis('loadRoutesFrom', $providerTokens, $i) && $methodCalls[] = FunctionCall::readParameters($providerTokens, $i);
+        foreach ($tokens as $i => $routeFileToken) {
+            if (FunctionCall::isMethodCallOnThis('loadRoutesFrom', $tokens, $i)) {
+                $methodCalls[] = FunctionCall::readParameters($tokens, $i);
+            }
         }
 
         return $methodCalls;

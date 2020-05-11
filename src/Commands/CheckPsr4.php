@@ -44,9 +44,9 @@ class CheckPsr4 extends Command implements FileCheckContract
 
         $errorPrinter->printer = $this->output;
 
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $autoload = ComposerJson::readKey('autoload.psr-4');
 
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             CheckNamespaces::forNamespace($files, $psr4Path, $psr4Namespace, $this);
         }

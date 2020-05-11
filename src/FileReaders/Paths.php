@@ -8,7 +8,7 @@ class Paths
 {
     public static function getPathsList($path)
     {
-        $files = (new Finder())->files()->name('*.php')->in($path);
+        $files = Finder::create()->files()->name('*.php')->in($path);
 
         $paths = [];
         foreach ($files as $f) {

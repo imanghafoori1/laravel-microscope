@@ -39,12 +39,6 @@ class SpyDispatcher extends Dispatcher
 
         $typeHintClassPath = $this->getTypeHintedClass($listenerObj, $methodName);
 
-/*
-        if ($typeHintClassPath && ! $this->exists($typeHintClassPath)) {
-            return $this->error('The type hint is wrong on the listener: public function '.$methodName.'('.$typeHintClassPath.' $...');
-        }
-*/
-
         $eventName = $this->stringify($event);
 
         if (class_exists($eventName) && $typeHintClassPath) {
