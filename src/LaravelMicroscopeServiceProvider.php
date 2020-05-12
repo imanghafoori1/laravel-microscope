@@ -103,7 +103,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         app()->terminating(function () {
             $spy = resolve('microscope.views');
-            if (Str::startsWith($spy->main->getName(), ['errors::'])) {
+            if (! $spy->main || Str::startsWith($spy->main->getName(), ['errors::'])) {
                 return;
             }
             $action = $this->getActionName();
@@ -123,7 +123,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         return $this->app->runningInConsole() && app()['env'] !== 'production';
     }
 
-    public function getActionName(): string
+    public function getActionName()
     {
         $action = '';
         if ($cRoute = \Route::getCurrentRoute()) {
