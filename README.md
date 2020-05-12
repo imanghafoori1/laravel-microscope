@@ -275,6 +275,19 @@ php artisan check:views
 - It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
 
+
+Also it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
+For that you must open up the page in the browser and then visit the log file to see a message like this:
+```
+local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
+local.INFO: array ('$var1' , '$var2');
+```
+
+Remember some variable are passed into your view from a `view composer` and not the controller.
+Those variables are also taken into consideration when detecting unused variables.
+
+----------------------
+
 and more features will be added soon. ;)
 
 ## Credits
@@ -353,7 +366,6 @@ Send me as much as a banana costs in your region:
 - Detect Bad code
 - Facadize static method calls
 - Detect return keyword in eloquent relations
-- Detect routeless controller actions
 - Detect wrong action() calls
 - Enhance blocky code detection
 - Fullly decouple the error logger
