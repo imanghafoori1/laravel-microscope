@@ -246,7 +246,7 @@ php artisan check:psr4
 php artisan check:imports
 ```
 
-- It check all the imports (`use` statements) to be valid.
+- It checks all the imports (`use` statements) to be valid.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
 ----------------------
@@ -255,7 +255,7 @@ php artisan check:imports
 php artisan check:routes
 ```
 
-- It check that your routes refer to valid controller classes and methods.
+- It checks that your routes refer to valid controller classes and methods.
 - It checks the all the controller methods to have valid type-hints.
 - It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
 - It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
@@ -266,7 +266,7 @@ php artisan check:routes
 php artisan check:compact
 ```
 
-- In php 7.3 if you "compact" a non-existant variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
+- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
 
 ----------------------
 
