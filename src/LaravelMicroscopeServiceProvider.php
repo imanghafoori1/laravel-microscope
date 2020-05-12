@@ -109,7 +109,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             $action = $this->getActionName();
 
             \Log::info('Laravel Microscope: The view file: '.$spy->main->getName().' at '.$action.' has some unused variables passed to it: ');
-            \Log::info(array_diff_key($spy->getMainVars(), $spy->readTokenizedVars()));
+            \Log::info(array_keys(array_diff_key($spy->getMainVars(), $spy->readTokenizedVars())));
         });
     }
 
