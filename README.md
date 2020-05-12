@@ -175,7 +175,7 @@ if ($var1):
 endif;
 ```
 
-**Although this type of refactor is totally safe and is gurantied to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
+**Although this type of refactor is totally safe and is guaranteed to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
 
 ----------------------
 
@@ -217,7 +217,7 @@ This is a valid but wrong type-hint, and will be reported to you. Very cool, isn
 php artisan check:gates
 ```
 
-It check the validity of all the gates you have defined, making sure that they refer to a valid class and method.
+It checks the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
 It also checks for the policy definitions to be valid.
 
