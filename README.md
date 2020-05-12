@@ -257,7 +257,8 @@ php artisan check:routes
 
 - It check that your routes refer to valid controller classes and methods.
 - It checks the all the controller methods to have valid type-hints.
-- it scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+- It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+- It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
 
 ----------------------
 
