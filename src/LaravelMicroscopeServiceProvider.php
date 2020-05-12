@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
+use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
@@ -19,6 +21,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        (app()['env'] !== 'production') && $this->spyView();
+
         if (! $this->canRun()) {
             return;
         }
@@ -89,6 +93,26 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Event::clearResolvedInstance('events');
     }
 
+    public function spyView()
+    {
+        app()->singleton('microscope.views', ViewsData::class);
+
+        \View::creator('*', function (View $view) {
+            resolve('microscope.views')->add($view);
+        });
+
+        app()->terminating(function () {
+            $spy = resolve('microscope.views');
+            if (Str::startsWith($spy->main->getName(), ['errors::'])) {
+                return;
+            }
+            $action = $this->getActionName();
+
+            \Log::info('Laravel Microscope: The view file: '.$spy->main->getName().' at '.$action.' has some unused variables passed to it: ');
+            \Log::info(array_diff_key($spy->getMainVars(), $spy->readTokenizedVars()));
+        });
+    }
+
     private function loadConfig()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
@@ -97,5 +121,15 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function canRun()
     {
         return $this->app->runningInConsole() && app()['env'] !== 'production';
+    }
+
+    public function getActionName(): string
+    {
+        $action = '';
+        if ($cRoute = \Route::getCurrentRoute()) {
+            $action = $cRoute->getActionName();
+        }
+
+        return $action;
     }
 }
