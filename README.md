@@ -29,7 +29,7 @@ Built with :heart: for lazy laravel developers ;)
 - It is created to **understand laravel run-time** and magic.
 - It does **not show you stupid false errors**, all the errors are really errors.
 - If you have written a lot of tests for your app, you may not need this.
-- **It can refactor your your code**, by applying `early returns` automatically.
+- **It can refactor your code**, by applying `early returns` automatically.
 
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
