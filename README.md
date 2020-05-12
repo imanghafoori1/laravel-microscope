@@ -25,7 +25,7 @@ Built with :heart: for lazy laravel developers ;)
 
 ## Key things to know:
 
-- It is created to be **smarter than phpstorm** and other IDEs in finding errors.
+- It is create to be **smarter than phpstorm** and other IDEs in finding errors.
 - It is created to **understand laravel run-time** and magic.
 - It does **not show you stupid false errors**, all the errors are really errors.
 - If you have written a lot of tests for your app, you may not need this.
@@ -277,14 +277,14 @@ php artisan check:views
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
 
 
-Also it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
+Also, it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
 For that you must open up the page in the browser and then visit the log file to see a message like this:
 ```
 local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
 local.INFO: array ('$var1' , '$var2');
 ```
 
-Remember some variable are passed into your view from a `view composer` and not the controller.
+Remember some variables are passed into your view from a `view composer` and not the controller.
 Those variables are also taken into consideration when detecting unused variables.
 
 ----------------------
@@ -303,7 +303,7 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 --------------------
 
 ### :raising_hand: Contributing
-If you find an issue, or have a better way to do something, feel free to open an issue or a pull request.
+If you find an issue, or have a better way to do something, feel free to open an issue , or a pull request.
 If you use laravel-microscope in your open source project, create a pull request to provide it's url as a sample application in the README.md file.
 
 
@@ -312,7 +312,7 @@ If you discover any security related issues, please email `imanghafoori1@gmail.c
 
 
 ### :star: Your Stars Make Us Do More :star:
-As always if you found this package useful and you want to encourage us to maintain and work on it. Just press the star button to declare your willing.
+As always if you found this package useful , and you want to encourage us to maintain and work on it. Just press the star button to declare your willing.
 
 Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
@@ -338,7 +338,7 @@ Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
 ### Laravel AnyPass
 
-:gem: It allows you login with any password in the local environment only.
+:gem: It allows you to login with any password in the local environment only.
 
 - https://github.com/imanghafoori1/laravel-anypass
 
