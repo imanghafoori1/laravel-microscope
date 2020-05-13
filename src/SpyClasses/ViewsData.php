@@ -40,7 +40,8 @@ class ViewsData
                     &&
                     FunctionCall::getNextToken($tokens, $i)[0] !== '='
                 ) {
-                } $vars[$token[1]] = null;
+                    $vars[$token[1]] = null;
+                }
             }
             $allVars = $allVars + $vars;
         }
