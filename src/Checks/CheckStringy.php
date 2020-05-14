@@ -18,7 +18,7 @@ class CheckStringy
 
     public function checkStringy($tokens, $absFilePath)
     {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $psr4 = ComposerJson::readAutoload();
         $namespaces = array_keys($psr4);
         $errorPrinter = resolve(ErrorPrinter::class);
         foreach ($tokens as $token) {

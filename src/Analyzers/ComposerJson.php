@@ -18,4 +18,9 @@ class ComposerJson
 
         return self::$result[$key];
     }
+
+    public static function readAutoload()
+    {
+        return self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
+    }
 }

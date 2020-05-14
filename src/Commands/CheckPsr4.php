@@ -44,8 +44,7 @@ class CheckPsr4 extends Command implements FileCheckContract
 
         $errorPrinter->printer = $this->output;
 
-        $autoload = ComposerJson::readKey('autoload.psr-4');
-
+        $autoload = ComposerJson::readAutoload();
         foreach ($autoload as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             CheckNamespaces::forNamespace($files, $psr4Path, $psr4Namespace, $this);
@@ -61,6 +60,8 @@ class CheckPsr4 extends Command implements FileCheckContract
             $c = count($errorPrinter->counts['badNamespace']);
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
+            $this->info('finished: "composer dump"');
+
         }
     }
 }

@@ -32,7 +32,7 @@ class CheckEarlyReturns extends Command
     {
         $this->startWarning();
 
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $psr4 = ComposerJson::readAutoload();
 
         $totalNumberOfFixes = $fixedFilesCount = 0;
         foreach ($psr4 as $psr4Namespace => $psr4Path) {

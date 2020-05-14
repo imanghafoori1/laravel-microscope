@@ -9,7 +9,7 @@ class Psr4Classes
 {
     public static function check($checks)
     {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $psr4 = ComposerJson::readAutoload();
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);

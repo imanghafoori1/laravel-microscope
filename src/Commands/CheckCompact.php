@@ -60,7 +60,7 @@ class CheckCompact extends Command
 
     private function checkPsr4Classes()
     {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $psr4 = ComposerJson::readAutoload();
 
         foreach ($psr4 as $_namespace => $dirPath) {
             foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
