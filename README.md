@@ -88,6 +88,10 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:blade_queries 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -267,6 +271,15 @@ php artisan check:compact
 ```
 
 - In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
+
+----------------------
+
+```php
+php artisan check:blade_queries
+```
+
+- Blade files should not contain DB queries. we should move them back into controllers and pass variables.
+This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
 
 ----------------------
 
