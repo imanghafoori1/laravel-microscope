@@ -18,6 +18,7 @@ class ErrorPrinter
         'CompactCall' => [],
         'routeDefinitionConflict' => [],
         'routelessCtrl' => [],
+        'queryInBlade' => [],
     ];
 
     public $printer;
@@ -127,6 +128,15 @@ class ErrorPrinter
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
         $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'Class does not exist:');
+    }
+
+    public function queryInBlade($absPath, $class, $lineNumber)
+    {
+        $key = 'queryInBlade';
+        array_push($this->counts[$key], (new PendingError($key))
+            ->header('Query in blade file: ')
+            ->errorData($this->yellow($class).'  <=== DB query in blade file')
+            ->link($absPath, $lineNumber));
     }
 
     public function wrongMethodError($absPath, $class, $lineNumber)

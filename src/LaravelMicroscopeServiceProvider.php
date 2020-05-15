@@ -19,6 +19,22 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
+    private static $commandNames = [
+        Commands\CheckEvents::class,
+        Commands\CheckGates::class,
+        Commands\CheckRoutes::class,
+        Commands\CheckViews::class,
+        Commands\CheckPsr4::class,
+        Commands\CheckImports::class,
+        Commands\CheckAll::class,
+        Commands\ClassifyStrings::class,
+        Commands\CheckDD::class,
+        Commands\CheckEarlyReturns::class,
+        Commands\CheckCompact::class,
+        Commands\CheckBladeQueries::class,
+
+    ];
+
     public function boot()
     {
         (app()['env'] !== 'production') && $this->spyView();
@@ -27,19 +43,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->commands([
-            Commands\CheckEvents::class,
-            Commands\CheckGates::class,
-            Commands\CheckRoutes::class,
-            Commands\CheckViews::class,
-            Commands\CheckPsr4::class,
-            Commands\CheckImports::class,
-            Commands\CheckAll::class,
-            Commands\ClassifyStrings::class,
-            Commands\CheckDD::class,
-            Commands\CheckEarlyReturns::class,
-            Commands\CheckCompact::class,
-        ]);
+        $this->commands(self::$commandNames);
 
         ConsolePrinterInstaller::boot();
     }
