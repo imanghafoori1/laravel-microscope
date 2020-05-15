@@ -59,7 +59,7 @@ class CheckImports extends Command implements FileCheckContract
         BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
+        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkFilePaths($paths)

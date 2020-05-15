@@ -29,7 +29,7 @@ class CheckDD extends Command
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
-        $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
+        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkForDD($absPath)

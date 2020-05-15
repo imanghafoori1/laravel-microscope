@@ -33,7 +33,7 @@ class CheckViews extends Command
         $this->checkBladeFiles();
 
         event('microscope.finished.checks', [$this]);
-        $this->info('Total elapsed time:'.((microtime(true) - $t1)).' seconds');
+        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkForViewMake($absPath, $staticCalls)
