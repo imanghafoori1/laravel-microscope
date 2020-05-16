@@ -26,10 +26,10 @@ class Refactor
         return EarlyReturns::apply($tokens, $changes);
     }
 
-    public static function saveTokens($file, array $refactoredTokens, $test = false)
+    public static function saveTokens($path, array $refactoredTokens, $test = false)
     {
-        $test && ($file = $file.'_flat');
-        file_put_contents($file, self::toString($refactoredTokens));
+        $test && ($path = $path.'_flat');
+        file_put_contents($path, self::toString($refactoredTokens));
     }
 
     public static function isBlocky(array $codeBlock)

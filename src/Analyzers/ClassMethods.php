@@ -59,6 +59,7 @@ class ClassMethods
                 'visibility' => $visibility,
                 'signature' => $signature,
                 'body' => Refactor::toString($body),
+                'startBodyIndex' => [$charIndex, $i],
                 'returnType' => $returnType,
 
             ];
