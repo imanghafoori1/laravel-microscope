@@ -14,20 +14,10 @@ class CheckActionComments extends Command
 
     protected $signature = 'check:action_comments';
 
-    protected $description = 'Checks the validity of route definitions';
+    protected $description = 'Adds route definition to the controller actions.';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return mixed
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $t1 = microtime(true);
-        $this->info('Checking route definitions...');
-
         $errorPrinter->printer = $this->output;
 
         $this->info('Commentify Route Actions...');
@@ -37,8 +27,5 @@ class CheckActionComments extends Command
         Psr4Classes::check([ActionsComments::class]);
 
         $this->finishCommand($errorPrinter);
-        $t4 = microtime(true);
-
-        $this->info('Total elapsed time:'.(($t4 - $t1)).' seconds');
     }
 }
