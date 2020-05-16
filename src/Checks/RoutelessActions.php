@@ -58,7 +58,7 @@ class RoutelessActions
         return $fullNamespace;
     }
 
-    protected function checkActions($tokens, $fullNamespace)
+    protected function checkActions($tokens, $fullNamespace, $path)
     {
         $class = ClassMethods::read($tokens);
 
@@ -87,7 +87,7 @@ class RoutelessActions
         $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
         if ($this->isLaravelController($fullNamespace)) {
-            $actions = $this->checkActions($tokens, $fullNamespace);
+            $actions = $this->checkActions($tokens, $fullNamespace, $classFilePath);
 
             foreach ($actions as $action) {
                 $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
