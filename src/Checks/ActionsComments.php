@@ -65,8 +65,8 @@ class ActionsComments extends RoutelessActions
             $routelessActions[] = [$line, $classAtMethod];
         }
         $question = 'Do you want to add route definition to: '.$fullNamespace;
-        if ((self::$command)->confirm($question)) {
-            $shouldSave && Refactor::saveTokens($path->getRealpath(), $tokens);
+        if ($shouldSave && (self::$command)->confirm($question, true)) {
+            Refactor::saveTokens($path->getRealpath(), $tokens);
         }
 
         return $routelessActions;
