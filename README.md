@@ -92,6 +92,10 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:action_comments 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -106,6 +110,8 @@ This will scan all your Psr-4 loaded classes and flattens your functions ans loo
 For example:
 
 ```php
+<?php
+
 forearch ($products as $product) {
     if ($someCond) {
         // A lot of code 1
@@ -129,6 +135,8 @@ forearch ($products as $product) {
 Will be discovered and converted into:
 
 ```php
+<?php
+
 forearch ($products as $product) {
     if (! $someCond) {
         continue;
@@ -156,6 +164,8 @@ forearch ($products as $product) {
 The same thing will apply for functions and methods, but with `return`
 
 ```php
+<?php
+
 if ($var1) {
     if ($var2 > 2) {
         echo 'Hey Man';
@@ -283,6 +293,13 @@ This command searches all the blade files for `Eloquent models` and `DB` query b
 
 ----------------------
 
+```php
+php artisan check:action_comments
+```
+
+- This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
+
+----------------------
 ```php
 php artisan check:views
 ```
