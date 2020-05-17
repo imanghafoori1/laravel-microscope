@@ -25,7 +25,7 @@ Built with :heart: for lazy laravel developers ;)
 
 ## Key things to know:
 
-- It is create to be **smarter than phpstorm** and other IDEs in finding errors.
+- It is created to be **smarter than phpstorm** and other IDEs in finding errors.
 - It is created to **understand laravel run-time** and magic.
 - It does **not show you stupid false errors**, all the errors are really errors.
 - If you have written a lot of tests for your app, you may not need this.
