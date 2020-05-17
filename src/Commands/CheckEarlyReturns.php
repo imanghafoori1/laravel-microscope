@@ -30,7 +30,9 @@ class CheckEarlyReturns extends Command
      */
     public function handle()
     {
-        $this->startWarning();
+        if (! $this->startWarning()) {
+            return;
+        }
 
         $psr4 = ComposerJson::readAutoload();
 
@@ -56,10 +58,11 @@ class CheckEarlyReturns extends Command
                     continue;
                 }
 
-                $this->getConfirm($path);
-                $this->fix($path, $tokens, $fixes);
-                $fixedFilesCount++;
-                $totalNumberOfFixes += $fixes;
+                if ($this->getConfirm($path)) {
+                    $this->fix($path, $tokens, $fixes);
+                    $fixedFilesCount++;
+                    $totalNumberOfFixes += $fixes;
+                }
             }
         }
 
@@ -103,6 +106,6 @@ class CheckEarlyReturns extends Command
     {
         $this->info('Checking for Early Returns...');
         $this->warn('This command is going to make changes to your files!');
-        $this->output->confirm('Do you have committed everything in git?', true);
+        return $this->output->confirm('Do you have committed everything in git?', true);
     }
 }
