@@ -39,36 +39,57 @@ class ActionsComments extends RoutelessActions
         foreach ($methods as $method) {
             $classAtMethod = $this->classAtMethod($fullNamespace, $method['name'][1]);
 
-            if (! ($r = app('router')->getRoutes()->getByAction($classAtMethod))) {
+            if (! ($route = app('router')->getRoutes()->getByAction($classAtMethod))) {
                 continue;
             }
 
             /**
-             * @var $r \Illuminate\Routing\Route
+             * @var $route \Illuminate\Routing\Route
              */
-            $methods = $r->methods();
+            $methods = $route->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
-            if (count($methods) > 1) {
-                $msg = '/** '."\n".'         * @methods('.implode(', ', $methods).')'."\n".'         * @uri(\'/'.$r->uri().'\')'."\n".'         * @name(\''.$r->getName().'\')'."\n         */";
-            } else {
-                $msg = '/** '."\n".'         * @'.strtolower(implode('', $methods)).'(\'/'.$r->uri().'\')'."\n".'         * @name(\''.$r->getName().'\')'."\n         */";
-            }
+            $msg = $this->getMsg($methods, $route);
 
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
-            if (T_DOC_COMMENT !== $tokens[$method['startBodyIndex'][0] + 2][0] || $msg !== $tokens[$method['startBodyIndex'][0] + 2][1]) {
+            if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
                 $shouldSave = true;
                 $tokens[$commentIndex][1] = "\n        ".$msg.$tokens[$commentIndex][1];
+            } elseif ($msg !== $tokens[$commentIndex + 1][1]) {
+                // if the docblock is there, but needs update...
+                $shouldSave = true;
+                $tokens[$commentIndex + 1][1] = $msg;
             }
 
             $line = $method['name'][2];
             $routelessActions[] = [$line, $classAtMethod];
         }
+
         $question = 'Do you want to add route definition to: '.$fullNamespace;
         if ($shouldSave && (self::$command)->confirm($question, true)) {
             Refactor::saveTokens($path->getRealpath(), $tokens);
         }
 
         return $routelessActions;
+    }
+
+    protected function getMsg($methods, $r)
+    {
+        $msg = '/** '."\n";
+        $prefix = '         * ';
+        $nameBlock = $prefix.'@name(\''.($r->getName() ?: '').'\')';
+        $msg .= $prefix;
+        if (count($methods) > 1) {
+            $msg .= '@methods('.implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$r->uri().'\')'."\n".$nameBlock;
+        } else {
+            $msg .= '@'.strtolower(implode('', $methods)).'(\'/'.$r->uri().'\')'."\n".$nameBlock;
+        }
+
+        $middlewares = $r->gatherMiddleware();
+        $msg .= "\n".$prefix.'@middlewares('.implode(', ', $middlewares).')';
+
+        $msg .= "\n         */";
+
+        return $msg;
     }
 }
