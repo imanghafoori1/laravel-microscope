@@ -58,9 +58,11 @@ class SyntaxNormalizer
                     continue;
                 } elseif ($next_T[0] !== T_IF && $next_T !== '{') {
                     $refactoredTokens[] = $t;
-                    $refactoredTokens[] = '{';
+                    array_splice($tokens, $next_I - 1, 0, ['{']);
+                    array_splice($tokens, $next_I - 1, 0, [T_WHITESPACE, ' ']);
                     [, $endIndex] = FunctionCall::forwardTo($tokens, $i, [';']);
-                    array_splice($tokens, $endIndex + 1, 0, ['}']);
+                    array_splice($tokens, $endIndex + 2, 0, [T_WHITESPACE, ' ']);
+                    array_splice($tokens, $endIndex + 2, 0, ['}']);
                     $tCount = count($tokens);
                     $i++;
                     continue;
