@@ -19,6 +19,7 @@ class ErrorPrinter
         'routeDefinitionConflict' => [],
         'routelessCtrl' => [],
         'queryInBlade' => [],
+        'envFound' => [],
     ];
 
     public $printer;

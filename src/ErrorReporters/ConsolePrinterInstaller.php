@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
@@ -63,6 +64,17 @@ class ConsolePrinterInstaller
             app(ErrorPrinter::class)->routeDefinitionConflict(
                 $e->data['poorRoute'],
                 $e->data['bullyRoute']
+            );
+        });
+
+        Event::listen(EnvFound::class, function (EnvFound $event) {
+            $data = $event->data;
+            app(ErrorPrinter::class)->simplePendError(
+                $data['absPath'],
+                $data['lineNumber'],
+                $data['name'],
+                'envFound',
+                'env() function found: '
             );
         });
 

@@ -33,6 +33,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckCompact::class,
         Commands\CheckBladeQueries::class,
         Commands\CheckActionComments::class,
+        Commands\CheckBadPractice::class,
 
     ];
 
