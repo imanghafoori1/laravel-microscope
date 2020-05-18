@@ -401,6 +401,9 @@ Send me as much as a banana costs in your region:
 - Enhance blocky code detection
 - Fullly decouple the error logger
 - Detect `return abort();`
+- Detect `env()` calls
+- Detect un-registered service providers
+- Detect unused middlewares
 
 ```
 A man will never fail, unless he stops trying.
