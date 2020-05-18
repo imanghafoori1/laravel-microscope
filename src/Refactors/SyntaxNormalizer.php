@@ -14,6 +14,7 @@ class SyntaxNormalizer
         $i = 0;
         $refactoredTokens = [];
         $tCount = count($tokens);
+        $ifIf = [];
 
         while ($tCount > $i) {
             $t = $tokens[$i];
@@ -67,10 +68,18 @@ class SyntaxNormalizer
                     $refactoredTokens[] = $t;
                     array_splice($tokens, $next_I - 1, 0, [['{', '']]);
                     [, $endIndex] = FunctionCall::forwardTo($tokens, $i, [';']);
+                    $NEXT = FunctionCall::getNextToken($tokens, $endIndex);
+                    if ($NEXT[0][0] == T_ELSE && $t[0] == T_ELSE) {
+                        $ia = array_pop($ifIf);
+                        array_splice($refactoredTokens, $ia, 0, [['{', '']]);
+                        array_splice($tokens, $endIndex + 2, 0, [['}', '']]);
+                    }
                     array_splice($tokens, $endIndex + 2, 0, [['}', '']]);
                     $tCount = count($tokens);
                     $i++;
                     continue;
+                } elseif($t[0] == T_IF && $next_T[0] === T_IF) {
+                    $ifIf[] = $next_I;
                 }
             }
 

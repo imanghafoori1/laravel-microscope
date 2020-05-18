@@ -17,6 +17,20 @@ class Ifs
 
         [$char, $if1BlockStartIndex] = FunctionCall::getNextToken($tokens, $condition1[2]);
         // if with no curly brace.
+        if ($char[0] == T_IF) {
+            [$char,] = FunctionCall::getNextToken($tokens, $if1BlockStartIndex);
+            $condition2 = self::readCondition($tokens, $if1BlockStartIndex);
+
+            $if2Body = self::readBody($tokens, $condition2[2]);
+
+            $afterSecondIf = FunctionCall::getNextToken($tokens, $if2Body[2]);
+
+            if (T_ELSEIF !== $afterSecondIf[0][0] && T_ELSE !== $afterSecondIf[0][0]) {
+                return NestedIf::merge($tokens, $condition1[2], $condition2[0], -1);
+            }
+        }
+
+        // if with no curly brace.
         if ($char[0] !== '{') {
             return null;
         }
