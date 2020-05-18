@@ -45,24 +45,29 @@ class SyntaxNormalizer
                 }
 
                 if (in_array($next_T[0], [T_FOR, T_FOREACH, T_WHILE])) {
-                    array_splice($tokens, $next_I, 0, ['{']);
+                    array_splice($tokens, $next_I, 0, [['{','',]]);
                     $refactoredTokens[] = $t;
                     $i++;
                     [, , $u] = Ifs::readCondition($tokens, $next_I + 1);
                     [, $u] = FunctionCall::getNextToken($tokens, $u);
                     [, $u] = FunctionCall::readBody($tokens, $u);
-                    array_splice($tokens, $u, 0, ['}']);
+                    array_splice($tokens, $u, 0, [['}','']]);
 
                     // we update the count since the number of elements is changed.
                     $tCount = count($tokens);
                     continue;
                 } elseif ($next_T[0] !== T_IF && $next_T !== '{') {
+                    /**
+                     * in case if or else block is like this:
+                     * if ($v) {
+                     *    ...
+                     * } else
+                     *   $var = 0;
+                     */
                     $refactoredTokens[] = $t;
-                    array_splice($tokens, $next_I - 1, 0, ['{']);
-                    array_splice($tokens, $next_I - 1, 0, [[T_WHITESPACE, " "]]);
+                    array_splice($tokens, $next_I - 1, 0, [['{', '']]);
                     [, $endIndex] = FunctionCall::forwardTo($tokens, $i, [';']);
-                    array_splice($tokens, $endIndex + 2, 0, [[T_WHITESPACE, " "]]);
-                    array_splice($tokens, $endIndex + 2, 0, ['}']);
+                    array_splice($tokens, $endIndex + 2, 0, [['}', '']]);
                     $tCount = count($tokens);
                     $i++;
                     continue;
