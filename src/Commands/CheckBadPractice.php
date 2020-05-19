@@ -34,6 +34,8 @@ class CheckBadPractice extends Command
 
         event('microscope.finished.checks', [$this]);
         $this->info('&It is recommended use env() calls, only and only in config files.');
+        $this->info('Otherwise you can NOT cache your config files using "config:cache"');
+        $this->info('https://laravel.com/docs/5.5/configuration#configuration-caching');
         $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
     }
 

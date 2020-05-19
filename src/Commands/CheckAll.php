@@ -47,6 +47,7 @@ class CheckAll extends Command
         $this->call('check:routes');
         $this->call('check:stringy_classes');
         $this->call('check:dd');
+        $this->call('check:bad_practices');
 
         //turns on error logging.
         $errorPrinter->logErrors = true;

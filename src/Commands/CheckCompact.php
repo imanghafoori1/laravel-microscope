@@ -25,7 +25,7 @@ class CheckCompact extends Command
     {
         $this->info('Checking compact() calls, fast and furious !!!  mm(~_~)mm  ');
 
-        $this->checkRoutePaths();
+        $this->checkRoutePaths(RoutePaths::get());
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
@@ -51,9 +51,9 @@ class CheckCompact extends Command
         }
     }
 
-    private function checkRoutePaths()
+    private function checkRoutePaths($paths)
     {
-        foreach (RoutePaths::get() as $filePath) {
+        foreach ($paths as $filePath) {
             $this->checkPathForCompact($filePath);
         }
     }
