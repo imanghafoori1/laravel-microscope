@@ -3,11 +3,13 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
 
 class CheckDD extends Command
 {
@@ -25,7 +27,9 @@ class CheckDD extends Command
         $t1 = microtime(true);
         $this->info('Checking dd...');
 
-        $this->checkRoutePaths();
+        $this->checkPaths(RoutePaths::get());
+        $this->checkPaths(Paths::getPathsList(MigrationPaths::get()));
+        $this->checkPaths(Paths::getPathsList(app()->databasePath()));
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
@@ -47,9 +51,9 @@ class CheckDD extends Command
         }
     }
 
-    private function checkRoutePaths()
+    private function checkPaths($paths)
     {
-        foreach (RoutePaths::get() as $filePath) {
+        foreach ($paths as $filePath) {
             $this->checkForDD($filePath);
         }
     }
