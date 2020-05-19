@@ -96,6 +96,10 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:bad_practices 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -262,6 +266,13 @@ php artisan check:imports
 
 - It checks all the imports (`use` statements) to be valid.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
+
+----------------------
+```php
+php artisan check:bad_practices
+```
+
+ - It detects bad practices like `env()` calls outside of the config files.
 
 ----------------------
 
