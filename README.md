@@ -186,11 +186,20 @@ if ($var1 && $var2 > 2) {
 - It also supports the ruby like if():/endif; syntax;
 
 ```php
+<?php
+
 if ($var1):
     if ($var2 > 2):
         echo 'Hey Man';
     endif;
 endif;
+
+// or if you avoid putting curly braces...
+if ($var1)
+    if ($var2 > 2)
+        echo 'Hey Man';
+
+
 ```
 
 **Although this type of refactor is totally safe and is guaranteed to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
