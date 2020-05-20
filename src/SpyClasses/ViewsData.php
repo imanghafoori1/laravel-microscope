@@ -32,7 +32,7 @@ class ViewsData
         $allVars = [];
         foreach ($this->all as $view) {
             $vars = [];
-            $tokens = self::getBladeTokens($view->getPathname());
+            $tokens = token_get_all(app('blade.compiler')->compileString(file_get_contents($view->getPath())));
             foreach ($tokens as $i => $token) {
                 // we collect only vars which are not being declared.
                 if (
