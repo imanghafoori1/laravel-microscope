@@ -6,7 +6,7 @@ use Illuminate\View\Compilers\BladeCompiler;
 
 class SpyBladeCompiler extends BladeCompiler
 {
-    protected function compileExtends($expression)
+    public function compileExtends($expression)
     {
         $expression = $this->stripParentheses($expression);
 
@@ -19,7 +19,7 @@ class SpyBladeCompiler extends BladeCompiler
      * @param  string  $value
      * @return string
      */
-    protected function compileEchos($value)
+    public function compileEchos($value)
     {
         foreach ($this->getEchoMethods() as $method) {
             $value = $this->$method($value);
@@ -29,26 +29,12 @@ class SpyBladeCompiler extends BladeCompiler
     }
 
     /**
-     * Get the echo methods in the proper order for compilation.
-     *
-     * @return array
-     */
-    protected function getEchoMethods()
-    {
-        return [
-            'compileRawEchos',
-            'compileEscapedEchos',
-            'compileRegularEchos',
-        ];
-    }
-
-    /**
      * Compile the "raw" echo statements.
      *
      * @param  string  $value
      * @return string
      */
-    protected function compileRawEchos($value)
+    public function compileRawEchos($value)
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
 
@@ -61,13 +47,7 @@ class SpyBladeCompiler extends BladeCompiler
         return preg_replace_callback($pattern, $callback, $value);
     }
 
-    /**
-     * Compile the "regular" echo statements.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    protected function compileRegularEchos($value)
+    public function compileRegularEchos($value)
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->contentTags[0], $this->contentTags[1]);
 
@@ -89,7 +69,7 @@ class SpyBladeCompiler extends BladeCompiler
      * @param  string  $value
      * @return string
      */
-    protected function compileEscapedEchos($value)
+    public function compileEscapedEchos($value)
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 
