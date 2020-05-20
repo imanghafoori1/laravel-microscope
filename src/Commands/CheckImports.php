@@ -50,8 +50,8 @@ class CheckImports extends Command implements FileCheckContract
         $errorPrinter->printer = $this->output;
 
         $this->checkFilePaths(RoutePaths::get());
-        $this->checkFilePaths(Paths::getPathsList(app()->configPath()));
-        $this->checkFilePaths(Paths::getPathsList(app()->databasePath()));
+        $this->checkFilePaths(Paths::getAbsFilePaths(app()->configPath()));
+        $this->checkFilePaths(Paths::getAbsFilePaths(app()->databasePath()));
 
         Psr4Classes::check([CheckClasses::class]);
 

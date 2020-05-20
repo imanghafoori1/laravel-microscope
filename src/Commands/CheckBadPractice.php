@@ -28,8 +28,8 @@ class CheckBadPractice extends Command
         $this->info('Checking bad practices...');
 
         $this->checkPaths(RoutePaths::get());
-        $this->checkPaths(Paths::getPathsList(MigrationPaths::get()));
-        $this->checkPaths(Paths::getPathsList(app()->databasePath()));
+        $this->checkPaths(Paths::getAbsFilePaths(MigrationPaths::get()));
+        $this->checkPaths(Paths::getAbsFilePaths(app()->databasePath()));
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);

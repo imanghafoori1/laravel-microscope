@@ -39,20 +39,20 @@ class RoutePaths
 
     private static function fullPath($calls, $providerClass, $path)
     {
-        $path1 = '';
+        $fullPath = '';
         foreach ($calls[0] as $token) {
             if ($token[0] == T_DIR) {
                 // remove class name from the end of string.
                 $relativeDir = trim(str_replace(class_basename($providerClass), '', $path), '\\');
 
-                $path1 .= $relativeDir;
+                $fullPath .= $relativeDir;
             } elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
                 $firstParam = trim($token[1], '\'\"');
-                $path1 .= $firstParam;
+                $fullPath .= $firstParam;
             }
         }
 
-        return FilePath::normalize(base_path($path1));
+        return FilePath::normalize(base_path($fullPath));
     }
 
     private static function readLoadedRouteFiles($path)
