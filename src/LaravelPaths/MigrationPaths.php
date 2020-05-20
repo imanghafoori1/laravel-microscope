@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 
 class MigrationPaths
@@ -12,7 +13,10 @@ class MigrationPaths
         $migrationDirs = [];
 
         foreach (app('migrator')->paths() as $path) {
-            $migrationDirs[] = FilePath::normalize($path);
+            // Excludes the migrations within "vendor" folder:
+            if (! Str::startsWith($path, [base_path('vendor')])) {
+                $migrationDirs[] = FilePath::normalize($path);
+            }
         }
 
         return $migrationDirs;
