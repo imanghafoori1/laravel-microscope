@@ -49,6 +49,6 @@ class CheckBladeQueries extends Command implements FileCheckContract
         BladeFiles::check([CheckModelClass::class]);
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
+        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 }

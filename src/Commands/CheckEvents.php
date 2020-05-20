@@ -33,7 +33,6 @@ class CheckEvents extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        /*(! $errorPrinter->logErrors ? PHP_EOL : '').*/
         $this->info('Checking events...');
 
         $errorPrinter->printer = $this->output;

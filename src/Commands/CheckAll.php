@@ -53,6 +53,6 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
+        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 }

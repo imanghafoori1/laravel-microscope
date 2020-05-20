@@ -48,7 +48,7 @@ class CheckRoutes extends Command
         $this->finishCommand($errorPrinter);
         $t4 = microtime(true);
 
-        $this->info('Total elapsed time:'.(($t4 - $t1)).' seconds');
+        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function getRouteId($route)
