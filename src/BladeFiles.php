@@ -34,7 +34,7 @@ class BladeFiles
                 /**
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
-                $tokens = ViewsData::getBladeTokens($blade->getPath());
+                $tokens = ViewsData::getBladeTokens($blade->getPathname());
                 foreach ($methods as $method) {
                     call_user_func_array([$method, 'check'], [$tokens, $blade->getPathname()]);
                 }
