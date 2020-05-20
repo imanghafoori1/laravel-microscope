@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
 use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 
 class BladeFiles
 {
@@ -33,9 +34,7 @@ class BladeFiles
                 /**
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
-                $content = $blade->getContents();
-                $tokens = token_get_all(app('blade.compiler')->compileString($content));
-
+                $tokens = ViewsData::getBladeTokens($blade->getPath());
                 foreach ($methods as $method) {
                     call_user_func_array([$method, 'check'], [$tokens, $blade->getPathname()]);
                 }

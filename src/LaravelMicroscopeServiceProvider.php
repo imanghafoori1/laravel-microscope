@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Imanghafoori\LaravelMicroscope\Commands;
+use Illuminate\View\Compilers\BladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
@@ -55,6 +57,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         if (! $this->canRun()) {
             return;
         }
+
+        $this->registerCompiler();
 
         //  $this->loadConfig();
 
@@ -144,5 +148,12 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         }
 
         return $action;
+    }
+
+    private function registerCompiler()
+    {
+        $this->app->singleton('microscope.blade.compiler', function () {
+            return new SpyBladeCompiler($this->app['files'], $this->app['config']['view.compiled']);
+        });
     }
 }
