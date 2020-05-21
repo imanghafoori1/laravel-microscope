@@ -14,6 +14,7 @@ class ExtractBladePartial
         // we skip the very end of the file.
         $total = count($tokens) - 3;
         $calls = [];
+        $callsOrder = [];
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('extractBlade', $tokens, $i);
 
@@ -24,22 +25,34 @@ class ExtractBladePartial
 
             $params = FunctionCall::readParameters($tokens, $i);
 
-            $calls[] = ($params[0][0]) ?? ($tokens[$i - 1]);
+            $partialName = $params[0][0][1];
+            ! in_array($partialName, $callsOrder) && $callsOrder[] = $partialName;
+            $calls[$partialName][] = ($params[0][0]) ?? ($tokens[$i - 1]);
+
             $i++;
         }
         if (! $calls) {
             return ;
         }
+
         $file = file($absPath);
-        $replacement = ["\n".'        @include('.$calls[0][1].')'. "\n"];
-        $extracted = array_splice($file, $calls[0][2] - 1, ($calls[1][2] - $calls[0][2]) + 1, $replacement);
-        $partialPath = self::find(trim($calls[0][1], '\'\"'));
 
-        array_shift($extracted);
-        array_pop($extracted);
-        $partialPath = str_replace(['/','\\'], '/', $partialPath);
+        $callsOrder = array_reverse($callsOrder);
+        foreach($callsOrder as $paramName) {
+            $call = $calls[$paramName];
+            $replacement = ["\n".'        @include('.$call[0][1].')'. "\n"];
 
-        self::forceFilePutContents($partialPath, implode('', $extracted));
+            $start = $call[0][2] - (1);
+            $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
+            $extracted = array_splice($file, $start, $removedLinesNumber, $replacement);
+            $partialPath = self::find(trim($call[0][1], '\'\"'));
+            array_shift($extracted);
+            array_pop($extracted);
+            $partialPath = str_replace(['/','\\'], '/', $partialPath);
+
+            self::forceFilePutContents($partialPath, implode('', $extracted));
+        }
+
         self::forceFilePutContents($absPath, implode('', $file));
 
         return $tokens;
