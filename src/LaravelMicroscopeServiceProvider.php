@@ -47,6 +47,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
+        \Event::listen('microscope.start.command', function () {
+            ! defined('microscope_start') && define('microscope_start', microtime(true));
+        });
+
         $this->commands(self::$commandNames);
 
         ConsolePrinterInstaller::boot();

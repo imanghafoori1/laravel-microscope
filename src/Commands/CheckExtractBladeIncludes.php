@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Checks\CheckModelClass;
 use Imanghafoori\LaravelMicroscope\Checks\ExtractBladePartial;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -36,21 +35,33 @@ class CheckExtractBladeIncludes extends Command implements FileCheckContract
      *
      * @param  ErrorPrinter  $errorPrinter
      *
-     * @throws \ErrorException
      * @return mixed
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $t1 = microtime(true);
-        $this->info('Checking to extract blade partials...');
+        if (! $this->startWarning()) {
+            return ;
+        }
+
+        event('microscope.start.command');
 
         $errorPrinter->printer = $this->output;
 
         BladeFiles::check([ExtractBladePartial::class]);
 
-        $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time:'.(round(microtime(true) - $t1, 2)).' seconds');
+        $this->info('Blade files extracted.');
+        $this->printTime();
     }
 
+    private function startWarning()
+    {
+        $this->info('Checking to extract blade partials...');
+        $this->warn('This command is going to make changes to your files!');
+        return $this->output->confirm('Do you have committed everything in git?', true);
+    }
 
+    private function printTime()
+    {
+        $this->info('Total elapsed time: '.round(microtime(true) - microscope_start, 2).' sec');
+    }
 }
