@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 
@@ -44,7 +45,7 @@ class ExtractBladePartial
             if (count($call) < 2) {
                 continue;
             }
-            $replacement = ['        @include('.$call[0][1].')'. "\n"];
+            $replacement = ['@include('.$call[0][1].')'. "\n"];
 
             $start = $call[0][2] - (1);
             $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
@@ -52,8 +53,17 @@ class ExtractBladePartial
             $partialPath = self::find(trim($call[0][1], '\'\"'));
             array_shift($extracted);
             array_pop($extracted);
+
             $partialPath = str_replace(['/','\\'], '/', $partialPath);
 
+            $spaces = (Str::before($extracted[0], trim($extracted[0])));
+            // add space before the @include to have proper indentation.
+            $file[$start] = $spaces.$file[$start];
+            foreach ($extracted as $i => $line) {
+                // remove spaces so that the created file
+                // does not have irrelevant indentation.
+                $extracted[$i] = Str::after($extracted[$i], $spaces);
+            }
             self::forceFilePutContents($partialPath, implode('', $extracted));
         }
 
