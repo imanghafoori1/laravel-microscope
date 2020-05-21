@@ -100,6 +100,10 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:extract_blades 
+</h4></p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -312,7 +316,48 @@ php artisan check:blade_queries
 This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
 
 ----------------------
+```php
+php artisan check:extract_blades
+```
 
+- If you want to extract a blade partial out and make it included like: `@include('myPartials.someFile')`
+
+you can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to indicate `start/end line` and the `path/name` of the partial you intend to be made.
+
+```html
+  <html>
+      
+      {!! extractBlade('myPartials.head') !!}
+          <head>...</head>
+      {!! extractBlade() !!}
+
+      
+      {!! extractBlade('myPartials.body') !!}
+          <body>...</body>
+      {!! extractBlade() !!}
+      
+    </html>
+```
+
+After you execute `php artisan check:extract_blades` it will become:
+
+```html
+<html>
+    @include('myPartials.head')
+    @include('myPartials.body')
+</html>
+```
+Also it will create:
+- `resources/views/myPartials/head.blade.php` 
+- `resources/views/myPartials/body.blade.php`
+
+and put the corresponding content in them.
+
+- It is also compatible with namespaced views in modular laravel applications.
+So this syntax will work: `'MyMod::myPartials.body'`
+
+
+----------------------
 ```php
 php artisan check:action_comments
 ```
