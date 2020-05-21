@@ -15,6 +15,7 @@ class ExtractBladePartial
         $total = count($tokens) - 3;
         $calls = [];
         $callsOrder = [];
+        $partialName = '';
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('extractBlade', $tokens, $i);
 
@@ -25,7 +26,7 @@ class ExtractBladePartial
 
             $params = FunctionCall::readParameters($tokens, $i);
 
-            $partialName = $params[0][0][1];
+            $partialName = $params[0][0][1] ?? $partialName;
             ! in_array($partialName, $callsOrder) && $callsOrder[] = $partialName;
             $calls[$partialName][] = ($params[0][0]) ?? ($tokens[$i - 1]);
 
@@ -40,7 +41,10 @@ class ExtractBladePartial
         $callsOrder = array_reverse($callsOrder);
         foreach($callsOrder as $paramName) {
             $call = $calls[$paramName];
-            $replacement = ["\n".'        @include('.$call[0][1].')'. "\n"];
+            if (count($call) < 2) {
+                continue;
+            }
+            $replacement = ['        @include('.$call[0][1].')'. "\n"];
 
             $start = $call[0][2] - (1);
             $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
