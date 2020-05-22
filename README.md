@@ -449,15 +449,17 @@ Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
 ----------------
 
-### 🍌 Reward me a banana 🍌
+### 🍌 Pay after it pays off:
 
-Send me as much as a banana costs in your region:
+If you think that my work has saved you a lot of time hence a lot of money, please take your time and send me 1 dollar, I appritiate it, a lot... (a single dollar is enough, please so do not send more.)
 
-- DogeCoin: DJEZr6GJ4Vx37LGF3zSng711AFZzmJTouN
-- LiteCoin: ltc1q82gnjkend684c5hvprg95fnja0ktjdfrhcu4c4
 - BitCoin: bc1q53dys3jkv0h4vhl88yqhqzyujvk35x8wad7uf9
-- Ripple: rJwrb2v1TR6rAHRWwcYvNZxjDN2bYpYXhZ
 - Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
+- USDC: 0xB3F88d2334C9A5eFBe9c0932A969E8a971139547
+
+You can contact me at telegram, after donation: https://t.me/imanghafoori
+
+I would be happy to answer you.
 
 --------------
 ### Todo:
