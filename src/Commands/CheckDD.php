@@ -24,7 +24,7 @@ class CheckDD extends Command
      */
     public function handle()
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking dd...');
 
         $this->checkPaths(RoutePaths::get());
@@ -33,7 +33,6 @@ class CheckDD extends Command
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkForDD($absPath)

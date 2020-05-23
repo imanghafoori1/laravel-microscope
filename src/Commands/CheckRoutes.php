@@ -30,7 +30,7 @@ class CheckRoutes extends Command
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking route definitions...');
 
         $errorPrinter->printer = $this->output;
@@ -46,8 +46,7 @@ class CheckRoutes extends Command
         Psr4Classes::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
         $this->finishCommand($errorPrinter);
-
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
+        $errorPrinter->printTime();
     }
 
     private function getRouteId($route)

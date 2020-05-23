@@ -14,6 +14,9 @@ class ConsolePrinterInstaller
 {
     protected static function finishCommand($command)
     {
+        /**
+         * @var $errorPrinter ErrorPrinter
+         */
         $errorPrinter = app(ErrorPrinter::class);
         $errorPrinter->printer = $command->getOutput();
 
@@ -31,6 +34,8 @@ class ConsolePrinterInstaller
         } else {
             $command->info(PHP_EOL.'All '.$commandType.' are correct!');
         }
+
+        $errorPrinter->printTime();
     }
 
     public static function boot()

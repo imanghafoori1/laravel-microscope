@@ -213,9 +213,6 @@ class ErrorPrinter
         })->count();
     }
 
-    /**
-     * Logs the errors to the console.
-     */
     public function logErrors()
     {
         collect($this->counts)->except('total')->flatten()->each(function ($error) {
@@ -230,6 +227,6 @@ class ErrorPrinter
 
     public function printTime()
     {
-        $this->printer->warning('Total elapsed time: '.round(microtime(true) - microscope_start, 2).' sec');
+        $this->logErrors && $this->printer->writeln('Total elapsed time: '.round(microtime(true) - microscope_start, 2).' sec', 2);
     }
 }

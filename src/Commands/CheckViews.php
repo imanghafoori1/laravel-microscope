@@ -4,11 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 
@@ -18,14 +18,9 @@ class CheckViews extends Command
 
     protected $description = 'Checks the validity of blade files';
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking views...');
 
         $this->checkRoutePaths();
@@ -33,7 +28,6 @@ class CheckViews extends Command
         $this->checkBladeFiles();
 
         event('microscope.finished.checks', [$this]);
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkForViewMake($absPath, $staticCalls)
