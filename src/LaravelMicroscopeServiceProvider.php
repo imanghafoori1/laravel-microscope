@@ -73,9 +73,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->spyRouter();
         // we spy the router in order to have a list of route files.
-        Str::startsWith('check:routes', $command) && app('router')->spyRouteConflict();
-        Str::startsWith('check:events', $command) && $this->spyEvents();
-        Str::startsWith('check:gates', $command) && $this->spyGates();
+        $all = Str::startsWith('check:all', $command);
+        ($all || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
+        ($all || Str::startsWith('check:events', $command)) && $this->spyEvents();
+        ($all || Str::startsWith('check:gates', $command)) && $this->spyGates();
     }
 
     private function spyRouter()

@@ -13,10 +13,10 @@ class SpyDispatcher extends Dispatcher
         $this->validateCallback($event[0], $listener);
     }
 
-    private function error(string $string)
+    private function error($string)
     {
-        $p = app(ErrorPrinter::class);
-        $p->others($string);
+//        app(ErrorPrinter::class)->print($string);
+        dump($string);
     }
 
     protected function validateCallback($event, $listener)
