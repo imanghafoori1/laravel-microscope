@@ -99,12 +99,14 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function spyEvents()
     {
-        $this->app->singleton('events', function ($app) {
-            return (new SpyDispatcher($app))->setQueueResolver(function () use ($app) {
-                return $app->make(QueueFactoryContract::class);
+        app()->booting(function () {
+            $this->app->singleton('events', function ($app) {
+                return (new SpyDispatcher($app))->setQueueResolver(function () use ($app) {
+                    return $app->make(QueueFactoryContract::class);
+                });
             });
+            Event::clearResolvedInstance('events');
         });
-        Event::clearResolvedInstance('events');
     }
 
     public function spyView()

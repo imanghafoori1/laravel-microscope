@@ -44,7 +44,7 @@ class CheckImports extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking imports...');
 
         $errorPrinter->printer = $this->output;
@@ -59,7 +59,7 @@ class CheckImports extends Command implements FileCheckContract
         BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
+        $errorPrinter->printTime();
     }
 
     private function checkFilePaths($paths)
