@@ -4,11 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class NamespaceCorrector
 {
-    /**
-     * @param  string  $classFilePath
-     * @param  string  $incorrectNamespace
-     * @param  string  $correctNamespace
-     */
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
@@ -18,13 +13,6 @@ class NamespaceCorrector
         ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
     }
 
-    /**
-     * @param  string  $relativeClassPath
-     * @param  string  $composerPath
-     * @param  string  $rootNamespace
-     *
-     * @return string
-     */
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
     {
         // remove the filename.php from the end of the string
@@ -44,12 +32,6 @@ class NamespaceCorrector
         return str_replace(trim($composerPath, '\\'), trim($rootNamespace, '\\/'), $p);
     }
 
-    /**
-     * @param $incorrectNamespace
-     * @param $correctNamespace
-     *
-     * @return array
-     */
     private static function getNewLine($incorrectNamespace, $correctNamespace)
     {
         // in case there is no namespace specified in the file:

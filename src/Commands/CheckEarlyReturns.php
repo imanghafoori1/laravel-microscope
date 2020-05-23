@@ -51,18 +51,17 @@ class CheckEarlyReturns extends Command
                 } catch (\Exception $e) {
                     dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (O_o)');
                     dump('Skipping : '.$path);
+                    $fixes = 0;
                     continue;
                 }
 
-                if ($fixes == 0) {
+                if ($fixes == 0 || ! $this->getConfirm($path)) {
                     continue;
                 }
 
-                if ($this->getConfirm($path)) {
-                    $this->fix($path, $tokens, $fixes);
-                    $fixedFilesCount++;
-                    $totalNumberOfFixes += $fixes;
-                }
+                $this->fix($path, $tokens, $fixes);
+                $fixedFilesCount++;
+                $totalNumberOfFixes += $fixes;
             }
         }
 

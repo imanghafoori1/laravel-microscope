@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\Checks\CheckModelClass;
+use Imanghafoori\LaravelMicroscope\Checks\CheckIsQuery;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
@@ -40,15 +40,15 @@ class CheckBladeQueries extends Command implements FileCheckContract
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking blade files for db queries...');
 
         $errorPrinter->printer = $this->output;
 
         // checks the blade files for database queries.
-        BladeFiles::check([CheckModelClass::class]);
+        BladeFiles::check([CheckIsQuery::class]);
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
+        $errorPrinter->printTime();
     }
 }

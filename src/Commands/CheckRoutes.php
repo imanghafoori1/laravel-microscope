@@ -46,7 +46,6 @@ class CheckRoutes extends Command
         Psr4Classes::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
         $this->finishCommand($errorPrinter);
-        $t4 = microtime(true);
 
         $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
@@ -54,10 +53,12 @@ class CheckRoutes extends Command
     private function getRouteId($route)
     {
         if ($routeName = $route->getName()) {
-            return 'Error on route name: '.$routeName;
+            $msg = 'name: '.$routeName;
         } else {
-            return 'Error on route url: '.$route->uri();
+            $msg = 'url: '.$route->uri();
         }
+
+        return 'Error on route '.$msg;
     }
 
     private function checkRouteDefinitions($errorPrinter, $routes)

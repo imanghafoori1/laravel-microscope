@@ -17,6 +17,7 @@ class CheckPsr4 extends Command implements FileCheckContract
     use LogsErrors;
 
     use ScansFiles;
+
     /**
      * The name and signature of the console command.
      *
@@ -61,7 +62,6 @@ class CheckPsr4 extends Command implements FileCheckContract
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info('finished: "composer dump"');
-
         }
     }
 }

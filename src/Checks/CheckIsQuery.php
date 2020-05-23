@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class CheckModelClass
+class CheckIsQuery
 {
     public static function check($tokens, $absPath)
     {

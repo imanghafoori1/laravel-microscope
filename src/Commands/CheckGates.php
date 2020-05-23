@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 class CheckGates extends Command
 {
     use LogsErrors;
+
     /**
      * The name and signature of the console command.
      *

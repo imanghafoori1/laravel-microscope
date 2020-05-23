@@ -50,7 +50,6 @@ class CheckExtractBladeIncludes extends Command implements FileCheckContract
         BladeFiles::check([ExtractBladePartial::class]);
 
         $this->info('Blade files extracted.');
-        $this->printTime();
     }
 
     private function startWarning()
@@ -58,10 +57,5 @@ class CheckExtractBladeIncludes extends Command implements FileCheckContract
         $this->info('Checking to extract blade partials...');
         $this->warn('This command is going to make changes to your files!');
         return $this->output->confirm('Do you have committed everything in git?', true);
-    }
-
-    private function printTime()
-    {
-        $this->info('Total elapsed time: '.round(microtime(true) - microscope_start, 2).' sec');
     }
 }

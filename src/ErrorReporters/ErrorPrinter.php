@@ -227,4 +227,9 @@ class ErrorPrinter
             }
         });
     }
+
+    public function printTime()
+    {
+        $this->printer->warning('Total elapsed time: '.round(microtime(true) - microscope_start, 2).' sec');
+    }
 }
