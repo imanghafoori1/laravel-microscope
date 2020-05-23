@@ -20,18 +20,18 @@ class SpyGate extends Gate
         try {
             $policy = app()->make($class);
         } catch (\Exception $e) {
-            return app(ErrorPrinter::class)->print("The $callback callback for Gate, does not refer to a resolvable class, for ability: $ability");
+            return app(ErrorPrinter::class)->pended[] = ("The $callback callback for Gate, does not refer to a resolvable class, for ability: $ability");
         }
 
         if (! method_exists($policy, $method)) {
-            return app(ErrorPrinter::class)->print("The $callback callback for Gate, does not refer to a valid method, for ability: $ability");
+            return app(ErrorPrinter::class)->pended[] = ("The $callback callback for Gate, does not refer to a valid method, for ability: $ability");
         }
     }
 
     public function policy($model, $policy)
     {
         if (! is_subclass_of($model, Model::class)) {
-            return app(ErrorPrinter::class)->print("The \"$model\" you are trying to define policy for, is not an eloquent model class.");
+            return app(ErrorPrinter::class)->pended[] = ("The \"$model\" you are trying to define policy for, is not an eloquent model class.");
         }
     }
 }

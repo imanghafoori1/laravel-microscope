@@ -26,6 +26,8 @@ class ErrorPrinter
 
     public $logErrors = true;
 
+    public $pended = [];
+
     public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
         array_push($this->counts['view'], (new PendingError('view'))
@@ -223,6 +225,11 @@ class ErrorPrinter
                 $this->end();
             }
         });
+
+        foreach ($this->pended as $pend) {
+            $this->print($pend);
+            $this->end();
+        }
     }
 
     public function printTime()

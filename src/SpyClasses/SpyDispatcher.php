@@ -15,8 +15,7 @@ class SpyDispatcher extends Dispatcher
 
     private function error($string)
     {
-//        app(ErrorPrinter::class)->print($string);
-        dump($string);
+        app(ErrorPrinter::class)->pended[] = $string;
     }
 
     protected function validateCallback($event, $listener)
@@ -71,9 +70,13 @@ class SpyDispatcher extends Dispatcher
 
     protected function getTypeHintedClass($listenerObj, $methodName)
     {
-        $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
-        $typeHint = $ref->getType();
+        try {
+            $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
+            $typeHint = $ref->getType();
 
-        return $typeHint ? $typeHint->getName() : null;
+            return $typeHint ? $typeHint->getName() : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
