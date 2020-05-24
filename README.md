@@ -175,14 +175,14 @@ The same thing will apply for functions and methods, but with `return`
 ```php
 <?php
 
-if ($var1) {
+if ($var1 > 1) {
     if ($var2 > 2) {
         echo 'Hey Man';
     }
 }
 
 // will be converted into:
-if ($var1 && $var2 > 2) {
+if ($var1 > 1 && $var2 > 2) {
     echo 'Hey Man';
 }
 
@@ -193,14 +193,14 @@ if ($var1 && $var2 > 2) {
 ```php
 <?php
 
-if ($var1):
+if ($var1 > 1):
     if ($var2 > 2):
         echo 'Hey Man';
     endif;
 endif;
 
 // or if you avoid putting curly braces...
-if ($var1)
+if ($var1 > 1)
     if ($var2 > 2)
         echo 'Hey Man';
 
