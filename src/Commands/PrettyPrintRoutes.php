@@ -14,7 +14,7 @@ class PrettyPrintRoutes extends Command
 
     public function handle()
     {
-        $values = config('microscope.pp.routes');
+        $values = config('microscope.pp.routes', []);
         foreach ($values as $val) {
             $val = trim($val);
             if (Str::containsAll($val, ['@', '\\'])) {

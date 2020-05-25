@@ -24,7 +24,7 @@ class CheckBadPractice extends Command
      */
     public function handle()
     {
-        $t1 = microtime(true);
+        event('microscope.start.command');
         $this->info('Checking bad practices...');
 
         $this->checkPaths(RoutePaths::get());
@@ -36,7 +36,6 @@ class CheckBadPractice extends Command
         $this->info('&It is recommended use env() calls, only and only in config files.');
         $this->info('Otherwise you can NOT cache your config files using "config:cache"');
         $this->info('https://laravel.com/docs/5.5/configuration#configuration-caching');
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
     }
 
     private function checkForEnv($absPath)
