@@ -105,6 +105,11 @@ You can run:
 </h4></p>
 
 <p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan pp:route
+</h4>
+</p>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
@@ -364,6 +369,16 @@ php artisan check:action_comments
 ```
 
 - This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
+
+----------------------
+
+```php
+php artisan pp:route
+```
+
+- First you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
+- You can also pass the Controller@method syntax to the function.
+- You can call it multiple times in otder to pretty-print multiple routes.
 
 ----------------------
 ```php
