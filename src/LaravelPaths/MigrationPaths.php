@@ -19,6 +19,8 @@ class MigrationPaths
             }
         }
 
+        $migrationDirs[] = app()->databasePath().DIRECTORY_SEPARATOR.'migrations';
+
         return $migrationDirs;
     }
 }
