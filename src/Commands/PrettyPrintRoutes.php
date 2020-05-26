@@ -48,22 +48,10 @@ class PrettyPrintRoutes extends Command
             $methods = $r->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
 
-            $action = $r->getActionName();
-            if (Str::contains($action, ['@'])) {
-                $action = explode('@', $action);
-                $action = "[". "\\". $action[0]."::class".", '".$action[1]."']";
-            } else {
-                $action = "\\". $action."::class";
-            }
+            $action = $this->getAction($r->getActionName());
 
             if (count($methods)  == 1) {
-                $this->getOutput()->writeln(
-                    PHP_EOL.'Route::'.strtolower($methods[0]).
-                    "('/".$r->uri()."', ".$action.")".PHP_EOL.
-                    ($middlewares ? '->middleware(['.$middlewares."])" : '').
-                    ($r->getName() ? ("->name('".$r->getName()."')") : '').
-                    ';'
-                );
+                $this->getOutput()->writeln(PHP_EOL.$this->getMovableRoute($r, $methods, $action, $middlewares));
             }
         } catch (Exception $e) {
             $this->info('The route has some problem.');
@@ -72,5 +60,34 @@ class PrettyPrintRoutes extends Command
 
             return;
         }
+    }
+
+    /**
+     * @param $r
+     * @param  array  $methods
+     * @param  string  $action
+     * @param $middlewares
+     *
+     * @return string
+     */
+    private function getMovableRoute($r, array $methods, string $action, $middlewares): string
+    {
+        return 'Route::'.strtolower($methods[0])."('/".$r->uri()."', ".$action.")".PHP_EOL.($middlewares ? '->middleware(['.$middlewares."])" : '').($r->getName() ? ("->name('".$r->getName()."')") : '').';';
+    }
+
+    /**
+     * @param $action
+     *
+     * @return array|string|void
+     */
+    private function getAction($action)
+    {
+        if (! Str::contains($action, ['@'])) {
+            return "\\".$action."::class";
+        }
+
+        $action = explode('@', $action);
+
+        return "["."\\".$action[0]."::class".", '".$action[1]."']";
     }
 }
