@@ -14,36 +14,29 @@ class PrettyPrintRoutes extends Command
 
     public function handle()
     {
-        $values = config('microscope.pp.routes', []);
-        foreach ($values as $val) {
-            $val = trim($val);
-            if (Str::containsAll($val, ['@', '\\'])) {
-                $route = app('routes')->getByAction($val);
-            } else {
-                $route = app('routes')->getByName($val);
-            }
+        $calls = config('microscope.write.routes', []);
 
-            if ($route) {
-                $this->printIt($route);
-            } else {
-                $this->info('Route name not found.');
+        foreach ($calls as $call) {
+            foreach ($call['args'] as $val) {
+                is_array($val) && ($val = implode('@', $val));
+                $val = trim($val ?? '');
+
+                $route = $this->deduceRoute($val);
+
+                if ($route) {
+                    ($call["function"] == "microscope_write_route") && $this->writeIt($route, $call['file']);
+                    ($call["function"] == "microscope_pretty_print_route") && $this->printIt($route);
+                } else {
+                    $this->info('Route name not found.');
+                }
             }
         }
     }
 
-    /**
-     * @param  $r \Illuminate\Routing\Route
-     */
-    private function printIt($r)
+    private function writeIt($r, $filename)
     {
         try {
-            $middlewares = $r->gatherMiddleware();
-            $middlewares && $middlewares = "'".implode("', '", $r->gatherMiddleware())."'";
-            $this->getOutput()->writeln('---------------------------------------------------');
-            $this->info(' name:             '.($r->getName() ? ($r->getName()): ''));
-            $this->info(' uri:              '.implode(', ', $r->methods())."   '/".$r->uri()."'  ");
-            $this->info(' middlewares:      '.$middlewares);
-            $this->info(' action:           '.$r->getActionName());
+            $middlewares = $this->getMiddlewares($r);
 
             $methods = $r->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
@@ -51,35 +44,52 @@ class PrettyPrintRoutes extends Command
             $action = $this->getAction($r->getActionName());
 
             if (count($methods)  == 1) {
-                $this->getOutput()->writeln(PHP_EOL.$this->getMovableRoute($r, $methods, $action, $middlewares));
+
+                $definition = PHP_EOL.$this->getMovableRoute($r, $methods, $action, $middlewares);
+
+                file_put_contents($filename, $definition, FILE_APPEND);
             }
         } catch (Exception $e) {
-            $this->info('The route has some problem.');
-            $this->info($e->getMessage());
-            $this->info($e->getFile());
+            $this->handleRouteProblem($e);
 
             return;
         }
     }
 
-    /**
-     * @param $r
-     * @param  array  $methods
-     * @param  string  $action
-     * @param $middlewares
-     *
-     * @return string
-     */
-    private function getMovableRoute($r, array $methods, string $action, $middlewares): string
+    private function deduceRoute($value)
     {
-        return 'Route::'.strtolower($methods[0])."('/".$r->uri()."', ".$action.")".PHP_EOL.($middlewares ? '->middleware(['.$middlewares."])" : '').($r->getName() ? ("->name('".$r->getName()."')") : '').';';
+        if (Str::containsAll($value, ['@', '\\'])) {
+            $route = app('routes')->getByAction($value);
+        } else {
+            $route = app('routes')->getByName($value);
+        }
+
+        return $route;
     }
 
-    /**
-     * @param $action
-     *
-     * @return array|string|void
-     */
+    private function printIt($r)
+    {
+        try {
+            $middlewares = $this->getMiddlewares($r);
+            $this->prettyPrintInConsole($r, $middlewares);
+        } catch (Exception $e) {
+            $this->handleRouteProblem($e);
+
+            return;
+        }
+    }
+
+    private function getMovableRoute($r, $methods, $action, $middlewares)
+    {
+        $nameSection = ($r->getName() ? ("->name('".$r->getName()."')") : '');
+        $middlewareSection = ($middlewares ? '->middleware(['.$middlewares."])" : '');
+        $uriAction = "('/".$r->uri()."', ".$action.")";
+
+        $method = strtolower($methods[0]);
+
+        return 'Route::'.$method.$uriAction.PHP_EOL.$middlewareSection.$nameSection.';';
+    }
+
     private function getAction($action)
     {
         if (! Str::contains($action, ['@'])) {
@@ -89,5 +99,29 @@ class PrettyPrintRoutes extends Command
         $action = explode('@', $action);
 
         return "["."\\".$action[0]."::class".", '".$action[1]."']";
+    }
+
+    private function getMiddlewares($r)
+    {
+        $middlewares = $r->gatherMiddleware();
+        $middlewares && $middlewares = "'".implode("', '", $r->gatherMiddleware())."'";
+
+        return $middlewares;
+    }
+
+    private function handleRouteProblem($e)
+    {
+        $this->info('The route has some problem.');
+        $this->info($e->getMessage());
+        $this->info($e->getFile());
+    }
+
+    private function prettyPrintInConsole($r, $middlewares)
+    {
+        $this->getOutput()->writeln('---------------------------------------------------');
+        $this->info(' name:             '.($r->getName() ? ($r->getName()) : ''));
+        $this->info(' uri:              '.implode(', ', $r->methods())."   '/".$r->uri()."'  ");
+        $this->info(' middlewares:      '.$middlewares);
+        $this->info(' action:           '.$r->getActionName());
     }
 }
