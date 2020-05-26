@@ -27,5 +27,7 @@ class CheckActionComments extends Command
         Psr4Classes::check([ActionsComments::class]);
 
         $this->finishCommand($errorPrinter);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 }

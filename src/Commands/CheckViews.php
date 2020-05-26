@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckViews extends Command
 {
@@ -28,6 +29,8 @@ class CheckViews extends Command
         $this->checkBladeFiles();
 
         event('microscope.finished.checks', [$this]);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function checkForViewMake($absPath, $staticCalls)

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckEarlyReturns extends Command
 {
@@ -66,6 +67,8 @@ class CheckEarlyReturns extends Command
         }
 
         $this->printFinalMsg($fixedFilesCount);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function fix($filePath, $tokens, $tries)

@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 
 class CheckCompact extends Command
@@ -29,6 +30,8 @@ class CheckCompact extends Command
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function checkPathForCompact($absPath)

@@ -50,6 +50,8 @@ class CheckExtractBladeIncludes extends Command implements FileCheckContract
         BladeFiles::check([ExtractBladePartial::class]);
 
         $this->info('Blade files extracted.');
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function startWarning()

@@ -47,6 +47,8 @@ class CheckRoutes extends Command
         BladeFiles::check([CheckRouteCalls::class]);
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function getRouteId($route)
