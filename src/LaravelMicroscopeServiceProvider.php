@@ -37,6 +37,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckBadPractice::class,
         Commands\CheckExtractBladeIncludes::class,
         Commands\PrettyPrintRoutes::class,
+        Commands\CheckExpansions::class,
     ];
 
     public function boot()
