@@ -43,6 +43,8 @@ class CheckDD extends Command
             if (
                 ($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) ||
                 ($index = FunctionCall::isGlobalCall('microscope_pretty_print_route', $tokens, $i)) ||
+                ($index = FunctionCall::isGlobalCall('microscope_dd_listeners', $tokens, $i)) ||
+                ($index = FunctionCall::isGlobalCall('microscope_write_route', $tokens, $i)) ||
                 ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) ||
                 ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))
             ) {
