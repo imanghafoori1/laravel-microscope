@@ -55,7 +55,11 @@ class CheckCompact extends Command
     private function checkRoutePaths($paths)
     {
         foreach ($paths as $filePath) {
-            $this->checkPathForCompact($filePath);
+            try {
+                $this->checkPathForCompact($filePath);
+            } catch (\Throwable $e) {
+                //
+            }
         }
     }
 
