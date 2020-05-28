@@ -32,10 +32,10 @@ if (! function_exists('microscope_dd_listeners')) {
                 dump(' Event:  ' .$event);
                 dump(' Listeners: ');
                 $sp = '     ';
-                foreach($listernsInfo as $i => $listernInfo) {
-                    dump($sp.($i + 1).' - '.$listernInfo[0]);
-                    $relPath = \Imanghafoori\LaravelMicroscope\Analyzers\FilePath::getRelativePath($listernInfo[1]['file']);
-                    dump($sp.'    at '.$relPath. ':'.$listernInfo[1]['line']);
+                foreach($listernsInfo as $i => $listenerInfo) {
+                    dump($sp.($i + 1).' - '.$listenerInfo[0]);
+                    $relPath = \Imanghafoori\LaravelMicroscope\Analyzers\FilePath::getRelativePath($listenerInfo[1]['file']);
+                    dump($sp.'    at '.$relPath. ':'.$listenerInfo[1]['line']);
                 }
                 dump('------------------------------------------');
             }

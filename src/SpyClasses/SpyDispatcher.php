@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
+use ReflectionFunction;
+use ReflectionException;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
@@ -33,10 +35,7 @@ class SpyDispatcher extends Dispatcher
             }
             unset($t['object']);
             if ($listener instanceof \Closure) {
-                $reflection = new \ReflectionFunction($listener);
-                $line = $reflection->getStartLine();
-                $path = FilePath::getRelativePath($reflection->getFileName());
-                $listener = 'Closure at: '.$path.':'.$line;
+                $listener = $this->stringifyClosure($listener);
             }
 
             if (Str::contains($event, '*')) {
@@ -141,5 +140,19 @@ class SpyDispatcher extends Dispatcher
         }
 
         return $listeners;
+    }
+
+    private function stringifyClosure($listener)
+    {
+        try {
+            $reflection = new ReflectionFunction($listener);
+            $line = $reflection->getStartLine();
+            $path = FilePath::getRelativePath($reflection->getFileName());
+            $listener = 'Closure at: '.$path.':'.$line;
+
+            return $listener;
+        } catch (ReflectionException $e) {
+            return '';
+        }
     }
 }
