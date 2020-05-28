@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 
 class CheckViews extends Command
@@ -18,11 +19,11 @@ class CheckViews extends Command
 
     protected $description = 'Checks the validity of blade files';
 
-    public function handle()
+    public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');
         $this->info('Checking views...');
-
+        $errorPrinter->printer = $this->output;
         $this->checkRoutePaths();
         $this->checkPsr4Classes();
         $this->checkBladeFiles();
