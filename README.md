@@ -113,6 +113,13 @@ You can run:
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
 </h4></p>
 
+Also You will have access to some global helper functions:
+ - microscope_dd_listeners($event);
+ 
+ In case you wonder what are the listeners and where are they?! 
+ You can use this (0_o) `microscope_dd_listeners(MyEvent::class);`  This call, also can be in `boot` or `register` as well.
+And it works like a normal `dd(...);` meaning that it will halt.
+
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
 Lets start with:
