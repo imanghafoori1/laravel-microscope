@@ -7,6 +7,16 @@ use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
 
 class SpyRouteCollection extends RouteCollection
 {
+    public $routesInfo;
+
+    public function addCallSiteInfo($route, $info)
+    {
+        $domainAndUri = $route->getDomain().$route->uri();
+        foreach ($route->methods() as $method) {
+            $this->routesInfo[$method][$domainAndUri][] = $info;
+        }
+    }
+
     /**
      * Add the given route to the arrays of routes.
      *
