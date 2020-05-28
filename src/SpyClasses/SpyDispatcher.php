@@ -30,19 +30,15 @@ class SpyDispatcher extends Dispatcher
             $excludes = [
                 base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
             ];
-            while (($t = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $i + 1)[$i]) && Str::startsWith($t['file'], $excludes)) {
+            while (($callSite = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $i + 1)[$i]) && Str::startsWith($callSite['file'], $excludes)) {
                 $i++;
             }
-            unset($t['object']);
+            unset($callSite['object']);
             if ($listener instanceof \Closure) {
                 $listener = $this->stringifyClosure($listener);
             }
 
-            if (Str::contains($event, '*')) {
-                $this->wildcardsOriginal[$event][] =  [$listener, $t];
-            } else {
-                $this->originalListeners[$event][] = [$listener, $t];
-            }
+            $this->addOriginalListener([$listener, $callSite], $event);
         }
     }
 
@@ -129,7 +125,7 @@ class SpyDispatcher extends Dispatcher
         }
     }
 
-    private function addOriginInterfaceListeners($eventName, array $listeners)
+    private function addOriginInterfaceListeners($eventName, $listeners)
     {
         foreach (class_implements($eventName) as $interface) {
             if (isset($this->originalListeners[$interface])) {
@@ -152,6 +148,15 @@ class SpyDispatcher extends Dispatcher
             return 'Closure at: '.$path.':'.$line;
         } catch (ReflectionException $e) {
             return '';
+        }
+    }
+
+    private function addOriginalListener($listener, $event)
+    {
+        if (Str::contains($event, '*')) {
+            $this->wildcardsOriginal[$event][] = $listener;
+        } else {
+            $this->originalListeners[$event][] = $listener;
         }
     }
 }
