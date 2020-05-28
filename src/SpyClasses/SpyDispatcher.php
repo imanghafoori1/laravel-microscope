@@ -2,15 +2,40 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
+use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyDispatcher extends Dispatcher
 {
+    public $originalListeners = [];
+
     public function listen($events, $listener)
     {
-        $event = (array) $events;
-        $this->validateCallback($event[0], $listener);
+        parent::listen($events, $listener);
+
+        $events = (array) $events;
+        foreach($events as $event) {
+            $this->validateCallback($event, $listener);
+        }
+
+        // do not move this loop into a private method or something, it breaks.
+        foreach ((array)$events as $event) {
+            $i = 0;
+            $excludes = [
+                base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
+            ];
+            while (($t = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $i + 1)[$i]) && Str::startsWith($t['file'], $excludes)) {
+                $i++;
+            }
+            unset($t['object']);
+            $this->originalListeners[$event][] = [$listener, $t];
+        }
+    }
+
+    public function getOriginalListeners($event)
+    {
+        return $this->originalListeners[$event] ?? [];
     }
 
     private function error($string)
