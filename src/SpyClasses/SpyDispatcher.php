@@ -30,7 +30,7 @@ class SpyDispatcher extends Dispatcher
             $excludes = [
                 base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
             ];
-            while (($callSite = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $i + 1)[$i]) && Str::startsWith($callSite['file'], $excludes)) {
+            while (($callSite = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $i + 1)[$i]) && Str::startsWith($callSite['file'] ?? '', $excludes)) {
                 $i++;
             }
             unset($callSite['object']);
