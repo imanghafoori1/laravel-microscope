@@ -102,7 +102,11 @@ class FunctionCall
 
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
-            [$actualToken, $j] = self::getPrevToken($tokens, $j);
+            try {
+                [$actualToken, $j] = self::getPrevToken($tokens, $j);
+            } catch (\Throwable $e) {
+                return [];
+            }
             if (! self::isEqual($expectedToken, $actualToken)) {
                 return [];
             }
