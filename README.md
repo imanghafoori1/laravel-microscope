@@ -40,6 +40,13 @@ You can install the package via composer:
 composer require imanghafoori/laravel-microscope --dev
 ```
 
+Although this project has already a lot of features, but it is still under active development, so you have to update it almost everyday in order to get the latest improvements and bug fixes.
+
+```bash
+composer update imanghafoori/laravel-microscope
+```
+
+
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
 You can run:
