@@ -4,11 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyDispatcher extends Dispatcher
 {
     public $originalListeners = [];
+
+    public $wildcardsOriginal = [];
 
     public function listen($events, $listener)
     {
@@ -19,7 +22,7 @@ class SpyDispatcher extends Dispatcher
             $this->validateCallback($event, $listener);
         }
 
-        // do not move this loop into a private method or something, it breaks.
+        // Do not move this loop into a private method or something, it breaks.
         foreach ((array)$events as $event) {
             $i = 0;
             $excludes = [
@@ -29,13 +32,35 @@ class SpyDispatcher extends Dispatcher
                 $i++;
             }
             unset($t['object']);
-            $this->originalListeners[$event][] = [$listener, $t];
+            if ($listener instanceof \Closure) {
+                $reflection = new \ReflectionFunction($listener);
+                $line = $reflection->getStartLine();
+                $path = FilePath::getRelativePath($reflection->getFileName());
+                $listener = 'Closure at: '.$path.':'.$line;
+            }
+
+            if (Str::contains($event, '*')) {
+                $this->wildcardsOriginal[$event][] =  [$listener, $t];
+            } else {
+                $this->originalListeners[$event][] = [$listener, $t];
+            }
         }
     }
 
-    public function getOriginalListeners($event)
+    public function getOriginalListeners($eventName)
     {
-        return $this->originalListeners[$event] ?? [];
+        $listeners = $this->originalListeners[$eventName] ?? [];
+
+        $wildcards = [];
+        foreach ($this->wildcardsOriginal as $key => $listeners) {
+            if (Str::is($key, $eventName)) {
+                $wildcards = array_merge($wildcards, $listeners);
+            }
+        }
+
+        $listeners = array_merge($listeners, $wildcards);
+
+        return class_exists($eventName, false) ? $this->addOriginInterfaceListeners($eventName, $listeners) : $listeners;
     }
 
     private function error($string)
@@ -103,5 +128,18 @@ class SpyDispatcher extends Dispatcher
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    private function addOriginInterfaceListeners($eventName, array $listeners)
+    {
+        foreach (class_implements($eventName) as $interface) {
+            if (isset($this->originalListeners[$interface])) {
+                foreach ($this->originalListeners[$interface] as $names) {
+                    $listeners = array_merge($listeners, (array)$names);
+                }
+            }
+        }
+
+        return $listeners;
     }
 }
