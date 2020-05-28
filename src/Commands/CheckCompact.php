@@ -23,6 +23,7 @@ class CheckCompact extends Command
      */
     public function handle()
     {
+        event('microscope.start.command');
         $this->info('Checking compact() calls, fast and furious!  mm(~_~)mm  ');
 
         $this->checkRoutePaths(RoutePaths::get());
