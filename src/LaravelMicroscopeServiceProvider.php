@@ -69,6 +69,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         //  $this->loadConfig();
 
         app()->singleton(ErrorPrinter::class);
+        $this->spyRouter();
 
         // we need to start spying before the boot process starts.
 
@@ -77,7 +78,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $checkAll = Str::startsWith('check:all', $command);
         ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
 //        ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
-        $this->spyRouter();
         ($checkAll || Str::startsWith('check:gates', $command)) && $this->spyGates();
     }
 
