@@ -51,9 +51,9 @@ class SpyDispatcher extends Dispatcher
         $listeners = $this->originalListeners[$eventName] ?? [];
 
         $wildcards = [];
-        foreach ($this->wildcardsOriginal as $key => $listeners) {
+        foreach ($this->wildcardsOriginal as $key => $wildcardListeners) {
             if (Str::is($key, $eventName)) {
-                $wildcards = array_merge($wildcards, $listeners);
+                $wildcards = array_merge($wildcards, $wildcardListeners);
             }
         }
 
@@ -148,9 +148,8 @@ class SpyDispatcher extends Dispatcher
             $reflection = new ReflectionFunction($listener);
             $line = $reflection->getStartLine();
             $path = FilePath::getRelativePath($reflection->getFileName());
-            $listener = 'Closure at: '.$path.':'.$line;
 
-            return $listener;
+            return 'Closure at: '.$path.':'.$line;
         } catch (ReflectionException $e) {
             return '';
         }
