@@ -4,6 +4,9 @@
 <h2 align="center">
     Automatic Code Refactor
 </h2>
+<h2 align="center">
+    3. New Way of Code Generation
+</h2>
 
 <h3 align="center">
 So, Give your eyes a rest, this will check it for you.
