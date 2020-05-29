@@ -4,9 +4,9 @@
 <h2 align="center">
     Automatic Code Refactor
 </h2>
-<h2 align="center">
-    3. New Way of Code Generation
-</h2>
+<h3 align="center">
+    New Way of Code Generation
+</h3>
 
 <h3 align="center">
 So, Give your eyes a rest, this will check it for you.
@@ -118,6 +118,14 @@ You can run:
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan pp:route
 </h4>
 </p>
+
+
+<p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:generate
+</h4>
+</p>
+
+
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
@@ -293,6 +301,17 @@ php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
+
+----------------------
+
+```php
+php artisan check:generate
+```
+You make empty file, we fill it, based on naming conventions.
+
+If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
+1 - It will be filled with boiler plate and correct Psr-4 namespace.
+2 - It will be appnded to the `providers` array in the `config/app.php`
 
 ----------------------
 
