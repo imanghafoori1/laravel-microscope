@@ -68,7 +68,8 @@ class ConsolePrinterInstaller
         Event::listen(RouteDefinitionConflict::class, function ($e) {
             app(ErrorPrinter::class)->routeDefinitionConflict(
                 $e->data['poorRoute'],
-                $e->data['bullyRoute']
+                $e->data['bullyRoute'],
+                $e->data['info']
             );
         });
 

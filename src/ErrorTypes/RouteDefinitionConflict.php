@@ -6,11 +6,12 @@ class RouteDefinitionConflict
 {
     public $data;
 
-    public function __construct($poorRoute, $bullyRoute)
+    public function __construct($poorRoute, $bullyRoute, $info)
     {
         $this->data = [
             'poorRoute' => $poorRoute,
-            'bullyRoute' => $bullyRoute
+            'bullyRoute' => $bullyRoute,
+            'info' => $info
         ];
     }
 }

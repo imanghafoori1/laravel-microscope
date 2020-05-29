@@ -28,9 +28,16 @@ class SpyRouteCollection extends RouteCollection
         $domainAndUri = $route->getDomain().$route->uri();
         foreach ($route->methods() as $method) {
             if (isset($this->routes[$method][$domainAndUri])) {
-                event(new RouteDefinitionConflict($this->routes[$method][$domainAndUri], $route));
+                if (! $this->isItSelf($this->routesInfo[$method][$domainAndUri])) {
+                    event(new RouteDefinitionConflict($this->routes[$method][$domainAndUri], $route, $this->routesInfo[$method][$domainAndUri]));
+                }
             }
         }
         parent::addToCollections($route);
+    }
+
+    private function isItSelf($info)
+    {
+        return $info[0] == $info[1];
     }
 }

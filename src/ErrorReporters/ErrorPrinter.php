@@ -99,7 +99,7 @@ class ErrorPrinter
             ->link($path, $lineNumber));
     }
 
-    public function routeDefinitionConflict($route1 , $route2)
+    public function routeDefinitionConflict($route1 , $route2, $info)
     {
         $key = 'routeDefinitionConflict';
         $routeName = $route1->getName();
@@ -111,7 +111,9 @@ class ErrorPrinter
             $routeUri = $this->yellow($routeUri);
             $msg = 'Route uri: '.$routeUri;
         }
-        $msg .= ' is overridden by ';
+
+        $msg .= "\n".' at '. $info[0]['file'].':'.$info[0]['line'];
+        $msg .= "\n".' is overridden by ';
 
         $routeName = $route2->getName();
         if ($routeName) {
@@ -120,6 +122,8 @@ class ErrorPrinter
         } else {
             $msg .= 'an other route with same uri.';
         }
+
+        $msg .= "\n".' at '. $info[1]['file'].':'.$info[1]['line']. "\n";
 
         $methods = implode(',', $route1->methods());
 
