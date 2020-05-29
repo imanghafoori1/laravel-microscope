@@ -29,16 +29,18 @@ class CheckEvents extends Command
      *
      * @param  ErrorPrinter  $errorPrinter
      *
-     * @return int
+     * @return mixed
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
+        event('microscope.start.command');
         $this->info('Checking events...');
 
         $errorPrinter->printer = $this->output;
 
         $this->finishCommand($errorPrinter);
+        event('microscope.finished.checks', [$this]);
 
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return $errorPrinter->pended ? 1: 0;
     }
 }
