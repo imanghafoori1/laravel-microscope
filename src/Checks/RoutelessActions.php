@@ -85,13 +85,17 @@ class RoutelessActions
     {
         $errorPrinter = resolve(ErrorPrinter::class);
         $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+        if (! $this->isLaravelController($fullNamespace)) {
+            return;
+        }
 
-        if ($this->isLaravelController($fullNamespace)) {
-            $actions = $this->checkActions($tokens, $fullNamespace, $classFilePath);
+        if ((new \ReflectionClass($fullNamespace))->isAbstract()) {
+            return;
+        }
+        $actions = $this->checkActions($tokens, $fullNamespace, $classFilePath);
 
-            foreach ($actions as $action) {
-                $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
-            }
+        foreach ($actions as $action) {
+            $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
         }
     }
 
