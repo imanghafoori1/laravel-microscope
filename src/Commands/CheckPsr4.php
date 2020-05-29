@@ -34,6 +34,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             CheckNamespaces::forNamespace($files, $psr4Path, $psr4Namespace, $this);
         }
 
+        $this->replaceOldNamespace($autoload);
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
     }
@@ -45,6 +46,25 @@ class CheckPsr4 extends Command implements FileCheckContract
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info('finished: "composer dump"');
+        }
+    }
+
+    private function replaceOldNamespace(array $autoload)
+    {
+        $olds = array_keys(CheckNamespaces::$changedNamespaces);
+        $news = array_values(CheckNamespaces::$changedNamespaces);
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
+            $files = FilePath::getAllPhpFiles($psr4Path);
+            foreach ($files as $classFilePath) {
+                $lines = file($classFilePath->getRealPath());
+                $changed = false;
+                foreach ($lines as $i => $line) {
+                    $count = 0;
+                    $lines[$i] = str_replace($olds, $news, $line, $count);
+                    $count && $changed = true;
+                }
+                $changed && file_put_contents($classFilePath->getRealPath(), implode('', $lines));
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckNamespaces
 {
+    public static $changedNamespaces = [];
+
     /**
      * Get all of the listeners and their corresponding events.
      *
@@ -61,6 +63,7 @@ class CheckNamespaces
                 continue;
             }
 
+            self::$changedNamespaces[$currentNamespace.'\\'. $class] = $correctNamespace.'\\'. $class;
             self::warn($currentNamespace, $relativePath);
 
             $answer = self::ask($command, $correctNamespace);
