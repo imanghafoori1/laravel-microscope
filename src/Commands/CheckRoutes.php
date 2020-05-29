@@ -48,7 +48,7 @@ class CheckRoutes extends Command
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
     private function getRouteId($route)

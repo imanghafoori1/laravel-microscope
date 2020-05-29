@@ -29,7 +29,7 @@ class CheckAll extends Command
      *
      * @param  ErrorPrinter  $errorPrinter
      *
-     * @return mixed
+     * @return int
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -55,6 +55,6 @@ class CheckAll extends Command
         $this->finishCommand($errorPrinter);
         $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 }

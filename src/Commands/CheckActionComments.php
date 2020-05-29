@@ -28,6 +28,6 @@ class CheckActionComments extends Command
 
         $this->finishCommand($errorPrinter);
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 }

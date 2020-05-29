@@ -29,7 +29,7 @@ class CheckEvents extends Command
      *
      * @param  ErrorPrinter  $errorPrinter
      *
-     * @return mixed
+     * @return int
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -39,6 +39,6 @@ class CheckEvents extends Command
 
         $this->finishCommand($errorPrinter);
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 }

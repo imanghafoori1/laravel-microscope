@@ -35,8 +35,7 @@ class CheckBladeQueries extends Command implements FileCheckContract
      *
      * @param  ErrorPrinter  $errorPrinter
      *
-     * @throws \ErrorException
-     * @return mixed
+     * @return int
      */
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -50,5 +49,7 @@ class CheckBladeQueries extends Command implements FileCheckContract
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
+
+        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 }
