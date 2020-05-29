@@ -73,19 +73,25 @@ class ActionsComments extends RoutelessActions
         return $routelessActions;
     }
 
-    protected function getMsg($methods, $r)
+    protected function getMsg($methods, $route)
     {
         $msg = '/** '."\n";
         $prefix = '         * ';
-        $nameBlock = $prefix.'@name(\''.($r->getName() ?: '').'\')';
+        $nameBlock = $prefix.'@name(\''.($route->getName() ?: '').'\')';
         $msg .= $prefix;
         if (count($methods) > 1) {
-            $msg .= '@methods('.implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$r->uri().'\')'."\n".$nameBlock;
+            $msg .= '@methods('.implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$route->uri().'\')'."\n".$nameBlock;
         } else {
-            $msg .= '@'.strtolower(implode('', $methods)).'(\'/'.$r->uri().'\')'."\n".$nameBlock;
+            $msg .= '@'.strtolower(implode('', $methods)).'(\'/'.$route->uri().'\')'."\n".$nameBlock;
         }
 
-        $middlewares = $r->gatherMiddleware();
+        $middlewares = $route->gatherMiddleware();
+
+        foreach($middlewares as $i => $m) {
+            if (! is_string($m)) {
+                $middlewares[$i] = 'Closure';
+            }
+        }
         $msg .= "\n".$prefix.'@middlewares('.implode(', ', $middlewares).')';
 
         $msg .= "\n         */";
