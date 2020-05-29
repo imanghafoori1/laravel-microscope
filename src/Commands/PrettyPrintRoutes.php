@@ -33,19 +33,19 @@ class PrettyPrintRoutes extends Command
         }
     }
 
-    private function writeIt($r, $filename)
+    private function writeIt($route, $filename)
     {
         try {
-            $middlewares = $this->getMiddlewares($r);
+            $middlewares = $this->getMiddlewares($route);
 
-            $methods = $r->methods();
+            $methods = $route->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
 
-            $action = $this->getAction($r->getActionName());
+            $action = $this->getAction($route->getActionName());
 
             if (count($methods)  == 1) {
 
-                $definition = PHP_EOL.$this->getMovableRoute($r, $methods, $action, $middlewares);
+                $definition = PHP_EOL.$this->getMovableRoute($route, $methods, $action, $middlewares);
 
                 file_put_contents($filename, $definition, FILE_APPEND);
             }
@@ -67,11 +67,11 @@ class PrettyPrintRoutes extends Command
         return $route;
     }
 
-    private function printIt($r)
+    private function printIt($route)
     {
         try {
-            $middlewares = $this->getMiddlewares($r);
-            $this->prettyPrintInConsole($r, $middlewares);
+            $middlewares = $this->getMiddlewares($route);
+            $this->prettyPrintInConsole($route, $middlewares);
         } catch (Exception $e) {
             $this->handleRouteProblem($e);
 
@@ -79,11 +79,11 @@ class PrettyPrintRoutes extends Command
         }
     }
 
-    private function getMovableRoute($r, $methods, $action, $middlewares)
+    private function getMovableRoute($route, $methods, $action, $middlewares)
     {
-        $nameSection = ($r->getName() ? ("->name('".$r->getName()."')") : '');
+        $nameSection = ($route->getName() ? ("->name('".$route->getName()."')") : '');
         $middlewareSection = ($middlewares ? '->middleware(['.$middlewares."])" : '');
-        $uriAction = "('/".$r->uri()."', ".$action.")";
+        $uriAction = "('/".$route->uri()."', ".$action.")";
 
         $method = strtolower($methods[0]);
 
@@ -101,10 +101,10 @@ class PrettyPrintRoutes extends Command
         return "["."\\".$action[0]."::class".", '".$action[1]."']";
     }
 
-    private function getMiddlewares($r)
+    private function getMiddlewares($route)
     {
-        $middlewares = $r->gatherMiddleware();
-        $middlewares && $middlewares = "'".implode("', '", $r->gatherMiddleware())."'";
+        $middlewares = $route->gatherMiddleware();
+        $middlewares && $middlewares = "'".implode("', '", $route->gatherMiddleware())."'";
 
         return $middlewares;
     }
@@ -116,12 +116,12 @@ class PrettyPrintRoutes extends Command
         $this->info($e->getFile());
     }
 
-    private function prettyPrintInConsole($r, $middlewares)
+    private function prettyPrintInConsole($route, $middlewares)
     {
         $this->getOutput()->writeln('---------------------------------------------------');
-        $this->info(' name:             '.($r->getName() ? ($r->getName()) : ''));
-        $this->info(' uri:              '.implode(', ', $r->methods())."   '/".$r->uri()."'  ");
+        $this->info(' name:             '.($route->getName() ? ($route->getName()) : ''));
+        $this->info(' uri:              '.implode(', ', $route->methods())."   '/".$route->uri()."'  ");
         $this->info(' middlewares:      '.$middlewares);
-        $this->info(' action:           '.$r->getActionName());
+        $this->info(' action:           '.$route->getActionName());
     }
 }
