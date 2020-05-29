@@ -21,13 +21,6 @@ class CheckRoutes extends Command
 
     protected $description = 'Checks the validity of route definitions';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return mixed
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');

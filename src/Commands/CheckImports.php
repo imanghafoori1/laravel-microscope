@@ -20,28 +20,10 @@ class CheckImports extends Command implements FileCheckContract
 
     use ScansFiles;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:imports {--d|detailed : Show files being checked}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks the validity of use statements';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @throws \ErrorException
-     * @return mixed
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');

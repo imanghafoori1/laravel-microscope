@@ -16,27 +16,10 @@ class CheckBladeQueries extends Command implements FileCheckContract
 
     use ScansFiles;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:blade_queries {--d|detailed : Show files being checked}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks db queries in blade files';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return int
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');

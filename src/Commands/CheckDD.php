@@ -18,11 +18,6 @@ class CheckDD extends Command
 
     protected $description = 'Checks the debug functions';
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
     public function handle()
     {
         event('microscope.start.command');

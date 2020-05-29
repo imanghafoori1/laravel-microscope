@@ -16,27 +16,10 @@ class CheckExtractBladeIncludes extends Command implements FileCheckContract
 
     use ScansFiles;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:extract_blades';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks to extract blade partials';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return mixed
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         if (! $this->startWarning()) {

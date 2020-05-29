@@ -10,25 +10,10 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckEarlyReturns extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:early_returns {--t|test : backup the changed files}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Applies the early return on the classes.';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         if (! $this->startWarning()) {

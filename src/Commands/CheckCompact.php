@@ -17,11 +17,6 @@ class CheckCompact extends Command
 
     protected $description = 'Checks the compact() function calls to be correct';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
         event('microscope.start.command');

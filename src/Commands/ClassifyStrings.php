@@ -12,18 +12,8 @@ class ClassifyStrings extends Command
 {
     use LogsErrors;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:stringy_classes';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Replaces string references with ::class version of them.';
 
     public function handle(ErrorPrinter $errorPrinter)

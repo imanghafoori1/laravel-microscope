@@ -10,27 +10,10 @@ class CheckAll extends Command
 {
     use LogsErrors;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:all {--d|detailed : Show files being checked}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Run all checks with one command.';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return int
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         $t1 = microtime(true);

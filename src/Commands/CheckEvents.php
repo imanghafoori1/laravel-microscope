@@ -10,18 +10,8 @@ class CheckEvents extends Command
 {
     use LogsErrors;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:events';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks the validity of event listeners';
 
     /**
@@ -41,6 +31,6 @@ class CheckEvents extends Command
         $this->finishCommand($errorPrinter);
         event('microscope.finished.checks', [$this]);
 
-        return $errorPrinter->pended ? 1: 0;
+        return $errorPrinter->pended ? 1 : 0;
     }
 }

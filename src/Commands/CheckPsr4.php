@@ -18,27 +18,10 @@ class CheckPsr4 extends Command implements FileCheckContract
 
     use ScansFiles;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Checks the validity of namespaces';
 
-    /**
-     * Execute the console command.
-     *
-     * @param  ErrorPrinter  $errorPrinter
-     *
-     * @return void
-     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking PSR-4 Namespaces...');

@@ -18,11 +18,6 @@ class CheckBadPractice extends Command
 
     protected $description = 'Checks the bad practices';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
         event('microscope.start.command');
