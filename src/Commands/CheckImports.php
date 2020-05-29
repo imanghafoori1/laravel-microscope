@@ -60,6 +60,8 @@ class CheckImports extends Command implements FileCheckContract
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function checkFilePaths($paths)

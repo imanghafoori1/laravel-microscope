@@ -38,5 +38,7 @@ class CheckEvents extends Command
         $errorPrinter->printer = $this->output;
 
         $this->finishCommand($errorPrinter);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 }

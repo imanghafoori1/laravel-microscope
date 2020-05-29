@@ -36,5 +36,7 @@ class ClassifyStrings extends Command
         Psr4Classes::check([CheckStringy::class]);
 
         $this->finishCommand($errorPrinter);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 }

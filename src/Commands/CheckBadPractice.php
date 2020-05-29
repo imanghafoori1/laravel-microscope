@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
 
 class CheckBadPractice extends Command
@@ -36,6 +37,8 @@ class CheckBadPractice extends Command
         $this->info('&It is recommended use env() calls, only and only in config files.');
         $this->info('Otherwise you can NOT cache your config files using "config:cache"');
         $this->info('https://laravel.com/docs/5.5/configuration#configuration-caching');
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function checkForEnv($absPath)

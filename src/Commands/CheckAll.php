@@ -54,5 +54,7 @@ class CheckAll extends Command
 
         $this->finishCommand($errorPrinter);
         $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 }

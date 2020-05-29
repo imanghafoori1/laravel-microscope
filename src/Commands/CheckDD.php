@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
 
 class CheckDD extends Command
@@ -33,6 +34,8 @@ class CheckDD extends Command
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function checkForDD($absPath)

@@ -53,6 +53,8 @@ class CheckPsr4 extends Command implements FileCheckContract
 
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
+
+        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     private function composerDumpIfNeeded($errorPrinter)
