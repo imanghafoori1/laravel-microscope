@@ -62,8 +62,14 @@ class CheckNamespaces
             if ($currentNamespace === $correctNamespace) {
                 continue;
             }
-
-            self::$changedNamespaces[$currentNamespace.'\\'. $class] = $correctNamespace.'\\'. $class;
+            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($currentNamespace). DIRECTORY_SEPARATOR . $class))) {
+                self::$changedNamespaces[$currentNamespace.'\\'. $class.';'] = $correctNamespace.'\\'. $class.';';
+                self::$changedNamespaces[$currentNamespace.'\\'. $class.'('] = $correctNamespace.'\\'. $class.'(';
+                self::$changedNamespaces[$currentNamespace.'\\'. $class.'::'] = $correctNamespace.'\\'. $class.'::';
+                self::$changedNamespaces[$currentNamespace.'\\'. $class.' as'] = $correctNamespace.'\\'. $class.' as';
+            } else {
+                self::$changedNamespaces[$currentNamespace.'\\'. $class] = $correctNamespace.'\\'. $class;
+            }
             self::warn($currentNamespace, $relativePath);
 
             $answer = self::ask($command, $correctNamespace);
@@ -73,13 +79,14 @@ class CheckNamespaces
                 app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
             }
         }
+        app(ErrorPrinter::class)->counts['total'] = 0;
     }
 
     private static function warn($currentNamespace, $relativePath)
     {
         $p = app(ErrorPrinter::class);
         $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
-        $p->printLink($relativePath, 4);
+        $p->printLink($relativePath, 3);
     }
 
     public static function hasOpeningTag($file)

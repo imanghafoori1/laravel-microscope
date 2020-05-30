@@ -20,6 +20,7 @@ class ErrorPrinter
         'routelessCtrl' => [],
         'queryInBlade' => [],
         'envFound' => [],
+        'ns_replacement' => [],
     ];
 
     public $printer;
@@ -160,7 +161,7 @@ class ErrorPrinter
     {
         array_push($this->counts['badNamespace'], (new PendingError('badNamespace'))
             ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
-            ->errorData('namespace fixed to: '.$this->yellow("namespace $correctNamespace;"))
+            ->errorData('  namespace fixed to:  '.$this->yellow("namespace $correctNamespace;"))
             ->link($absPath, $lineNumber));
     }
 
