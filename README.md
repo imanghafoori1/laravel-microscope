@@ -301,6 +301,7 @@ php artisan check:psr4
 ```
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
+- It also checks for references to the old namespace with the system and replaces them with the new one.
 
 ----------------------
 
