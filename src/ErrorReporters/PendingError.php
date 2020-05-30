@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class PendingError
 {
-    static $maxLength = 0;
+    static $maxLength = 60;
 
     private $type;
 
@@ -92,9 +92,6 @@ class PendingError
         return $this->linkPath;
     }
 
-    /**
-     * @return int
-     */
     public function getLinkLineNumber()
     {
         return $this->linkLineNumber;

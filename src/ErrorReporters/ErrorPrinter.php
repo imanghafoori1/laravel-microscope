@@ -182,14 +182,15 @@ class ErrorPrinter
 
     public function printHeader($msg)
     {
-        $this->print('');
         $number = ++$this->counts['total'];
         ($number < 10) && $number = " $number";
 
         $number = '<fg=yellow>'.$number.' </>';
         $path = "| $number";
 
-        $this->print($msg, $path, PendingError::$maxLength -1);
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
+        $this->print('');
+        $this->print($msg, $path, PendingError::$maxLength - 1);
     }
 
     public function end()

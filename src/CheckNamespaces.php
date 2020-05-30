@@ -84,6 +84,9 @@ class CheckNamespaces
 
     private static function warn($currentNamespace, $relativePath)
     {
+        /**
+         * @var $p ErrorPrinter
+         */
         $p = app(ErrorPrinter::class);
         $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
         $p->printLink($relativePath, 3);
