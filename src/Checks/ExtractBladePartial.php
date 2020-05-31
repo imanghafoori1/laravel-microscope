@@ -56,7 +56,7 @@ class ExtractBladePartial
 
             $partialPath = str_replace(['/','\\'], '/', $partialPath);
 
-            $spaces = (Str::before($extracted[0], trim($extracted[0])));
+            $spaces = Str::before($extracted[0], trim($extracted[0]));
             // add space before the @include to have proper indentation.
             $file[$start] = $spaces.$file[$start];
             foreach ($extracted as $i => $line) {
