@@ -29,9 +29,9 @@ class CheckClasses
     public static function warnDumping($msg)
     {
         $p = resolve(ErrorPrinter::class)->printer;
-        $p->info('It seems composer has some trouble with autoload...');
-        $p->info($msg);
-        $p->info('Running "composer dump-autoload" command...  \(*_*)\  ');
+        $p->writeln('It seems composer has some trouble with autoload...');
+        $p->writeln($msg);
+        $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
     }
 
     private static function checkImports($tokens, $absFilePath)
