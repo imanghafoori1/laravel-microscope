@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 
 class SpyDispatcher extends Dispatcher
 {
@@ -60,6 +61,8 @@ class SpyDispatcher extends Dispatcher
 
     private function error($string)
     {
+        strlen($string);
+        PendingError::$maxLength < strlen($string) && PendingError::$maxLength = strlen($string);
         app(ErrorPrinter::class)->pended[] = $string;
     }
 
