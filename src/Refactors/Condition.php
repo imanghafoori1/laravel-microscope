@@ -76,18 +76,18 @@ class Condition
     private static function replace($conditionTokens, $ops)
     {
         $newTokens = [];
-        foreach ($conditionTokens as $t) {
-            $o = $t[1] ?? $t[0];
-            if (isset($ops[$o])) {
-                $r = $t;
-                $r[1] = $ops[$o];
+        foreach ($conditionTokens as $token) {
+            $char = is_array($token) ? $token[1] : $token[0];
+            if (isset($ops[$char])) {
+                $r = (array)$token;
+                $r[1] = $ops[$char];
+
                 $newTokens[] = $r;
             } else {
-                $newTokens[] = $t;
+                $newTokens[] = $token;
             }
         }
 
         return $newTokens;
     }
-
 }
