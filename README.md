@@ -145,7 +145,7 @@ Lets start with:
 php artisan check:early_returns
 ```
 
-This will scan all your Psr-4 loaded classes and flattens your functions ans loops by applting the early return rule.
+This will scan all your Psr-4 loaded classes and flattens your functions ans loops by applying the early return rule.
 For example:
 
 ```php
