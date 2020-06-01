@@ -53,31 +53,26 @@ composer update imanghafoori/laravel-microscope
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
 You can run:
-<p> <h4>
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
-</h4>
-</p>
+</h4></p>
 <p>
 <h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gates
-     </h4>
-</p>
+ </h4></p>
 <p>
 <h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:views
-</h4>
-</p>
+</h4></p>
 <p>
 <h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:routes 
- </h4>
-</p>
+ </h4></p>
 
 <p>
 <h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4 
-</h4>
-</p>
+</h4></p>
  
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:imports  </h4>
@@ -116,14 +111,12 @@ You can run:
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan pp:route
-</h4>
-</p>
+</h4></p>
 
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:generate
-</h4>
-</p>
+</h4></p>
 
 
 
@@ -508,7 +501,7 @@ If you think that my work has saved you a lot of time hence a lot of money, plea
 - Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
 - USDC: 0xB3F88d2334C9A5eFBe9c0932A969E8a971139547
 
-You can contact me at telegram, after donation: tg://resolve?domain=imanghafoori
+You can contact me at telegram, after donation: https://t.me/imanghafoori so I can put your logo and name on the readme file. 
 
 I would be happy to answer you.
 
