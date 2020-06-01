@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -88,6 +89,9 @@ class CheckNamespaces
          * @var $p ErrorPrinter
          */
         $p = app(ErrorPrinter::class);
+        $msg = 'Incorrect namespace: '.$p->yellow("namespace $currentNamespace;");
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
+        $p->end();
         $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
         $p->printLink($relativePath, 3);
     }
