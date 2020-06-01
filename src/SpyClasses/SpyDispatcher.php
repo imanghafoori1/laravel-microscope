@@ -61,8 +61,8 @@ class SpyDispatcher extends Dispatcher
 
     private function error($string)
     {
-        strlen($string);
-        PendingError::$maxLength < strlen($string) && PendingError::$maxLength = strlen($string);
+        $len = strlen($string);
+        PendingError::$maxLength < $len && PendingError::$maxLength = $len;
         app(ErrorPrinter::class)->pended[] = $string;
     }
 
