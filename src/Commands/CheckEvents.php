@@ -28,7 +28,6 @@ class CheckEvents extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $this->finishCommand($errorPrinter);
         event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->pended ? 1 : 0;

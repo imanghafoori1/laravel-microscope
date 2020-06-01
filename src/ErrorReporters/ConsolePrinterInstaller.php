@@ -28,8 +28,10 @@ class ConsolePrinterInstaller
             return;
         }
 
-        if ($errorCount = $errorPrinter->hasErrors()) {
-            $command->getOutput()->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
+        if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
+            $msg = $errorCount.' errors found for '.$commandType;
+
+            $errorCount && $command->getOutput()->writeln(PHP_EOL.$msg);
             $errorPrinter->logErrors();
         } else {
             $command->info(PHP_EOL.'All '.$commandType.' are correct!');

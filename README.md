@@ -5,7 +5,7 @@
     Automatic Code Refactor
 </h2>
 <h3 align="center">
-    New Way of Code Generation
+    and, New Way of Code Generation
 </h3>
 
 <h3 align="center">

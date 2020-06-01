@@ -22,8 +22,9 @@ trait LogsErrors
             return;
         }
 
-        if ($errorCount = $errorPrinter->hasErrors()) {
-            $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+        if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
+            $errorCount && $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+
             $errorPrinter->logErrors();
         } else {
             $this->info(PHP_EOL.'All '.$commandType.' are correct!');
