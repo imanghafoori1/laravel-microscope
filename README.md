@@ -508,7 +508,7 @@ If you think that my work has saved you a lot of time hence a lot of money, plea
 - Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
 - USDC: 0xB3F88d2334C9A5eFBe9c0932A969E8a971139547
 
-You can contact me at telegram, after donation: https://t.me/imanghafoori
+You can contact me at telegram, after donation: tg://resolve?domain=imanghafoori
 
 I would be happy to answer you.
 
