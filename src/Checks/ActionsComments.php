@@ -75,7 +75,7 @@ class ActionsComments extends RoutelessActions
 
     protected function getMsg($methods, $route)
     {
-        $msg = '/** '."\n";
+        $msg = '/**'."\n";
         $prefix = '         * ';
         $nameBlock = $prefix.'@name(\''.($route->getName() ?: '').'\')';
         $msg .= $prefix;

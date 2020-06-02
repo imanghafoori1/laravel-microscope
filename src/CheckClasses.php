@@ -4,6 +4,8 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Composer;
+use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -91,6 +93,8 @@ class CheckClasses
     {
         foreach ($imports as $i => $import) {
             if (self::isAbsent($import[0])) {
+                $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
+                $isInUserSpace && ReplaceLine::fixReference($absPath, $import[0]);
                 app(ErrorPrinter::class)->wrongImport($absPath, $import[0], $import[1]);
             }
         }

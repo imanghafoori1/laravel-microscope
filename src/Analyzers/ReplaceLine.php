@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\LaravelMicroscope\Psr4Classes;
+
 class ReplaceLine
 {
     /**
@@ -42,5 +44,16 @@ class ReplaceLine
         }
 
         return $isReplaced;
+    }
+
+    public static function fixReference($absPath, $class)
+    {
+        $t = Psr4Classes::classList();
+        $c = explode('\\', $class);
+        $className = array_pop($c);
+        $correct = $t[$className] ?? [];
+        if (count($correct) === 1) {
+            self::replaceFirst($absPath, $class, $correct[0]);
+        }
     }
 }
