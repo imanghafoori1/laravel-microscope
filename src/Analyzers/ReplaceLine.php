@@ -13,7 +13,7 @@ class ReplaceLine
      *
      * @return bool|int
      */
-    public static function replaceFirst($file, $search, $replace = '')
+    public static function replaceFirst($file, $search, $replace = '', $_line = null)
     {
         $reading = fopen($file, 'r');
         $tmpFile = fopen($file.'._tmp', 'w');
@@ -27,8 +27,10 @@ class ReplaceLine
 
             // replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
-                $line = str_replace($search, $replace, $line);
-                $isReplaced = $lineNum;
+                if (! $_line || $lineNum == $_line) {
+                    $line = str_replace($search, $replace, $line);
+                    $isReplaced = $lineNum;
+                }
             }
 
             // copy the entire file to the end
@@ -46,14 +48,16 @@ class ReplaceLine
         return $isReplaced;
     }
 
-    public static function fixReference($absPath, $class)
+    public static function fixReference($absPath, $class, $lineNum)
     {
-        $t = Psr4Classes::classList();
-        $c = explode('\\', $class);
-        $className = array_pop($c);
-        $correct = $t[$className] ?? [];
+        $class_list = Psr4Classes::classList();
+        $cls = explode('\\', $class);
+        $className = array_pop($cls);
+        $correct = $class_list[$className] ?? [];
         if (count($correct) === 1) {
-            self::replaceFirst($absPath, $class, $correct[0]);
+            return self::replaceFirst($absPath, $class, $correct[0], $lineNum);
+        } else {
+            return false;
         }
     }
 }
