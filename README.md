@@ -313,7 +313,8 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 php artisan check:imports
 ```
 
-- It checks all the imports (`use` statements) to be valid.
+- It checks all the imports (`use` statements) to be valid and reports invalid ones.
+- It auto-corrects some of the refrences, it no ambiguity is around the class name.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
 ----------------------
