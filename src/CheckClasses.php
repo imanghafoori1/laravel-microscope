@@ -126,6 +126,7 @@ class CheckClasses
             if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
                 continue;
             }
+
             $trimmed = trim($token[1], '\'\"');
 
             if ($onlyAbsClassPath && $trimmed[0] !== '\\') {
@@ -135,6 +136,11 @@ class CheckClasses
             [$class, $method] = explode('@', $trimmed);
 
             if (substr_count($class, '\\') <= 0) {
+                continue;
+            }
+
+
+            if (Str::contains($trimmed, ['-', '/', '[', '*', '+', '.', '(', '$', '^'])) {
                 continue;
             }
 
