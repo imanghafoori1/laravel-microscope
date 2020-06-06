@@ -104,6 +104,7 @@ class ClassReferenceFinder
                     $c++;
                     $collect = false;
                 }
+                self::forward();
                 continue;
             } elseif ($t == '(' || $t == ')') {
                 // wrong...
