@@ -86,7 +86,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             $count && $changed[] = ($i + 1);
         }
 
-        $changed && file_put_contents($_path, implode('', $lines));
+       $changed && file_put_contents($_path, implode('', $lines));
 
         return $changed;
     }
