@@ -145,7 +145,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function canRun()
     {
-        return $this->app->runningInConsole() && app()['env'] !== 'production';
+        return $this->app->runningInConsole() && ! $this->app->runningUnitTests() && app()['env'] !== 'production';
     }
 
     public function getActionName()
