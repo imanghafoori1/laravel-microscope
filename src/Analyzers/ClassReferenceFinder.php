@@ -47,6 +47,8 @@ class ClassReferenceFinder
                 $force_close = false;
                 $collect = true;
                 // continue;   // why we do not continue?? (0_o)
+            } elseif (in_array($t, [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+                $isInsideMethod = false;
             } elseif ($t == T_FUNCTION) {
                 $isDefiningFunction = true;
                 if ($isInSideClass and ! $isInsideMethod) {
