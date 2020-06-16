@@ -35,6 +35,8 @@ Built with :heart: for lazy laravel developers ;)
 - If you have written a lot of tests for your app, you may not need this.
 - **It can refactor your code**, by applying `early returns` automatically.
 
+### :film_strip: Video tutorial [here](https://youtu.be/aEkiE30wNKk)
+
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
 You can install the package via composer:
