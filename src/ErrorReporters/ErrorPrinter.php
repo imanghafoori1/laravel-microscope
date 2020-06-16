@@ -113,7 +113,7 @@ class ErrorPrinter
             $msg = 'Route uri: '.$routeUri;
         }
 
-        $msg .= "\n".' at '. $info[0]['file'].':'.$info[0]['line'];
+        $msg .= "\n".' at '. ($info[0]['file'] ?? 'unknown').':'.($info[0]['line'] ?? 2);
         $msg .= "\n".' is overridden by ';
 
         $routeName = $route2->getName();
