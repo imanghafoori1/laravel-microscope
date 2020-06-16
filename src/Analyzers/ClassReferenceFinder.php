@@ -134,7 +134,7 @@ class ClassReferenceFinder
                 // When we reach the ::class syntax.
                 // we do not want to treat: $var::method(), self::method()
                 // as a real class name, so it must be of type T_STRING
-                if (! $collect && ! in_array(self::$lastToken[1], ['parent', 'self', 'static']) && self::$lastToken[0] == T_STRING && (self::$secLastToken[1] ?? null) !== '->') {
+                if (! $collect && self::$lastToken[0] == T_STRING && ! in_array(self::$lastToken[1], ['parent', 'self', 'static']) && (self::$secLastToken[1] ?? null) !== '->') {
                     $classes[$c][] = self::$lastToken;
                 }
                 $collect = false;
