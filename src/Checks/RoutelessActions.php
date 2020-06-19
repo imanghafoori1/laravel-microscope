@@ -18,9 +18,6 @@ class RoutelessActions
                 continue;
             }
 
-            if (! is_array($method['name'])) {
-                continue;
-            }
             $methodName = $method['name'][1];
             // we exclude __construct
             if ($methodName == '__construct') {

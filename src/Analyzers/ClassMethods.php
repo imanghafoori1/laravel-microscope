@@ -32,7 +32,11 @@ class ClassMethods
                 continue;
             }
 
-            $name = $tokens[$i + 2];
+            if (! is_array($name = $tokens[$i + 2])) {
+                $i++;
+                continue;
+            }
+
             if (in_array($tokens[$i - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
                 $visibility = $tokens[$i - 2];
             } else {
