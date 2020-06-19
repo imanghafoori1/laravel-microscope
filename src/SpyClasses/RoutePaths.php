@@ -20,7 +20,7 @@ class RoutePaths
 
         foreach (config('app.providers') as $providerClass) {
             // we exclude the core or package service providers here.
-            if (! Str::contains($providerClass, array_keys(ComposerJson::readKey('autoload.psr-4')))) {
+            if (! Str::contains($providerClass, array_keys(ComposerJson::readAutoload()))) {
                 continue;
             }
 

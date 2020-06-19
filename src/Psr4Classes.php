@@ -33,7 +33,7 @@ class Psr4Classes
 
     public static function classList()
     {
-        $psr4 = ComposerJson::readKey('autoload.psr-4');
+        $psr4 = ComposerJson::readAutoload();
 
         if (self::$allNamespaces) {
             return self::$allNamespaces;
