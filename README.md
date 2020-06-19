@@ -37,6 +37,12 @@ Built with :heart: for lazy laravel developers ;)
 
 ### :film_strip: Video tutorial [here](https://youtu.be/aEkiE30wNKk)
 
+### :star: Your Stars Make Us Do More
+If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
+
+Stargazers: https://github.com/imanghafoori1/microscope/stargazers
+
+
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
 You can install the package via composer:
@@ -454,11 +460,6 @@ If you use laravel-microscope in your open source project, create a pull request
 ### :exclamation: Security
 If you discover any security related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
 
-
-### :star: Your Stars Make Us Do More :star:
-As always if you found this package useful , and you want to encourage us to maintain and work on it. Just press the star button to declare your willing.
-
-Stargazers: https://github.com/imanghafoori1/microscope/stargazers
 
 ## More from the author:
 
