@@ -41,6 +41,7 @@ class SpyRouter extends Router
         $i = 2;
         $excludes = [
             base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
+            base_path('vendor'.DIRECTORY_SEPARATOR.'imanghafoori'),
         ];
 
         while (
