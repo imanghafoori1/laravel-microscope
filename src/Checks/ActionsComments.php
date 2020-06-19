@@ -77,8 +77,15 @@ class ActionsComments extends RoutelessActions
     {
         $msg = '/**'."\n";
         $prefix = '         * ';
-        $nameBlock = $prefix.'@name(\''.($route->getName() ?: '').'\')';
-        $msg .= $prefix;
+
+        [$file, $line] = $this->getCallsiteInfo($methods[0], $route);
+
+        if ($file) {
+            $msg .= $prefix.'@at('.$file.':'.$line.')';
+        }
+
+        $nameBlock = $prefix."@name('".($route->getName() ?: '')."')";
+        $msg .= "\n".$prefix;
         if (count($methods) > 1) {
             $msg .= '@methods('.implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$route->uri().'\')'."\n".$nameBlock;
         } else {
@@ -97,5 +104,15 @@ class ActionsComments extends RoutelessActions
         $msg .= "\n         */";
 
         return $msg;
+    }
+
+    private function getCallsiteInfo($methods, $route)
+    {
+        $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
+        $file = $callsite[0]['file'] ?? '';
+        $line = $callsite[0]['line'] ?? '';
+        $file = trim(str_replace(base_path(), '', $file), '\\/');
+
+        return [$file, $line];
     }
 }
