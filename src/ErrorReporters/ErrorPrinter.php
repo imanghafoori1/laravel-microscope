@@ -4,23 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class ErrorPrinter
 {
-    public $counts = [
-        'view' => [],
-        'route' => [],
+    public $errorsList = [
         'total' => 0,
-        'bladeImport' => [],
-        'badRelation' => [],
-        'wrongImport' => [],
-        'wrongUsedClassError' => [],
-        'wrongMethodError' => [],
-        'badNamespace' => [],
-        'ddFound' => [],
-        'CompactCall' => [],
-        'routeDefinitionConflict' => [],
-        'routelessCtrl' => [],
-        'queryInBlade' => [],
-        'envFound' => [],
-        'ns_replacement' => [],
     ];
 
     public $printer;
@@ -31,7 +16,7 @@ class ErrorPrinter
 
     public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
-        array_push($this->counts['view'], (new PendingError('view'))
+        ($this->errorsList['view'][] = (new PendingError('view'))
             ->header(trim($lineContent))
             ->errorData($this->yellow($fileName.'.blade.php').' does not exist')
             ->link($absPath, $lineNumber));
@@ -39,7 +24,7 @@ class ErrorPrinter
 
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
-        array_push($this->counts['route'], (new PendingError('route'))
+        ($this->errorsList['route'][] = (new PendingError('route'))
             ->header($errorIt)
             ->errorData($errorTxt.$this->yellow($path))
             ->link($absPath, $lineNumber));
@@ -64,7 +49,7 @@ class ErrorPrinter
 
     public function pendError($path, $lineNumber, $absent, $key, $header)
     {
-        array_push($this->counts[$key], (new PendingError($key))
+        ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow($absent).'   <==== does not exist')
             ->link($path, $lineNumber));
@@ -73,7 +58,7 @@ class ErrorPrinter
     public function routelessAction($absPath, $lineNumber, $action)
     {
         $key = 'routelessCtrl';
-        array_push($this->counts[$key], (new PendingError($key))
+        ($this->errorsList[$key][] = (new PendingError($key))
             ->header('No route is defined for controller action:')
             ->errorData($this->yellow($action))
             ->link($absPath, $lineNumber));
@@ -81,7 +66,7 @@ class ErrorPrinter
 
     public function simplePendError($path, $lineNumber, $absent, $key, $header)
     {
-        array_push($this->counts[$key], (new PendingError($key))
+        ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow($absent))
             ->link($path, $lineNumber));
@@ -94,7 +79,7 @@ class ErrorPrinter
 
     public function compactError($path, $lineNumber, $absent, $key, $header)
     {
-        array_push($this->counts[$key], (new PendingError($key))
+        ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow(implode(', ',array_keys($absent))). ' does not exist')
             ->link($path, $lineNumber));
@@ -128,7 +113,7 @@ class ErrorPrinter
 
         $methods = implode(',', $route1->methods());
 
-        $this->counts[$key][$methods] = (new PendingError($key))
+        $this->errorsList[$key][$methods] = (new PendingError($key))
             ->header('Route with uri: '.$this->yellow($methods.': /'.$route1->uri()).' is overridden.')
             ->errorData($msg);
     }
@@ -141,7 +126,7 @@ class ErrorPrinter
     public function queryInBlade($absPath, $class, $lineNumber)
     {
         $key = 'queryInBlade';
-        array_push($this->counts[$key], (new PendingError($key))
+        ($this->errorsList[$key][] = (new PendingError($key))
             ->header('Query in blade file: ')
             ->errorData($this->yellow($class).'  <=== DB query in blade file')
             ->link($absPath, $lineNumber));
@@ -159,7 +144,7 @@ class ErrorPrinter
 
     public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
-        array_push($this->counts['badNamespace'], (new PendingError('badNamespace'))
+        ($this->errorsList['badNamespace'][] = (new PendingError('badNamespace'))
             ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
             ->errorData('  namespace fixed to:  '.$this->yellow("namespace $correctNamespace;"))
             ->link($absPath, $lineNumber));
@@ -182,7 +167,7 @@ class ErrorPrinter
 
     public function printHeader($msg)
     {
-        $number = ++$this->counts['total'];
+        $number = ++$this->errorsList['total'];
         ($number < 10) && $number = " $number";
 
         $number = '<fg=yellow>'.$number.' </>';
@@ -214,7 +199,7 @@ class ErrorPrinter
      */
     public function hasErrors()
     {
-        $errorsCollection = collect($this->counts);
+        $errorsCollection = collect($this->errorsList);
 
         return $errorsCollection->flatten()->filter(function ($action) {
             return $action instanceof PendingError;
@@ -223,7 +208,7 @@ class ErrorPrinter
 
     public function logErrors()
     {
-        collect($this->counts)->except('total')->flatten()->each(function ($error) {
+        collect($this->errorsList)->except('total')->flatten()->each(function ($error) {
             if ($error instanceof PendingError) {
                 $this->printHeader($error->getHeader());
                 $this->print($error->getErrorData());
@@ -236,6 +221,11 @@ class ErrorPrinter
             $this->print($pend);
             $this->end();
         }
+    }
+
+    public function getCount($key)
+    {
+        return count($this->errorsList[$key] ?? []);
     }
 
     public function printTime()

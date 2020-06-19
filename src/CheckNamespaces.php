@@ -80,7 +80,7 @@ class CheckNamespaces
                 app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
             }
         }
-        app(ErrorPrinter::class)->counts['total'] = 0;
+        app(ErrorPrinter::class)->errorsList['total'] = 0;
     }
 
     private static function warn($currentNamespace, $relativePath)

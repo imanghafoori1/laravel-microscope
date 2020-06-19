@@ -66,10 +66,9 @@ class CheckPsr4 extends Command implements FileCheckContract
         $this->composerDumpIfNeeded($errorPrinter);
     }
 
-    private function composerDumpIfNeeded($errorPrinter)
+    private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
-        if ($errorPrinter->counts['badNamespace']) {
-            $c = count($errorPrinter->counts['badNamespace']);
+        if ($c = $errorPrinter->getCount('badNamespace')) {
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'finished: "composer dump"');
