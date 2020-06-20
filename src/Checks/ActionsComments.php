@@ -5,22 +5,22 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 
-class ActionsComments extends RoutelessActions
+class ActionsComments
 {
     public static $command;
 
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
     {
-        (new self())->checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
+        self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens);
     }
 
-    public function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
+    public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens)
     {
 //        $errorPrinter = resolve(ErrorPrinter::class);
-        $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+        $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
-        if ($this->isLaravelController($fullNamespace)) {
-            $actions = $this->checkActions($tokens, $fullNamespace, $classFilePath);
+        if (RoutelessActions::isLaravelController($fullNamespace)) {
+            $actions = self::checkActions($tokens, $fullNamespace, $classFilePath);
 
             /*foreach ($actions as $action) {
                 $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
@@ -28,16 +28,16 @@ class ActionsComments extends RoutelessActions
         }
     }
 
-    protected function checkActions($tokens, $fullNamespace, $path)
+    protected static function checkActions($tokens, $fullNamespace, $path)
     {
         $class = ClassMethods::read($tokens);
 
-        $methods = $this->getControllerActions($class['methods']);
+        $methods = RoutelessActions::getControllerActions($class['methods']);
         $routelessActions = [];
         $shouldSave = false;
 
         foreach ($methods as $method) {
-            $classAtMethod = $this->classAtMethod($fullNamespace, $method['name'][1]);
+            $classAtMethod = RoutelessActions::classAtMethod($fullNamespace, $method['name'][1]);
 
             if (! ($route = app('router')->getRoutes()->getByAction($classAtMethod))) {
                 continue;
@@ -48,7 +48,7 @@ class ActionsComments extends RoutelessActions
              */
             $methods = $route->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
-            $msg = $this->getMsg($methods, $route);
+            $msg = self::getMsg($methods, $route);
 
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
@@ -73,12 +73,12 @@ class ActionsComments extends RoutelessActions
         return $routelessActions;
     }
 
-    protected function getMsg($methods, $route)
+    protected static function getMsg($methods, $route)
     {
         $msg = '/**'."\n";
         $prefix = '         * ';
 
-        [$file, $line] = $this->getCallsiteInfo($methods[0], $route);
+        [$file, $line] = self::getCallsiteInfo($methods[0], $route);
 
         if ($file) {
             $msg .= $prefix.'@at('.$file.':'.$line.')';
@@ -106,7 +106,7 @@ class ActionsComments extends RoutelessActions
         return $msg;
     }
 
-    private function getCallsiteInfo($methods, $route)
+    private static function getCallsiteInfo($methods, $route)
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $file = $callsite[0]['file'] ?? '';

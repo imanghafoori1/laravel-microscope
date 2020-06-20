@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class RoutelessActions
 {
-    protected function getControllerActions($methods)
+    public static function getControllerActions($methods)
     {
         $orphanMethods = [];
         foreach ($methods as $method) {
@@ -30,7 +30,7 @@ class RoutelessActions
         return $orphanMethods;
     }
 
-    protected function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
+    public static function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
     {
         $absFilePath = $classFilePath->getRealPath();
         $className = $classFilePath->getFilename();
@@ -40,7 +40,7 @@ class RoutelessActions
         return $namespace.'\\'.$className;
     }
 
-    protected function isLaravelController($fullNamespace)
+    public static function isLaravelController($fullNamespace)
     {
         try {
             return is_subclass_of($fullNamespace, Controller::class);
@@ -50,22 +50,21 @@ class RoutelessActions
         }
     }
 
-    protected function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
+    public static function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
     {
-        $fullNamespace = $this->getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
-        $fullNamespace = trim($fullNamespace, '.php');
+        $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
 
-        return $fullNamespace;
+        return trim($fullNamespace, '.php');
     }
 
     protected function findOrphanActions($tokens, $fullNamespace)
     {
         $class = ClassMethods::read($tokens);
 
-        $methods = $this->getControllerActions($class['methods']);
+        $methods = self::getControllerActions($class['methods']);
         $routelessActions = [];
         foreach ($methods as $method) {
-            $classAtMethod = $this->classAtMethod($fullNamespace, $method['name'][1]);
+            $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
 
             if (! app('router')->getRoutes()->getByAction($classAtMethod)) {
                 $line = $method['name'][2];
@@ -84,9 +83,9 @@ class RoutelessActions
     public function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
     {
         $errorPrinter = resolve(ErrorPrinter::class);
-        $fullNamespace = $this->getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+        $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
-        if (! $this->isLaravelController($fullNamespace)) {
+        if (! self::isLaravelController($fullNamespace)) {
             return;
         }
 
@@ -102,7 +101,7 @@ class RoutelessActions
         }
     }
 
-    protected function classAtMethod($fullNamespace, $methodName)
+    public static function classAtMethod($fullNamespace, $methodName)
     {
         ($methodName == '__invoke') ? ($methodName = '') : ($methodName = '@'.$methodName);
 
