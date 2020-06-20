@@ -58,7 +58,7 @@ class RoutelessActions
         return $fullNamespace;
     }
 
-    protected function checkActions($tokens, $fullNamespace, $path)
+    protected function findOrphanActions($tokens, $fullNamespace)
     {
         $class = ClassMethods::read($tokens);
 
@@ -90,11 +90,12 @@ class RoutelessActions
             return;
         }
 
+        // exclude abstract class
         if ((new \ReflectionClass($fullNamespace))->isAbstract()) {
             return;
         }
 
-        $actions = $this->checkActions($tokens, $fullNamespace, $classFilePath);
+        $actions = $this->findOrphanActions($tokens, $fullNamespace);
 
         foreach ($actions as $action) {
             $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
