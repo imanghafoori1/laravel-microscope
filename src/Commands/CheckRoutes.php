@@ -10,7 +10,6 @@ use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
-use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRoutes extends Command
@@ -31,10 +30,6 @@ class CheckRoutes extends Command
         $routes = app(Router::class)->getRoutes()->getRoutes();
         $this->checkRouteDefinitions($errorPrinter, $routes);
         // checks calls like this: route('admin.user')
-        // in the psr-4 loaded classes.
-        $this->info('Searching for route-less controller actions...');
-        Psr4Classes::check([RoutelessActions::class]);
-
         $this->info('Checking route names exists...');
         Psr4Classes::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
