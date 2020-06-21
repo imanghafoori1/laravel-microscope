@@ -19,7 +19,7 @@ class CheckDeadControllers extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');
-        $this->info('Checking for dead controllers...');
+        $this->info('Checking for route-less controllers...');
 
         $errorPrinter->printer = $this->output;
 
