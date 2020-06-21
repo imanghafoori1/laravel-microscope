@@ -48,16 +48,16 @@ class ReplaceLine
         return $isReplaced;
     }
 
-    public static function fixReference($absPath, $class, $lineNum)
+    public static function fixReference($absPath, $class, $lineNum, $prefix = '')
     {
         $class_list = Psr4Classes::classList();
         $cls = explode('\\', $class);
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
         if (count($correct) === 1) {
-            return self::replaceFirst($absPath, $class, $correct[0], $lineNum);
+            return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
         } else {
-            return false;
+            return [false, $correct];
         }
     }
 }

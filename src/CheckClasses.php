@@ -94,7 +94,8 @@ class CheckClasses
         foreach ($imports as $i => $import) {
             if (self::isAbsent($import[0])) {
                 $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
-                if ($isInUserSpace && ReplaceLine::fixReference($absFilePath, $import[0], $import[1])) {
+                $result = ReplaceLine::fixReference($absFilePath, $import[0], $import[1]);
+                if ($isInUserSpace && $result[0]) {
                     self::printFixation($absFilePath, $import[0], $import[1]);
                 } else {
                     app(ErrorPrinter::class)->wrongImport($absFilePath, $import[0], $import[1]);
@@ -146,7 +147,8 @@ class CheckClasses
 
             if (! class_exists($class)) {
                 $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
-                if ($isInUserSpace && ReplaceLine::fixReference($absFilePath, $class, $token[2])) {
+                $result = ReplaceLine::fixReference($absFilePath, $class, $token[2]);
+                if ($isInUserSpace && $result[0]) {
                     self::printFixation($absFilePath, $class, $token[2]);
                 } else {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
@@ -175,10 +177,19 @@ class CheckClasses
             if (self::isAbsent($cls) && ! function_exists($cls)) {
                 $isInUserSpace = Str::startsWith($cls, array_keys(ComposerJson::readAutoload()));
                 $line = $nonImportedClass['line'];
-                if ($isInUserSpace && ReplaceLine::fixReference($absFilePath, $cls, $line)) {
+                $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
+                if (! $result[0]) {
+                    $cls = str_replace($nonImportedClass['namespace'].'\\', '', $cls);
+                    $result = ReplaceLine::fixReference($absFilePath, $cls, $line, '\\');
+                }
+                
+                if ($isInUserSpace && $result[0]) {
                     self::printFixation($absFilePath, $cls, $line);
                 } else {
-                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line);
+//                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line, $result[1]);
+                    $fixes = implode("\n - ", $result[1]);
+                    $fixes && $fixes = "\n Possible fixes:\n - ". $fixes;
+                    app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls."   <====  Class does not exist". $fixes, 'wrongUsedClassError', 'Class Does not exist:');
                 }
             }
         }

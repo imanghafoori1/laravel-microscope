@@ -67,6 +67,7 @@ class Expander
                     $results[$i]['class'] .= $row[1];
                 }
                 $results[$i]['line'] = $row[2];
+                $results[$i]['namespace'] = $namespace;
             }
         }
 
