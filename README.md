@@ -26,7 +26,7 @@ Built with :heart: for lazy laravel developers ;)
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
-
+[![Today Downloads][ico-today-downloads]][link-downloads]
 <!--
 <p align="center">
 <a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/8d75e05f4b67de65b51e10772b054f506aa8cfab/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f762f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Latest Version on Packagist" data-canonical-src="https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
@@ -544,6 +544,7 @@ Albert einstein
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/imanghafoori1/laravel-microscope.svg?style=flat-square&logo=scrutinizer
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square&logo=scrutinizer
 [ico-downloads]: https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square
+[ico-today-downloads]: https://img.shields.io/packagist/dd/imanghafoori/laravel-microscope.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/imanghafoori/laravel-microscope
 [link-travis]: https://travis-ci.org/imanghafoori1/laravel-microscope
