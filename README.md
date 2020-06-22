@@ -545,7 +545,7 @@ Albert einstein
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=flat-square&logo=scrutinizer
 [ico-downloads]: https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/imanghafoori1/laravel-microscope
+[link-packagist]: https://packagist.org/packages/imanghafoori/laravel-microscope
 [link-travis]: https://travis-ci.org/imanghafoori1/laravel-microscope
 [link-scrutinizer]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope
