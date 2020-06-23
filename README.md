@@ -550,6 +550,6 @@ Albert einstein
 [link-travis]: https://travis-ci.org/imanghafoori1/laravel-self-test
 [link-scrutinizer]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope
-[link-downloads]: https://packagist.org/packages/imanghafoori/laravel-microscope
+[link-downloads]: https://packagist.org/packages/imanghafoori/laravel-microscope/stats
 [link-author]: https://github.com/imanghafoori1
 [link-contributors]: ../../contributors
