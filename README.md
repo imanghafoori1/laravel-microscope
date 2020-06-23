@@ -547,9 +547,9 @@ Albert einstein
 [ico-today-downloads]: https://img.shields.io/packagist/dd/imanghafoori/laravel-microscope.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/imanghafoori/laravel-microscope
-[link-travis]: https://travis-ci.org/imanghafoori1/laravel-microscope
+[link-travis]: https://travis-ci.org/imanghafoori1/laravel-self-test
 [link-scrutinizer]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope
-[link-downloads]: https://packagist.org/packages/imanghafoori1/laravel-microscope
+[link-downloads]: https://packagist.org/packages/imanghafoori/laravel-microscope
 [link-author]: https://github.com/imanghafoori1
 [link-contributors]: ../../contributors
