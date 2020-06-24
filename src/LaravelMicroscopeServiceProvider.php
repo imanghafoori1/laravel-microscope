@@ -40,6 +40,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckExpansions::class,
         Commands\CheckDeadControllers::class,
         Commands\CheckGenericActionComments::class,
+        Commands\CheckPsr12::class,
     ];
 
     public function boot()
