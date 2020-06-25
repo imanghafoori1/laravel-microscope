@@ -506,11 +506,13 @@ If you discover any security related issues, please email `imanghafoori1@gmail.c
 
 ----------------
 
-### 🍌 Pay after it pays off:
+### 🍌 Donation:
 
-You can contact me, if you wan to make a donation, so I can put your logo and name on the readme file as a donator. 
-https://t.me/imanghafoori 
-email: imanghafoori1@gmail.com
+You can contact me, if you wan to make a donation, so I can put your logo or name on the readme file as a donator. 
+
+IM: https://t.me/imanghafoori 
+
+Email: imanghafoori1@gmail.com
 
 I would be happy to answer you.
 
