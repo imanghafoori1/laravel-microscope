@@ -22,6 +22,11 @@ class CheckPsr12 extends Command
         $errorPrinter->printer = $this->output;
 
         $this->info('Psr-12 is on the table...');
+        $this->warn('This command is going to make changes to your files!');
+
+        if (! $this->output->confirm('Do you have committed everything in git?', true)) {
+            return ;
+        }
 
         ActionsComments::$command = $this;
 
