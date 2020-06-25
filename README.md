@@ -508,13 +508,9 @@ If you discover any security related issues, please email `imanghafoori1@gmail.c
 
 ### 🍌 Pay after it pays off:
 
-If you think that my work has saved you a lot of time hence a lot of money, please take your time and send me 1 dollar, I appritiate it, a lot... (a single dollar is enough, please so do not send more.)
-
-- BitCoin: bc1q53dys3jkv0h4vhl88yqhqzyujvk35x8wad7uf9
-- Etherium: 0xa4898246820bbC8f677A97C2B73e6DBB9510151e
-- USDC: 0xB3F88d2334C9A5eFBe9c0932A969E8a971139547
-
-You can contact me at telegram, after donation: https://t.me/imanghafoori so I can put your logo and name on the readme file. 
+You can contact me, if you wan to make a donation, so I can put your logo and name on the readme file as a donator. 
+https://t.me/imanghafoori 
+email: imanghafoori1@gmail.com
 
 I would be happy to answer you.
 
