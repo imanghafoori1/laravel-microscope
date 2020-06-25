@@ -72,6 +72,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         //  $this->loadConfig();
 
         app()->singleton(ErrorPrinter::class);
+        // also we should spy the factory paths.
         $this->spyRouter();
 
         // we need to start spying before the boot process starts.

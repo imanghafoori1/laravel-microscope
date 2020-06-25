@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRoutes extends Command
@@ -64,7 +65,8 @@ class CheckRoutes extends Command
             } catch (Exception $e) {
                 $msg1 = $this->getRouteId($route);
                 $msg2 = 'The controller can not be resolved: ';
-                $errorPrinter->route($ctrlClass, $msg1, $msg2);
+                [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
+                $errorPrinter->route($ctrlClass, $msg1, $msg2, $path, $line);
 
                 continue;
             }

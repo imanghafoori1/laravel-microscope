@@ -106,7 +106,7 @@ class ActionsComments
         return $msg;
     }
 
-    private static function getCallsiteInfo($methods, $route)
+    public static function getCallsiteInfo($methods, $route)
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $file = $callsite[0]['file'] ?? '';
