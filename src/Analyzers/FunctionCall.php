@@ -205,7 +205,7 @@ class FunctionCall
                 $level--;
             }
 
-            $isOpening = in_array($token[0], ['[', '(', '{']);
+            $isOpening = in_array($token[0], ['[', '(', '{', T_CURLY_OPEN]);
 
             if ($level == 0 && $isOpening) {
                 break;
@@ -237,7 +237,7 @@ class FunctionCall
                 break;
             }
 
-            if (in_array($nextToken[0], ['[', '(', '{'])) {
+            if (in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
                 $level++;
             }
 
@@ -258,7 +258,7 @@ class FunctionCall
 
     private static function level($nextToken, $level)
     {
-        if (in_array($nextToken[0], ['[', '(', '{'])) {
+        if (in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
             $level++;
         }
 

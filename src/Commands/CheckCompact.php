@@ -118,9 +118,6 @@ class CheckCompact extends Command
 
             return $methodBody;
         } catch (\Exception $e) {
-            // this is a work around for tokenizer weird bugs,
-            // which makes it impossible to process the syntax.
-            // so, we just ignore the current scope and continue.
             return false;
         }
     }

@@ -22,9 +22,8 @@ class CurlyBraces
         while ($i < $ct - 1) {
             $i++;
             $token = $tokens[$i];
-            $token[0] == '{' && $level++;
-            $token[0] == T_CURLY_OPEN && $level++;
-            $token[0] == '}' && $level--;
+            in_array($token[0], [T_CURLY_OPEN, '{']) && $level++;
+            ($token[0] == '}') && $level--;
             if ($level == 0) {
                 if (in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
                     if ($tokens[$i - 1] != T_DOUBLE_COLON) {

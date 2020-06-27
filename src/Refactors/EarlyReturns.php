@@ -43,9 +43,6 @@ class EarlyReturns
                 // get the very last token of function (or foreach) body.
                 [$ifBody, $condition] = FunctionCall::readBackUntil($tokens, $methodBodyCloseIndex);
             } catch (\Exception $e) {
-                // this is a work around for tokenizer weird bugs,
-                // which makes it impossible to process the syntax.
-                // so, we just ignore the current scope and continue.
                 continue;
             }
 
