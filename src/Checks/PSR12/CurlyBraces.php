@@ -23,6 +23,7 @@ class CurlyBraces
             $i++;
             $token = $tokens[$i];
             $token[0] == '{' && $level++;
+            $token[0] == T_CURLY_OPEN && $level++;
             $token[0] == '}' && $level--;
             if ($level == 0) {
                 if (in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
@@ -56,7 +57,7 @@ class CurlyBraces
 
     private static function writePublic($level, $token, $isInClass, $i, $tokens, $classFilePath)
     {
-        if ($level != 1 || $token != T_FUNCTION || ! $isInClass) {
+        if (($level != 1) || ($token[0] != T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];
         }
 
