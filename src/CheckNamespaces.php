@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
@@ -35,7 +35,7 @@ class CheckNamespaces
             }
 
             // exclude migration directories
-            if (Str::startsWith($absFilePath, MigrationPaths::get())) {
+            if (Str::startsWith($absFilePath, LaravelPaths::migrationDirs())) {
                 continue;
             }
 

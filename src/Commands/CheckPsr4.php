@@ -7,15 +7,15 @@ use Illuminate\Support\Composer;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
 
 class CheckPsr4 extends Command implements FileCheckContract
 {
@@ -52,8 +52,9 @@ class CheckPsr4 extends Command implements FileCheckContract
         }
         $paths = [];
         $paths = array_merge($paths, RoutePaths::get());
-        $paths = array_merge($paths, Paths::getAbsFilePaths(MigrationPaths::get()));
-        $paths = array_merge($paths, Paths::getAbsFilePaths(app()->databasePath()));
+        $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
+        $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
+        $paths = array_merge($paths, Paths::getAbsFilePaths(app()->databasePath('seeds')));
         $paths = array_merge($paths, $this->bladeFilePaths());
 
         foreach ($paths as $_path) {

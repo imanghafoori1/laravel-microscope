@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\MigrationPaths;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckDD extends Command
 {
@@ -24,8 +24,9 @@ class CheckDD extends Command
         $this->info('Checking dd...');
 
         $this->checkPaths(RoutePaths::get());
-        $this->checkPaths(Paths::getAbsFilePaths(MigrationPaths::get()));
-        $this->checkPaths(Paths::getAbsFilePaths(app()->databasePath()));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
+        $this->checkPaths(Paths::getAbsFilePaths(app()->databasePath('seeds')));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);

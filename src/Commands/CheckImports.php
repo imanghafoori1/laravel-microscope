@@ -3,13 +3,14 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -33,7 +34,9 @@ class CheckImports extends Command implements FileCheckContract
 
         $this->checkFilePaths(RoutePaths::get());
         $this->checkFilePaths(Paths::getAbsFilePaths(app()->configPath()));
-        $this->checkFilePaths(Paths::getAbsFilePaths(app()->databasePath()));
+        $this->checkFilePaths(Paths::getAbsFilePaths(app()->databasePath('seeds')));
+        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
+        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
 
         Psr4Classes::check([CheckClasses::class]);
 

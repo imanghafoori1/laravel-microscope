@@ -6,12 +6,15 @@ use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Faker\Generator as FakerGenerator;
 use Illuminate\Support\ServiceProvider;
 use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
@@ -74,6 +77,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         app()->singleton(ErrorPrinter::class);
         // also we should spy the factory paths.
         $this->spyRouter();
+        $this->spyFactory();
 
         // we need to start spying before the boot process starts.
 
@@ -93,6 +97,15 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return $router;
         });
         Route::swap($router);
+    }
+
+    private function spyFactory()
+    {
+        $this->app->singleton(EloquentFactory::class, function ($app) {
+            return SpyFactory::construct(
+                $app->make(FakerGenerator::class), $app->databasePath('factories')
+            );
+        });
     }
 
     private function spyGates()

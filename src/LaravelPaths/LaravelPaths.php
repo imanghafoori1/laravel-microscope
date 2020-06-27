@@ -3,11 +3,17 @@
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factory;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 
-class MigrationPaths
+class LaravelPaths
 {
-    public static function get()
+    public static function factoryDirs()
+    {
+        return app()->make(Factory::class)->loadedPaths;
+    }
+
+    public static function migrationDirs()
     {
         // normalize the migration paths
         $migrationDirs = [];
