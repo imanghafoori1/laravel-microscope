@@ -5,6 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class SpyRouter extends Router
 {
@@ -28,26 +30,61 @@ class SpyRouter extends Router
         parent::loadRoutes($routes);
     }
 
-    /**
-     * Add a route to the underlying route collection.
-     *
-     * @param  array|string  $methods
-     * @param  string  $uri
-     * @param  \Closure|array|string|callable|null  $action
-     * @return \Illuminate\Routing\Route
-     */
-    public function addRoute($methods, $uri, $action)
+    public function updateGroupStack(array $attributes)
     {
-        $i = 2;
-        $excludes = [
-            base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
-            base_path('vendor'.DIRECTORY_SEPARATOR.'imanghafoori'),
-        ];
+        if (isset($attributes['middlewares'])) {
+            $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
+            app(ErrorPrinter::class)->route(
+                null,
+                'Incorrect \'middlewares\' key.',
+                $err,
+                $info['file'] ?? '',
+                $info['line'] ?? 1
+            );
+        }
+        parent::updateGroupStack($attributes);
 
+        $e = $this->groupStack;
+        $new_attr = end($e);
+
+        $i = 2;
         while (
             ($info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $i + 1)[$i])
             &&
-            Str::startsWith(($info['file'] ?? ''), $excludes)
+            $this->isExcluded($info)
+        ) {
+            $i++;
+        }
+        $ns = $new_attr['namespace'] ?? null;
+        $dir = (NamespaceCorrector::getRelativePathFromNamespace($ns));
+
+        if ($ns && $ns !== $dir && !is_dir($dir)) {
+            $err = "['namespace' => "."'".$attributes['namespace']. '\'] passed to Route::group(...) is not correct.';
+            app(ErrorPrinter::class)->route(
+                null,
+                'Incorrect namespace.',
+                $err,
+                $info['file'] ?? '',
+                $info['line'] ?? 1
+            );
+        }
+    }
+
+    private function isExcluded($info)
+    {
+        return Str::startsWith(($info['file'] ?? ''), [
+            base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
+            base_path('vendor'.DIRECTORY_SEPARATOR.'imanghafoori'),
+        ]);
+    }
+
+    public function addRoute($methods, $uri, $action)
+    {
+        $i = 2;
+        while (
+            ($info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $i + 1)[$i])
+            &&
+            $this->isExcluded($info)
         ) {
             $i++;
         }
