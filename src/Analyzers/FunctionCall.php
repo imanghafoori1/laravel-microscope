@@ -7,13 +7,13 @@ class FunctionCall
     public static function getNextToken($tokens, $i)
     {
         $i++;
-        $nextToken = $tokens[$i] ?? '_';
-        if ($nextToken[0] == T_WHITESPACE) {
+        $token = $tokens[$i] ?? '_';
+        while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
             $i++;
-            $nextToken = $tokens[$i] ?? null;
+            $token = $tokens[$i] ?? null;
         }
 
-        return [$nextToken, $i];
+        return [$token, $i];
     }
 
     public static function forwardTo($tokens, $i, $tokenType)
@@ -32,7 +32,7 @@ class FunctionCall
     {
         $i--;
         $token = $tokens[$i];
-        if ($token[0] == T_WHITESPACE) {
+        while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
             $i--;
             $token = $tokens[$i];
         }
