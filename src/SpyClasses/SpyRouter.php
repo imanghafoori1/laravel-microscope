@@ -56,9 +56,9 @@ class SpyRouter extends Router
             $i++;
         }
         $ns = $new_attr['namespace'] ?? null;
-        $dir = (NamespaceCorrector::getRelativePathFromNamespace($ns));
+        $dir = NamespaceCorrector::getRelativePathFromNamespace($ns);
 
-        if ($ns && $ns !== $dir && !is_dir($dir)) {
+        if ($ns && isset($attributes['namespace']) && $ns !== $dir && ! is_dir($dir)) {
             $err = "['namespace' => "."'".$attributes['namespace']. '\'] passed to Route::group(...) is not correct.';
             app(ErrorPrinter::class)->route(
                 null,
