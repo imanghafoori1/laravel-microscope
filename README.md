@@ -252,6 +252,153 @@ if ($var1 > 1)
 ----------------------
 
 ```php
+php artisan check:psr4
+```
+- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
+- It automatically corrects namespaces (according to PSR-4 rules)
+- It also checks for references to the old namespace with the system and replaces them with the new one.
+
+----------------------
+
+```php
+php artisan check:generate
+```
+You make empty file, we fill it, based on naming conventions.
+
+If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
+1 - It will be filled with boiler plate and correct Psr-4 namespace.
+2 - It will be appnded to the `providers` array in the `config/app.php`
+
+----------------------
+
+```php
+php artisan check:imports
+```
+
+- It checks all the imports (`use` statements) to be valid and reports invalid ones.
+- It auto-corrects some of the refrences, it no ambiguity is around the class name.
+- It can understand the laravel aliased classes so `use Request;` would be valid.
+
+----------------------
+
+```php
+php artisan check:bad_practices
+```
+
+ - It detects bad practices like `env()` calls outside of the config files.
+
+----------------------
+
+
+```php
+php artisan check:routes
+```
+
+- It checks that your routes refer to valid controller classes and methods.
+- It checks the all the controller methods to have valid type-hints.
+- It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
+- It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
+
+----------------------
+
+```php
+php artisan check:compact
+```
+
+- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
+
+----------------------
+
+```php
+php artisan check:blade_queries
+```
+
+- Blade files should not contain DB queries. we should move them back into controllers and pass variables.
+This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
+
+----------------------
+
+```php
+php artisan check:extract_blades
+```
+
+- If you want to extract a blade partial out and make it included like: `@include('myPartials.someFile')`
+
+you can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to indicate `start/end line` and the `path/name` of the partial you intend to be made.
+
+```html
+  <html>
+      
+      {!! extractBlade('myPartials.head') !!}
+          <head>...</head>
+      {!! extractBlade() !!}
+
+      
+      {!! extractBlade('myPartials.body') !!}
+          <body>...</body>
+      {!! extractBlade() !!}
+      
+    </html>
+```
+
+After you execute `php artisan check:extract_blades` it will become:
+
+```html
+<html>
+    @include('myPartials.head')
+    @include('myPartials.body')
+</html>
+```
+Also it will create:
+- `resources/views/myPartials/head.blade.php` 
+- `resources/views/myPartials/body.blade.php`
+
+and put the corresponding content in them.
+
+- It is also compatible with namespaced views in modular laravel applications.
+So this syntax will work: `'MyMod::myPartials.body'`
+
+----------------------
+
+```php
+php artisan check:action_comments
+```
+
+- This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
+
+----------------------
+
+```php
+php artisan pp:route
+```
+
+- First you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
+- You can also pass the Controller@method syntax to the function.
+- You can call it multiple times in otder to pretty-print multiple routes.
+
+----------------------
+
+```php
+php artisan check:views
+```
+
+- It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
+- It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
+
+
+Also, it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
+For that you must open up the page in the browser and then visit the log file to see a message like this:
+```
+local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
+local.INFO: array ('$var1' , '$var2');
+```
+
+Remember some variables are passed into your view from a `view composer` and not the controller.
+Those variables are also taken into consideration when detecting unused variables.
+
+----------------------
+
+```php
 php artisan check:events
 ```
 
@@ -303,148 +450,6 @@ Gate::define('someAbility', 'UserGate@someMethod');
 2 - It checks the  `UserPolicy` class path to be valid.
 
 3 - It checks the  `someMethod` to exist.
-
-----------------------
-
-```php
-php artisan check:psr4
-```
-- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
-- It automatically corrects namespaces (according to PSR-4 rules)
-- It also checks for references to the old namespace with the system and replaces them with the new one.
-
-----------------------
-
-```php
-php artisan check:generate
-```
-You make empty file, we fill it, based on naming conventions.
-
-If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
-1 - It will be filled with boiler plate and correct Psr-4 namespace.
-2 - It will be appnded to the `providers` array in the `config/app.php`
-
-----------------------
-
-```php
-php artisan check:imports
-```
-
-- It checks all the imports (`use` statements) to be valid and reports invalid ones.
-- It auto-corrects some of the refrences, it no ambiguity is around the class name.
-- It can understand the laravel aliased classes so `use Request;` would be valid.
-
-----------------------
-```php
-php artisan check:bad_practices
-```
-
- - It detects bad practices like `env()` calls outside of the config files.
-
-----------------------
-
-```php
-php artisan check:routes
-```
-
-- It checks that your routes refer to valid controller classes and methods.
-- It checks the all the controller methods to have valid type-hints.
-- It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
-- It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
-
-----------------------
-
-```php
-php artisan check:compact
-```
-
-- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
-
-----------------------
-
-```php
-php artisan check:blade_queries
-```
-
-- Blade files should not contain DB queries. we should move them back into controllers and pass variables.
-This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
-
-----------------------
-```php
-php artisan check:extract_blades
-```
-
-- If you want to extract a blade partial out and make it included like: `@include('myPartials.someFile')`
-
-you can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to indicate `start/end line` and the `path/name` of the partial you intend to be made.
-
-```html
-  <html>
-      
-      {!! extractBlade('myPartials.head') !!}
-          <head>...</head>
-      {!! extractBlade() !!}
-
-      
-      {!! extractBlade('myPartials.body') !!}
-          <body>...</body>
-      {!! extractBlade() !!}
-      
-    </html>
-```
-
-After you execute `php artisan check:extract_blades` it will become:
-
-```html
-<html>
-    @include('myPartials.head')
-    @include('myPartials.body')
-</html>
-```
-Also it will create:
-- `resources/views/myPartials/head.blade.php` 
-- `resources/views/myPartials/body.blade.php`
-
-and put the corresponding content in them.
-
-- It is also compatible with namespaced views in modular laravel applications.
-So this syntax will work: `'MyMod::myPartials.body'`
-
-
-----------------------
-```php
-php artisan check:action_comments
-```
-
-- This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
-
-----------------------
-
-```php
-php artisan pp:route
-```
-
-- First you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
-- You can also pass the Controller@method syntax to the function.
-- You can call it multiple times in otder to pretty-print multiple routes.
-
-----------------------
-```php
-php artisan check:views
-```
-- It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
-- It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
-
-
-Also, it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
-For that you must open up the page in the browser and then visit the log file to see a message like this:
-```
-local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
-local.INFO: array ('$var1' , '$var2');
-```
-
-Remember some variables are passed into your view from a `view composer` and not the controller.
-Those variables are also taken into consideration when detecting unused variables.
 
 ----------------------
 
