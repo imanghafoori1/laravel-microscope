@@ -32,20 +32,10 @@ class SpyRouter extends Router
 
     public function updateGroupStack(array $attributes)
     {
-        if (isset($attributes['middlewares'])) {
-            $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
-            app(ErrorPrinter::class)->route(
-                null,
-                'Incorrect \'middlewares\' key.',
-                $err,
-                $info['file'] ?? '',
-                $info['line'] ?? 1
-            );
-        }
         parent::updateGroupStack($attributes);
 
         $e = $this->groupStack;
-        $new_attr = end($e);
+        $newAttr = end($e);
 
         $i = 2;
         while (
@@ -55,19 +45,29 @@ class SpyRouter extends Router
         ) {
             $i++;
         }
-        $ns = $new_attr['namespace'] ?? null;
+        $ns = $newAttr['namespace'] ?? null;
         $dir = NamespaceCorrector::getRelativePathFromNamespace($ns);
+
+        if (isset($attributes['middlewares'])) {
+            $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
+            $this->routeError($info, $err, "Incorrect 'middlewares' key.");
+        }
 
         if ($ns && isset($attributes['namespace']) && $ns !== $dir && ! is_dir($dir)) {
             $err = "['namespace' => "."'".$attributes['namespace']. '\'] passed to Route::group(...) is not correct.';
-            app(ErrorPrinter::class)->route(
-                null,
-                'Incorrect namespace.',
-                $err,
-                $info['file'] ?? '',
-                $info['line'] ?? 1
-            );
+            $this->routeError($info, $err, 'Incorrect namespace.');
         }
+    }
+
+    public function routeError($info, $err, $msg)
+    {
+        app(ErrorPrinter::class)->route(
+            null,
+            $msg,
+            $err,
+            $info['file'] ?? '',
+            $info['line'] ?? 1
+        );
     }
 
     private function isExcluded($info)
