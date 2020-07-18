@@ -74,7 +74,8 @@ class CheckRoutes extends Command
             if (! method_exists($ctrlObj, $method)) {
                 $msg1 = $this->getRouteId($route);
                 $msg2 = 'Absent Method: ';
-                $errorPrinter->route($ctrl, $msg1, $msg2);
+                [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
+                $errorPrinter->route($ctrl, $msg1, $msg2, $path, $line);
             }
         }
     }
