@@ -53,6 +53,7 @@ class CheckPsr4 extends Command implements FileCheckContract
         $paths = [];
         $paths = array_merge($paths, RoutePaths::get());
         $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
+        $paths = array_merge($paths, Paths::getAbsFilePaths(config_path()));
         $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
         $paths = array_merge($paths, Paths::getAbsFilePaths(app()->databasePath('seeds')));
         $paths = array_merge($paths, $this->bladeFilePaths());
@@ -80,6 +81,8 @@ class CheckPsr4 extends Command implements FileCheckContract
     {
         $lines = file($_path);
         $changed = [];
+        $olds = $this->deriveVariants($olds);
+        $news = $this->deriveVariants($news);
         foreach ($lines as $i => $line) {
             $count = 0;
             $lines[$i] = str_replace($olds, $news, $line, $count);
@@ -118,5 +121,19 @@ class CheckPsr4 extends Command implements FileCheckContract
         unset($hints['notifications'], $hints['pagination']);
 
         return $hints;
+    }
+
+    private function deriveVariants($olds)
+    {
+        $newOld = [];
+        foreach ($olds as $old) {
+            $newOld[] = $old.'(';
+            $newOld[] = $old.'::';
+            $newOld[] = $old.';';
+            $newOld[] = $old."\n";
+            $newOld[] = $old."\r";
+        }
+
+        return $newOld;
     }
 }
