@@ -30,10 +30,10 @@ class ComposerJson
     public static function readAutoload()
     {
         $composers = [''];
-
         foreach (self::readKey('repositories') as $repo) {
             if ($repo['type'] == 'path') {
-                $composers[] = (trim($repo['url'], "./")).DIRECTORY_SEPARATOR.'';
+                $r = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $repo['url']);
+                $composers[] = Str::finish($r, DIRECTORY_SEPARATOR);
             }
         }
 
