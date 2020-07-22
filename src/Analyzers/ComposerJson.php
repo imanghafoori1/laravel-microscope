@@ -16,7 +16,7 @@ class ComposerJson
             return self::$result[$path][$key];
         }
 
-        $composer = json_decode(file_get_contents(  app()->basePath($path. 'composer.json')  ), true);
+        $composer = json_decode(file_get_contents(app()->basePath($path. 'composer.json')), true);
 
         $value = (array) data_get($composer, $key, []);
 
@@ -29,18 +29,17 @@ class ComposerJson
 
     public static function readAutoload()
     {
-        $composers = [''];
         foreach (self::readKey('repositories') as $repo) {
             if ($repo['type'] == 'path') {
-                $r = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $repo['url']);
-                $composers[] = Str::finish($r, DIRECTORY_SEPARATOR);
+                $composers[] = trim(trim($repo['url'], "."), '/').DIRECTORY_SEPARATOR.'';
             }
         }
 
         $res = [];
         foreach ($composers as $path) {
-            $res = $res + self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
+            $res = $res + self::readKey('autoload.psr-4', $path);
         }
+        $res = $res + self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
 
         return $res;
     }
