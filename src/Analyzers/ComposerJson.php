@@ -16,11 +16,11 @@ class ComposerJson
             return self::$result[$path][$key];
         }
 
-        $composer = json_decode(file_get_contents(app()->basePath($path. 'composer.json')), true);
+        $composer = \json_decode(\file_get_contents(app()->basePath($path. 'composer.json')), true);
 
         $value = (array) data_get($composer, $key, []);
 
-        if (in_array($key, ['autoload.psr-4', 'autoload-dev.psr-4'])) {
+        if (\in_array($key, ['autoload.psr-4', 'autoload-dev.psr-4'])) {
             $value = self::normalizePaths($value, $path);
         }
 
@@ -32,7 +32,7 @@ class ComposerJson
         foreach (self::readKey('repositories') as $repo) {
             if ($repo['type'] == 'path') {
                 // here we exclude local packages outside of the root folder.
-                ! Str::contains($repo['url'], '../') && $composers[] = trim(trim($repo['url'], "."), '/').DIRECTORY_SEPARATOR.'';
+                ! Str::contains($repo['url'], '../') && $composers[] = \trim(\trim($repo['url'], "."), '/').DIRECTORY_SEPARATOR.'';
             }
         }
 

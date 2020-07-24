@@ -20,7 +20,7 @@ class FunctionCall
     {
         $i++;
         $nextToken = $tokens[$i] ?? '_';
-        while (! in_array($nextToken[0], $tokenType)) {
+        while (! \in_array($nextToken[0], $tokenType)) {
             $i++;
             $nextToken = $tokens[$i] ?? null;
         }
@@ -61,7 +61,7 @@ class FunctionCall
         [$prev, $p2] = self::getPrevToken($tokens, $index);
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
 
-        if (in_array($prev[0], $ops)) {
+        if (\in_array($prev[0], $ops)) {
             return null;
         }
 
@@ -167,7 +167,7 @@ class FunctionCall
             [$token, $i] = self::getPrevToken($tokens, $i);
 
             $depth = 0;
-            if (in_array($token[0], $chars)) {
+            if (\in_array($token[0], $chars)) {
                 [$ifBody, $openIfIndex] = FunctionCall::readBodyBack($tokens, $i);
                 [, $closeParenIndex] = FunctionCall::getPrevToken($tokens, $openIfIndex);
                 [$condition, $openParenIndex] = FunctionCall::readBodyBack($tokens, $closeParenIndex);
@@ -201,11 +201,11 @@ class FunctionCall
         while (true) {
             [$token, $i] = self::getPrevToken($tokens, $i);
 
-            if (in_array($token[0], [']', ')', '}'])) {
+            if (\in_array($token[0], [']', ')', '}'])) {
                 $level--;
             }
 
-            $isOpening = in_array($token[0], ['[', '(', '{', T_CURLY_OPEN]);
+            $isOpening = \in_array($token[0], ['[', '(', '{', T_CURLY_OPEN]);
 
             if ($level == 0 && $isOpening) {
                 break;
@@ -237,11 +237,11 @@ class FunctionCall
                 break;
             }
 
-            if (in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
+            if (\in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
                 $level++;
             }
 
-            if (in_array($nextToken[0], [']', ')', '}'])) {
+            if (\in_array($nextToken[0], [']', ')', '}'])) {
                 $level--;
             }
 
@@ -258,11 +258,11 @@ class FunctionCall
 
     private static function level($nextToken, $level)
     {
-        if (in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
+        if (\in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
             $level++;
         }
 
-        if (in_array($nextToken[0], [']', ')', '}'])) {
+        if (\in_array($nextToken[0], [']', ')', '}'])) {
             $level--;
         }
 

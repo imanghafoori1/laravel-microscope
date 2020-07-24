@@ -25,7 +25,7 @@ class CheckStringy
             if (! $this->isPossiblyClassyString($token, $namespaces)) {
                 continue;
             }
-            $classPath = trim($token[1], '\'\"');
+            $classPath = \trim($token[1], '\'\"');
             if (CheckClasses::isAbsent($classPath)) {
                 $relPath = NamespaceCorrector::getRelativePathFromNamespace($classPath);
                 // Is a correct namespace path, pointing to a directory

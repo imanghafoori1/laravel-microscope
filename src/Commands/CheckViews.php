@@ -61,7 +61,7 @@ class CheckViews extends Command
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
         if (FunctionCall::isSolidString($paramTokens)) {
-            $viewName = trim($paramTokens[0][1], '\'\"');
+            $viewName = \trim($paramTokens[0][1], '\'\"');
 
             $viewName && ! View::exists($viewName) && BladeFile::isMissing($absPath, $paramTokens[0][2], $viewName);
         }

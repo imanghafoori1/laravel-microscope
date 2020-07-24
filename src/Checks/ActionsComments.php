@@ -86,10 +86,10 @@ class ActionsComments
 
         $nameBlock = $prefix."@name('".($route->getName() ?: '')."')";
         $msg .= "\n".$prefix;
-        if (count($methods) > 1) {
-            $msg .= '@methods('.implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$route->uri().'\')'."\n".$nameBlock;
+        if (\count($methods) > 1) {
+            $msg .= '@methods('.\implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$route->uri().'\')'."\n".$nameBlock;
         } else {
-            $msg .= '@'.strtolower(implode('', $methods)).'(\'/'.$route->uri().'\')'."\n".$nameBlock;
+            $msg .= '@'.strtolower(\implode('', $methods)).'(\'/'.$route->uri().'\')'."\n".$nameBlock;
         }
 
         $middlewares = $route->gatherMiddleware();
@@ -99,7 +99,7 @@ class ActionsComments
                 $middlewares[$i] = 'Closure';
             }
         }
-        $msg .= "\n".$prefix.'@middlewares('.implode(', ', $middlewares).')';
+        $msg .= "\n".$prefix.'@middlewares('.\implode(', ', $middlewares).')';
 
         $msg .= "\n         */";
 
@@ -111,7 +111,7 @@ class ActionsComments
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $file = $callsite[0]['file'] ?? '';
         $line = $callsite[0]['line'] ?? '';
-        $file = trim(str_replace(base_path(), '', $file), '\\/');
+        $file = \trim(str_replace(base_path(), '', $file), '\\/');
 
         return [$file, $line];
     }

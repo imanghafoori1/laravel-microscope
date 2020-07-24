@@ -40,7 +40,7 @@ class ActionsUnDocblock
                 }
             }
 
-            if (in_array($token[0], [T_PUBLIC, T_PRIVATE, T_PROTECTED]) && ($tokens[$i - 1][0] == T_WHITESPACE)) {
+            if (\in_array($token[0], [T_PUBLIC, T_PRIVATE, T_PROTECTED]) && ($tokens[$i - 1][0] == T_WHITESPACE)) {
                 if (($tokens[$i - 2][0] == '}') && $tokens[$i - 1][1] != "\n\n    ") {
                     $tokens[$i - 1][1] = "\n\n    ";
                     Refactor::saveTokens($classFilePath->getRealpath(), $tokens);

@@ -46,9 +46,9 @@ class Psr4Classes
                     continue;
                 }
 
-                $filePath = str_replace(base_path(), '', $classFilePath->getRealPath());
+                $filePath = \str_replace(base_path(), '', $classFilePath->getRealPath());
 
-                $composerPath = str_replace('/', '\\', $psr4Path);
+                $composerPath = \str_replace('/', '\\', $psr4Path);
 
                 // replace composer base_path with composer namespace
                 /**
@@ -56,9 +56,9 @@ class Psr4Classes
                  *      "App\\": "app/"
                  *  }.
                  */
-                $ns = str_replace(trim($composerPath, '\\'), trim($psr4Namespace, '\\/'), $filePath);
-                $t = (str_replace('.php', '', [$ns, $fileName]));
-                self::$allNamespaces[$t[1]][] = trim($t[0], '\\');
+                $ns = \str_replace(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $filePath);
+                $t = (\str_replace('.php', '', [$ns, $fileName]));
+                self::$allNamespaces[$t[1]][] = \trim($t[0], '\\');
             }
         }
 

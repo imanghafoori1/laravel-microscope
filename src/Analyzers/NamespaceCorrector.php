@@ -9,19 +9,19 @@ class NamespaceCorrector
         // decides to add namespace (in case there is no namespace) or edit the existing one.
         [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
-        $oldLine = ltrim($oldLine, '\\');
+        $oldLine = \ltrim($oldLine, '\\');
         ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
     }
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
     {
         // remove the filename.php from the end of the string
-        $p = explode(DIRECTORY_SEPARATOR, $relativeClassPath);
+        $p = \explode(DIRECTORY_SEPARATOR, $relativeClassPath);
         array_pop($p);
         // ensure back slashes.
-        $p = implode('\\', $p);
+        $p = \implode('\\', $p);
 
-        $composerPath = str_replace('/', '\\', $composerPath);
+        $composerPath = \str_replace('/', '\\', $composerPath);
 
         // replace composer base_path with composer namespace
         /**
@@ -29,7 +29,7 @@ class NamespaceCorrector
          *      "App\\": "app/"
          *  }.
          */
-        return str_replace(trim($composerPath, '\\'), trim($rootNamespace, '\\/'), $p);
+        return \str_replace(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $p);
     }
 
     private static function getNewLine($incorrectNamespace, $correctNamespace)
@@ -54,6 +54,6 @@ class NamespaceCorrector
         $namespaces = array_keys($autoload);
         $paths = array_values($autoload);
 
-        return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, str_replace($namespaces, $paths, $namespace));
+        return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
 }

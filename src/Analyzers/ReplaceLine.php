@@ -28,7 +28,7 @@ class ReplaceLine
             // replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
                 if (! $_line || $lineNum == $_line) {
-                    $line = str_replace($search, $replace, $line);
+                    $line = \str_replace($search, $replace, $line);
                     $isReplaced = $lineNum;
                 }
             }
@@ -51,10 +51,10 @@ class ReplaceLine
     public static function fixReference($absPath, $class, $lineNum, $prefix = '')
     {
         $class_list = Psr4Classes::classList();
-        $cls = explode('\\', $class);
+        $cls = \explode('\\', $class);
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
-        if (count($correct) === 1) {
+        if (\count($correct) === 1) {
             return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
         } else {
             return [false, $correct];

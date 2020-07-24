@@ -18,8 +18,8 @@ class PrettyPrintRoutes extends Command
 
         foreach ($calls as $call) {
             foreach ($call['args'] as $val) {
-                is_array($val) && ($val = implode('@', $val));
-                $val = trim($val ?? '');
+                is_array($val) && ($val = \implode('@', $val));
+                $val = \trim($val ?? '');
 
                 $route = $this->deduceRoute($val);
                 /**
@@ -45,7 +45,7 @@ class PrettyPrintRoutes extends Command
 
             $action = $this->getAction($route->getActionName());
 
-            if (count($methods) == 1) {
+            if (\count($methods) == 1) {
                 $definition = PHP_EOL.$this->getMovableRoute($route, $methods, $action, $middlewares);
 
                 file_put_contents($filename, $definition, FILE_APPEND);
@@ -104,7 +104,7 @@ class PrettyPrintRoutes extends Command
             return $action."::class";
         }
 
-        $action = explode('@', $action);
+        $action = \explode('@', $action);
 
         return "[".$action[0]."::class".", '".$action[1]."']";
     }
@@ -112,7 +112,7 @@ class PrettyPrintRoutes extends Command
     private function getMiddlewares($route)
     {
         $middlewares = $route->gatherMiddleware();
-        $middlewares && $middlewares = "'".implode("', '", $route->gatherMiddleware())."'";
+        $middlewares && $middlewares = "'".\implode("', '", $route->gatherMiddleware())."'";
 
         return ($middlewares ? '->middleware(['.$middlewares."])" : '');
     }
@@ -128,7 +128,7 @@ class PrettyPrintRoutes extends Command
     {
         $this->getOutput()->writeln('---------------------------------------------------');
         $this->info(' name:             '.($route->getName() ? ($route->getName()) : ''));
-        $this->info(' uri:              '.implode(', ', $route->methods())."   '/".$route->uri()."'  ");
+        $this->info(' uri:              '.\implode(', ', $route->methods())."   '/".$route->uri()."'  ");
         $this->info(' middlewares:      '.$middlewares);
         $this->info(' action:           '.$route->getActionName());
     }

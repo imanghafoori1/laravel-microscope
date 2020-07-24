@@ -13,19 +13,19 @@ class SyntaxNormalizer
         $start = [T_FOR, T_IF, T_FOREACH, T_WHILE, T_ELSEIF];
         $i = 0;
         $refactoredTokens = [];
-        $tCount = count($tokens);
+        $tCount = \count($tokens);
         $ifIf = [];
 
         while ($tCount > $i) {
             $t = $tokens[$i];
-            if (in_array($t[0], $ends)) {
+            if (\in_array($t[0], $ends)) {
                 // replace the ruby-style syntax with C-style
                 $refactoredTokens[] = ['}', $t[1]];
                 $i++;
                 continue;
             }
 
-            if (in_array($t[0], $start)) {
+            if (\in_array($t[0], $start)) {
                 // forward to end of parenthesis
                 [, , $u] = Ifs::readCondition($tokens, $i);
                 // read first char after the parenthesis
@@ -45,7 +45,7 @@ class SyntaxNormalizer
                     [$next_T, $next_I] = FunctionCall::getNextToken($tokens, $u);
                 }
 
-                if (in_array($next_T[0], [T_FOR, T_FOREACH, T_WHILE])) {
+                if (\in_array($next_T[0], [T_FOR, T_FOREACH, T_WHILE])) {
                     array_splice($tokens, $next_I, 0, [['{','',]]);
                     $refactoredTokens[] = $t;
                     $i++;
@@ -55,7 +55,7 @@ class SyntaxNormalizer
                     array_splice($tokens, $u, 0, [['}','']]);
 
                     // we update the count since the number of elements is changed.
-                    $tCount = count($tokens);
+                    $tCount = \count($tokens);
                     continue;
                 } elseif ($next_T[0] !== T_IF && $next_T !== '{') {
                     /**
@@ -75,7 +75,7 @@ class SyntaxNormalizer
                         array_splice($tokens, $endIndex + 2, 0, [['}', '']]);
                     }
                     array_splice($tokens, $endIndex + 2, 0, [['}', '']]);
-                    $tCount = count($tokens);
+                    $tCount = \count($tokens);
                     $i++;
                     continue;
                 } elseif($t[0] == T_IF && $next_T[0] === T_IF) {

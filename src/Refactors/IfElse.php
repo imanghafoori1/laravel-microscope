@@ -8,7 +8,7 @@ class IfElse
 {
     public static function refactorElseIf($tokens, $ifBody, $elseBody, $condition)
     {
-        if (Refactor::isBlocky($elseBody[1]) && self::shouldBeFlipped(count($elseBody[1]), count($ifBody[1]))) {
+        if (Refactor::isBlocky($elseBody[1]) && self::shouldBeFlipped(\count($elseBody[1]), \count($ifBody[1]))) {
             return self::flipElseIf($tokens, $condition, $ifBody, $elseBody);
         } elseif (Refactor::isBlocky($ifBody[1])) {
             return self::removeTokens($tokens, $ifBody[2], $elseBody[0], $elseBody[2]);

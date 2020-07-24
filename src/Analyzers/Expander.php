@@ -11,7 +11,7 @@ class Expander
      */
     public static function isBuiltinType($type)
     {
-        return in_array(strtolower($type), [
+        return \in_array(strtolower($type), [
             'string',
             'int',
             'float',

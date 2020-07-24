@@ -17,7 +17,7 @@ class ErrorPrinter
     public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
         ($this->errorsList['view'][] = (new PendingError('view'))
-            ->header(trim($lineContent))
+            ->header(\trim($lineContent))
             ->errorData($this->yellow($fileName.'.blade.php').' does not exist')
             ->link($absPath, $lineNumber));
     }
@@ -81,7 +81,7 @@ class ErrorPrinter
     {
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($this->yellow(implode(', ',array_keys($absent))). ' does not exist')
+            ->errorData($this->yellow(\implode(', ',array_keys($absent))). ' does not exist')
             ->link($path, $lineNumber));
     }
 
@@ -111,7 +111,7 @@ class ErrorPrinter
 
         $msg .= "\n".' at '. $info[1]['file'].':'.$info[1]['line']. "\n";
 
-        $methods = implode(',', $route1->methods());
+        $methods = \implode(',', $route1->methods());
 
         $this->errorsList[$key][$methods] = (new PendingError($key))
             ->header('Route with uri: '.$this->yellow($methods.': /'.$route1->uri()).' is overridden.')
@@ -187,7 +187,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $filePath = trim(str_replace(base_path(), '', $path), '\\/');
+            $filePath = \trim(\str_replace(base_path(), '', $path), '\\/');
             $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
         }
     }
@@ -225,7 +225,7 @@ class ErrorPrinter
 
     public function getCount($key)
     {
-        return count($this->errorsList[$key] ?? []);
+        return \count($this->errorsList[$key] ?? []);
     }
 
     public function printTime()

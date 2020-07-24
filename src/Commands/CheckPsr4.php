@@ -85,11 +85,11 @@ class CheckPsr4 extends Command implements FileCheckContract
         $news = $this->deriveVariants($news);
         foreach ($lines as $i => $line) {
             $count = 0;
-            $lines[$i] = str_replace($olds, $news, $line, $count);
+            $lines[$i] = \str_replace($olds, $news, $line, $count);
             $count && $changed[] = ($i + 1);
         }
 
-       $changed && file_put_contents($_path, implode('', $lines));
+       $changed && file_put_contents($_path, \implode('', $lines));
 
         return $changed;
     }

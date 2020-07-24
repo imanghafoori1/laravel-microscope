@@ -82,7 +82,7 @@ class ParseUseStatement
                                 if (self::fetch($tokens, T_AS)) {
                                     $uses[self::fetch($tokens, T_STRING)] = [$name.$suffix, $token[2]];
                                 } else {
-                                    $tmp = explode('\\', $suffix);
+                                    $tmp = \explode('\\', $suffix);
                                     $uses[end($tmp)] = [$name.$suffix, $token[2]];
                                 }
                                 if (! self::fetch($tokens, ',')) {
@@ -92,7 +92,7 @@ class ParseUseStatement
                         } elseif (self::fetch($tokens, T_AS)) {
                             $uses[self::fetch($tokens, T_STRING)] = [$name, $token[2]];
                         } else {
-                            $tmp = explode('\\', $name);
+                            $tmp = \explode('\\', $name);
                             $uses[end($tmp)] = [$name, $token[2]];
                         }
                         if (! self::fetch($tokens, ',')) {
@@ -121,24 +121,24 @@ class ParseUseStatement
     public static function fetch(&$tokens, $take)
     {
         $res = null;
-        while ($token = current($tokens)) {
+        while ($token = \current($tokens)) {
             [
                 $token,
                 $s,
-            ] = is_array($token) ? $token : [
+            ] = \is_array($token) ? $token : [
                 $token,
                 $token,
             ];
-            if (in_array($token, (array) $take, true)) {
+            if (\in_array($token, (array) $take, true)) {
                 $res .= $s;
-            } elseif (! in_array($token, [
+            } elseif (! \in_array($token, [
                 T_DOC_COMMENT,
                 T_WHITESPACE,
                 T_COMMENT,
             ], true)) {
                 break;
             }
-            next($tokens);
+            \next($tokens);
         }
 
         return $res;

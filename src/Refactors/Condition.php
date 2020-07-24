@@ -40,7 +40,7 @@ class Condition
         }
 
         foreach ($conditionTokens as $t) {
-            if (in_array($t[1] ?? $t[0], $ops)) {
+            if (\in_array($t[1] ?? $t[0], $ops)) {
                 $found = true;
                 break;
             }
@@ -65,7 +65,7 @@ class Condition
         foreach ($conditionTokens as $t) {
             $t == '(' && $level++;
             $t == ')' && $level--;
-            if ($level === 0 && in_array($t[1] ?? $t[0], $ops)) {
+            if ($level === 0 && \in_array($t[1] ?? $t[0], $ops)) {
                 $found++;
             }
         }

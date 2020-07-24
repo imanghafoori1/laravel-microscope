@@ -80,7 +80,7 @@ class CheckCompact extends Command
             [, $compactedVars,] = Ifs::readCondition($methodBody, $pp);
             $compactVars = [];
             foreach ($compactedVars as $uu => $var) {
-                $var[0] == T_CONSTANT_ENCAPSED_STRING && $compactVars[] = '$'.trim($var[1], '\'\"');
+                $var[0] == T_CONSTANT_ENCAPSED_STRING && $compactVars[] = '$'.\trim($var[1], '\'\"');
             }
             $compactVars = array_flip($compactVars);
 

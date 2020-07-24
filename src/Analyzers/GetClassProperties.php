@@ -20,7 +20,7 @@ class GetClassProperties
     public static function readClassDefinition($tokens)
     {
         $type = $class = null;
-        $allTokensCount = count($tokens);
+        $allTokensCount = \count($tokens);
         $parent = null;
         $interfaces = $namespace = '';
 
@@ -36,7 +36,7 @@ class GetClassProperties
             }
 
             // when we reach the first "class", or "interface" or "trait" keyword
-            if (! $class && in_array($tokens[$i][0], [T_CLASS, T_INTERFACE, T_TRAIT])) {
+            if (! $class && \in_array($tokens[$i][0], [T_CLASS, T_INTERFACE, T_TRAIT])) {
                 $class = $tokens[$i + 2][1];
                 $type = $tokens[$i + 2][0];
                 $i = $i + 2;
@@ -53,7 +53,7 @@ class GetClassProperties
         }
 
         return [
-            ltrim($namespace, '\\'),
+            \ltrim($namespace, '\\'),
             $class,
             $type,
             $parent,
@@ -93,7 +93,7 @@ class GetClassProperties
                 continue;
             }
 
-            if (in_array($tokens[$i][0], $terminators) || ! isset($tokens[$i])) {
+            if (\in_array($tokens[$i][0], $terminators) || ! isset($tokens[$i])) {
                 // we go ahead and collect until we reach:
                 // 1. an opening curly brace {
                 // 2. or a semi-colon ;

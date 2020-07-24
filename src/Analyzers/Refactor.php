@@ -40,7 +40,7 @@ class Refactor
         foreach ($codeBlock as $token) {
             $token[0] == '}' && $depth++;
             $token[0] == '{' && $depth--;
-            if ($depth == 0 && (in_array($token[0], self::blocksKeyWords))) {
+            if ($depth == 0 && (\in_array($token[0], self::blocksKeyWords))) {
                 $isBlocky = true;
             }
         }

@@ -9,13 +9,13 @@ class CheckViewFilesExistence
 {
     public static function check($tokens, $absPath)
     {
-        $tCount = count($tokens);
+        $tCount = \count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
             if (! self::isEnvMake($tokens, $i)) {
                 continue;
             }
 
-            $viewName = trim($tokens[$i + 4][1], '\'\"');
+            $viewName = \trim($tokens[$i + 4][1], '\'\"');
             if (! View::exists($viewName)) {
                 self::error($tokens, $absPath, $i);
             }
@@ -53,6 +53,6 @@ class CheckViewFilesExistence
 
     private static function isMethodCall($tokens, $i, $varName, $methods)
     {
-        return self::isVariable($tokens[$i], $varName) && in_array($tokens[$i + 2][1] ?? null, $methods);
+        return self::isVariable($tokens[$i], $varName) && \in_array($tokens[$i + 2][1] ?? null, $methods);
     }
 }

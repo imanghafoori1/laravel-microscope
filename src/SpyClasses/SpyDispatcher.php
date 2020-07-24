@@ -102,7 +102,7 @@ class SpyDispatcher extends Dispatcher
 
     protected function noClass($event, $class, $method)
     {
-        $at = implode('@', [$class, $method]);
+        $at = \implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The class of '.$at.' can not be resolved as a listener for "'.$e.'" event';
@@ -110,7 +110,7 @@ class SpyDispatcher extends Dispatcher
 
     protected function noMethod($event, $class, $method)
     {
-        $at = implode('@', [$class, $method]);
+        $at = \implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';

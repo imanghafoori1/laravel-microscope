@@ -25,6 +25,6 @@ class CheckIsQuery
     {
         $queryBuilder = ['\\'.DB::class, DB::class, '\DB', 'DB'];
 
-        return is_subclass_of($class, Model::class) || in_array($class, $queryBuilder);
+        return is_subclass_of($class, Model::class) || \in_array($class, $queryBuilder);
     }
 }

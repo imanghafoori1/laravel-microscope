@@ -12,7 +12,7 @@ class CheckRouteCalls
         // we skip the very first tokens: '<?php '
         $i = 4;
         // we skip the very end of the file.
-        $total = count($tokens) - 3;
+        $total = \count($tokens) - 3;
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('route', $tokens, $i);
             $index = $index ?: self::checkForRedirectRoute($tokens, $i);
@@ -44,7 +44,7 @@ class CheckRouteCalls
 
     public static function checkRouteExists($line, $routeName, $absPath)
     {
-        $matchedRoute = app('router')->getRoutes()->getByName(trim($routeName, '\'\"'));
+        $matchedRoute = app('router')->getRoutes()->getByName(\trim($routeName, '\'\"'));
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
     }
 

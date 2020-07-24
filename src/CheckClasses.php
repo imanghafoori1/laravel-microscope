@@ -78,15 +78,15 @@ class CheckClasses
      */
     protected static function calculateClassFromFile($filePath, $basePath, $path, $rootNamespace)
     {
-        $class = trim(Str::replaceFirst($basePath, '', $filePath), DIRECTORY_SEPARATOR);
+        $class = \trim(Str::replaceFirst($basePath, '', $filePath), DIRECTORY_SEPARATOR);
 
         // remove .php from class path
         $withoutDotPhp = Str::replaceLast('.php', '', $class);
         // ensure backslash on windows
-        $allBackSlash = str_replace(DIRECTORY_SEPARATOR, '\\', $withoutDotPhp);
+        $allBackSlash = \str_replace(DIRECTORY_SEPARATOR, '\\', $withoutDotPhp);
 
         // replaces the base folder name with corresponding namespace
-        return str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
+        return \str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
     private static function checkImportedClassesExist($imports, $absFilePath)
@@ -124,19 +124,19 @@ class CheckClasses
     {
         foreach ($tokens as $token) {
             // if it is a string containing a single '@'
-            if ($token[0] != T_CONSTANT_ENCAPSED_STRING || substr_count($token[1], '@') != 1) {
+            if ($token[0] != T_CONSTANT_ENCAPSED_STRING || \substr_count($token[1], '@') != 1) {
                 continue;
             }
 
-            $trimmed = trim($token[1], '\'\"');
+            $trimmed = \trim($token[1], '\'\"');
 
             if ($onlyAbsClassPath && $trimmed[0] !== '\\') {
                 continue;
             }
 
-            [$class, $method] = explode('@', $trimmed);
+            [$class, $method] = \explode('@', $trimmed);
 
-            if (substr_count($class, '\\') <= 0) {
+            if (\substr_count($class, '\\') <= 0) {
                 continue;
             }
 
@@ -173,21 +173,21 @@ class CheckClasses
         $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         foreach ($nonImportedClasses as $nonImportedClass) {
-            $cls = trim($nonImportedClass['class'], '\\');
+            $cls = \trim($nonImportedClass['class'], '\\');
             if (self::isAbsent($cls) && ! function_exists($cls)) {
                 $isInUserSpace = Str::startsWith($cls, array_keys(ComposerJson::readAutoload()));
                 $line = $nonImportedClass['line'];
                 $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
                 if (! $result[0]) {
-                    $cls = str_replace($nonImportedClass['namespace'].'\\', '', $cls);
+                    $cls = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
                     $result = ReplaceLine::fixReference($absFilePath, $cls, $line, '\\');
                 }
-                
+
                 if ($isInUserSpace && $result[0]) {
                     self::printFixation($absFilePath, $cls, $line);
                 } else {
 //                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line, $result[1]);
-                    $fixes = implode("\n - ", $result[1]);
+                    $fixes = \implode("\n - ", $result[1]);
                     $fixes && $fixes = "\n Possible fixes:\n - ". $fixes;
                     app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls."   <====  Class does not exist". $fixes, 'wrongUsedClassError', 'Class Does not exist:');
                 }

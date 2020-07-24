@@ -34,7 +34,7 @@ class RoutelessActions
     {
         $absFilePath = $classFilePath->getRealPath();
         $className = $classFilePath->getFilename();
-        $relativePath = str_replace(base_path(), '', $absFilePath);
+        $relativePath = \str_replace(base_path(), '', $absFilePath);
         $namespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $psr4Path, $psr4Namespace);
 
         return $namespace.'\\'.$className;
@@ -54,7 +54,7 @@ class RoutelessActions
     {
         $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
 
-        return trim($fullNamespace, '.php');
+        return \trim($fullNamespace, '.php');
     }
 
     protected function findOrphanActions($tokens, $fullNamespace)
@@ -105,6 +105,6 @@ class RoutelessActions
     {
         ($methodName == '__invoke') ? ($methodName = '') : ($methodName = '@'.$methodName);
 
-        return trim($fullNamespace, '\\').$methodName;
+        return \trim($fullNamespace, '\\').$methodName;
     }
 }
