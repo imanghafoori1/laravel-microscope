@@ -58,7 +58,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             }
         }
 
-        $this->info(PHP_EOL.CheckNamespaces::$checkedNamespaces.' classes where checked!');
+        $this->info(PHP_EOL.'Checked '.CheckNamespaces::$checkedNamespaces.' namespaces!');
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
     }

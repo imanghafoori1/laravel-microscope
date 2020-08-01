@@ -29,6 +29,7 @@ class ComposerJson
 
     public static function readAutoload()
     {
+        $composers = [];
         foreach (self::readKey('repositories') as $repo) {
             if ($repo['type'] == 'path') {
                 // here we exclude local packages outside of the root folder.
@@ -38,11 +39,14 @@ class ComposerJson
 
         $res = [];
         foreach ($composers as $path) {
+            // We avoid autoload-dev for repositories.
             $res = $res + self::readKey('autoload.psr-4', $path);
         }
-        $res = $res + self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
 
-        return $res;
+        // add the root composer.json
+        $root = self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
+
+        return $res + $root;
     }
 
     private static function normalizePaths($value, $path)
