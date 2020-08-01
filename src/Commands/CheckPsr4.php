@@ -50,20 +50,15 @@ class CheckPsr4 extends Command implements FileCheckContract
                 }
             }
         }
-        $paths = [];
-        $paths = array_merge($paths, RoutePaths::get());
-        $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
-        $paths = array_merge($paths, Paths::getAbsFilePaths(config_path()));
-        $paths = array_merge($paths, Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
-        $paths = array_merge($paths, Paths::getAbsFilePaths(app()->databasePath('seeds')));
-        $paths = array_merge($paths, $this->bladeFilePaths());
 
-        foreach ($paths as $_path) {
+        foreach ($this->collectAllPaths() as $_path) {
             $lineNumbers = $this->fixRefs($_path, $olds, $news);
             foreach ($lineNumbers as $line) {
                 $errorPrinter->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
             }
         }
+
+        $this->info(PHP_EOL.CheckNamespaces::$checkedNamespaces.' classes where checked!');
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
     }
@@ -135,5 +130,29 @@ class CheckPsr4 extends Command implements FileCheckContract
         }
 
         return $newOld;
+    }
+
+    private function collectAllPaths()
+    {
+        $paths = [
+            RoutePaths::get(),
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
+            Paths::getAbsFilePaths(config_path()),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
+            Paths::getAbsFilePaths(app()->databasePath('seeds')),
+            $this->bladeFilePaths(),
+        ];
+
+        return $this->mergePaths($paths);
+    }
+
+    private function mergePaths($paths)
+    {
+        $all = [];
+        foreach ($paths as $p) {
+            $all = array_merge($all, $p);
+        }
+
+        return $all;
     }
 }

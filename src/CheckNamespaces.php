@@ -12,6 +12,8 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckNamespaces
 {
+    public static $checkedNamespaces = 0;
+
     public static $changedNamespaces = [];
 
     /**
@@ -60,6 +62,7 @@ class CheckNamespaces
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
+            self::$checkedNamespaces++;
             if ($currentNamespace === $correctNamespace) {
                 continue;
             }
