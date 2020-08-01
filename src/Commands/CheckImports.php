@@ -44,6 +44,7 @@ class CheckImports extends Command implements FileCheckContract
         BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
+        $this->getOutput()->writeln(CheckClassReferences::$refCount. ' class references were checked');
         $errorPrinter->printTime();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
