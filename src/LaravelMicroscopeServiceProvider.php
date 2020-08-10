@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Support\ServiceProvider;
+use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
