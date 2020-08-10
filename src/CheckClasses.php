@@ -189,6 +189,7 @@ class CheckClasses
 //                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line, $result[1]);
                     $fixes = \implode("\n - ", $result[1]);
                     $fixes && $fixes = "\n Possible fixes:\n - ". $fixes;
+                    $cls != 'class' && ! \is_numeric($cls) &&
                     app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls."   <====  Class does not exist". $fixes, 'wrongUsedClassError', 'Class Does not exist:');
                 }
             }
