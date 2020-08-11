@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Event;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
 
 class ConsolePrinterInstaller
@@ -97,10 +97,10 @@ class ConsolePrinterInstaller
             $data = $event->data;
 
             app(ErrorPrinter::class)->compactError(
-				$data['absPath'],
-				$data['lineNumber'],
-				$data['name'],
-				'CompactCall',
+                $data['absPath'],
+                $data['lineNumber'],
+                $data['name'],
+                'CompactCall',
                 'compact() function call has problems man ! ');
         });
     }

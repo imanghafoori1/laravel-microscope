@@ -3,13 +3,13 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckCompact extends Command
 {
@@ -34,7 +34,7 @@ class CheckCompact extends Command
     {
         $tokens = token_get_all(file_get_contents($absPath));
 
-        foreach($tokens as $i => $token) {
+        foreach ($tokens as $i => $token) {
             if ($tokens[$i][0] != T_FUNCTION) {
                 continue;
             }

@@ -11,7 +11,7 @@ trait ScansFiles
     {
         // @todo better to be an event listener.
         if ($this->option('detailed')) {
-            $this->line("Checking ".$path);
+            $this->line('Checking '.$path);
         }
     }
 }

@@ -29,13 +29,13 @@ if (! function_exists('microscope_dd_listeners')) {
             $events = config('microscope.dump.listeners');
             foreach ($events as $event) {
                 $listernsInfo = Event::getOriginalListeners($event);
-                dump(' Event:  ' .$event);
+                dump(' Event:  '.$event);
                 dump(' Listeners: ');
                 $sp = '     ';
-                foreach($listernsInfo as $i => $listenerInfo) {
+                foreach ($listernsInfo as $i => $listenerInfo) {
                     dump($sp.($i + 1).' - '.$listenerInfo[0]);
                     $relPath = \Imanghafoori\LaravelMicroscope\Analyzers\FilePath::getRelativePath($listenerInfo[1]['file']);
-                    dump($sp.'    at '.$relPath. ':'.$listenerInfo[1]['line']);
+                    dump($sp.'    at '.$relPath.':'.$listenerInfo[1]['line']);
                 }
                 dump('------------------------------------------');
             }

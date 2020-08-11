@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Closure;
-use Illuminate\Support\Str;
 use Illuminate\Routing\Router;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyRouter extends Router
 {
@@ -54,7 +54,7 @@ class SpyRouter extends Router
         }
 
         if ($ns && isset($attributes['namespace']) && $ns !== $dir && ! is_dir($dir)) {
-            $err = "['namespace' => "."'".$attributes['namespace']. '\'] passed to Route::group(...) is not correct.';
+            $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
             $this->routeError($info, $err, 'Incorrect namespace.');
         }
     }

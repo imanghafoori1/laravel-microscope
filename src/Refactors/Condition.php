@@ -19,7 +19,7 @@ class Condition
             '!==',
         ];
 
-        $logic = [ '&&', '||', 'or', 'and', '?:', '??', '-', '+', '*', '**', '%', '<=>'];
+        $logic = ['&&', '||', 'or', 'and', '?:', '??', '-', '+', '*', '**', '%', '<=>'];
 
         $ops = array_merge($ops, $logic);
 
@@ -35,7 +35,6 @@ class Condition
         ];
         if (self::count($conditionTokens, $comparison) == 1 &&
             self::count($conditionTokens, $logic) == 0) {
-
             return self::replace($conditionTokens, $comparison);
         }
 
@@ -79,7 +78,7 @@ class Condition
         foreach ($conditionTokens as $token) {
             $char = is_array($token) ? $token[1] : $token[0];
             if (isset($ops[$char])) {
-                $r = (array)$token;
+                $r = (array) $token;
                 $r[1] = $ops[$char];
 
                 $newTokens[] = $r;

@@ -16,7 +16,6 @@ class ActionsUnDocblock
         if (RoutelessActions::isLaravelController($fullNamespace)) {
             self::removeGenericDocBlocks($tokens, $classFilePath);
         }
-
     }
 
     private static function removeGenericDocBlocks($tokens, $classFilePath)

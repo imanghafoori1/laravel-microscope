@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use InvalidArgumentException;
 
@@ -36,18 +36,18 @@ class ExtractBladePartial
             $i++;
         }
         if (! $calls) {
-            return ;
+            return;
         }
 
         $file = file($absPath);
 
         $callsOrder = array_reverse($callsOrder);
-        foreach($callsOrder as $paramName) {
+        foreach ($callsOrder as $paramName) {
             $call = $calls[$paramName];
             if (\count($call) < 2) {
                 continue;
             }
-            $replacement = ['@include('.$call[0][1].')'. "\n"];
+            $replacement = ['@include('.$call[0][1].')'."\n"];
 
             $start = $call[0][2] - (1);
             $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
@@ -56,7 +56,7 @@ class ExtractBladePartial
             array_shift($extracted);
             array_pop($extracted);
 
-            $partialPath = \str_replace(['/','\\'], '/', $partialPath);
+            $partialPath = \str_replace(['/', '\\'], '/', $partialPath);
 
             $spaces = Str::before($extracted[0], \trim($extracted[0]));
             // add space before the @include to have proper indentation.
@@ -129,19 +129,20 @@ class ExtractBladePartial
         return strpos($name, '::') > 0;
     }
 
-    public static function forceFilePutContents($filepath, $message){
+    public static function forceFilePutContents($filepath, $message)
+    {
         try {
             $isInFolder = preg_match("/^(.*)\/([^\/]+)$/", $filepath, $filepathMatches);
-            if($isInFolder) {
+            if ($isInFolder) {
                 $folderName = $filepathMatches[1];
 //                $fileName = $filepathMatches[2];
-                if (!is_dir($folderName)) {
+                if (! is_dir($folderName)) {
                     mkdir($folderName, 0777, true);
                 }
             }
             file_put_contents($filepath, $message);
         } catch (Exception $e) {
-            echo "ERR: error writing '$message' to '$filepath', ". $e->getMessage();
+            echo "ERR: error writing '$message' to '$filepath', ".$e->getMessage();
         }
     }
 }
