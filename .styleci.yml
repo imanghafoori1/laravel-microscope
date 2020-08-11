@@ -1,2 +1,1 @@
-php:
-  preset: laravel
+preset: laravel
