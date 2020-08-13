@@ -2,26 +2,25 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\View\View;
-use Illuminate\Support\Str;
+use Faker\Generator as FakerGenerator;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Faker\Generator as FakerGenerator;
 use Illuminate\Support\ServiceProvider;
-use Imanghafoori\LaravelMicroscope\Commands;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
-use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {

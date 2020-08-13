@@ -81,11 +81,11 @@ class ErrorPrinter
     {
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($this->yellow(\implode(', ',array_keys($absent))). ' does not exist')
+            ->errorData($this->yellow(\implode(', ', array_keys($absent))).' does not exist')
             ->link($path, $lineNumber));
     }
 
-    public function routeDefinitionConflict($route1 , $route2, $info)
+    public function routeDefinitionConflict($route1, $route2, $info)
     {
         $key = 'routeDefinitionConflict';
         $routeName = $route1->getName();
@@ -98,7 +98,7 @@ class ErrorPrinter
             $msg = 'Route uri: '.$routeUri;
         }
 
-        $msg .= "\n".' at '. ($info[0]['file'] ?? 'unknown').':'.($info[0]['line'] ?? 2);
+        $msg .= "\n".' at '.($info[0]['file'] ?? 'unknown').':'.($info[0]['line'] ?? 2);
         $msg .= "\n".' is overridden by ';
 
         $routeName = $route2->getName();
@@ -109,7 +109,7 @@ class ErrorPrinter
             $msg .= 'an other route with same uri.';
         }
 
-        $msg .= "\n".' at '. $info[1]['file'].':'.$info[1]['line']. "\n";
+        $msg .= "\n".' at '.$info[1]['file'].':'.$info[1]['line']."\n";
 
         $methods = \implode(',', $route1->methods());
 

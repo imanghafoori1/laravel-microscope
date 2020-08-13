@@ -4,15 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 
 class CheckViews extends Command
 {
@@ -33,7 +32,7 @@ class CheckViews extends Command
         $this->checkPsr4Classes();
         $this->checkBladeFiles();
 
-        $this->getOutput()->writeln(' - '.self::$checkedCallsNum. ' view references were checked to exist. ('.self::$skippedCallsNum.' skipped)');
+        $this->getOutput()->writeln(' - '.self::$checkedCallsNum.' view references were checked to exist. ('.self::$skippedCallsNum.' skipped)');
         event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
@@ -43,7 +42,7 @@ class CheckViews extends Command
     {
         $tokens = \token_get_all(\file_get_contents($absPath));
 
-        foreach($tokens as $i => $token) {
+        foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
                 $this->checkViewParams($absPath, $tokens, $i, 0);
                 continue;

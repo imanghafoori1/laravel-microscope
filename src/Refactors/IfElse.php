@@ -21,9 +21,8 @@ class IfElse
     {
         $ifIsLonger = ($elseCount + 10) < $ifBody;
 
-        return ($ifIsLonger || ($elseCount < $ifBody * 0.7));
+        return $ifIsLonger || ($elseCount < $ifBody * 0.7);
     }
-
 
     private static function removeTokens($tokens, $from, $to, $at)
     {
@@ -42,8 +41,8 @@ class IfElse
         return $refactoredTokens;
     }
 
-    private static function flipElseIf($tokens, $condition, $ifBody, $elseBody) {
-
+    private static function flipElseIf($tokens, $condition, $ifBody, $elseBody)
+    {
         [$ifBlockStartIndex, $ifBody, $ifBlockEndIndex] = $ifBody;
         [$elseBodyStartIndex, $elseBody, $elseBodyEndIndex] = $elseBody;
         [$conditionStartIndex, $condition, $conditionCloseIndex] = $condition;

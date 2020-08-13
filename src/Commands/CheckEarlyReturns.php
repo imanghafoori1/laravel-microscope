@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckEarlyReturns extends Command
@@ -93,6 +93,7 @@ class CheckEarlyReturns extends Command
     {
         $this->info('Checking for Early Returns...');
         $this->warn('This command is going to make changes to your files!');
+
         return $this->output->confirm('Do you have committed everything in git?', true);
     }
 }

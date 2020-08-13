@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class PrettyPrintRoutes extends Command
 {
@@ -26,8 +26,8 @@ class PrettyPrintRoutes extends Command
                  * @var  \Illuminate\Routing\Route  $route
                  */
                 if ($route) {
-                    ($call["function"] == "microscope_write_route") && $this->writeIt($route, $call['file']);
-                    ($call["function"] == "microscope_pretty_print_route") && $this->printIt($route);
+                    ($call['function'] == 'microscope_write_route') && $this->writeIt($route, $call['file']);
+                    ($call['function'] == 'microscope_pretty_print_route') && $this->printIt($route);
                 } else {
                     $this->info('Route name not found.');
                 }
@@ -88,7 +88,7 @@ class PrettyPrintRoutes extends Command
             $defaults = '';
         } else {
             $method = strtolower($methods[0]);
-            $uriAction = "('/".$route->uri()."', ".$action.")";
+            $uriAction = "('/".$route->uri()."', ".$action.')';
             $defaults = $this->getDefaults($route->defaults);
         }
 
@@ -99,14 +99,14 @@ class PrettyPrintRoutes extends Command
 
     private function getAction($action)
     {
-        $action = Str::start($action, "\\");
+        $action = Str::start($action, '\\');
         if (! Str::contains($action, ['@'])) {
-            return $action."::class";
+            return $action.'::class';
         }
 
         $action = \explode('@', $action);
 
-        return "[".$action[0]."::class".", '".$action[1]."']";
+        return '['.$action[0].'::class'.", '".$action[1]."']";
     }
 
     private function getMiddlewares($route)
@@ -114,7 +114,7 @@ class PrettyPrintRoutes extends Command
         $middlewares = $route->gatherMiddleware();
         $middlewares && $middlewares = "'".\implode("', '", $route->gatherMiddleware())."'";
 
-        return ($middlewares ? '->middleware(['.$middlewares."])" : '');
+        return $middlewares ? '->middleware(['.$middlewares.'])' : '';
     }
 
     private function handleRouteProblem($e)

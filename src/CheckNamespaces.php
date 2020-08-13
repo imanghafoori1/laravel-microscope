@@ -4,11 +4,11 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckNamespaces
 {
@@ -66,13 +66,13 @@ class CheckNamespaces
             if ($currentNamespace === $correctNamespace) {
                 continue;
             }
-            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($currentNamespace). DIRECTORY_SEPARATOR . $class))) {
-                self::$changedNamespaces[$currentNamespace.'\\'. $class.';'] = $correctNamespace.'\\'. $class.';';
-                self::$changedNamespaces[$currentNamespace.'\\'. $class.'('] = $correctNamespace.'\\'. $class.'(';
-                self::$changedNamespaces[$currentNamespace.'\\'. $class.'::'] = $correctNamespace.'\\'. $class.'::';
-                self::$changedNamespaces[$currentNamespace.'\\'. $class.' as'] = $correctNamespace.'\\'. $class.' as';
+            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($currentNamespace).DIRECTORY_SEPARATOR.$class))) {
+                self::$changedNamespaces[$currentNamespace.'\\'.$class.';'] = $correctNamespace.'\\'.$class.';';
+                self::$changedNamespaces[$currentNamespace.'\\'.$class.'('] = $correctNamespace.'\\'.$class.'(';
+                self::$changedNamespaces[$currentNamespace.'\\'.$class.'::'] = $correctNamespace.'\\'.$class.'::';
+                self::$changedNamespaces[$currentNamespace.'\\'.$class.' as'] = $correctNamespace.'\\'.$class.' as';
             } else {
-                self::$changedNamespaces[$currentNamespace.'\\'. $class] = $correctNamespace.'\\'. $class;
+                self::$changedNamespaces[$currentNamespace.'\\'.$class] = $correctNamespace.'\\'.$class;
             }
             self::warn($currentNamespace, $relativePath);
 

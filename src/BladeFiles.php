@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
-use Symfony\Component\Finder\Finder;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
+use Symfony\Component\Finder\Finder;
 
 class BladeFiles
 {

@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class EarlyReturns
 {
@@ -142,7 +142,7 @@ class EarlyReturns
         $ifBlockLength = $ifBody[1][1] - $ifBody[1][0];
         $afterIfLength = $methodBodyCloseIndex - $ifBody[1][1];
 
-        return (($afterIfLength + 20) > $ifBlockLength);
+        return ($afterIfLength + 20) > $ifBlockLength;
     }
 
     private static function collectConditions($tokens, $ifOpenParenIndex, $ifCloseParenIndex)
@@ -155,5 +155,4 @@ class EarlyReturns
 
         return $conditionTokens;
     }
-
 }

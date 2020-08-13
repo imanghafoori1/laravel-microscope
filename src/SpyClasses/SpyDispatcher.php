@@ -2,13 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use ReflectionFunction;
-use ReflectionException;
-use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
+use ReflectionException;
+use ReflectionFunction;
 
 class SpyDispatcher extends Dispatcher
 {
@@ -23,13 +23,13 @@ class SpyDispatcher extends Dispatcher
         parent::listen($events, $listener);
 
         $events = (array) $events;
-        foreach($events as $event) {
+        foreach ($events as $event) {
             self::$listeningNum++;
             $this->validateCallback($event, $listener);
         }
 
         // Do not move this loop into a private method or something, it breaks.
-        foreach ((array)$events as $event) {
+        foreach ((array) $events as $event) {
             $i = 0;
             $excludes = [
                 base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
@@ -136,7 +136,7 @@ class SpyDispatcher extends Dispatcher
         foreach (class_implements($eventName) as $interface) {
             if (isset($this->originalListeners[$interface])) {
                 foreach ($this->originalListeners[$interface] as $names) {
-                    $listeners = array_merge($listeners, (array)$names);
+                    $listeners = array_merge($listeners, (array) $names);
                 }
             }
         }

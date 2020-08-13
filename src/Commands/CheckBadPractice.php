@@ -3,14 +3,14 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckBadPractice extends Command
 {
@@ -41,7 +41,7 @@ class CheckBadPractice extends Command
     {
         $tokens = token_get_all(file_get_contents($absPath));
 
-        foreach($tokens as $i => $token) {
+        foreach ($tokens as $i => $token) {
             if (($index = FunctionCall::isGlobalCall('env', $tokens, $i))) {
                 EnvFound::isMissing($absPath, $tokens[$index][2], $tokens[$index][1]);
             }

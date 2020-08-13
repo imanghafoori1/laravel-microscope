@@ -3,15 +3,15 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Support\Str;
-use Illuminate\Routing\Router;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
 {
@@ -46,10 +46,9 @@ class CheckRoutes extends Command
 
         $this->getOutput()->writeln(' - '.CheckRouteCalls::$checkedRouteCallsNum.
             ' route(...) calls were checked. ('
-            . CheckRouteCalls::$skippedRouteCallsNum.' skipped)');
+            .CheckRouteCalls::$skippedRouteCallsNum.' skipped)');
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
-
 
         event('microscope.finished.checks', [$this]);
 

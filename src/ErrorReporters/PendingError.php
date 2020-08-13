@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 class PendingError
 {
-    static $maxLength = 60;
+    public static $maxLength = 60;
 
     private $type;
 

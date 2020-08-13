@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class ActionsComments
 {
@@ -94,7 +94,7 @@ class ActionsComments
 
         $middlewares = $route->gatherMiddleware();
 
-        foreach($middlewares as $i => $m) {
+        foreach ($middlewares as $i => $m) {
             if (! is_string($m)) {
                 $middlewares[$i] = 'Closure';
             }

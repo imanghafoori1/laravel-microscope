@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Composer;
-use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
@@ -40,7 +40,7 @@ class CheckClasses
     {
         // If file is empty or does not begin with <?php
         if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
-            return ;
+            return;
         }
 
         [
@@ -53,7 +53,7 @@ class CheckClasses
 
         // It means that, there is no class/trait definition found in the file.
         if (! $class) {
-            return ;
+            return;
         }
 
         event('laravel_microscope.checking_file', [$absFilePath]);
@@ -140,7 +140,6 @@ class CheckClasses
                 continue;
             }
 
-
             if (Str::contains($trimmed, ['-', '/', '[', '*', '+', '.', '(', '$', '^'])) {
                 continue;
             }
@@ -188,8 +187,8 @@ class CheckClasses
                 } else {
 //                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line, $result[1]);
                     $fixes = \implode("\n - ", $result[1]);
-                    $fixes && $fixes = "\n Possible fixes:\n - ". $fixes;
-                    app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls."   <====  Class does not exist". $fixes, 'wrongUsedClassError', 'Class Does not exist:');
+                    $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;
+                    app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls.'   <====  Class does not exist'.$fixes, 'wrongUsedClassError', 'Class Does not exist:');
                 }
             }
         }

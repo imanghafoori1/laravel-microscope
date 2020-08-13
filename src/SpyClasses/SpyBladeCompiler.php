@@ -44,7 +44,6 @@ class SpyBladeCompiler extends BladeCompiler
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3];
 
-
             $wrapped = sprintf($this->echoFormat, $matches[2]);
 
             // in order to avoid changing the number of lines after compilation
@@ -60,7 +59,6 @@ class SpyBladeCompiler extends BladeCompiler
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 
         $callback = function ($matches) {
-
             $whitespace = empty($matches[3]) ? '' : $matches[3];
 
             // in order to avoid changing the number of lines after compilation

@@ -32,7 +32,7 @@ class SpyGate extends Gate
         if ($t) {
             $callback1 = is_string($callback) ? $callback : 'Closure';
             $callback2 = is_string($t) ? $t : 'Closure';
-            app(ErrorPrinter::class)->pended[] = ("The Gate definition '$ability' is overridden. loser:". $callback1. ' Winner: '.$callback2);
+            app(ErrorPrinter::class)->pended[] = ("The Gate definition '$ability' is overridden. loser:".$callback1.' Winner: '.$callback2);
         }
 
         parent::define($ability, $callback);
