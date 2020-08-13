@@ -9,8 +9,11 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class SpyGate extends Gate
 {
+    public static $definedGatesNum = 0;
+
     public function define($ability, $callback)
     {
+        self::$definedGatesNum++;
         if (is_string($callback)) {
             [$class, $method] = Str::parseCallback($callback, '__invoke');
 
@@ -29,7 +32,7 @@ class SpyGate extends Gate
         if ($t) {
             $callback1 = is_string($callback) ? $callback : 'Closure';
             $callback2 = is_string($t) ? $t : 'Closure';
-            app(ErrorPrinter::class)->pended[] = ("The Gate definition '$ability' is overridden. loser:".$callback1.' Winner: '.$callback2);
+            app(ErrorPrinter::class)->pended[] = ("The Gate definition '$ability' is overridden. loser:". $callback1. ' Winner: '.$callback2);
         }
 
         parent::define($ability, $callback);

@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Closure;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
+use Illuminate\Routing\Router;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class SpyRouter extends Router
 {

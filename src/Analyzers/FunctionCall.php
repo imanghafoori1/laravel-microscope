@@ -43,7 +43,6 @@ class FunctionCall
     public static function isSolidString($tokens)
     {
         [$nextToken, $i] = self::getNextToken($tokens, 0);
-
         return ($tokens[0][0] == T_CONSTANT_ENCAPSED_STRING) && ($nextToken !== '.');
     }
 
@@ -142,24 +141,24 @@ class FunctionCall
         return $params;
     }
 
-    /* public static function readConditions(&$tokens, $i)
-     {
-         $params = [];
-         $level = 1;
-         while (true) {
-             [$nextToken, $i] = self::getNextToken($tokens, $i);
+   /* public static function readConditions(&$tokens, $i)
+    {
+        $params = [];
+        $level = 1;
+        while (true) {
+            [$nextToken, $i] = self::getNextToken($tokens, $i);
 
-             $level = self::level($nextToken, $level);
+            $level = self::level($nextToken, $level);
 
-             if ($level == 0 && $nextToken == ')') {
-                 break;
-             }
+            if ($level == 0 && $nextToken == ')') {
+                break;
+            }
 
-             $params[] = $nextToken;
-         }
+            $params[] = $nextToken;
+        }
 
-         return [$params, $i];
-     }*/
+        return [$params, $i];
+    }*/
 
     public static function readBackUntil(&$tokens, $i, $chars = ['}'])
     {

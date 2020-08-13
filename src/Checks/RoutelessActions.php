@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
 class RoutelessActions
 {

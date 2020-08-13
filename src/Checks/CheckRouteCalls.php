@@ -7,6 +7,10 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRouteCalls
 {
+    public static $checkedRouteCallsNum = 0;
+
+    public static $skippedRouteCallsNum = 0;
+
     public static function check($tokens, $absFilePath)
     {
         // we skip the very first tokens: '<?php '
@@ -29,7 +33,12 @@ class CheckRouteCalls
             $paramTokens = $params[0] ?? ['_', '_'];
             FunctionCall::isSolidString($paramTokens) && ($param1 = $params[0]);
 
-            $param1 && self::checkRouteExists($tokens[$index][2], $param1[0][1], $absFilePath);
+            if ($param1) {
+                self::$checkedRouteCallsNum++;
+                self::checkRouteExists($tokens[$index][2], $param1[0][1], $absFilePath);
+            } else {
+                self::$skippedRouteCallsNum++;
+            }
             $i++;
         }
 

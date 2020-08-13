@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 
 class Psr4Classes
 {
@@ -13,6 +13,8 @@ class Psr4Classes
      */
     public static $allNamespaces = [];
 
+    public static $checkedFilesNum = 0;
+
     public static function check($checks)
     {
         $psr4 = ComposerJson::readAutoload();
@@ -20,6 +22,7 @@ class Psr4Classes
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
+                self::$checkedFilesNum++;
                 $absFilePath = $classFilePath->getRealPath();
 
                 $tokens = token_get_all(file_get_contents($absFilePath));

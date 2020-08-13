@@ -32,7 +32,7 @@ class ClassMethods
                 continue;
             }
 
-            if (! is_array($name = $tokens[$i + 2])) {
+            if (! \is_array($name = $tokens[$i + 2])) {
                 $i++;
                 continue;
             }
@@ -40,7 +40,7 @@ class ClassMethods
             if (\in_array($tokens[$i - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
                 $visibility = $tokens[$i - 2];
             } else {
-                $visibility = [T_PUBLIC, 'public'];
+                $visibility = [T_PUBLIC, "public"];
             }
 
             [, $signature, $endSignature] = Ifs::readCondition($tokens, $i + 2);

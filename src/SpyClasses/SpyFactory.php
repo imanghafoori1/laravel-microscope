@@ -11,7 +11,7 @@ class SpyFactory extends Factory
     public function load($path)
     {
         if (is_dir($path)) {
-            $this->loadedPaths[] = $path;
+            $this->loadedPaths[] = $path; 
         } else {
             // throw some warning.
         }

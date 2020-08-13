@@ -3,8 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 
 class CheckGates extends Command
 {
@@ -22,8 +24,9 @@ class CheckGates extends Command
         $errorPrinter->printer = $this->output;
 
         $this->finishCommand($errorPrinter);
+        $this->getOutput()->writeln(' - '.SpyGate::$definedGatesNum. ' gate definitions were checked.');
         event('microscope.finished.checks', [$this]);
 
-        return $errorPrinter->pended ? 1 : 0;
+        return $errorPrinter->pended ? 1: 0;
     }
 }

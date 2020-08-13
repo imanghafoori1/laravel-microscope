@@ -4,15 +4,16 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckIsQuery;
 use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 
 class CheckBladeQueries extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
 
     protected $signature = 'check:blade_queries {--d|detailed : Show files being checked}';

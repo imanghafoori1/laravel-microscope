@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\GenerateCode;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckExpansions extends Command
 {

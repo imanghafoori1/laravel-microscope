@@ -3,11 +3,13 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 
 class BladeFiles
 {
+    public static $checkedFilesNum = 0;
+
     public static function check($methods)
     {
         $hints = self::getNamespacedPaths();
@@ -31,6 +33,7 @@ class BladeFiles
             $files = (new Finder())->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {
+                self::$checkedFilesNum++;
                 /**
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */

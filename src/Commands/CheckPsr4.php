@@ -4,22 +4,23 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
+use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckPsr4 extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
 
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked}';
@@ -57,7 +58,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             }
         }
 
-        $this->info(PHP_EOL.'Checked '.CheckNamespaces::$checkedNamespaces.' namespaces!');
+        $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were Checked!');
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
     }
@@ -83,7 +84,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             $count && $changed[] = ($i + 1);
         }
 
-        $changed && file_put_contents($_path, \implode('', $lines));
+       $changed && file_put_contents($_path, \implode('', $lines));
 
         return $changed;
     }

@@ -2,14 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
+use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 
 class SyntaxNormalizer
 {
     public static function normalizeSyntax($tokens)
     {
-        $ends = [T_ENDFOR, T_ENDIF, T_ENDFOREACH, T_ENDWHILE];
+        $ends = [T_ENDFOR, T_ENDIF, T_ENDFOREACH, T_ENDWHILE,];
         $start = [T_FOR, T_IF, T_FOREACH, T_WHILE, T_ELSEIF];
         $i = 0;
         $refactoredTokens = [];
@@ -46,13 +46,13 @@ class SyntaxNormalizer
                 }
 
                 if (\in_array($next_T[0], [T_FOR, T_FOREACH, T_WHILE])) {
-                    array_splice($tokens, $next_I, 0, [['{', '']]);
+                    array_splice($tokens, $next_I, 0, [['{','',]]);
                     $refactoredTokens[] = $t;
                     $i++;
                     [, , $u] = Ifs::readCondition($tokens, $next_I + 1);
                     [, $u] = FunctionCall::getNextToken($tokens, $u);
                     [, $u] = FunctionCall::readBody($tokens, $u);
-                    array_splice($tokens, $u, 0, [['}', '']]);
+                    array_splice($tokens, $u, 0, [['}','']]);
 
                     // we update the count since the number of elements is changed.
                     $tCount = \count($tokens);
@@ -63,7 +63,7 @@ class SyntaxNormalizer
                      * if ($v) {
                      *    ...
                      * } else
-                     *   $var = 0;.
+                     *   $var = 0;
                      */
                     $refactoredTokens[] = $t;
                     array_splice($tokens, $next_I - 1, 0, [['{', '']]);
@@ -78,7 +78,7 @@ class SyntaxNormalizer
                     $tCount = \count($tokens);
                     $i++;
                     continue;
-                } elseif ($t[0] == T_IF && $next_T[0] === T_IF) {
+                } elseif($t[0] == T_IF && $next_T[0] === T_IF) {
                     $ifIf[] = $next_I;
                 }
             }

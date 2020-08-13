@@ -44,9 +44,9 @@ class ParseUseStatement
     {
         $namespace = $class = $classLevel = $level = null;
         $res = $uses = [];
-        while ($token = current($tokens)) {
-            next($tokens);
-            switch (is_array($token) ? $token[0] : $token) {
+        while ($token = \current($tokens)) {
+            \next($tokens);
+            switch (\is_array($token) ? $token[0] : $token) {
                 case T_NAMESPACE:
                     $namespace = ltrim(self::fetch($tokens, [
                         T_STRING,
@@ -93,7 +93,7 @@ class ParseUseStatement
                             $uses[self::fetch($tokens, T_STRING)] = [$name, $token[2]];
                         } else {
                             $tmp = \explode('\\', $name);
-                            $uses[end($tmp)] = [$name, $token[2]];
+                            $uses[\end($tmp)] = [$name, $token[2]];
                         }
                         if (! self::fetch($tokens, ',')) {
                             break;

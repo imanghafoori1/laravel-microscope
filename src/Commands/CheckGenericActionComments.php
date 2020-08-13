@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\ActionsUnDocblock;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Checks\ActionsUnDocblock;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckGenericActionComments extends Command
 {

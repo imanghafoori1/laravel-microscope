@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 

@@ -48,7 +48,7 @@ class NamespaceCorrector
     public static function getRelativePathFromNamespace($namespace)
     {
         $autoload = ComposerJson::readAutoload();
-        uksort($autoload, function ($a, $b) {
+        uksort($autoload, function($a, $b) {
             return strlen($b) <=> strlen($a);
         });
         $namespaces = array_keys($autoload);

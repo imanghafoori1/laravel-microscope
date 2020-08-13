@@ -3,11 +3,11 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
-use Imanghafoori\LaravelMicroscope\Checks\PSR12\CurlyBraces;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Checks\PSR12\CurlyBraces;
+use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckPsr12 extends Command
 {
@@ -25,7 +25,7 @@ class CheckPsr12 extends Command
         $this->warn('This command is going to make changes to your files!');
 
         if (! $this->output->confirm('Do you have committed everything in git?', true)) {
-            return;
+            return ;
         }
 
         ActionsComments::$command = $this;

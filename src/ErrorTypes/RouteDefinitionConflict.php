@@ -11,7 +11,7 @@ class RouteDefinitionConflict
         $this->data = [
             'poorRoute' => $poorRoute,
             'bullyRoute' => $bullyRoute,
-            'info' => $info,
+            'info' => $info
         ];
     }
 }

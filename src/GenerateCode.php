@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class GenerateCode
 {
@@ -22,6 +22,7 @@ class GenerateCode
      */
     public static function serviceProvider($paths, $composerPath, $composerNamespace, $command)
     {
+
         foreach ($paths as $classFilePath) {
             /**
              * @var $classFilePath \Symfony\Component\Finder\SplFileInfo
@@ -39,14 +40,14 @@ class GenerateCode
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
 
-            $className = \str_replace('.php', '', $classFilePath->getFilename());
+            $className = \str_replace('.php', '',$classFilePath->getFilename());
             $answer = self::ask($command, $correctNamespace.'\\'.$className);
             if (! $answer) {
                 continue;
             }
             file_put_contents($absFilePath, self::providerContent($correctNamespace, $className));
             $tokens = token_get_all(file_get_contents(config_path('app.php')));
-            foreach ($tokens as $i => $token) {
+            foreach($tokens as $i => $token) {
                 if (! self::isProvidersKey($tokens, $i)) {
                     continue;
                 }
@@ -58,7 +59,7 @@ class GenerateCode
 
                 $tokens[$j] !== ',' && array_splice($tokens, $j + 1, 0, [[',']]);
 
-                array_splice($tokens, (int) $closeBracketIndex, 0, [["\n        ".$correctNamespace.'\\'.$className.'::class,'."\n    "]]);
+                array_splice($tokens, (int)$closeBracketIndex, 0, [["\n        ".$correctNamespace.'\\'.$className.'::class,'."\n    "]]);
                 file_put_contents(config_path('app.php'), Refactor::toString($tokens));
             }
         }

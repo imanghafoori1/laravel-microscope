@@ -3,19 +3,23 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
-use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Illuminate\Routing\Router;
+use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
+use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckRoutes extends Command
 {
     use LogsErrors;
+
+    public static $checkedRoutesNum = 0;
+
+    public static $skippedRoutesNum = 0;
 
     protected $signature = 'check:routes';
 
@@ -31,11 +35,23 @@ class CheckRoutes extends Command
         $routes = app(Router::class)->getRoutes()->getRoutes();
         $this->checkRouteDefinitions($errorPrinter, $routes);
         // checks calls like this: route('admin.user')
+        $this->getOutput()->writeln(
+            ' - '.CheckRoutes::$checkedRoutesNum.
+            ' Route:: definitions were checked. ('.
+            CheckRoutes::$skippedRoutesNum.' skipped)'
+        );
         $this->info('Checking route names exists...');
         Psr4Classes::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
+
+        $this->getOutput()->writeln(' - '.CheckRouteCalls::$checkedRouteCallsNum.
+            ' route(...) calls were checked. ('
+            . CheckRouteCalls::$skippedRouteCallsNum.' skipped)');
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
+
+
+        event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
@@ -55,9 +71,11 @@ class CheckRoutes extends Command
     {
         foreach ($routes as $route) {
             if (! is_string($ctrl = $route->getAction()['uses'])) {
+                self::$skippedRoutesNum++;
                 continue;
             }
 
+            self::$checkedRoutesNum++;
             [$ctrlClass, $method] = Str::parseCallback($ctrl, '__invoke');
 
             try {
