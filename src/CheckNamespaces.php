@@ -66,14 +66,7 @@ class CheckNamespaces
             if ($currentNamespace === $correctNamespace) {
                 continue;
             }
-            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($currentNamespace).DIRECTORY_SEPARATOR.$class))) {
-                self::$changedNamespaces[$currentNamespace.'\\'.$class.';'] = $correctNamespace.'\\'.$class.';';
-                self::$changedNamespaces[$currentNamespace.'\\'.$class.'('] = $correctNamespace.'\\'.$class.'(';
-                self::$changedNamespaces[$currentNamespace.'\\'.$class.'::'] = $correctNamespace.'\\'.$class.'::';
-                self::$changedNamespaces[$currentNamespace.'\\'.$class.' as'] = $correctNamespace.'\\'.$class.' as';
-            } else {
-                self::$changedNamespaces[$currentNamespace.'\\'.$class] = $correctNamespace.'\\'.$class;
-            }
+            self::changedNamespaces($class, $currentNamespace, $correctNamespace);
             self::warn($currentNamespace, $relativePath);
 
             $answer = self::ask($command, $correctNamespace);
@@ -123,5 +116,20 @@ class CheckNamespaces
     private static function ask($command, $correctNamespace)
     {
         return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
+    }
+
+    private static function changedNamespaces($class, $currentNamespace, $correctNamespace)
+    {
+        $_currentClass = $currentNamespace.'\\'.$class;
+        $_correctClass = $correctNamespace.'\\'.$class;
+        $relPath = NamespaceCorrector::getRelativePathFromNamespace($currentNamespace);
+        if (is_dir(base_path($relPath.DIRECTORY_SEPARATOR.$class))) {
+            self::$changedNamespaces[$_currentClass.';'] = $_correctClass.';';
+            self::$changedNamespaces[$_currentClass.'('] = $_correctClass.'(';
+            self::$changedNamespaces[$_currentClass.'::'] = $_correctClass.'::';
+            self::$changedNamespaces[$_currentClass.' as'] = $_correctClass.' as';
+        } else {
+            self::$changedNamespaces[$_currentClass] = $_correctClass;
+        }
     }
 }
