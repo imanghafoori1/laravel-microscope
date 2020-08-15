@@ -2,13 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 
 class CheckClasses
 {
@@ -92,14 +92,16 @@ class CheckClasses
     private static function checkImportedClassesExist($imports, $absFilePath)
     {
         foreach ($imports as $i => $import) {
-            if (self::isAbsent($import[0])) {
-                $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
-                $result = ReplaceLine::fixReference($absFilePath, $import[0], $import[1]);
-                if ($isInUserSpace && $result[0]) {
-                    self::printFixation($absFilePath, $import[0], $import[1]);
-                } else {
-                    app(ErrorPrinter::class)->wrongImport($absFilePath, $import[0], $import[1]);
-                }
+            if (! self::isAbsent($import[0])) {
+                continue;
+            }
+
+            $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
+            $result = ReplaceLine::fixReference($absFilePath, $import[0], $import[1]);
+            if ($isInUserSpace && $result[0]) {
+                self::printFixation($absFilePath, $import[0], $import[1]);
+            } else {
+                app(ErrorPrinter::class)->wrongImport($absFilePath, $import[0], $import[1]);
             }
         }
     }
@@ -111,13 +113,7 @@ class CheckClasses
 
     protected static function fullNamespace($currentNamespace, $class)
     {
-        if ($currentNamespace) {
-            $namespacedClassName = $currentNamespace.'\\'.$class;
-        } else {
-            $namespacedClassName = $class;
-        }
-
-        return $namespacedClassName;
+        return $currentNamespace ? $currentNamespace.'\\'.$class : $class;
     }
 
     public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
@@ -173,23 +169,29 @@ class CheckClasses
 
         foreach ($nonImportedClasses as $nonImportedClass) {
             $cls = \trim($nonImportedClass['class'], '\\');
-            if (self::isAbsent($cls) && ! function_exists($cls)) {
-                $isInUserSpace = Str::startsWith($cls, array_keys(ComposerJson::readAutoload()));
-                $line = $nonImportedClass['line'];
-                $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
-                if (! $result[0]) {
-                    $cls = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
-                    $result = ReplaceLine::fixReference($absFilePath, $cls, $line, '\\');
-                }
+            if (! self::isAbsent($cls) || function_exists($cls)) {
+                continue;
+            }
 
-                if ($isInUserSpace && $result[0]) {
-                    self::printFixation($absFilePath, $cls, $line);
-                } else {
-//                    app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $cls, $line, $result[1]);
-                    $fixes = \implode("\n - ", $result[1]);
-                    $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;
-                    app(ErrorPrinter::class)->simplePendError($absFilePath, $line, $cls.'   <====  Class does not exist'.$fixes, 'wrongUsedClassError', 'Class Does not exist:');
-                }
+            $isInUserSpace = Str::startsWith($cls, array_keys(ComposerJson::readAutoload()));
+            $line = $nonImportedClass['line'];
+            $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
+            if (! $result[0]) {
+                $cls = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
+                $result = ReplaceLine::fixReference($absFilePath, $cls, $line, '\\');
+            }
+
+            if ($isInUserSpace && $result[0]) {
+                self::printFixation($absFilePath, $cls, $line);
+            } else {
+                $fixes = self::possibleFixMsg($result[1]);
+                app(ErrorPrinter::class)->simplePendError(
+                    $absFilePath,
+                    $line,
+                    $cls.'   <===   Class does not exist'.$fixes,
+                    'wrongUsedClassError',
+                    'Class Does not exist:'
+                );
             }
         }
     }
@@ -197,5 +199,13 @@ class CheckClasses
     private static function printFixation($absPath, $class, $line)
     {
         app(ErrorPrinter::class)->simplePendError($absPath, $line, $class, 'ns_replacement', 'Namespace auto-corrected');
+    }
+
+    private static function possibleFixMsg($pieces)
+    {
+        $fixes = \implode("\n - ", $pieces);
+        $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;
+
+        return $fixes;
     }
 }
