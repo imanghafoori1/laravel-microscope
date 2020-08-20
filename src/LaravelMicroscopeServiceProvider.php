@@ -66,6 +66,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->commands(self::$commandNames);
 
+        $this->publishes([
+            __DIR__.'/../config/config.php' => config_path('microscope.php'),
+        ], 'config');
+
         ConsolePrinterInstaller::boot();
     }
 
@@ -78,7 +82,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->registerCompiler();
 
-        //  $this->loadConfig();
+         $this->loadConfig();
 
         app()->singleton(ErrorPrinter::class);
         // also we should spy the factory paths.
@@ -164,7 +168,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function loadConfig()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-microscope');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'microscope');
     }
 
     private function canRun()

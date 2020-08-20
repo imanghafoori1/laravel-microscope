@@ -29,4 +29,26 @@ class LaravelPaths
 
         return $migrationDirs;
     }
+
+    /**
+     * Check given path should be ignored.
+     *
+     * @param string $path
+     * @return boolean
+     */
+    public static function isIgnored($path)
+    {
+        $ignorePatterns = config('microscope.ignore');
+        if (is_array($ignorePatterns) == false || is_string($path) == false) {
+            return false;
+        }
+
+        foreach ($ignorePatterns as $ignorePattern) {
+            if (fnmatch(rtrim(base_path(), '\\/').'/'.ltrim($ignorePattern, '\\/'), $path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

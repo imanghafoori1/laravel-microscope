@@ -2,9 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use InvalidArgumentException;
 
 class ExtractBladePartial
 {
