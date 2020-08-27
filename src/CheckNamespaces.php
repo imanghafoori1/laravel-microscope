@@ -26,7 +26,7 @@ class CheckNamespaces
      *
      * @return void
      */
-    public static function forNamespace($paths, $composerPath, $composerNamespace, $command)
+    public static function within($paths, $composerPath, $composerNamespace, $command)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();

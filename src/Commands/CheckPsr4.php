@@ -5,17 +5,17 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Symfony\Component\Finder\Finder;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
-use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckPsr4 extends Command implements FileCheckContract
 {
@@ -33,38 +33,19 @@ class CheckPsr4 extends Command implements FileCheckContract
         $errorPrinter->printer = $this->output;
 
         $autoload = ComposerJson::readAutoload();
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            CheckNamespaces::forNamespace($files, $psr4Path, $psr4Namespace, $this);
-        }
+        $this->fixNamespaces($autoload);
         $olds = array_keys(CheckNamespaces::$changedNamespaces);
         $news = array_values(CheckNamespaces::$changedNamespaces);
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
-                $_path = $classFilePath->getRealPath();
-                $lineNumbers = $this->fixRefs($_path, $olds, $news);
-                foreach ($lineNumbers as $line) {
-                    $errorPrinter->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
-                }
-            }
-        }
-
-        foreach ($this->collectAllPaths() as $_path) {
-            $lineNumbers = $this->fixRefs($_path, $olds, $news);
-            foreach ($lineNumbers as $line) {
-                $errorPrinter->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
-            }
-        }
+        $this->fixReferences($autoload, $olds, $news);
 
         $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were Checked!');
         $this->finishCommand($errorPrinter);
         $this->composerDumpIfNeeded($errorPrinter);
     }
 
-    private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
+    private function composerDumpIfNeeded()
     {
-        if ($c = $errorPrinter->getCount('badNamespace')) {
+        if ($c = (self::$printer)->getCount('badNamespace')) {
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'finished: "composer dump"');
@@ -131,7 +112,7 @@ class CheckPsr4 extends Command implements FileCheckContract
         return $newOld;
     }
 
-    private function collectAllPaths()
+    private function collectNonPsr4Paths()
     {
         $paths = [
             RoutePaths::get(),
@@ -153,5 +134,40 @@ class CheckPsr4 extends Command implements FileCheckContract
         }
 
         return $all;
+    }
+
+    private function fixReferences($autoload, $olds, $news)
+    {
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
+            $files = FilePath::getAllPhpFiles($psr4Path);
+            foreach ($files as $classFilePath) {
+                $_path = $classFilePath->getRealPath();
+                $lineNumbers = $this->fixRefs($_path, $olds, $news);
+                foreach ($lineNumbers as $line) {
+                    $this->report($_path, $line);
+                }
+            }
+        }
+
+
+        foreach ($this->collectNonPsr4Paths() as $_path) {
+            $lineNumbers = $this->fixRefs($_path, $olds, $news);
+            foreach ($lineNumbers as $line) {
+                $this->report($_path, $line);
+            }
+        }
+    }
+
+    private function fixNamespaces(array $autoload)
+    {
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
+            $files = FilePath::getAllPhpFiles($psr4Path);
+            CheckNamespaces::within($files, $psr4Path, $psr4Namespace, $this);
+        }
+    }
+
+    private function report(string $_path, $line)
+    {
+        app(ErrorPrinter::class)->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
     }
 }
