@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+
 class ErrorPrinter
 {
     public $errorsList = [
@@ -16,6 +18,10 @@ class ErrorPrinter
 
     public function view($absPath, $lineContent, $lineNumber, $fileName)
     {
+        if (LaravelPaths::isIgnored($absPath)) {
+            return;
+        }
+
         ($this->errorsList['view'][] = (new PendingError('view'))
             ->header(\trim($lineContent))
             ->errorData($this->yellow($fileName.'.blade.php').' does not exist')
@@ -24,6 +30,10 @@ class ErrorPrinter
 
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
+        if (LaravelPaths::isIgnored($absPath)) {
+            return;
+        }
+
         ($this->errorsList['route'][] = (new PendingError('route'))
             ->header($errorIt)
             ->errorData($errorTxt.$this->yellow($path))
@@ -49,6 +59,10 @@ class ErrorPrinter
 
     public function pendError($path, $lineNumber, $absent, $key, $header)
     {
+        if (LaravelPaths::isIgnored($path)) {
+            return;
+        }
+
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow($absent).'   <==== does not exist')
@@ -57,6 +71,10 @@ class ErrorPrinter
 
     public function routelessAction($absPath, $lineNumber, $action)
     {
+        if (LaravelPaths::isIgnored($absPath)) {
+            return;
+        }
+
         $key = 'routelessCtrl';
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header('No route is defined for controller action:')
@@ -66,6 +84,10 @@ class ErrorPrinter
 
     public function simplePendError($path, $lineNumber, $absent, $key, $header)
     {
+        if (LaravelPaths::isIgnored($path)) {
+            return;
+        }
+
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow($absent))
@@ -79,6 +101,10 @@ class ErrorPrinter
 
     public function compactError($path, $lineNumber, $absent, $key, $header)
     {
+        if (LaravelPaths::isIgnored($path)) {
+            return;
+        }
+
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($this->yellow(\implode(', ', array_keys($absent))).' does not exist')
@@ -87,6 +113,10 @@ class ErrorPrinter
 
     public function routeDefinitionConflict($route1, $route2, $info)
     {
+        if (LaravelPaths::isIgnored($info[0]['file'])) {
+            return;
+        }
+
         $key = 'routeDefinitionConflict';
         $routeName = $route1->getName();
         if ($routeName) {
@@ -125,6 +155,10 @@ class ErrorPrinter
 
     public function queryInBlade($absPath, $class, $lineNumber)
     {
+        if (LaravelPaths::isIgnored($absPath)) {
+            return;
+        }
+
         $key = 'queryInBlade';
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header('Query in blade file: ')
@@ -144,6 +178,10 @@ class ErrorPrinter
 
     public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
+        if (LaravelPaths::isIgnored($absPath)) {
+            return;
+        }
+
         ($this->errorsList['badNamespace'][] = (new PendingError('badNamespace'))
             ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
             ->errorData('  namespace fixed to:  '.$this->yellow("namespace $correctNamespace;"))
