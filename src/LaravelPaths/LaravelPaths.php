@@ -34,7 +34,7 @@ class LaravelPaths
      * Check given path should be ignored.
      *
      * @param string $path
-     * @return boolean
+     * @return bool
      */
     public static function isIgnored($path)
     {

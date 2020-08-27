@@ -82,7 +82,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->registerCompiler();
 
-         $this->loadConfig();
+        $this->loadConfig();
 
         app()->singleton(ErrorPrinter::class);
         // also we should spy the factory paths.
