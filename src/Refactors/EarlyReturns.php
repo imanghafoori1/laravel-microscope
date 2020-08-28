@@ -61,6 +61,17 @@ class EarlyReturns
                 continue;
             }
 
+            if (($ifBody[1][1] - $ifBody[1][0]) < 40) {
+                continue;
+            }
+
+            $line1 = $tokens[$ifBody[1][1] + 1][2] ?? null;
+            $line2 = $tokens[$ifBody[1][0] + 1][2] ?? null;
+
+            if ($line1 && $line2 && ($line1 - $line2 < 5)) {
+                continue;
+            }
+
             $tokens = self::refactorTokens($tokens, $condition, $ifBody, $methodBodyCloseIndex, self::getKeyword($token[0]));
             $changes++;
         }
