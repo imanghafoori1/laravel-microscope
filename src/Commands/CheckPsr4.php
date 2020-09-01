@@ -20,6 +20,7 @@ use Symfony\Component\Finder\Finder;
 class CheckPsr4 extends Command implements FileCheckContract
 {
     use LogsErrors;
+
     use ScansFiles;
 
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked}';
@@ -34,8 +35,8 @@ class CheckPsr4 extends Command implements FileCheckContract
 
         $autoload = ComposerJson::readAutoload();
         $this->fixNamespaces($autoload);
-        $olds = array_keys(CheckNamespaces::$changedNamespaces);
-        $news = array_values(CheckNamespaces::$changedNamespaces);
+        $olds = \array_keys(CheckNamespaces::$changedNamespaces);
+        $news = \array_values(CheckNamespaces::$changedNamespaces);
         $this->fixReferences($autoload, $olds, $news);
 
         $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were Checked!');
@@ -43,9 +44,9 @@ class CheckPsr4 extends Command implements FileCheckContract
         $this->composerDumpIfNeeded($errorPrinter);
     }
 
-    private function composerDumpIfNeeded()
+    private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
-        if ($c = (self::$printer)->getCount('badNamespace')) {
+        if ($c = $errorPrinter->getCount('badNamespace')) {
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'finished: "composer dump"');
@@ -64,7 +65,7 @@ class CheckPsr4 extends Command implements FileCheckContract
             $count && $changed[] = ($i + 1);
         }
 
-        $changed && file_put_contents($_path, \implode('', $lines));
+        $changed && \file_put_contents($_path, \implode('', $lines));
 
         return $changed;
     }
