@@ -38,6 +38,11 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
+                // new class {... }
+                if (self::$token[1] == 'class') {
+                    self::forward();
+                    continue;
+                }
                 $isInSideClass = true;
             } elseif ($t == T_CATCH) {
                 $collect = true;
