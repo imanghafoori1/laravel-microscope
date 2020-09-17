@@ -177,8 +177,8 @@ class CheckClasses
             $line = $nonImportedClass['line'];
             $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
             if (! $result[0]) {
-                $cls = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
-                $result = ReplaceLine::fixReference($absFilePath, $cls, $line, '\\');
+                $cls1 = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
+                $result = ReplaceLine::fixReference($absFilePath, $cls1, $line, '\\');
             }
 
             if ($isInUserSpace && $result[0]) {
@@ -188,7 +188,7 @@ class CheckClasses
                 app(ErrorPrinter::class)->simplePendError(
                     $absFilePath,
                     $line,
-                    $cls.'   <===   Class does not exist'.$fixes,
+                    $cls.'   <===  \(-_-)/ '.$fixes,
                     'wrongUsedClassError',
                     'Class Does not exist:'
                 );
