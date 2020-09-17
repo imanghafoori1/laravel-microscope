@@ -27,6 +27,14 @@ class ClassReferenceFinder
             $t = self::$token[0];
 
             if ($t == T_USE) {
+                // function () use ($var) {...}
+                // for this type of use we do not care and continue;
+                // who cares ?!
+                if (self::$lastToken == ')') {
+                    self::forward();
+                    continue;
+                }
+
                 // Since we don't want to collect use statements (imports)
                 // and we want to collect the used traits on the class.
                 if (! $isInSideClass) {
