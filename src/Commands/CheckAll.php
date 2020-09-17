@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -40,7 +40,7 @@ class CheckAll extends Command
         $this->finishCommand($errorPrinter);
         $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
 
-        if (random_int(1, 2) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:al') ) {
+        if (random_int(1, 2) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:al')) {
             $this->info(PHP_EOL.'Heyman, If you find this package useful to you...');
             $this->info('Please contribute to it by sharing a post about it or give it an star on github.');
             $this->info('Reguards, Iman Ghafoori   (^_^) ');
