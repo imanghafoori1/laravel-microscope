@@ -75,7 +75,7 @@ class ClassReferenceFinder
                 // we do not want to keep track of
                 // white spaces or collect them
                 continue;
-            } elseif ($t == ';' || $t == '}') {
+            } elseif (in_array($t, [';', '}', T_BOOLEAN_AND, T_BOOLEAN_OR, T_LOGICAL_OR , T_LOGICAL_AND])) {
                 $force_close = false;
                 if ($collect) {
                     $c++;
