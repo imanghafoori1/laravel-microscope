@@ -18,7 +18,7 @@ class SpyDispatcher extends Dispatcher
 
     public $wildcardsOriginal = [];
 
-    public function listen($events, $listener)
+    public function listen($events, $listener = null)
     {
         parent::listen($events, $listener);
 
