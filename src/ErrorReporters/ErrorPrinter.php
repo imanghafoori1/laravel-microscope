@@ -113,7 +113,7 @@ class ErrorPrinter
 
     public function routeDefinitionConflict($route1, $route2, $info)
     {
-        if (LaravelPaths::isIgnored($info[0]['file'])) {
+        if (LaravelPaths::isIgnored($info[0]['file'] ?? 'unknown')) {
             return;
         }
 
@@ -139,7 +139,7 @@ class ErrorPrinter
             $msg .= 'an other route with same uri.';
         }
 
-        $msg .= "\n".' at '.$info[1]['file'].':'.$info[1]['line']."\n";
+        $msg .= "\n".' at '.($info[1]['file'] ?? ' ').':'.$info[1]['line']."\n";
 
         $methods = \implode(',', $route1->methods());
 
