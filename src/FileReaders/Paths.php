@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
+use Symfony\Component\Finder\Finder;
 
 class Paths
 {
