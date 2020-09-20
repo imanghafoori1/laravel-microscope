@@ -10,7 +10,11 @@ class LaravelPaths
 {
     public static function factoryDirs()
     {
-        return app()->make(Factory::class)->loadedPaths;
+        try {
+            return app()->make(Factory::class)->loadedPaths;
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public static function migrationDirs()
