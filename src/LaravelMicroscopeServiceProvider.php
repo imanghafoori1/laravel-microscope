@@ -87,7 +87,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         app()->singleton(ErrorPrinter::class);
         // also we should spy the factory paths.
         $this->spyRouter();
-        $this->spyFactory();
+        if (class_exists('Illuminate\Database\Eloquent\Factory')) {
+            $this->spyFactory();
+        }
 
         // we need to start spying before the boot process starts.
 
