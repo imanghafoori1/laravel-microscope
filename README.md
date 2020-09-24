@@ -214,15 +214,10 @@ The same thing will apply for functions and methods, but with `return`
 ```php
 <?php
 
-if ($var1 > 1) {
-    if ($var2 > 2) {
-        echo 'Hey Man';
+if ($cond1) {
+    if ($cond2) {
+        ....       merge into  ===>    if ($cond1 && $cond2) {   ...   }
     }
-}
-
-// will be converted into:
-if ($var1 > 1 && $var2 > 2) {
-    echo 'Hey Man';
 }
 
 ```
