@@ -55,10 +55,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-        \Event::listen('microscope.start.command', function () {
+        Event::listen('microscope.start.command', function () {
             ! defined('microscope_start') && define('microscope_start', microtime(true));
         });
-        \Event::listen('microscope.finished.checks', function () {
+        Event::listen('microscope.finished.checks', function () {
             CheckViews::$checkedCallsNum = 0;
             CheckClassReferences::$refCount = 0;
             Psr4Classes::$checkedFilesNum = 0;
