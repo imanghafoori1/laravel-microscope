@@ -49,7 +49,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        (app()['env'] !== 'production') && $this->spyView();
+        (app()['env'] !== 'production') && config('microscope.log_unused_view_vars', true) && $this->spyView();
 
         if (! $this->canRun()) {
             return;
