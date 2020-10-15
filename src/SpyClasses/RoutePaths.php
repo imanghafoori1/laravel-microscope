@@ -27,7 +27,11 @@ class RoutePaths
             // get tokens by class name
             $path = NamespaceCorrector::getRelativePathFromNamespace($providerClass);
 
-            $methodCalls = self::readLoadedRouteFiles($path);
+            try {
+                $methodCalls = self::readLoadedRouteFiles($path);
+            } catch (\Throwable $e){
+                $methodCalls = [];
+            }
 
             foreach ($methodCalls as $calls) {
                 $routePaths[] = self::fullPath($calls, $providerClass, $path);
