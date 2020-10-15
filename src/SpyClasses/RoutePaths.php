@@ -29,7 +29,7 @@ class RoutePaths
 
             try {
                 $methodCalls = self::readLoadedRouteFiles($path);
-            } catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 $methodCalls = [];
             }
 
