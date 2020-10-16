@@ -6,6 +6,7 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -93,6 +94,10 @@ class CheckClasses
     {
         foreach ($imports as $i => $import) {
             if (! self::isAbsent($import[0])) {
+                continue;
+            }
+
+            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($import[0])))) {
                 continue;
             }
 
