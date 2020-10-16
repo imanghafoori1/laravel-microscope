@@ -93,16 +93,15 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == ',') {
+                // to avoid mistaking commas in default array values with commas between args
+                $collect = ($isMethodSignature && self::$lastToken[0] == T_VARIABLE) || $implements;
+                $isInSideClass && ($force_close = false);
                 // for method calls: foo(new Hello, $var);
                 // we do not want to collect after comma.
-                $collect = ($isMethodSignature || $implements) ? true : false;
-                $isInSideClass && ($force_close = false);
                 $c++;
                 self::forward();
                 continue;
             } elseif ($t == ']') {
-                // for method calls: foo(new Hello, $var);
-                // we do not want to collect after comma.
                 $force_close = $collect = false;
                 $c++;
                 self::forward();
