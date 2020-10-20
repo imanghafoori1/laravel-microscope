@@ -59,7 +59,7 @@ You can install the package via composer:
 composer require imanghafoori/laravel-microscope --dev
 ```
 
-Although this project has already a lot of features, but it is still under active development, so you have to update it almost everyday in order to get the latest improvements and bug fixes.
+Although this project has already a lot of features, it is still under active development, so you have to update it almost every day in order to get the latest improvements and bug fixes.
 
 ```bash
 composer update imanghafoori/laravel-microscope
@@ -154,7 +154,7 @@ Lets start with:
 php artisan check:early_returns
 ```
 
-This will scan all your Psr-4 loaded classes and flattens your functions ans loops by applying the early return rule.
+This will scan all your Psr-4 loaded classes and flattens your functions and loops by applying the early return rule.
 For example:
 
 ```php
@@ -222,7 +222,7 @@ if ($cond1) {
 
 ```
 
-- It also supports the ruby like if():/endif; syntax;
+- It also supports the ruby-like if():/endif; syntax;
 
 ```php
 <?php
@@ -241,7 +241,7 @@ if ($var1 > 1)
 
 ```
 
-**Although this type of refactor is totally safe and is guaranteed to do the same thing as before, but anyway be careful to commit everything before trying this feature, in case of a weird bug or something.**
+**Although this type of refactoring is totally safe and is guaranteed to do the same thing as before, but be careful to commit everything before trying this feature, in case of a weird bug or something.**
 
 ----------------------
 
@@ -257,11 +257,11 @@ php artisan check:psr4
 ```php
 php artisan check:generate
 ```
-You make empty file, we fill it, based on naming conventions.
+You make an empty file, we fill it, based on naming conventions.
 
 If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
-1 - It will be filled with boiler plate and correct Psr-4 namespace.
-2 - It will be appnded to the `providers` array in the `config/app.php`
+1 - It will be filled with a boilerplate and correct Psr-4 namespace.
+2 - It will be appended to the `providers` array in the `config/app.php`
 
 ----------------------
 
@@ -270,7 +270,7 @@ php artisan check:imports
 ```
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
-- It auto-corrects some of the refrences, it no ambiguity is around the class name.
+- It auto-corrects some of the references, it no ambiguity is around the class name.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
 ----------------------
@@ -289,7 +289,7 @@ php artisan check:routes
 ```
 
 - It checks that your routes refer to valid controller classes and methods.
-- It checks the all the controller methods to have valid type-hints.
+- It checks all the controller methods to have valid type-hints.
 - It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
 - It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
 
@@ -343,7 +343,7 @@ After you execute `php artisan check:extract_blades` it will become:
     @include('myPartials.body')
 </html>
 ```
-Also it will create:
+Also, it will create:
 - `resources/views/myPartials/head.blade.php` 
 - `resources/views/myPartials/body.blade.php`
 
@@ -368,7 +368,7 @@ php artisan pp:route
 
 - First you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
 - You can also pass the Controller@method syntax to the function.
-- You can call it multiple times in otder to pretty-print multiple routes.
+- You can call it multiple times in order to pretty-print multiple routes.
 
 ----------------------
 
@@ -376,11 +376,11 @@ php artisan pp:route
 php artisan check:views
 ```
 
-- It scans your code and find the `view()` and `View::make()` and reports if they refer to wrong files.
-- It scans your blade files for `@include()` and `@extends()` and reports if they refer to wrong files.
+- It scans your code and find the `view()` and `View::make()` and reports if they refer to the wrong files.
+- It scans your blade files for `@include()` and `@extends()` and reports if they refer to the wrong files.
 
 
-Also, it can detect `unused variables` which are passed into your view from the controller line this: `view('hello', [...]);`
+Also, it can detect `unused variables` which are passed into your view from the controller like this: `view('hello', [...]);`
 For that you must open up the page in the browser and then visit the log file to see a message like this:
 ```
 local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
@@ -402,7 +402,7 @@ For example consider:
 Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 ```
 
-1 - It checks the  `\App\Listeners\MyListener` class path to be valid.
+1 - It checks the  `\App\Listeners\MyListener` classpath to be valid.
 
 2 - It checks the  `myMethod` to exist on the `MyListener` class
 
@@ -439,9 +439,9 @@ Gate::policy(User::class, 'UserPolicy@someMethod');
 Gate::define('someAbility', 'UserGate@someMethod');
 ```
 
-1 - It checks the  `User` class path to be valid.
+1 - It checks the  `User` classpath to be valid.
 
-2 - It checks the  `UserPolicy` class path to be valid.
+2 - It checks the  `UserPolicy` classpath to be valid.
 
 3 - It checks the  `someMethod` to exist.
 
@@ -461,12 +461,12 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 --------------------
 
 ### :raising_hand: Contributing
-If you find an issue, or have a better way to do something, feel free to open an issue , or a pull request.
-If you use laravel-microscope in your open source project, create a pull request to provide it's url as a sample application in the README.md file.
+If you find an issue or have a better way to do something, feel free to open an issue, or a pull request.
+If you use laravel-microscope in your open source project, create a pull request to provide its URL as a sample application in the README.md file.
 
 
 ### :exclamation: Security
-If you discover any security related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
+If you discover any security-related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
 
 
 ## More from the author:
@@ -507,7 +507,7 @@ If you discover any security related issues, please email `imanghafoori1@gmail.c
 
 ### 🍌 Donation:
 
-You can contact me, if you wan to make a donation, so I can put your logo or name on the readme file as a donator. 
+You can contact me if you want to make a donation, so I can put your logo or name on the readme file as a donator. 
 
 IM: https://t.me/imanghafoori 
 
@@ -522,13 +522,13 @@ I would be happy to answer you.
 - Detect return keyword in eloquent relations
 - Detect wrong action() calls
 - Enhance blocky code detection
-- Fullly decouple the error logger
+- Fully decouple the error logger
 - Detect `return abort();`
 - Detect un-registered service providers
 - Detect unused middlewares
 
 ```
-A man will never fail, unless he stops trying.
+A man will never fail unless he stops trying.
 
 Albert einstein
 ```
