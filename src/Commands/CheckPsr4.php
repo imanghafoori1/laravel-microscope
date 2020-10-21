@@ -22,7 +22,7 @@ class CheckPsr4 extends Command implements FileCheckContract
     use LogsErrors;
     use ScansFiles;
 
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force : Force replace without asking anything}';
 
     protected $description = 'Checks the validity of namespaces';
 

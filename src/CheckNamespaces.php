@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
@@ -26,7 +27,7 @@ class CheckNamespaces
      *
      * @return void
      */
-    public static function within($paths, $composerPath, $composerNamespace, $command)
+    public static function within($paths, $composerPath, $composerNamespace, Command $command)
     {
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
@@ -69,8 +70,9 @@ class CheckNamespaces
             self::changedNamespaces($class, $currentNamespace, $correctNamespace);
             self::warn($currentNamespace, $relativePath);
 
-            $answer = self::ask($command, $correctNamespace);
-            if ($answer) {
+            $run = $command->option('force') ? true : self::ask($command, $correctNamespace);
+
+            if($run){
                 self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
                 // maybe an event listener
                 app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
