@@ -23,7 +23,7 @@ class CheckAll extends Command
         //turns off error logging.
         $errorPrinter->logErrors = false;
 
-        $this->call('check:psr4', ['--detailed' => $this->option('detailed') , '--force' => $this->option('force')]);
+        $this->call('check:psr4', ['--detailed' => $this->option('detailed'), '--force' => $this->option('force')]);
         $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:imports', ['--detailed' => $this->option('detailed')]);

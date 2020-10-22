@@ -118,6 +118,7 @@ class CheckNamespaces
         if ($command->option('force')) {
             return true;
         }
+
         return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
     }
 
