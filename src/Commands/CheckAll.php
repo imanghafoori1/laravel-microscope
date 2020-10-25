@@ -11,7 +11,7 @@ class CheckAll extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:all {--d|detailed : Show files being checked}';
+    protected $signature = 'check:all {--d|detailed : Show files being checked} {--f|force}';
 
     protected $description = 'Run all checks with one command.';
 
