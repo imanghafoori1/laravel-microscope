@@ -46,7 +46,7 @@ class ComposerJson
         // add the root composer.json
         $root = self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
 
-        return $res + $root;
+        return self::removedIgnored($res + $root);
     }
 
     private static function normalizePaths($value, $path)
@@ -60,5 +60,18 @@ class ComposerJson
         }
 
         return $value;
+    }
+
+    private static function removedIgnored($mapping)
+    {
+        $result = [];
+        $ignored = config('microscope.ignored_namespaces');
+        foreach ($mapping as $namespace => $path) {
+            if (! in_array($namespace, $ignored)) {
+                $result[$namespace] = $path;
+            }
+        }
+
+        return $result;
     }
 }
