@@ -89,7 +89,7 @@ class CheckNamespaces
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
         $p->end();
         $currentNamespace && $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
-        ! $currentNamespace && $p->printHeader('Namespace Not Found: '. $class);
+        ! $currentNamespace && $p->printHeader('Namespace Not Found: '.$class);
         $p->printLink($relativePath, 3);
     }
 
