@@ -60,6 +60,10 @@ class CheckStringy
     {
         $chars = ['@', ' ', ',', ':', '/', '.', '-'];
 
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::contains($token[1], $namespaces) && ! Str::contains($token[1], $chars);
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING &&
+            Str::contains($token[1], $namespaces) &&
+            ! in_array($token[1], $namespaces) &&
+            ! Str::contains($token[1], $chars) &&
+            ! Str::endsWith($token[1], '\\');
     }
 }

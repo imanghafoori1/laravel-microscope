@@ -10,6 +10,7 @@ class ReplaceLine
      * @param  string  $file
      * @param  string  $search
      * @param  string  $replace
+     * @param  null  $_line
      *
      * @return bool|int
      */

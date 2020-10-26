@@ -67,7 +67,7 @@ class CheckNamespaces
                 continue;
             }
             self::changedNamespaces($class, $currentNamespace, $correctNamespace);
-            self::warn($currentNamespace, $relativePath);
+            self::warn($currentNamespace, $relativePath, $class);
 
             $answer = self::ask($command, $correctNamespace);
             if ($answer) {
@@ -79,7 +79,7 @@ class CheckNamespaces
         app(ErrorPrinter::class)->errorsList['total'] = 0;
     }
 
-    private static function warn($currentNamespace, $relativePath)
+    private static function warn($currentNamespace, $relativePath, $class)
     {
         /**
          * @var $p ErrorPrinter
@@ -88,7 +88,8 @@ class CheckNamespaces
         $msg = 'Incorrect namespace: '.$p->yellow("namespace $currentNamespace;");
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
         $p->end();
-        $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
+        $currentNamespace && $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
+        ! $currentNamespace && $p->printHeader('Namespace Not Found: '. $class);
         $p->printLink($relativePath, 3);
     }
 
