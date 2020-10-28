@@ -58,6 +58,10 @@ You can install the package via composer:
 ```bash
 composer require imanghafoori/laravel-microscope --dev
 ```
+You may also publish config file:
+```
+php artisan vendor:publish
+```
 
 Although this project has already a lot of features, it is still under active development, so you have to update it almost every day in order to get the latest improvements and bug fixes.
 
