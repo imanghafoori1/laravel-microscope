@@ -29,15 +29,25 @@ class ConsolePrinterInstaller
         }
 
         if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
-            $msg = $errorCount.' errors found for '.$commandType;
+            $lastTimeCount = cache()->get(self::getKey($commandType), null);
 
-            $errorCount && $command->getOutput()->writeln(PHP_EOL.$msg);
+            $errorCount && $command->getOutput()->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
             $errorPrinter->logErrors();
+            if (! is_null($lastTimeCount)) {
+                $_msg2 = PHP_EOL.self::printErrorCount($lastTimeCount, $commandType, $errorCount);
+                $_msg2 && $command->info($_msg2);
+            }
         } else {
             $command->info(PHP_EOL.'All '.$commandType.' are correct!');
         }
+        cache()->set(self::getKey($commandType), $errorCount);
 
         $errorPrinter->printTime();
+    }
+
+    protected static function getKey($commandType)
+    {
+        return "__microscope__$commandType-count";
     }
 
     public static function boot()
@@ -103,5 +113,15 @@ class ConsolePrinterInstaller
                 'CompactCall',
                 'compact() function call has problems man ! ');
         });
+    }
+
+    protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)
+    {
+        $lastTimeError = $commandType.' errors, compared to the last run.';
+        if (($errorCount > $lastTimeCount)) {
+            return ' +'.($errorCount - $lastTimeCount).' new '.$lastTimeError;
+        } elseif ($errorCount < $lastTimeCount) {
+            return ' -'.($lastTimeCount - $errorCount).' less '.$lastTimeError;
+        }
     }
 }
