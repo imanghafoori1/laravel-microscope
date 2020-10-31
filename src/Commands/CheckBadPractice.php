@@ -16,7 +16,7 @@ class CheckBadPractice extends Command
 {
     protected $signature = 'check:bad_practices';
 
-    protected $description = 'Checks the bad practices';
+    protected $description = 'Checks for bad practices';
 
     public function handle()
     {

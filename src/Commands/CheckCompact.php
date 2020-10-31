@@ -15,7 +15,7 @@ class CheckCompact extends Command
 {
     protected $signature = 'check:compact';
 
-    protected $description = 'Checks the compact() function calls to be correct';
+    protected $description = 'Checks that compact() function calls are correct';
 
     public function handle()
     {

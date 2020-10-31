@@ -14,7 +14,7 @@ class ClassifyStrings extends Command
 
     protected $signature = 'check:stringy_classes';
 
-    protected $description = 'Replaces string references with ::class version of them.';
+    protected $description = 'Replaces string references with ::class version of them';
 
     public function handle(ErrorPrinter $errorPrinter)
     {

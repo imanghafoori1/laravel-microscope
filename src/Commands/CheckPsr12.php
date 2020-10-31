@@ -15,7 +15,7 @@ class CheckPsr12 extends Command
 
     protected $signature = 'check:psr12';
 
-    protected $description = 'applies psr-12 rules.';
+    protected $description = 'Applies psr-12 rules';
 
     public function handle(ErrorPrinter $errorPrinter)
     {

@@ -14,7 +14,7 @@ class CheckActionComments extends Command
 
     protected $signature = 'check:action_comments';
 
-    protected $description = 'Adds route definition to the controller actions.';
+    protected $description = 'Adds route definition to the controller actions';
 
     public function handle(ErrorPrinter $errorPrinter)
     {

@@ -14,7 +14,7 @@ class CheckGenericActionComments extends Command
 
     protected $signature = 'check:docblocks';
 
-    protected $description = 'removes generic docblocks from controllers.';
+    protected $description = 'Removes generic docblocks from controllers';
 
     public function handle(ErrorPrinter $errorPrinter)
     {
