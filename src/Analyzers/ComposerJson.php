@@ -65,7 +65,7 @@ class ComposerJson
     private static function removedIgnored($mapping)
     {
         $result = [];
-        $ignored = config('microscope.ignored_namespaces');
+        $ignored = config('microscope.ignored_namespaces', []);
         foreach ($mapping as $namespace => $path) {
             if (! in_array($namespace, $ignored)) {
                 $result[$namespace] = $path;
