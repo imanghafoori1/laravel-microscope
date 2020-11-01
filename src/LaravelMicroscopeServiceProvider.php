@@ -70,6 +70,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('microscope.php'),
         ], 'config');
 
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'microscope');
+
         ConsolePrinterInstaller::boot();
     }
 
