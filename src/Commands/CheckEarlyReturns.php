@@ -12,7 +12,7 @@ class CheckEarlyReturns extends Command
 {
     protected $signature = 'check:early_returns {--t|test : backup the changed files}';
 
-    protected $description = 'Applies the early return on the classes.';
+    protected $description = 'Applies the early return on the classes';
 
     public function handle()
     {

@@ -14,7 +14,7 @@ class CheckDeadControllers extends Command
 
     protected $signature = 'check:dead_controllers';
 
-    protected $description = 'Checks public controller methods to have routes.';
+    protected $description = 'Checks that public controller methods have routes';
 
     public function handle(ErrorPrinter $errorPrinter)
     {
