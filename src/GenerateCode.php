@@ -34,6 +34,7 @@ class GenerateCode
             $content = file_get_contents($absFilePath);
 
             if (strlen(\trim($content)) > 10) {
+                // file is not empty
                 continue;
             }
 
@@ -45,9 +46,27 @@ class GenerateCode
             if (! $answer) {
                 continue;
             }
+
             file_put_contents($absFilePath, ServiceProviderStub::providerContent($correctNamespace, $className));
+
+            self::generateFolderStructure($classFilePath, $correctNamespace);
             self::addToProvidersArray($correctNamespace.'\\'.$className);
         }
+    }
+
+    /**
+     * Build the directory for the class if necessary.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    protected static function makeDirectory($path)
+    {
+        if (! is_dir($path)) {
+            @mkdir($path, 0777, true);
+        }
+
+        return $path;
     }
 
     private static function ask($command, $name)
@@ -67,6 +86,7 @@ class GenerateCode
     private static function addToProvidersArray($providerPath)
     {
         $tokens = token_get_all(file_get_contents(config_path('app.php')));
+
         foreach ($tokens as $i => $token) {
             if (! self::isProvidersKey($tokens, $i)) {
                 continue;
@@ -85,5 +105,26 @@ class GenerateCode
         }
 
         return $tokens;
+    }
+
+    protected static function generateFolderStructure($classFilePath, $namespace)
+    {
+        $_basePath = $classFilePath->getPath().DIRECTORY_SEPARATOR;
+        file_put_contents($_basePath.'routes.php', self::routeContent($namespace));
+        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
+        self::makeDirectory($_basePath.'views');
+        self::makeDirectory($_basePath.'Http');
+        self::makeDirectory($_basePath.'Models');
+    }
+
+    protected static function routeContent($namespace)
+    {
+        return "<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::group(['middleware' => ['web'], 'namespace' => '$namespace\Http'], function () {
+
+});";
     }
 }
