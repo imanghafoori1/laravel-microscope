@@ -11,7 +11,7 @@ class ServiceProviderStub
         $mapping = [
             '$correctNamespace' => $correctNamespace,
             '$className' => $className,
-            '$viewNamespace' => $viewNamespace,
+            '$name' => strtolower($viewNamespace),
         ];
 
         return '<?php'.str_replace(array_keys($mapping), array_values($mapping), $string);

@@ -97,7 +97,7 @@ class CheckClasses
                 continue;
             }
 
-            if (is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($import[0])))) {
+            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($import[0])))) {
                 continue;
             }
 
@@ -113,7 +113,7 @@ class CheckClasses
 
     public static function isAbsent($class)
     {
-        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class);
+        return ! \class_exists($class) && ! \interface_exists($class) && ! \trait_exists($class);
     }
 
     protected static function fullNamespace($currentNamespace, $class)
@@ -145,15 +145,15 @@ class CheckClasses
                 continue;
             }
 
-            if (! class_exists($class)) {
-                $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
+            if (! \class_exists($class)) {
+                $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
                 $result = ReplaceLine::fixReference($absFilePath, $class, $token[2]);
                 if ($isInUserSpace && $result[0]) {
                     self::printFixation($absFilePath, $class, $token[2]);
                 } else {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
-            } elseif (! method_exists($class, $method)) {
+            } elseif (! \method_exists($class, $method)) {
                 app(ErrorPrinter::class)->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
         }
@@ -174,11 +174,11 @@ class CheckClasses
 
         foreach ($nonImportedClasses as $nonImportedClass) {
             $cls = \trim($nonImportedClass['class'], '\\');
-            if (! self::isAbsent($cls) || function_exists($cls)) {
+            if (! self::isAbsent($cls) || \function_exists($cls)) {
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($cls, array_keys(ComposerJson::readAutoload()));
+            $isInUserSpace = Str::startsWith($cls, \array_keys(ComposerJson::readAutoload()));
             $line = $nonImportedClass['line'];
             $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
             if (! $result[0]) {

@@ -114,7 +114,7 @@ class GenerateCode
         self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
         self::makeDirectory($_basePath.'views');
         self::makeDirectory($_basePath.'Http');
-        self::makeDirectory($_basePath.'Models');
+        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'Models');
     }
 
     protected static function routeContent($namespace)
