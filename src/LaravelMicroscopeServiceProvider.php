@@ -77,10 +77,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function register()
     {
-        (app()['env'] !== 'production') && $this->spyEvents();
         if (! $this->canRun()) {
             return;
         }
+        $this->spyEvents();
 
         $this->registerCompiler();
 
