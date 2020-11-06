@@ -53,7 +53,7 @@ class SpyRouter extends Router
             $this->routeError($info, $err, "Incorrect 'middlewares' key.");
         }
 
-        if ($ns && isset($attributes['namespace']) && $ns !== $dir && ! is_dir($dir)) {
+        if ($ns && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ns) !== $dir) {
             $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
             $this->routeError($info, $err, 'Incorrect namespace.');
         }
