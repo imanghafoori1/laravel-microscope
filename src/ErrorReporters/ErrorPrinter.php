@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class ErrorPrinter
@@ -225,7 +226,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $filePath = \trim(\str_replace(base_path(), '', $path), '\\/');
+            $filePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
             $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
         }
     }

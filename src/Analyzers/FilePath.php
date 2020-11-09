@@ -14,16 +14,16 @@ class FilePath
 
         $sections = \explode(DIRECTORY_SEPARATOR, $dir);
 
-        $res = [];
+        $result = [];
         foreach ($sections as $i => $section) {
             if ($section == '..') {
-                \array_pop($res);
+                \array_pop($result);
             } else {
-                $res[] = $section;
+                $result[] = $section;
             }
         }
 
-        return \implode(DIRECTORY_SEPARATOR, $res);
+        return \implode(DIRECTORY_SEPARATOR, $result);
     }
 
     public static function getRelativePath($absFilePath)

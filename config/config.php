@@ -14,5 +14,8 @@ return [
     /**
      * An array of root namespaces to be ignored while scanning for errors.
      */
-    'ignored_namespaces' => [],
+    'ignored_namespaces' => [
+        // 'Laravel\\Nova\\',
+        // 'Laravel\\Nova\\Tests\\'
+    ],
 ];

@@ -46,10 +46,10 @@ class GenerateCode
             if (! $answer) {
                 continue;
             }
+            $prefix = strtolower(str_replace('ServiceProvider', '', $className));
+            file_put_contents($absFilePath, ServiceProviderStub::providerContent($correctNamespace, $className, $prefix));
 
-            file_put_contents($absFilePath, ServiceProviderStub::providerContent($correctNamespace, $className));
-
-            self::generateFolderStructure($classFilePath, $correctNamespace);
+            self::generateFolderStructure($classFilePath, $correctNamespace, $prefix);
             self::addToProvidersArray($correctNamespace.'\\'.$className);
         }
     }
@@ -107,10 +107,10 @@ class GenerateCode
         return $tokens;
     }
 
-    protected static function generateFolderStructure($classFilePath, $namespace)
+    protected static function generateFolderStructure($classFilePath, $namespace, $prefix)
     {
         $_basePath = $classFilePath->getPath().DIRECTORY_SEPARATOR;
-        file_put_contents($_basePath.'routes.php', self::routeContent($namespace));
+        file_put_contents($_basePath.$prefix.'_routes.php', self::routeContent($namespace));
         self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
         self::makeDirectory($_basePath.'views');
         self::makeDirectory($_basePath.'Http');
