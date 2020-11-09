@@ -43,12 +43,12 @@ class LaravelPaths
     public static function isIgnored($path)
     {
         $ignorePatterns = config('microscope.ignore');
-        if (is_array($ignorePatterns) == false || is_string($path) == false) {
+        if (! $ignorePatterns || ! is_array($ignorePatterns)) {
             return false;
         }
 
         foreach ($ignorePatterns as $ignorePattern) {
-            if (fnmatch(rtrim(base_path(), '\\/').'/'.ltrim($ignorePattern, '\\/'), $path)) {
+            if (Str::is(base_path($ignorePattern), $path)) {
                 return true;
             }
         }

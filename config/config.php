@@ -2,9 +2,11 @@
 
 return [
     /**
-     * An array of patterns that should be ignored for the checks.
+     * An array of patterns relative to base_path that should be ignored when reporting.
      */
-    'ignore' => [],
+    'ignore' => [
+        // 'nova*'
+    ],
 
     /**
      * You can turn off the extra variable passing detection, which performs some logs.
