@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 
 class CheckViewFilesExistence
 {
@@ -42,10 +42,7 @@ class CheckViewFilesExistence
 
     private static function error($tokens, $absPath, $i)
     {
-        $p = app(ErrorPrinter::class);
-        $p->print('included view: '.$tokens[$i + 4][1].' does not exist in blade file');
-        $p->printLink($absPath, $tokens[$i + 4][2]);
-        $p->end();
+        BladeFile::isMissing($absPath, $tokens[$i + 4][2], $tokens[$i + 4][1]);
     }
 
     private static function isVariable($token, string $varName)
