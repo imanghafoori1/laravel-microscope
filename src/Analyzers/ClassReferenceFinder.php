@@ -78,6 +78,7 @@ class ClassReferenceFinder
             } elseif ($t == T_IMPLEMENTS) {
                 $collect = $implements = true;
                 $c++;
+                self::forward();
                 continue;
             } elseif ($t == T_WHITESPACE || $t == '&') {
                 // we do not want to keep track of
