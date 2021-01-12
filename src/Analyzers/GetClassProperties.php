@@ -7,7 +7,8 @@ class GetClassProperties
     public static function fromFilePath($filePath)
     {
         $fp = fopen($filePath, 'r');
-        $buffer = fread($fp, 2000);
+        $buffer = fread($fp, config('microscope.psr4_buffer', 2000));
+        // in order to ensure docblocks are closed if there is any opeinging we add "/**/"
         $tokens = token_get_all($buffer.'/**/');
 
         if (strpos($buffer, '{') === false) {
