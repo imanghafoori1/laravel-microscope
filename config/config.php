@@ -26,5 +26,5 @@ return [
      * So, if you have a lot of use statements or very big docblocks for your classes so that
      * the "class" falls deep down, you may increase this value, so that it searches deeper.
      */
-    'psr4_buffer' => 2000,
+    'psr4_buffer' => 2500,
 ];
