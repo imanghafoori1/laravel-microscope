@@ -325,7 +325,7 @@ php artisan check:extract_blades
 you can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to indicate `start/end line` and the `path/name` of the partial you intend to be made.
 
 ```html
-  <html>
+ <html>
       
       {!! extractBlade('myPartials.head') !!}
           <head>...</head>
@@ -336,7 +336,7 @@ you can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to
           <body>...</body>
       {!! extractBlade() !!}
       
-    </html>
+ </html>
 ```
 
 After you execute `php artisan check:extract_blades` it will become:
