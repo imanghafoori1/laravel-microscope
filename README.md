@@ -2,11 +2,8 @@
     Find Bugs Before They Bite
 </h1>
 <h2 align="center">
-    Automatic Code Refactor
+    Imagine your code can correct it self
 </h2>
-<h3 align="center">
-    and, New Way of Code Generation
-</h3>
 
 <h3 align="center">
 So, Give your eyes a rest, this will check it for you.
