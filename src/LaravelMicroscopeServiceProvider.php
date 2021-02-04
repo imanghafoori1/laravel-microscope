@@ -75,7 +75,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ConsolePrinterInstaller::boot();
 
         Event::listen('microscope.checking', function ($path, $command) {
-            $command->line('Checking: '. $path);
+            $command->line('Checking: '.$path);
         });
     }
 
