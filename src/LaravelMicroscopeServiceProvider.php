@@ -73,6 +73,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'microscope');
 
         ConsolePrinterInstaller::boot();
+
+        Event::listen('microscope.checking', function ($path, $command) {
+            $command->line('Checking: '. $path);
+        });
     }
 
     public function register()

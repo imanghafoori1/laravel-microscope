@@ -7,19 +7,16 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 
-class CheckImports extends Command implements FileCheckContract
+class CheckImports extends Command
 {
     use LogsErrors;
-    use ScansFiles;
 
     protected $signature = 'check:imports {--d|detailed : Show files being checked}';
 

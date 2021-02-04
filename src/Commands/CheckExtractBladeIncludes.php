@@ -5,15 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\ExtractBladePartial;
-use Imanghafoori\LaravelMicroscope\Contracts\FileCheckContract;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Traits\ScansFiles;
 
-class CheckExtractBladeIncludes extends Command implements FileCheckContract
+class CheckExtractBladeIncludes extends Command
 {
     use LogsErrors;
-    use ScansFiles;
 
     protected $signature = 'check:extract_blades';
 
