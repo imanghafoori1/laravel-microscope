@@ -18,7 +18,7 @@ class CheckImports extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:imports {--d|detailed : Show files being checked}';
+    protected $signature = 'check:imports {--d|detailed : Show files being checked} {--n|nofix : avoids the automatic fixes}';
 
     protected $description = 'Checks the validity of use statements';
 
@@ -26,6 +26,10 @@ class CheckImports extends Command
     {
         event('microscope.start.command');
         $this->info('Checking imports...');
+
+        if (! $this->option('nofix')) {
+            config(['microscope.no_fix' => true]);
+        }
 
         $errorPrinter->printer = $this->output;
 

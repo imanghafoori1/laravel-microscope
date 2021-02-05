@@ -33,7 +33,10 @@ class CheckPsr4 extends Command
         $this->fixNamespaces($autoload);
         $olds = \array_keys(CheckNamespaces::$changedNamespaces);
         $news = \array_values(CheckNamespaces::$changedNamespaces);
-        $this->fixReferences($autoload, $olds, $news);
+
+        if (! $this->option('nofix')) {
+            $this->fixReferences($autoload, $olds, $news);
+        }
 
         $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were Checked!');
         $this->finishCommand($errorPrinter);

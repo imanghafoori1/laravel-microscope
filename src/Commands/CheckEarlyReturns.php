@@ -37,7 +37,6 @@ class CheckEarlyReturns extends Command
                 } catch (\Exception $e) {
                     dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (O_o)');
                     dump('Skipping : '.$path);
-                    $fixes = 0;
                     continue;
                 }
 

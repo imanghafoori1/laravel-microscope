@@ -55,6 +55,7 @@ class ReplaceLine
         $cls = \explode('\\', $class);
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
+
         if (\count($correct) === 1) {
             return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
         } else {
