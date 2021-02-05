@@ -19,7 +19,7 @@ class CheckPsr4 extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--n|nofix}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force}';
 
     protected $description = 'Checks the validity of namespaces';
 
