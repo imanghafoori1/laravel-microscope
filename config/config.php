@@ -2,6 +2,11 @@
 
 return [
     /**
+     * Avoids auto-fix if is set to true.
+     */
+    'no_fix' => false,
+
+    /**
      * An array of patterns relative to base_path that should be ignored when reporting.
      */
     'ignore' => [
