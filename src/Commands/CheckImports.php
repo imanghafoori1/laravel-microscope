@@ -27,9 +27,7 @@ class CheckImports extends Command
         event('microscope.start.command');
         $this->info('Checking imports...');
 
-        if (! $this->option('nofix')) {
-            config(['microscope.no_fix' => true]);
-        }
+        $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $errorPrinter->printer = $this->output;
 

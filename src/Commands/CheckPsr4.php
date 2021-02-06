@@ -31,7 +31,9 @@ class CheckPsr4 extends Command
         $olds = \array_keys(CheckNamespaces::$changedNamespaces);
         $news = \array_values(CheckNamespaces::$changedNamespaces);
 
-        if (! $this->option('nofix')) {
+        $this->option('nofix') && config(['microscope.no_fix' => true]);
+
+        if (! config('microscope.no_fix')) {
             $this->fixReferences($autoload, $olds, $news);
         }
 

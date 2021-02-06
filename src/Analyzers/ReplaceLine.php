@@ -51,6 +51,10 @@ class ReplaceLine
 
     public static function fixReference($absPath, $class, $lineNum, $prefix = '')
     {
+        if (config('microscope.no_fix')) {
+            return [false, []];
+        }
+
         $class_list = Psr4Classes::classList();
         $cls = \explode('\\', $class);
         $className = array_pop($cls);
