@@ -71,14 +71,12 @@ class CheckNamespaces
             self::changedNamespaces($class, $currentNamespace, $correctNamespace);
             self::warn($currentNamespace, $relativePath, $class);
 
-            $answer = self::ask($command, $correctNamespace);
-            if ($answer) {
+            if (! $command->option('nofix') && self::ask($command, $correctNamespace)) {
                 self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
                 // maybe an event listener
                 app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
             }
         }
-        app(ErrorPrinter::class)->errorsList['total'] = 0;
     }
 
     private static function warn($currentNamespace, $relativePath, $class)

@@ -19,7 +19,7 @@ class CheckPsr4 extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--n|nofix}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix}';
 
     protected $description = 'Checks the validity of namespaces';
 
@@ -30,7 +30,7 @@ class CheckPsr4 extends Command
         $errorPrinter->printer = $this->output;
 
         $autoload = ComposerJson::readAutoload();
-        $this->fixNamespaces($autoload);
+        $this->checkNamespaces($autoload);
         $olds = \array_keys(CheckNamespaces::$changedNamespaces);
         $news = \array_values(CheckNamespaces::$changedNamespaces);
 
@@ -39,7 +39,9 @@ class CheckPsr4 extends Command
         }
 
         $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were Checked!');
-        $this->finishCommand($errorPrinter);
+
+        $this->printErrorsCount($errorPrinter);
+
         $this->composerDumpIfNeeded($errorPrinter);
     }
 
@@ -157,7 +159,7 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function fixNamespaces(array $autoload)
+    private function checkNamespaces(array $autoload)
     {
         foreach ($autoload as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
@@ -168,5 +170,14 @@ class CheckPsr4 extends Command
     private function report(string $_path, $line)
     {
         app(ErrorPrinter::class)->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
+    }
+
+    private function printErrorsCount(ErrorPrinter $errorPrinter): void
+    {
+        if ($errorCount = $errorPrinter->errorsList['total']) {
+            $errorCount && $this->warn(PHP_EOL.$errorCount.' error(s) found in namespaces');
+        } else {
+            $this->info(PHP_EOL.'All namespaces are correct!');
+        }
     }
 }
