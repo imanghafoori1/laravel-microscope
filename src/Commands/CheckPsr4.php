@@ -12,7 +12,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Symfony\Component\Finder\Finder;
 
 class CheckPsr4 extends Command
