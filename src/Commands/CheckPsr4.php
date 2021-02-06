@@ -17,8 +17,6 @@ use Symfony\Component\Finder\Finder;
 
 class CheckPsr4 extends Command
 {
-    use LogsErrors;
-
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix}';
 
     protected $description = 'Checks the validity of namespaces';
@@ -172,7 +170,7 @@ class CheckPsr4 extends Command
         app(ErrorPrinter::class)->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
     }
 
-    private function printErrorsCount(ErrorPrinter $errorPrinter): void
+    private function printErrorsCount($errorPrinter)
     {
         if ($errorCount = $errorPrinter->errorsList['total']) {
             $errorCount && $this->warn(PHP_EOL.$errorCount.' error(s) found in namespaces');
