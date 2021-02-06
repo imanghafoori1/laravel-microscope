@@ -18,7 +18,7 @@ class CheckImports extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:imports {--d|detailed : Show files being checked} {--n|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:imports {--d|detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Checks the validity of use statements';
 
