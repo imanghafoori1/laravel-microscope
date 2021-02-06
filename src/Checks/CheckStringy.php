@@ -25,11 +25,10 @@ class CheckStringy
             if (! $this->isPossiblyClassyString($token, $namespaces)) {
                 continue;
             }
+
             $classPath = \trim($token[1], '\'\"');
             if (CheckClasses::isAbsent($classPath)) {
-                $relPath = NamespaceCorrector::getRelativePathFromNamespace($classPath);
-                // Is a correct namespace path, pointing to a directory
-                if (is_dir(base_path($relPath))) {
+                if (self::refersToDir($classPath)) {
                     continue;
                 }
                 $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
@@ -38,9 +37,7 @@ class CheckStringy
 
             $errorPrinter->printLink($absFilePath, $token[2]);
             $command = app('current.command');
-            $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-            $answer = $command->getOutput()->confirm('Do you want to replace: '.$token[1].' with ::class version of it? ', true);
-            if ($answer) {
+            if (self::ask($command, $token, $absFilePath)) {
                 dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
                 ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
                 $command->info('====================================');
@@ -65,5 +62,18 @@ class CheckStringy
             ! in_array($token[1], $namespaces) &&
             ! Str::contains($token[1], $chars) &&
             ! Str::endsWith($token[1], '\\');
+    }
+
+    private static function ask($command, $token, $absFilePath)
+    {
+        $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
+        $text = 'Do you want to replace: '.$token[1].' with ::class version of it?';
+
+        return $command->getOutput()->confirm($text, true);
+    }
+
+    private static function refersToDir(string $classPath)
+    {
+        return is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($classPath)));
     }
 }
