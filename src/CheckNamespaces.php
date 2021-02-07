@@ -28,6 +28,7 @@ class CheckNamespaces
      */
     public static function within($paths, $composerPath, $composerNamespace, $command)
     {
+        $detailed = $command->option('detailed');
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
@@ -58,7 +59,7 @@ class CheckNamespaces
                 continue;
             }
 
-            if ($command->option('detailed')) {
+            if ($detailed) {
                 event('microscope.checking', [$classFilePath->getRelativePathname(), $command]);
             }
 
