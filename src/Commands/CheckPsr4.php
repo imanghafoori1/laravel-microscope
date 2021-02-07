@@ -40,10 +40,11 @@ class CheckPsr4 extends Command
         }
 
         $this->getOutput()->writeln('');
-        $this->getOutput()->writeln('<fg=green>Finished !!!</>');
-        $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        $this->getOutput()->writeln('<options=bold;fg=green> - '.
-            implode("\n - <options=bold;fg=green>", array_keys($autoload)).'');
+        $this->getOutput()->writeln('<fg=green>Finished!!!</>');
+        $this->getOutput()->writeln('==============================');
+        $this->getOutput()->writeln("<options=bold;fg=yellow>".CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
+        $this->getOutput()->writeln("<options=bold;fg=green> - ".
+            implode("\n - <options=bold;fg=green>",array_keys($autoload)). "");
 
         $this->printErrorsCount($errorPrinter, $time);
 
