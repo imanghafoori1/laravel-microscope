@@ -23,8 +23,8 @@ class CheckPsr4 extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->line('');
+        $this->info('Start checking PSR-4 namespaces...');
         $time = microtime(true);
-        $this->info('Checking PSR-4 Namespaces...');
 
         $errorPrinter->printer = $this->output;
 
@@ -40,10 +40,10 @@ class CheckPsr4 extends Command
         }
 
         $this->getOutput()->writeln('');
-        $this->getOutput()->writeln('Finished!');
-        $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        $this->getOutput()->writeln('<options=bold;fg=green> - '.
-            implode("\n - <options=bold;fg=green>", array_keys($autoload)).'');
+        $this->getOutput()->writeln('<fg=green>Finished !!!</>');
+        $this->getOutput()->writeln("<options=bold;fg=yellow>".CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
+        $this->getOutput()->writeln("<options=bold;fg=green> - ".
+            implode("\n - <options=bold;fg=green>",array_keys($autoload)). "");
 
         $this->printErrorsCount($errorPrinter, $time);
 
@@ -184,7 +184,7 @@ class CheckPsr4 extends Command
         } else {
             $time = microtime(true) - $time;
             $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
-            $this->line('<fg=green>'.round($time, 5).'(s)</>');
+            $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
             $this->line('');
         }
     }
