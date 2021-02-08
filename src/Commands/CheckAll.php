@@ -38,13 +38,10 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
-        $this->info('Total elapsed time: '.(round(microtime(true) - $t1, 2)).' seconds');
+        $this->info(''.(round(microtime(true) - $t1, 2)).' (s)');
 
-        if (random_int(1, 2) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:al')) {
-            $this->info(PHP_EOL.'Heyman, If you find this package useful to you...');
-            $this->info('Please contribute to it by sharing a post about it or give it an star on github.');
-            $this->info('Regards, Iman Ghafoori   (^_^) ');
-            $this->info('https://github.com/imanghafoori1/microscope');
+        if (random_int(1, 5) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:al')) {
+            ErrorPrinter::thanks($this);
         }
 
         return $errorPrinter->hasErrors() ? 1 : 0;

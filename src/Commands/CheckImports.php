@@ -47,11 +47,8 @@ class CheckImports extends Command
 
         $errorPrinter->printTime();
 
-        if (random_int(1, 2) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
-            $this->info(PHP_EOL.'Heyman, If you find this package useful to you...');
-            $this->info('Please contribute to it by sharing a post about it or give it an star on github.');
-            $this->info('Reguards, Iman Ghafoori   (^_^) ');
-            $this->info('https://github.com/imanghafoori1/microscope');
+        if (random_int(1, 5) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
+            ErrorPrinter::thanks($this);
         }
 
         return $errorPrinter->hasErrors() ? 1 : 0;
