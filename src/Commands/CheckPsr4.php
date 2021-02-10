@@ -85,7 +85,7 @@ class CheckPsr4 extends Command
 
         foreach ($hints as $paths) {
             foreach ($paths as $path) {
-                $files = Finder::create()->name('*.blade.php')->files()->in($path);
+                $files = is_dir($path) ? Finder::create()->name('*.blade.php')->files()->in($path) : [];
                 foreach ($files as $blade) {
                     /**
                      * @var \Symfony\Component\Finder\SplFileInfo $blade
