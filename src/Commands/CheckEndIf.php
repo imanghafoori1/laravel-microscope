@@ -76,7 +76,9 @@ class CheckEndIf extends Command
 
     private function getConfirm($filePath)
     {
-        return $this->output->confirm('Do you want to replace endif: '.$filePath, true);
+        $filePath = FilePath::getRelativePath($filePath);
+
+        return $this->output->confirm('Replacing endif in: '.$filePath, true);
     }
 
     private function startWarning()

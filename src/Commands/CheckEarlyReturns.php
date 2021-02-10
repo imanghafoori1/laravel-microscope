@@ -85,6 +85,8 @@ class CheckEarlyReturns extends Command
 
     private function getConfirm($filePath)
     {
+        $filePath = FilePath::getRelativePath($filePath);
+
         return $this->output->confirm('Do you want to flatten: '.$filePath, true);
     }
 
