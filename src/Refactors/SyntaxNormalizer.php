@@ -31,6 +31,7 @@ class SyntaxNormalizer
                 self::$hasChange = true;
                 // replace the ruby-style syntax with C-style
                 $refactoredTokens[] = $replace ? '}' : ['}', $t[1]];
+                $replace && self::removeSemi($tokens, $i);
                 $i++;
                 continue;
             }
@@ -105,5 +106,12 @@ class SyntaxNormalizer
         }
 
         return $refactoredTokens;
+    }
+
+    private static function removeSemi(&$tokens, $i)
+    {
+        [$next, $u] = FunctionCall::getNextToken($tokens, $i);
+        // replaces ";" token with a neutral token.
+        $next == ';' && $tokens[$u] = ['', ''];
     }
 }
