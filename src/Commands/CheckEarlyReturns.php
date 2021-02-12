@@ -17,7 +17,7 @@ class CheckEarlyReturns extends Command
     public function handle()
     {
         if ($this->option('nofix')) {
-            $this->info(PHP_EOL.' Checking for possible code flattenings...'. PHP_EOL);
+            $this->info(PHP_EOL.' Checking for possible code flattenings...'.PHP_EOL);
         }
 
         if (! $this->option('nofix') && ! $this->startWarning()) {
