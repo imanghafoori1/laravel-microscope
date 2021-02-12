@@ -30,6 +30,9 @@ class BladeFiles
     public static function checkPaths($paths, $methods)
     {
         foreach ($paths as $path) {
+            if (! is_dir($path)) {
+                continue;
+            }
             $files = (new Finder())->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {

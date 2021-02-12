@@ -23,7 +23,7 @@ trait LogsErrors
         }
 
         if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
-            $errorCount && $this->error(PHP_EOL.$errorCount.' errors found for '.$commandType);
+            $errorCount && $this->warn(PHP_EOL.$errorCount.' errors found for '.$commandType);
 
             $errorPrinter->logErrors();
         } else {

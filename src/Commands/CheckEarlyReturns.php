@@ -10,19 +10,23 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckEarlyReturns extends Command
 {
-    protected $signature = 'check:early_returns {--t|test : backup the changed files}';
+    protected $signature = 'check:early_returns {--t|test : backup the changed files} {--s|nofix}';
 
     protected $description = 'Applies the early return on the classes';
 
     public function handle()
     {
-        if (! $this->startWarning()) {
+        if ($this->option('nofix')) {
+            $this->info(PHP_EOL.' Checking for possible code flattenings...'. PHP_EOL);
+        }
+
+        if (! $this->option('nofix') && ! $this->startWarning()) {
             return;
         }
 
         $psr4 = ComposerJson::readAutoload();
 
-        $totalNumberOfFixes = $fixedFilesCount = 0;
+        $fixingFilesCount = $totalNumberOfFixes = $fixedFilesCount = 0;
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $file) {
@@ -35,8 +39,16 @@ class CheckEarlyReturns extends Command
                 try {
                     [$fixes, $tokens] = $this->refactor($tokens);
                 } catch (\Exception $e) {
-                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (O_o)');
+                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
                     dump('Skipping : '.$path);
+                    continue;
+                }
+
+                $fixes !== 0 && $fixingFilesCount++;
+
+                if ($this->option('nofix') && $fixes !== 0) {
+                    $filePath = FilePath::getRelativePath($path);
+                    $this->line("<fg=red>    - $filePath</fg=red>");
                     continue;
                 }
 
@@ -50,7 +62,7 @@ class CheckEarlyReturns extends Command
             }
         }
 
-        $this->printFinalMsg($fixedFilesCount);
+        $this->printFinalMsg($fixedFilesCount, $fixingFilesCount);
 
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
@@ -72,29 +84,33 @@ class CheckEarlyReturns extends Command
         return [$fixes, $tokens];
     }
 
-    private function printFinalMsg($fixed)
+    private function printFinalMsg($fixed, $fixingFilesCount)
     {
         if ($fixed > 0) {
-            $msg = 'Hooraay !!!, '.$fixed.' files were flattened by laravel-microscope... ';
-        } else {
-            $msg = 'Congratulations, your code base does not seems to need any fix';
+            $msg = ' Hooraay!!!, '.$fixed.' files were flattened by laravel-microscope!';
+        } elseif ($fixingFilesCount == 0) {
+            $msg = ' Congratulations, your code base does not seems to need any flattening. <fg=red> \(^_^)/ </fg=red>';
+        } elseif ($fixingFilesCount !== 0 && $this->option('nofix')) {
+            $msg = ' The files above can be flattened by: <fg=cyan>php artisan check:early</fg=cyan>';
         }
-        $this->info(PHP_EOL.$msg);
-        $this->info('     \(^_^)/    You rock...   \(^_^)/    ');
+
+        isset($msg) && $this->info(PHP_EOL.$msg);
+        $this->info(PHP_EOL);
+        $this->line('========================================');
     }
 
     private function getConfirm($filePath)
     {
         $filePath = FilePath::getRelativePath($filePath);
 
-        return $this->output->confirm('Do you want to flatten: '.$filePath, true);
+        return $this->output->confirm(' Do you want to flatten: '.$filePath, true);
     }
 
     private function startWarning()
     {
-        $this->info('Checking for Early Returns...');
-        $this->warn('This command is going to make changes to your files!');
+        $this->info(PHP_EOL.' Checking for Early Returns...');
+        $this->warn(' Warning: This command is going to make "CHANGES" to your files!');
 
-        return $this->output->confirm('Do you have committed everything in git?', true);
+        return $this->output->confirm(' Do you have committed everything in git?', false);
     }
 }

@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
@@ -38,15 +39,16 @@ class CheckPsr4 extends Command
         if (! config('microscope.no_fix')) {
             $this->fixReferences($autoload, $olds, $news);
         }
-
-        $this->getOutput()->writeln('');
-        $this->getOutput()->writeln('<fg=green>Finished!!!</>');
-        $this->getOutput()->writeln('==============================');
-        $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        $this->getOutput()->writeln('<options=bold;fg=green> - '.
-            implode("\n - <options=bold;fg=green>", array_keys($autoload)).'');
-
-        $this->printErrorsCount($errorPrinter, $time);
+        if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
+            $this->getOutput()->writeln('');
+            $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
+            $this->getOutput()->writeln('==============================');
+            $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
+            $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
+            $this->printErrorsCount($errorPrinter, $time);
+        } else {
+            $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
+        }
 
         $this->composerDumpIfNeeded($errorPrinter);
     }
