@@ -14,11 +14,11 @@ class ActionsUnDocblock
         $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
         if (RoutelessActions::isLaravelController($fullNamespace)) {
-            self::removeGenericDocBlocks($tokens, $classFilePath);
+            self::removeGenericDocBlocks($tokens, $classFilePath->getRealpath());
         }
     }
 
-    private static function removeGenericDocBlocks($tokens, $classFilePath)
+    private static function removeGenericDocBlocks($tokens, $absFilePath)
     {
         foreach ($tokens as $i => $token) {
             if ($token[0] == T_DOC_COMMENT) {
@@ -35,19 +35,19 @@ class ActionsUnDocblock
                     if ($tokens[$i + 1][0] == T_WHITESPACE) {
                         unset($tokens[$i + 1]);
                     }
-                    Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+                    Refactor::saveTokens($absFilePath, $tokens);
                 }
             }
 
             if (\in_array($token[0], [T_PUBLIC, T_PRIVATE, T_PROTECTED]) && ($tokens[$i - 1][0] == T_WHITESPACE)) {
                 if (($tokens[$i - 2][0] == '}') && $tokens[$i - 1][1] != "\n\n    ") {
                     $tokens[$i - 1][1] = "\n\n    ";
-                    Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+                    Refactor::saveTokens($absFilePath, $tokens);
                 }
 
                 if (($tokens[$i - 2][0] == '{') && $tokens[$i - 1][1] != "\n    ") {
                     $tokens[$i - 1][1] = "\n    ";
-                    Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+                    Refactor::saveTokens($absFilePath, $tokens);
                 }
             }
         }

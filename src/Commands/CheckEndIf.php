@@ -36,8 +36,9 @@ class CheckEndIf extends Command
                 try {
                     $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
                 } catch (\Exception $e) {
-                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (O_o)');
-                    dump('Skipping : '.$path);
+                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
+                    dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
+                    dump('Send us the contents of: '.$path);
                     continue;
                 }
 
@@ -66,12 +67,12 @@ class CheckEndIf extends Command
     private function printFinalMsg($fixed)
     {
         if ($fixed > 0) {
-            $msg = 'Hooraay !!!, '.$fixed.' files were flattened by laravel-microscope... ';
+            $msg = 'Hooray!!!, '.$fixed.' files were flattened by the microscope.';
         } else {
-            $msg = 'Congratulations, your code base does not seems to need any fix';
+            $msg = 'Congratulations, your code base does not seems to need any fix.';
         }
         $this->info(PHP_EOL.$msg);
-        $this->info('     \(^_^)/    You rock...   \(^_^)/    ');
+        $this->info('     \(^_^)/    You Rock    \(^_^)/    ');
     }
 
     private function getConfirm($filePath)

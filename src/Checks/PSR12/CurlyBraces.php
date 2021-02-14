@@ -10,7 +10,7 @@ class CurlyBraces
 
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
     {
-        self::removeGenericDocBlocks($tokens, $classFilePath);
+        self::removeGenericDocBlocks($tokens, $classFilePath->getRealpath());
     }
 
     private static function removeGenericDocBlocks($tokens, $classFilePath)
@@ -44,17 +44,18 @@ class CurlyBraces
             if ($tokens[$i + 1][0] == T_WHITESPACE) {
                 if ($tokens[$i + 1][1] != PHP_EOL.$sp && $tokens[$i + 1][1] != "\n".$sp) {
                     $tokens[$i + 1][1] = PHP_EOL.$sp;
-                    Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+                    Refactor::saveTokens($classFilePath, $tokens);
                 } else {
+                    ///
                 }
             } else {
                 array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
-                Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+                Refactor::saveTokens($classFilePath, $tokens);
             }
         }
     }
 
-    private static function writePublic($level, $token, $isInClass, $i, $tokens, $classFilePath)
+    private static function writePublic($level, $token, $isInClass, $i, $tokens, $absolutePath)
     {
         if (($level != 1) || ($token[0] != T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];
@@ -70,7 +71,7 @@ class CurlyBraces
             array_splice($tokens, $t, 0, [[T_PUBLIC, 'public']]);
             $i++;
             $i++;
-            Refactor::saveTokens($classFilePath->getRealpath(), $tokens);
+            Refactor::saveTokens($absolutePath, $tokens);
         }
 
         return [$tokens, $i];

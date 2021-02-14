@@ -26,10 +26,10 @@ class Refactor
         return EarlyReturns::apply($tokens, $changes);
     }
 
-    public static function saveTokens($path, array $refactoredTokens, $test = false)
+    public static function saveTokens($path, array $tokens, $test = false)
     {
         $test && ($path = $path.'_flat');
-        file_put_contents($path, self::toString($refactoredTokens));
+        file_put_contents($path, self::toString($tokens));
     }
 
     public static function isBlocky(array $codeBlock)
@@ -48,14 +48,15 @@ class Refactor
         return $isBlocky;
     }
 
-    public static function toString($refactoredTokens)
+    public static function toString($tokens)
     {
-        $stringOutput = '';
-        foreach ($refactoredTokens as $refToken) {
-            $stringOutput .= $refToken[1] ?? $refToken[0];
+        $string = '';
+
+        foreach ($tokens as $token) {
+            $string .= $token[1] ?? $token[0];
         }
 
-        return $stringOutput;
+        return $string;
     }
 
     private static function recursiveRefactor($tokens, $refactor)
