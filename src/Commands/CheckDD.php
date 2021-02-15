@@ -14,6 +14,8 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckDD extends Command
 {
+    public static $checkedCallsNum = 0;
+
     protected $signature = 'check:dd {--d|detailed : Show files being checked}';
 
     protected $description = 'Checks the debug functions';
@@ -28,6 +30,8 @@ class CheckDD extends Command
         $this->checkPaths(Paths::getAbsFilePaths(app()->databasePath('seeds')));
         $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
         $this->checkPsr4Classes();
+
+        $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');
 
         event('microscope.finished.checks', [$this]);
 
@@ -55,6 +59,7 @@ class CheckDD extends Command
     private function checkPaths($paths)
     {
         foreach ($paths as $filePath) {
+            self::$checkedCallsNum++;
             $this->checkForDD($filePath);
         }
     }
@@ -65,6 +70,7 @@ class CheckDD extends Command
 
         foreach ($psr4 as $_namespace => $dirPath) {
             foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
+                self::$checkedCallsNum++;
                 $this->checkForDD($filePath->getRealPath());
             }
         }
