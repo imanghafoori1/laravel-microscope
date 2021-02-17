@@ -10,7 +10,7 @@ class FunctionCall
         $token = $tokens[$i] ?? '_';
         while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
             $i++;
-            $token = $tokens[$i] ?? null;
+            $token = $tokens[$i] ?? [null, null];
         }
 
         return [$token, $i];
@@ -22,7 +22,7 @@ class FunctionCall
         $nextToken = $tokens[$i] ?? '_';
         while (! \in_array($nextToken[0], $tokenType)) {
             $i++;
-            $nextToken = $tokens[$i] ?? null;
+            $nextToken = $tokens[$i] ?? [null, null];
         }
 
         return [$nextToken, $i];
