@@ -219,8 +219,14 @@ The same thing will apply for functions and methods, but with `return`
 
 if ($cond1) {
     if ($cond2) {
-        ....       merge into  ===>    if ($cond1 && $cond2) {   ...   }
+        ....       
     }
+}
+
+// merge into:
+
+if ($cond1 && $cond2) { 
+    ...  
 }
 
 ```
@@ -240,7 +246,6 @@ endif;
 if ($var1 > 1)
     if ($var2 > 2)
         echo 'Hey Man';
-
 
 ```
 
