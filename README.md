@@ -530,7 +530,6 @@ I would be happy to answer you.
 - Detect return keyword in eloquent relations
 - Detect wrong action() calls
 - Enhance blocky code detection
-- Fully decouple the error logger
 - Detect `return abort();`
 - Detect un-registered service providers
 - Detect unused middlewares
