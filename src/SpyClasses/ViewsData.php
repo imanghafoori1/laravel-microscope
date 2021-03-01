@@ -51,6 +51,8 @@ class ViewsData
 
     public static function getBladeTokens($path)
     {
+        app('microscope.blade.compiler')->withoutComponentTags();
+
         return token_get_all(app('microscope.blade.compiler')->compileString(file_get_contents($path)));
     }
 }
