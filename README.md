@@ -38,6 +38,7 @@ Built with :heart: for lazy laravel developers ;)
 - It does **not show you stupid false errors**, all the errors are really errors.
 - Even If you have written a lot of tests for your app, **you may still need this**.
 - **It can refactor your code**, by applying `early returns` automatically.
+- It is written from scratch to yield the **maximum performance** possible.
 
 ### :film_strip: Video tutorial [here](https://youtu.be/aEkiE30wNKk)
 
