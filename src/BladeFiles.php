@@ -12,6 +12,8 @@ class BladeFiles
 
     public static function check($methods)
     {
+        $compiler = app('microscope.blade.compiler');
+        method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
         $hints = self::getNamespacedPaths();
         $hints['1'] = View::getFinder()->getPaths();
         foreach ($hints as $paths) {
