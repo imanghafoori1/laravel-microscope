@@ -44,7 +44,7 @@ Built with :heart: for lazy laravel developers ;)
 ### :star: Your Stars Make Us Do More
 If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
 
-Stargazers: https://github.com/imanghafoori1/microscope/stargazers
+<a href="https://github.com/imanghafoori1/microscope/stargazers">Stargazers</a> 
 
 
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
@@ -54,17 +54,11 @@ You can install the package via composer:
 ```bash
 composer require imanghafoori/laravel-microscope --dev
 ```
+
 You may also publish config file:
 ```
 php artisan vendor:publish
 ```
-
-Although this project has already a lot of features, it is still under active development, so you have to update it almost every day in order to get the latest improvements and bug fixes.
-
-```bash
-composer update imanghafoori/laravel-microscope
-```
-
 
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
@@ -133,7 +127,6 @@ You can run:
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:generate
 </h4></p>
-
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:endif
