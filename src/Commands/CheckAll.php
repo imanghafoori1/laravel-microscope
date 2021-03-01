@@ -20,13 +20,13 @@ class CheckAll extends Command
         $t1 = microtime(true);
         $errorPrinter->printer = $this->output;
 
-        //turns off error logging.
+        // turns off error logging.
         $errorPrinter->logErrors = false;
 
         $this->call('check:psr4', ['--detailed' => $this->option('detailed'), '--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
+        $this->call('check:imports', ['--nofix' => $this->option('nofix'), '--detailed' => $this->option('detailed')]);
         $this->call('check:events');
         $this->call('check:gates');
-        $this->call('check:imports', ['--nofix' => $this->option('nofix'), '--detailed' => $this->option('detailed')]);
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
         $this->call('check:routes');
         $this->call('check:stringy_classes');
@@ -35,7 +35,7 @@ class CheckAll extends Command
         $this->call('check:early_returns', ['--nofix' => true]);
         $this->call('check:bad_practices');
 
-        //turns on error logging.
+        // turns on error logging.
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
