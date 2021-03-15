@@ -6,7 +6,7 @@
 </h2>
 
 <h3 align="center">
-Give your eyes a rest, we will detect and fix them.
+Give your eyes a rest, we will detect and fix them for you.
 </h3>
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
@@ -504,18 +504,6 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 :gem: It allows you to decouple your eloquent models to reach a modular structure
 
 - https://github.com/imanghafoori1/eloquent-relativity
-
-----------------
-
-### 🍌 Donation:
-
-You can contact me if you want to make a donation, so I can put your logo or name on the readme file as a donator. 
-
-IM: https://t.me/imanghafoori 
-
-Email: imanghafoori1@gmail.com
-
-I would be happy to answer you.
 
 --------------
 ### Todo:
