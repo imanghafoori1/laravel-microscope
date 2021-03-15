@@ -1,12 +1,12 @@
 <h1 align="center">
-    Find Bugs Before They Bite
+   Do you dear to move a class?
 </h1>
 <h2 align="center">
-    Your laravel app can "heal" itself
+     Find Bugs Before They Bite
 </h2>
 
 <h3 align="center">
-So, give your eyes a rest, it will be detected and corrected.
+Give your eyes a rest, we will detect and fix them.
 </h3>
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
