@@ -1,5 +1,5 @@
 <h1 align="center">
-   Do you dear to move a class?
+   Do you dare to move a class?
 </h1>
 <h2 align="center">
      Find Bugs Before They Bite
