@@ -170,7 +170,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
                 \Log::info('Laravel Microscope - The view file "'.$viewName.'"');
                 \Log::info('At "'.$action.'" has some unused variables passed to it: ');
                 \Log::info($uselessVars);
-                \Log::info('If you do not see these variables passed a in controller, look in view composers.');
+                \Log::info('If you do not see these variables passed in a controller, look in view composers.');
             }
         });
     }
