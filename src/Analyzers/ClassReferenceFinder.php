@@ -20,7 +20,7 @@ class ClassReferenceFinder
         $classes = [];
         $c = 0;
         $force_close = $implements = $collect = false;
-        $isDefiningFunction = $isCatchException = $isMethodSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
+        $isDefiningFunction = $isCatchException = $isSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
 
         while (self::$token = current($tokens)) {
             next($tokens);
@@ -95,7 +95,8 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == ',') {
                 // to avoid mistaking commas in default array values with commas between args
-                $collect = ($isMethodSignature && self::$lastToken[0] == T_VARIABLE) || $implements;
+                // example:   function hello($arg = [1, 2]) { ... }
+                $collect = ($isSignature && self::$lastToken[0] == T_VARIABLE) || $implements;
                 $isInSideClass && ($force_close = false);
                 // for method calls: foo(new Hello, $var);
                 // we do not want to collect after comma.
@@ -108,7 +109,7 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == '{') {
-                $implements = $isMethodSignature = false;
+                $implements = $isSignature = false;
                 if ($isDefiningMethod) {
                     $isDefiningMethod = false;
                     $isInsideMethod = true;
@@ -123,8 +124,8 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == '(' || $t == ')') {
                 // wrong...
-                if ($t == '(' && ($isDefiningMethod || $isCatchException)) {
-                    $isMethodSignature = true;
+                if ($t == '(' && ($isDefiningFunction || $isCatchException)) {
+                    $isSignature = true;
                     $collect = true;
                 } else {
                     // so is calling a method by: ()
