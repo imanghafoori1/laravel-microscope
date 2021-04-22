@@ -18,7 +18,7 @@ class CheckClasses
         try {
             self::checkImports($tokens, $absFilePath);
         } catch (\ErrorException $e) {
-            // In case a file is moved or deleted...
+            // In case a file is moved or deleted,
             // composer will need a dump autoload.
             if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
                 throw $e;
@@ -104,7 +104,7 @@ class CheckClasses
             $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
             $result = ReplaceLine::fixReference($absFilePath, $import[0], $import[1]);
             if ($isInUserSpace && $result[0]) {
-                self::printFixation($absFilePath, $import[0], $import[1]);
+                self::printFixation($absFilePath, $import[0], $import[1], $result[1]);
             } else {
                 app(ErrorPrinter::class)->wrongImport($absFilePath, $import[0], $import[1]);
             }
@@ -149,7 +149,7 @@ class CheckClasses
                 $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
                 $result = ReplaceLine::fixReference($absFilePath, $class, $token[2]);
                 if ($isInUserSpace && $result[0]) {
-                    self::printFixation($absFilePath, $class, $token[2]);
+                    self::printFixation($absFilePath, $class, $token[2], $result[1]);
                 } else {
                     app(ErrorPrinter::class)->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
@@ -173,27 +173,27 @@ class CheckClasses
         $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         foreach ($nonImportedClasses as $nonImportedClass) {
-            $cls = \trim($nonImportedClass['class'], '\\');
-            if (! self::isAbsent($cls) || \function_exists($cls)) {
+            $class = \trim($nonImportedClass['class'], '\\');
+            if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($cls, \array_keys(ComposerJson::readAutoload()));
+            $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
             $line = $nonImportedClass['line'];
-            $result = ReplaceLine::fixReference($absFilePath, $cls, $line);
+            $result = ReplaceLine::fixReference($absFilePath, $class, $line);
             if (! $result[0]) {
-                $cls1 = \str_replace($nonImportedClass['namespace'].'\\', '', $cls);
+                $cls1 = \str_replace($nonImportedClass['namespace'].'\\', '', $class);
                 $result = ReplaceLine::fixReference($absFilePath, $cls1, $line, '\\');
             }
 
             if ($isInUserSpace && $result[0]) {
-                self::printFixation($absFilePath, $cls, $line);
+                self::printFixation($absFilePath, $class, $line, $result[1]);
             } else {
                 $fixes = self::possibleFixMsg($result[1]);
                 app(ErrorPrinter::class)->simplePendError(
                     $absFilePath,
                     $line,
-                    $cls.'   <===  \(-_-)/ '.$fixes,
+                    $class.'   <===  \(-_-)/ '.$fixes,
                     'wrongUsedClassError',
                     'Class Does not exist:'
                 );
@@ -201,9 +201,12 @@ class CheckClasses
         }
     }
 
-    private static function printFixation($absPath, $class, $line)
+    private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
-        app(ErrorPrinter::class)->simplePendError($absPath, $line, $class, 'ns_replacement', 'Namespace auto-corrected');
+        $line1 = $wrongClass . '   <===  Did not exist.';
+        $line2 = 'Auto-corrected to: '. substr($correct[0], 0, 55);
+
+        app(ErrorPrinter::class)->simplePendError($absPath, $lineNumber, $line2, 'ns_replacement', $line1);
     }
 
     private static function possibleFixMsg($pieces)
