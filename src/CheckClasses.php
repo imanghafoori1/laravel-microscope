@@ -203,8 +203,8 @@ class CheckClasses
 
     private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
-        $line1 = $wrongClass . '   <===  Did not exist.';
-        $line2 = 'Auto-corrected to: '. substr($correct[0], 0, 55);
+        $line1 = $wrongClass.'   <===  Did not exist.';
+        $line2 = 'Auto-corrected to: '.substr($correct[0], 0, 55);
 
         app(ErrorPrinter::class)->simplePendError($absPath, $lineNumber, $line2, 'ns_replacement', $line1);
     }
