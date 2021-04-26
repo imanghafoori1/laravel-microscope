@@ -197,7 +197,7 @@ class CheckClasses
 
             $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
             $line = $nonImportedClass['line'];
-            $result = self::fix($absFilePath, $class, $line, $nonImportedClass);
+            $result = self::fix($absFilePath, $class, $line, $nonImportedClass['namespace']);
 
             if ($isInUserSpace && $result[0]) {
                 app(ErrorPrinter::class)->printFixation($absFilePath, $class, $line, $result[1]);
