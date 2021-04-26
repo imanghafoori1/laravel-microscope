@@ -95,20 +95,22 @@ class CheckClasses
         $printer = app(ErrorPrinter::class);
 
         foreach ($imports as $i => $import) {
-            if (! self::isAbsent($import[0])) {
+            [$class, $line] = $import;
+
+            if (! self::isAbsent($class)) {
                 continue;
             }
 
-            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($import[0])))) {
+            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($class)))) {
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($import[0], array_keys(ComposerJson::readAutoload()));
-            $result = ReplaceLine::fixReference($absFilePath, $import[0], $import[1]);
+            $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
+            $result = ReplaceLine::fixReference($absFilePath, $class, $line);
             if ($isInUserSpace && $result[0]) {
-                $printer->printFixation($absFilePath, $import[0], $import[1], $result[1]);
+                $printer->printFixation($absFilePath, $class, $line, $result[1]);
             } else {
-                $printer->wrongImport($absFilePath, $import[0], $import[1]);
+                $printer->wrongImport($absFilePath, $class, $line);
             }
         }
     }
