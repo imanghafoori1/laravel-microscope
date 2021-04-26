@@ -29,6 +29,14 @@ class ErrorPrinter
             ->link($absPath, $lineNumber));
     }
 
+    public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
+    {
+        $header = $wrongClass.'   <===  Did not exist.';
+        $msg = 'Auto-corrected to: '.substr($correct[0], 0, 55);
+
+        $this->simplePendError($absPath, $lineNumber, $msg, 'ns_replacement', $header);
+    }
+
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
         if (LaravelPaths::isIgnored($absPath)) {
@@ -260,6 +268,20 @@ class ErrorPrinter
             $this->print($pend);
             $this->end();
         }
+    }
+
+    private static function possibleFixMsg($pieces)
+    {
+        $fixes = \implode("\n - ", $pieces);
+        $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;
+
+        return $fixes;
+    }
+
+    public function wrongImportPossibleFixes($absPath, $line, $class, $fixes)
+    {
+        $fixes = self::possibleFixMsg($fixes);
+        $this->wrongUsedClassError($absPath, $class.'   <===  \(-_-)/  '.$fixes, $line);
     }
 
     public function getCount($key)

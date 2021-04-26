@@ -10,14 +10,16 @@ class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($methods)
+    public static function check($checkers)
     {
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
+
         $hints = self::getNamespacedPaths();
-        $hints['1'] = View::getFinder()->getPaths();
+        $hints['random_key_69471'] = View::getFinder()->getPaths();
+
         foreach ($hints as $paths) {
-            self::checkPaths($paths, $methods);
+            self::checkPaths($paths, $checkers);
         }
     }
 
@@ -29,7 +31,7 @@ class BladeFiles
         return $hints;
     }
 
-    public static function checkPaths($paths, $methods)
+    public static function checkPaths($paths, $checkers)
     {
         foreach ($paths as $path) {
             if (! is_dir($path)) {
@@ -43,8 +45,8 @@ class BladeFiles
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
                 $tokens = ViewsData::getBladeTokens($blade->getPathname());
-                foreach ($methods as $method) {
-                    call_user_func_array([$method, 'check'], [$tokens, $blade->getPathname()]);
+                foreach ($checkers as $checkerClass) {
+                    call_user_func_array([$checkerClass, 'check'], [$tokens, $blade->getPathname()]);
                 }
             }
         }
