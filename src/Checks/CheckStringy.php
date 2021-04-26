@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckStringy
@@ -27,7 +26,7 @@ class CheckStringy
             }
 
             $classPath = \trim($token[1], '\'\"');
-            if (CheckClasses::isAbsent($classPath)) {
+            if (\class_exists($classPath)) {
                 if (self::refersToDir($classPath)) {
                     continue;
                 }
@@ -39,6 +38,7 @@ class CheckStringy
             $command = app('current.command');
             if (self::ask($command, $token, $absFilePath)) {
                 dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
+
                 ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
                 $command->info('====================================');
             }
@@ -50,7 +50,7 @@ class CheckStringy
         ($string[0] !== '\\') && ($string = '\\'.$string);
         $string .= '::class';
 
-        return $string;
+        return str_replace('\\\\', '\\', $string);
     }
 
     private function isPossiblyClassyString($token, $namespaces)
