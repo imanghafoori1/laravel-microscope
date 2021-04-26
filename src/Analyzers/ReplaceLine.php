@@ -6,14 +6,6 @@ use Imanghafoori\LaravelMicroscope\Psr4Classes;
 
 class ReplaceLine
 {
-    /**
-     * @param  string  $file
-     * @param  string  $search
-     * @param  string  $replace
-     * @param  null  $_line
-     *
-     * @return bool|int
-     */
     public static function replaceFirst($file, $search, $replace = '', $_line = null)
     {
         $reading = fopen($file, 'r');
@@ -34,12 +26,12 @@ class ReplaceLine
                 }
             }
 
-            // copy the entire file to the end
+            // Copy the entire file to the end
             fwrite($tmpFile, $line);
         }
         fclose($reading);
         fclose($tmpFile);
-        // might as well not overwrite the file if we didn't replace anything
+        // Might as well not overwrite the file if we didn't replace anything
         if ($isReplaced) {
             rename($file.'._tmp', $file);
         } else {
@@ -60,10 +52,43 @@ class ReplaceLine
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
 
-        if (\count($correct) === 1) {
-            return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
-        } else {
+        $contextClass = self::getNamespaceFromRelativePath($absPath);
+
+        if (\count($correct) !== 1) {
             return [false, $correct];
         }
+
+        if (self::getNamespaceFromFullClass($contextClass) == self::getNamespaceFromFullClass($correct[0])) {
+            $correct[0] = trim(class_basename($correct[0]), '\\');
+            $prefix = '';
+        }
+
+        return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
+    }
+
+    public static function getNamespaceFromFullClass($class)
+    {
+        $arr = explode('\\', $class);
+        array_pop($arr);
+
+        return implode('\\', $arr);
+    }
+
+    public static function getNamespaceFromRelativePath($relPath)
+    {
+        // Remove .php from class path
+        $relPath = str_replace([base_path(), '.php'], '', $relPath);
+
+        $autoload = ComposerJson::readAutoload();
+        uksort($autoload, function ($a, $b) {
+            return strlen($b) <=> strlen($a);
+        });
+
+        $namespaces = array_keys($autoload);
+        $paths = array_values($autoload);
+
+        $relPath = \str_replace(DIRECTORY_SEPARATOR, '/', $relPath);
+
+        return trim(\str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($paths, $namespaces, $relPath)), '\\');
     }
 }

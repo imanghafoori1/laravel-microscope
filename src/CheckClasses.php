@@ -49,7 +49,7 @@ class CheckClasses
             $class,
             $type,
             $parent,
-            $interfaces
+            $interfaces,
         ] = GetClassProperties::readClassDefinition($tokens);
 
         // It means that, there is no class/trait definition found in the file.
@@ -65,29 +65,6 @@ class CheckClasses
         self::checkNotImportedClasses($tokens, $absFilePath);
 
         self::checkImportedClasses($currentNamespace, $class, $absFilePath);
-    }
-
-    /**
-     * Calculate the namespace\className from absolute file path.
-     *
-     * @param  string  $filePath
-     * @param  string  $basePath
-     * @param  string  $path
-     * @param  string  $rootNamespace
-     *
-     * @return string
-     */
-    protected static function calculateClassFromFile($filePath, $basePath, $path, $rootNamespace)
-    {
-        $class = \trim(Str::replaceFirst($basePath, '', $filePath), DIRECTORY_SEPARATOR);
-
-        // remove .php from class path
-        $withoutDotPhp = Str::replaceLast('.php', '', $class);
-        // ensure backslash on windows
-        $allBackSlash = \str_replace(DIRECTORY_SEPARATOR, '\\', $withoutDotPhp);
-
-        // replaces the base folder name with corresponding namespace
-        return \str_replace(rtrim($path, '/').'\\', $rootNamespace, $allBackSlash);
     }
 
     private static function checkImportedClassesExist($imports, $absFilePath)
