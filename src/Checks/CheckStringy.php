@@ -36,12 +36,20 @@ class CheckStringy
 
             $errorPrinter->printLink($absFilePath, $token[2]);
             $command = app('current.command');
-            if (self::ask($command, $token, $absFilePath)) {
-                dump('Replacing: '.$token[1].'  with: '.$this->getClassyPath($classPath));
-
-                ReplaceLine::replaceFirst($absFilePath, $token[1], $this->getClassyPath($classPath));
-                $command->info('====================================');
+            if (! self::ask($command, $token, $absFilePath)) {
+                continue;
             }
+            $classPath = $this->getClassyPath($classPath);
+            $command->info('Replacing: '.$token[1].'  with: '.$classPath);
+
+            $contextClass = ReplaceLine::getNamespaceFromRelativePath($absFilePath);
+
+            if (ReplaceLine::haveSameNamespace($contextClass, $classPath)) {
+                $classPath = trim(class_basename($classPath), '\\');
+            }
+
+            ReplaceLine::replaceFirst($absFilePath, $token[1], $classPath);
+            $command->info('====================================');
         }
     }
 

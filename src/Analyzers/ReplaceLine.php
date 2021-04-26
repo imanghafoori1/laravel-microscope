@@ -58,7 +58,7 @@ class ReplaceLine
             return [false, $correct];
         }
 
-        if (self::getNamespaceFromFullClass($contextClass) == self::getNamespaceFromFullClass($correct[0])) {
+        if (self::haveSameNamespace($contextClass, $correct[0])) {
             $correct[0] = trim(class_basename($correct[0]), '\\');
             $prefix = '';
         }
@@ -71,7 +71,12 @@ class ReplaceLine
         $arr = explode('\\', $class);
         array_pop($arr);
 
-        return implode('\\', $arr);
+        return trim(implode('\\', $arr), '\\');
+    }
+
+    public static function haveSameNamespace($class1, $class2)
+    {
+        return self::getNamespaceFromFullClass($class1) == self::getNamespaceFromFullClass($class2);
     }
 
     public static function getNamespaceFromRelativePath($relPath)
