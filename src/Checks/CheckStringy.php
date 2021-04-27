@@ -26,7 +26,7 @@ class CheckStringy
             }
 
             $classPath = \trim($token[1], '\'\"');
-            if (\class_exists($classPath)) {
+            if (! \class_exists($classPath)) {
                 if (self::refersToDir($classPath)) {
                     continue;
                 }
@@ -36,9 +36,11 @@ class CheckStringy
 
             $errorPrinter->printLink($absFilePath, $token[2]);
             $command = app('current.command');
+
             if (! self::ask($command, $token, $absFilePath)) {
                 continue;
             }
+
             $classPath = $this->getClassyPath($classPath);
             $command->info('Replacing: '.$token[1].'  with: '.$classPath);
 
