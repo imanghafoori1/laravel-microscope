@@ -58,25 +58,12 @@ class ReplaceLine
             return [false, $correct];
         }
 
-        if (self::haveSameNamespace($contextClass, $correct[0])) {
+        if (NamespaceCorrector::haveSameNamespace($contextClass, $correct[0])) {
             $correct[0] = trim(class_basename($correct[0]), '\\');
             $prefix = '';
         }
 
         return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
-    }
-
-    public static function getNamespaceFromFullClass($class)
-    {
-        $arr = explode('\\', $class);
-        array_pop($arr);
-
-        return trim(implode('\\', $arr), '\\');
-    }
-
-    public static function haveSameNamespace($class1, $class2)
-    {
-        return self::getNamespaceFromFullClass($class1) == self::getNamespaceFromFullClass($class2);
     }
 
     public static function getNamespaceFromRelativePath($relPath)

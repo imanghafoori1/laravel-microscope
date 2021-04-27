@@ -27,6 +27,11 @@ class ComposerJson
         return self::$result[$path][$key] = $value;
     }
 
+    public static function isInAppSpace($class)
+    {
+        return Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
+    }
+
     public static function readAutoload()
     {
         $composers = [];

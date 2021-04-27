@@ -44,7 +44,7 @@ class CheckStringy
 
             $contextClass = ReplaceLine::getNamespaceFromRelativePath($absFilePath);
 
-            if (ReplaceLine::haveSameNamespace($contextClass, $classPath)) {
+            if (NamespaceCorrector::haveSameNamespace($contextClass, $classPath)) {
                 $classPath = trim(class_basename($classPath), '\\');
             }
 

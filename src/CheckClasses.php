@@ -83,9 +83,10 @@ class CheckClasses
             }
 
             $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
-            $result = ReplaceLine::fixReference($absFilePath, $class, $line);
-            if ($isInUserSpace && $result[0]) {
-                $printer->printFixation($absFilePath, $class, $line, $result[1]);
+            [$isCorrected, $corrects] = ReplaceLine::fixReference($absFilePath, $class, $line);
+
+            if ($isInUserSpace && $isCorrected) {
+                $printer->printFixation($absFilePath, $class, $line, $corrects);
             } else {
                 $printer->wrongImport($absFilePath, $class, $line);
             }
@@ -168,21 +169,25 @@ class CheckClasses
     {
         $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
+        $printer = app(ErrorPrinter::class);
+
         foreach ($nonImportedClasses as $nonImportedClass) {
-            $class = \trim($nonImportedClass['class'], '\\');
+            $class = $nonImportedClass['class'];
+            $line = $nonImportedClass['line'];
+
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
-            $line = $nonImportedClass['line'];
-            $result = self::fix($absFilePath, $class, $line, $nonImportedClass['namespace']);
-
-            if ($isInUserSpace && $result[0]) {
-                app(ErrorPrinter::class)->printFixation($absFilePath, $class, $line, $result[1]);
-            } else {
-                app(ErrorPrinter::class)->wrongImportPossibleFixes($absFilePath, $line, $class, $result[1]);
+            if (! ComposerJson::isInAppSpace($class)) {
+                return $printer->wrongImport($absFilePath, $class, $line);
             }
+
+            [$isFixed, $corrections] = self::fix($absFilePath, $class, $line, $nonImportedClass['namespace']);
+
+            $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
+
+            $printer->$method($absFilePath, $class, $line, $corrections);
         }
     }
 }

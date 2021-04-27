@@ -31,8 +31,8 @@ class ErrorPrinter
 
     public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
-        $header = $wrongClass.'   <===  Did not exist.';
-        $msg = 'Auto-corrected to: '.substr($correct[0], 0, 55);
+        $header = $wrongClass.'  <===  Did not exist';
+        $msg = 'Auto-corrected to:   '.substr($correct[0], 0, 55);
 
         $this->simplePendError($absPath, $lineNumber, $msg, 'ns_replacement', $header);
     }
@@ -278,7 +278,7 @@ class ErrorPrinter
         return $fixes;
     }
 
-    public function wrongImportPossibleFixes($absPath, $line, $class, $fixes)
+    public function wrongImportPossibleFixes($absPath, $class, $line, $fixes)
     {
         $fixes = self::possibleFixMsg($fixes);
         $this->wrongUsedClassError($absPath, $class.'   <===  \(-_-)/  '.$fixes, $line);
