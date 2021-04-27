@@ -2,6 +2,11 @@
 
 return [
     /**
+     * Will disable microscope if set to false.
+     */
+    'is_enabled' => env('MICROSCOPE_ENABLED', true),
+
+    /**
      * Avoids auto-fix if is set to true.
      */
     'no_fix' => false,
