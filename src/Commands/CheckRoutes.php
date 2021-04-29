@@ -47,8 +47,6 @@ class CheckRoutes extends Command
         $this->getOutput()->writeln(' - '.CheckRouteCalls::$checkedRouteCallsNum.
             ' route(...) calls were checked. ('
             .CheckRouteCalls::$skippedRouteCallsNum.' skipped)');
-        $this->finishCommand($errorPrinter);
-        $errorPrinter->printTime();
 
         event('microscope.finished.checks', [$this]);
 
