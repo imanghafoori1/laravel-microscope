@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -59,11 +60,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Event::listen('microscope.start.command', function () {
             ! defined('microscope_start') && define('microscope_start', microtime(true));
         });
-        Event::listen('microscope.finished.checks', function () {
-            CheckViews::$checkedCallsNum = 0;
-            CheckClassReferences::$refCount = 0;
-            Psr4Classes::$checkedFilesNum = 0;
-        });
+
+        $this->resetCountersOnFinish();
 
         $this->commands(self::$commandNames);
 
@@ -98,14 +96,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             $this->spyFactory();
         }
 
-        // we need to start spying before the boot process starts.
-
+        // We need to start spying before the boot process starts.
         $command = $_SERVER['argv'][1] ?? null;
-        // we spy the router in order to have a list of route files.
+        // We spy the router in order to have a list of route files.
         $checkAll = Str::startsWith('check:all', $command);
         ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
         Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
-//        ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
+        // ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
         ($checkAll || Str::startsWith('check:gates', $command)) && $this->spyGates();
     }
 
@@ -161,17 +158,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             if (! $spy->main || Str::startsWith($spy->main->getName(), ['errors::'])) {
                 return;
             }
+
             $action = $this->getActionName();
 
             $uselessVars = array_keys(array_diff_key($spy->getMainVars(), $spy->readTokenizedVars()));
             $viewName = $spy->main->getName();
 
-            if ($uselessVars) {
-                \Log::info('Laravel Microscope - The view file "'.$viewName.'"');
-                \Log::info('At "'.$action.'" has some unused variables passed to it: ');
-                \Log::info($uselessVars);
-                \Log::info('If you do not see these variables passed in a controller, look in view composers.');
-            }
+            $uselessVars && $this->logUnusedViewVars($viewName, $action, $uselessVars);
         });
     }
 
@@ -187,12 +180,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function getActionName()
     {
-        $action = '';
-        if ($cRoute = \Route::getCurrentRoute()) {
-            $action = $cRoute->getActionName();
-        }
+        $cRoute = \Route::getCurrentRoute();
 
-        return $action;
+        return $cRoute ? $cRoute->getActionName() : '';
     }
 
     private function registerCompiler()
@@ -200,5 +190,22 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->app->singleton('microscope.blade.compiler', function () {
             return new SpyBladeCompiler($this->app['files'], $this->app['config']['view.compiled']);
         });
+    }
+
+    private function resetCountersOnFinish()
+    {
+        Event::listen('microscope.finished.checks', function () {
+            CheckViews::$checkedCallsNum = 0;
+            CheckClassReferences::$refCount = 0;
+            Psr4Classes::$checkedFilesNum = 0;
+        });
+    }
+
+    private function logUnusedViewVars($viewName, string $action, array $uselessVars)
+    {
+        Log::info('Laravel Microscope - The view file "'.$viewName.'"');
+        Log::info('At "'.$action.'" has some unused variables passed to it: ');
+        Log::info($uselessVars);
+        Log::info('If you do not see these variables passed in a controller, look in view composers.');
     }
 }
