@@ -13,6 +13,7 @@ class ClassMethods
             'type' => '',
         ];
         $methods = [];
+
         while (isset($tokens[$i])) {
             $token = $tokens[$i];
 
@@ -37,19 +38,23 @@ class ClassMethods
                 continue;
             }
 
-            if (\in_array($tokens[$i - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
-                $visibility = $tokens[$i - 2];
-            } else {
-                $visibility = [T_PUBLIC, 'public'];
-            }
-
+            [$visibility, $isStatic] = self::findVisibility($tokens, $i - 2);
             [, $signature, $endSignature] = Ifs::readCondition($tokens, $i + 2);
             [$char, $charIndex] = FunctionCall::forwardTo($tokens, $endSignature, [':', ';', '{']);
             if ($char == ':') {
                 [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+
+                if ($returnType == '?') {
+                    $hasOptionalReturnType = true;
+                    [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+                } else {
+                    $hasOptionalReturnType = false;
+                }
+
                 [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
             } else {
                 $returnType = null;
+                $hasOptionalReturnType = null;
             }
 
             if ($char == '{') {
@@ -57,6 +62,7 @@ class ClassMethods
             } elseif ($char == ';') {
                 $body = [];
             }
+
             $i++;
             $methods[] = [
                 'name' => $name,
@@ -65,12 +71,28 @@ class ClassMethods
                 'body' => Refactor::toString($body),
                 'startBodyIndex' => [$charIndex, $i],
                 'returnType' => $returnType,
-
+                'optional_return_type' => $hasOptionalReturnType,
+                'is_static' => $isStatic,
             ];
         }
 
         $class['methods'] = $methods;
 
         return $class;
+    }
+
+    private static function findVisibility($tokens, $i)
+    {
+        $isStatic = false;
+        if ($tokens[$i][0] == T_STATIC) {
+            $i = $i - 2;
+            $isStatic = true;
+        }
+
+        if (\in_array($tokens[$i][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+            return [$tokens[$i], $isStatic];
+        } else {
+            return [[T_PUBLIC, 'public'], $isStatic];
+        }
     }
 }
