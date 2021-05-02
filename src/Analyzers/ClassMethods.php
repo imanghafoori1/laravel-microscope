@@ -41,21 +41,8 @@ class ClassMethods
             [$visibility, $isStatic] = self::findVisibility($tokens, $i - 2);
             [, $signature, $endSignature] = Ifs::readCondition($tokens, $i + 2);
             [$char, $charIndex] = FunctionCall::forwardTo($tokens, $endSignature, [':', ';', '{']);
-            if ($char == ':') {
-                [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
 
-                if ($returnType == '?') {
-                    $hasOptionalReturnType = true;
-                    [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
-                } else {
-                    $hasOptionalReturnType = false;
-                }
-
-                [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
-            } else {
-                $returnType = null;
-                $hasOptionalReturnType = null;
-            }
+            [$returnType, $hasNullableReturnType, $char, $charIndex] = self::processReturnType($char, $tokens, $charIndex);
 
             if ($char == '{') {
                 [$body, $i] = FunctionCall::readBody($tokens, $charIndex);
@@ -71,7 +58,7 @@ class ClassMethods
                 'body' => Refactor::toString($body),
                 'startBodyIndex' => [$charIndex, $i],
                 'returnType' => $returnType,
-                'optional_return_type' => $hasOptionalReturnType,
+                'nullable_return_type' => $hasNullableReturnType,
                 'is_static' => $isStatic,
             ];
         }
@@ -94,5 +81,26 @@ class ClassMethods
         } else {
             return [[T_PUBLIC, 'public'], $isStatic];
         }
+    }
+
+    private static function processReturnType($char, $tokens, $charIndex)
+    {
+        if ($char != ':') {
+            return [null, null, $char, $charIndex];
+        }
+
+        [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+
+        // In case the return type is like this: function c() : ?string {...
+        $hasNullableReturnType = ($returnType == '?');
+
+        if ($hasNullableReturnType) {
+            [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+        }
+
+
+        [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+
+        return [$returnType, $hasNullableReturnType, $char, $charIndex];
     }
 }
