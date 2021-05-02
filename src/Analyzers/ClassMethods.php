@@ -98,7 +98,6 @@ class ClassMethods
             [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
         }
 
-
         [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
 
         return [$returnType, $hasNullableReturnType, $char, $charIndex];
