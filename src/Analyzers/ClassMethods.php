@@ -78,9 +78,8 @@ class ClassMethods
         $isAbstract = ($tokens[$i][0] == T_ABSTRACT);
         $isAbstract && ($i = $i - 2);
 
-
         $hasModifier = \in_array($tokens[$i][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE]);
-        $visibility =  $hasModifier ? $tokens[$i] : [T_PUBLIC, 'public'];
+        $visibility = $hasModifier ? $tokens[$i] : [T_PUBLIC, 'public'];
 
         // We have to cover both syntax:
         //     public abstract function x() {
