@@ -20,6 +20,7 @@ class ClassMethods
             if ($token[0] == T_CLASS && $tokens[$i - 1][0] !== T_DOUBLE_COLON) {
                 $class['name'] = $tokens[$i + 2];
                 $class['type'] = T_CLASS;
+                $class['is_abstract'] = ($tokens[$i - 2][0] === T_ABSTRACT);
             } elseif ($token[0] == T_INTERFACE) {
                 $class['name'] = $tokens[$i + 2];
                 $class['type'] = T_INTERFACE;
@@ -38,7 +39,7 @@ class ClassMethods
                 continue;
             }
 
-            [$visibility, $isStatic] = self::findVisibility($tokens, $i - 2);
+            [$visibility, $isStatic, $isAbstract] = self::findVisibility($tokens, $i - 2);
             [, $signature, $endSignature] = Ifs::readCondition($tokens, $i + 2);
             [$char, $charIndex] = FunctionCall::forwardTo($tokens, $endSignature, [':', ';', '{']);
 
@@ -60,6 +61,7 @@ class ClassMethods
                 'returnType' => $returnType,
                 'nullable_return_type' => $hasNullableReturnType,
                 'is_static' => $isStatic,
+                'is_abstract' => $isAbstract,
             ];
         }
 
@@ -70,17 +72,24 @@ class ClassMethods
 
     private static function findVisibility($tokens, $i)
     {
-        $isStatic = false;
-        if ($tokens[$i][0] == T_STATIC) {
-            $i = $i - 2;
-            $isStatic = true;
+        $isStatic = ($tokens[$i][0] == T_STATIC);
+        $isStatic && ($i = $i - 2);
+
+        $isAbstract = ($tokens[$i][0] == T_ABSTRACT);
+        $isAbstract && ($i = $i - 2);
+
+
+        $hasModifier = \in_array($tokens[$i][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE]);
+        $visibility =  $hasModifier ? $tokens[$i] : [T_PUBLIC, 'public'];
+
+        // We have to cover both syntax:
+        //     public abstract function x() {
+        //     abstract public function x() {
+        if (! $isAbstract) {
+            $isAbstract = ($tokens[$i - 2][0] == T_ABSTRACT);
         }
 
-        if (\in_array($tokens[$i][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
-            return [$tokens[$i], $isStatic];
-        } else {
-            return [[T_PUBLIC, 'public'], $isStatic];
-        }
+        return [$visibility, $isStatic, $isAbstract];
     }
 
     private static function processReturnType($char, $tokens, $charIndex)
