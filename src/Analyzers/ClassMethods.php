@@ -72,11 +72,8 @@ class ClassMethods
 
     private static function findVisibility($tokens, $i)
     {
-        $isStatic = ($tokens[$i][0] == T_STATIC);
-        $isStatic && ($i = $i - 2);
-
-        $isAbstract = ($tokens[$i][0] == T_ABSTRACT);
-        $isAbstract && ($i = $i - 2);
+        $isStatic = $tokens[$i][0] === T_STATIC && $i -= 2;
+        $isAbstract = $tokens[$i][0] === T_ABSTRACT && $i -= 2;
 
         $hasModifier = \in_array($tokens[$i][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE]);
         $visibility = $hasModifier ? $tokens[$i] : [T_PUBLIC, 'public'];
@@ -84,9 +81,7 @@ class ClassMethods
         // We have to cover both syntax:
         //     public abstract function x() {
         //     abstract public function x() {
-        if (! $isAbstract) {
-            $isAbstract = ($tokens[$i - 2][0] == T_ABSTRACT);
-        }
+        ! $isAbstract && $isAbstract = $tokens[$i - 2][0] === T_ABSTRACT;
 
         return [$visibility, $isStatic, $isAbstract];
     }
