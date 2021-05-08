@@ -149,6 +149,6 @@ class ParseUseStatement
 
     private static function FetchNS(&$tokens)
     {
-        return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR,]);
+        return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]);
     }
 }
