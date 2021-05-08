@@ -22,7 +22,7 @@ class ReplaceLine
             if ($lineNum == $_line) {
                 $line = '';
                 $isReplaced = true;
-            } 
+            }
             // Copy the entire file to the end
             fwrite($tmpFile, $line);
         }
@@ -92,7 +92,7 @@ class ReplaceLine
 
         if (NamespaceCorrector::haveSameNamespace($contextClass, $correct[0])) {
             if ($isUsed) {
-                return [self::removeLine($absPath, $lineNum), 'deleted!'];
+                return [self::removeLine($absPath, $lineNum), [' Deleted!']];
             }
 
             $correct[0] = trim(class_basename($correct[0]), '\\');

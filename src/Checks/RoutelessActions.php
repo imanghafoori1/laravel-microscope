@@ -63,7 +63,6 @@ class RoutelessActions
 
         $methods = self::getControllerActions($class['methods']);
         $routelessActions = [];
-
         foreach ($methods as $method) {
             $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
 

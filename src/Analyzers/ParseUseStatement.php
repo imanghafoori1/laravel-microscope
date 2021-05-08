@@ -149,16 +149,6 @@ class ParseUseStatement
 
     private static function FetchNS(&$tokens)
     {
-        if (defined('T_NAME_QUALIFIED')) {
-            \next($tokens);
-            $token = \current($tokens);
-
-            return $token[1];
-        }
-
-        return self::fetch($tokens, [
-            T_STRING,
-            T_NS_SEPARATOR,
-        ]);
+        return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR,]);
     }
 }

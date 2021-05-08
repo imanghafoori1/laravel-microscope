@@ -83,7 +83,8 @@ class CheckClasses
             }
 
             $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
-            [$isCorrected, $corrects] = ReplaceLine::fixReference($absFilePath, $class, $line);
+
+            [$isCorrected, $corrects] = ReplaceLine::fixReference($absFilePath, $class, $line, '', true);
 
             if ($isInUserSpace && $isCorrected) {
                 $printer->printFixation($absFilePath, $class, $line, $corrects);
