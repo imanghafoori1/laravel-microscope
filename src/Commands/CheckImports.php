@@ -39,7 +39,7 @@ class CheckImports extends Command
 
         Psr4Classes::check([CheckClasses::class]);
 
-        // checks the blade files for class references.
+        // Checks the blade files for class references.
         BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
@@ -47,7 +47,7 @@ class CheckImports extends Command
 
         $errorPrinter->printTime();
 
-        if (random_int(1, 5) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
+        if (random_int(1, 7) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
             ErrorPrinter::thanks($this);
         }
 
