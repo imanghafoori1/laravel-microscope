@@ -42,7 +42,7 @@ class Expander
             $results[$i]['class'] = '';
 
             // attach the current namespace if it does not begin with '\'
-            if ($importeds[0][1] != '\\') {
+            if ($importeds[0][1][0] != '\\') {
                 $results[$i]['class'] = $namespace ? $namespace.'\\' : '';
             }
 
