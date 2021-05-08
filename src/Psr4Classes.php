@@ -60,7 +60,9 @@ class Psr4Classes
                  *  }.
                  */
                 $ns = \str_replace(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $filePath);
-                $t = (\str_replace('.php', '', [$ns, $fileName]));
+                $t = \str_replace('.php', '', [$ns, $fileName]);
+                $t = \str_replace('/', '\\', $t); // for linux environments.
+
                 self::$allNamespaces[$t[1]][] = \trim($t[0], '\\');
             }
         }
