@@ -9,9 +9,7 @@ class ParseUseStatement
     public static function getUseStatementsByPath($namespacedClassName, $absPath = null)
     {
         if (! isset(self::$cache[$namespacedClassName])) {
-            $code = file_get_contents($absPath);
-
-            self::$cache = self::parseUseStatements(token_get_all($code), $namespacedClassName)[0] + self::$cache;
+            self::$cache = self::parseUseStatements(token_get_all(file_get_contents($absPath)), $namespacedClassName)[0] + self::$cache;
         }
 
         return self::$cache[$namespacedClassName];
@@ -48,10 +46,7 @@ class ParseUseStatement
             \next($tokens);
             switch (\is_array($token) ? $token[0] : $token) {
                 case T_NAMESPACE:
-                    $namespace = ltrim(self::fetch($tokens, [
-                        T_STRING,
-                        T_NS_SEPARATOR,
-                    ]).'\\', '\\');
+                    $namespace = ltrim(self::FetchNS($tokens).'\\', '\\');
                     $uses = [];
                     break;
 
@@ -69,16 +64,10 @@ class ParseUseStatement
                     break;
 
                 case T_USE:
-                    while (! $class && ($name = self::fetch($tokens, [
-                        T_STRING,
-                        T_NS_SEPARATOR,
-                    ]))) {
+                    while (! $class && ($name = self::FetchNS($tokens))) {
                         $name = ltrim($name, '\\');
                         if (self::fetch($tokens, '{')) {
-                            while ($suffix = self::fetch($tokens, [
-                                T_STRING,
-                                T_NS_SEPARATOR,
-                            ])) {
+                            while ($suffix = self::FetchNS($tokens)) {
                                 if (self::fetch($tokens, T_AS)) {
                                     $uses[self::fetch($tokens, T_STRING)] = [$name.$suffix, $token[2]];
                                 } else {
@@ -156,5 +145,20 @@ class ParseUseStatement
         dump('and also send the content of the file to fix the issue.');
         dump('========================== Thanks ==========================');
         sleep(3);
+    }
+
+    private static function FetchNS(&$tokens)
+    {
+        if (defined('T_NAME_QUALIFIED')) {
+            \next($tokens);
+            $token = \current($tokens);
+
+            return $token[1];
+        }
+
+        return self::fetch($tokens, [
+            T_STRING,
+            T_NS_SEPARATOR,
+        ]);
     }
 }
