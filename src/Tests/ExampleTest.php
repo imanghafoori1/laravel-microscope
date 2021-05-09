@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Tests;
+namespace Imanghafoori\LaravelMicroscope\src\Tests;
 
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
@@ -15,6 +15,7 @@ class ExampleTest extends TestCase
     /** @test */
     public function true_is_true()
     {
+        $this->assertTrue(true);
         $this->assertTrue(true);
     }
 }
