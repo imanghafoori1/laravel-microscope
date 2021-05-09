@@ -115,8 +115,8 @@ class ReplaceLine
         $namespaces = array_keys($autoload);
         $paths = array_values($autoload);
 
-        $relPath = \str_replace(DIRECTORY_SEPARATOR, '/', $relPath);
+        $relPath = \str_replace('\\', '/', $relPath);
 
-        return trim(\str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($paths, $namespaces, $relPath)), '\\');
+        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
     }
 }
