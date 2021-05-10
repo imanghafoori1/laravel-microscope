@@ -8,69 +8,28 @@ class ReplaceLine
 {
     public static function removeLine($file, $_line = null)
     {
-        $reading = fopen($file, 'r');
-        $tmpFile = fopen($file.'._tmp', 'w');
-
-        $isReplaced = false;
-
-        $lineNum = 0;
-        while (! feof($reading)) {
-            $lineNum++;
-            $line = fgets($reading);
-
-            // replace only the first occurrence in the file
+        $lineChanger = function ($lineNum) use ($_line) {
+            // Replace only the first occurrence in the file
             if ($lineNum == $_line) {
-                $line = '';
-                $isReplaced = true;
+                return '';
             }
-            // Copy the entire file to the end
-            fwrite($tmpFile, $line);
-        }
-        fclose($reading);
-        fclose($tmpFile);
-        // Might as well not overwrite the file if we didn't replace anything
-        if ($isReplaced) {
-            rename($file.'._tmp', $file);
-        } else {
-            unlink($file.'._tmp');
-        }
+        };
 
-        return $isReplaced;
+        return self::applyToFile($file, $lineChanger);
     }
 
     public static function replaceFirst($file, $search, $replace = '', $_line = null)
     {
-        $reading = fopen($file, 'r');
-        $tmpFile = fopen($file.'._tmp', 'w');
-
-        $isReplaced = false;
-
-        $lineNum = 0;
-        while (! feof($reading)) {
-            $lineNum++;
-            $line = fgets($reading);
-
-            // replace only the first occurrence in the file
+        $lineChanger = function ($lineNum, $line, $isReplaced) use ($search, $replace, $_line) {
+            // Replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
                 if (! $_line || $lineNum == $_line) {
-                    $line = \str_replace($search, $replace, $line);
-                    $isReplaced = $lineNum;
+                    return \str_replace($search, $replace, $line);
                 }
             }
+        };
 
-            // Copy the entire file to the end
-            fwrite($tmpFile, $line);
-        }
-        fclose($reading);
-        fclose($tmpFile);
-        // Might as well not overwrite the file if we didn't replace anything
-        if ($isReplaced) {
-            rename($file.'._tmp', $file);
-        } else {
-            unlink($file.'._tmp');
-        }
-
-        return $isReplaced;
+        return self::applyToFile($file, $lineChanger);
     }
 
     public static function fixReference($absPath, $class, $lineNum, $prefix = '', $isUsed = false)
@@ -118,5 +77,37 @@ class ReplaceLine
         $relPath = \str_replace('\\', '/', $relPath);
 
         return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
+    }
+
+    private static function applyToFile($file, $lineChanger)
+    {
+        $reading = fopen($file, 'r');
+        $tmpFile = fopen($file.'._tmp', 'w');
+
+        $isReplaced = false;
+
+        $lineNum = 0;
+        while (! feof($reading)) {
+            $lineNum++;
+            $line = fgets($reading);
+
+            $newLine = $lineChanger($lineNum, $line, $isReplaced);
+            if (is_string($newLine)) {
+                $line = $newLine;
+                $isReplaced = true;
+            }
+            // Copy the entire file to the end
+            fwrite($tmpFile, $line);
+        }
+        fclose($reading);
+        fclose($tmpFile);
+        // Might as well not overwrite the file if we didn't replace anything
+        if ($isReplaced) {
+            rename($file.'._tmp', $file);
+        } else {
+            unlink($file.'._tmp');
+        }
+
+        return $isReplaced;
     }
 }
