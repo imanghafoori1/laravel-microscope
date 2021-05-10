@@ -102,7 +102,6 @@ class AbstractMethodsClassTest extends TestCase
     {
         $string = file_get_contents(__DIR__.'/stubs/abstract_sample_class.php');
 
-
         return token_get_all($string);
     }
 }
