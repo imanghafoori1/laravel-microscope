@@ -30,4 +30,23 @@ abstract class abstract_sample
     abstract public function abstract_with_return_type_6(): void;
 
     abstract public function abstract_with_return_type_7(): float;
+
+    abstract public function abstract_with_return_type_8(): ?string;
+
+    //with parameters
+    abstract public function abstract_with_parameter_0($parameter1);
+
+    abstract public function abstract_with_parameter_1(?int $parameter1);
+
+    abstract public function abstract_with_parameter_2(int $parameter1);
+
+    abstract public function abstract_with_parameter_3(int $parameter1, $parameter2, string $parameter3);
+
+    abstract public function abstract_with_parameter_4(...$parameter2);
+
+    abstract public function abstract_with_parameter_5(string ...$parameter1);
+
+    abstract public function abstract_with_parameter_6(?string ...$parameter1);
+
+    abstract public function abstract_with_parameter_7($parameter1 = null);
 }
