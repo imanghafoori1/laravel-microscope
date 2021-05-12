@@ -157,7 +157,7 @@ For example:
 ```php
 <?php
 
-forearch ($products as $product) {
+foreach ($products as $product) {
     if ($someCond) {
         // A lot of code 1
         // A lot of code 1
@@ -182,7 +182,7 @@ Will be discovered and converted into:
 ```php
 <?php
 
-forearch ($products as $product) {
+foreach ($products as $product) {
     if (! $someCond) {
         continue;
     }
