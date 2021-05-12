@@ -3,50 +3,58 @@
 abstract class abstract_sample
 {
     // simple methods
+    abstract public function abstract_0();
+
     abstract public function abstract_1();
 
-    abstract public function abstract_2();
+    abstract protected function abstract_2();
 
-    abstract protected function abstract_3();
+    // static methods
+    abstract public static function abstract_static_3();
 
-    //static methods
-    abstract public static function abstract_static_2();
+    abstract public static function abstract_static_4();
 
-    abstract public static function abstract_static_1();
-
-    abstract protected static function abstract_static_3();
+    abstract protected static function abstract_static_5();
 
     // methods with returns type
-    abstract public function abstract_with_return_type_1(): test;
+    abstract public function abstract_with_return_type_6(): test;
 
-    abstract public function abstract_with_return_type_2(): string;
+    abstract public function abstract_with_return_type_7(): string;
 
-    abstract public function abstract_with_return_type_3(): bool;
+    abstract public function abstract_with_return_type_8(): bool;
 
-    abstract public function abstract_with_return_type_4(): int;
+    abstract public function abstract_with_return_type_9(): int;
 
-    abstract public function abstract_with_return_type_5(): array;
+    abstract public function abstract_with_return_type_10(): array;
 
-    abstract public function abstract_with_return_type_6(): void;
+    abstract public function abstract_with_return_type_11(): void;
 
-    abstract public function abstract_with_return_type_7(): float;
+    abstract public function abstract_with_return_type_12(): float;
 
-    abstract public function abstract_with_return_type_8(): ?string;
+    abstract public function abstract_with_return_type_13(): ?string;
 
-    //with parameters
-    abstract public function abstract_with_parameter_0($parameter1);
+    // with parameters
+    abstract public function abstract_with_parameter_14($parameter1);
 
-    abstract public function abstract_with_parameter_1(?int $parameter1);
+    abstract public function abstract_with_parameter_15(?int $parameter1);
 
-    abstract public function abstract_with_parameter_2(int $parameter1);
+    abstract public function abstract_with_parameter_16(int $parameter1);
 
-    abstract public function abstract_with_parameter_3(int $parameter1, $parameter2, string $parameter3);
+    abstract public function abstract_with_parameter_17(int $parameter1, $parameter2, string $parameter3);
 
-    abstract public function abstract_with_parameter_4(...$parameter2);
+    abstract public function abstract_with_parameter_18(...$parameter2);
 
-    abstract public function abstract_with_parameter_5(string ...$parameter1);
+    abstract public function abstract_with_parameter_19(string ...$parameter1);
 
-    abstract public function abstract_with_parameter_6(?string ...$parameter1);
+    abstract public function abstract_with_parameter_20(?string ...$parameter1);
 
-    abstract public function abstract_with_parameter_7($parameter1 = null);
+    abstract public function abstract_with_parameter_21($parameter1 = null);
+
+    public abstract function abstract_with_parameter_22();
+
+    abstract function abstract_with_parameter_23();
+
+    protected abstract function abstract_with_parameter_24();
+
+    abstract static function abstract_static_25();
 }
