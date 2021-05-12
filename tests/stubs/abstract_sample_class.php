@@ -50,11 +50,11 @@ abstract class abstract_sample
 
     abstract public function abstract_with_parameter_21($parameter1 = null);
 
-    public abstract function abstract_with_parameter_22();
+    abstract public function abstract_with_parameter_22();
 
-    abstract function abstract_with_parameter_23();
+    abstract public function abstract_with_parameter_23();
 
-    protected abstract function abstract_with_parameter_24();
+    abstract protected function abstract_with_parameter_24();
 
-    abstract static function abstract_static_25();
+    abstract public static function abstract_static_25();
 }
