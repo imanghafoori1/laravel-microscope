@@ -92,10 +92,9 @@ class AbstractMethodsClassTest extends TestCase
     public function check_is_static_method_test()
     {
         $class = $this->classToken;
-        $this->assertEquals($class['methods'][3]['is_static'], true);
-        $this->assertEquals($class['methods'][4]['is_static'], true);
-        $this->assertEquals($class['methods'][5]['is_static'], true);
-        $this->assertEquals($class['methods'][25]['is_static'], true);
+        foreach ([3,4,5,25] as $index){
+            $this->assertTrue($class['methods'][$index]['is_static']);
+        }
     }
 
     /** @test  */
