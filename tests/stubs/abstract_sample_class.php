@@ -2,13 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 abstract class abstract_sample extends TestCase
 {
-    static $lastToken = [null, null, null];
+    public static $lastToken = [null, null, null];
 
     private $secLastToken;
 
