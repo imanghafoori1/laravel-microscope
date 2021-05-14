@@ -46,25 +46,33 @@ class MethodsClassTest extends TestCase
         $class = $this->classToken;
 
         $this->assertFalse($class['methods'][0]['is_static']);
-        $this->assertTrue($class['methods'][4]['is_static']);
-        $this->assertTrue($class['methods'][5]['is_static']);
-        $this->assertTrue($class['methods'][6]['is_static']);
-        $this->assertTrue($class['methods'][7]['is_static']);
+        foreach ([4, 5, 6, 7] as $index) {
+            $this->assertTrue($class['methods'][$index]['is_static']);
+        }
     }
 
-    /** @test */
-    private function check_visibility()
+    /** @test
+     * @dataProvider checkVisibility
+     */
+    private function check_visibility($index, $visibility)
     {
         $class = $this->classToken;
 
-        $this->assertEquals($class['methods'][0]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][1]['visibility'][1], 'protected');
-        $this->assertEquals($class['methods'][2]['visibility'][1], 'private');
-        $this->assertEquals($class['methods'][3]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][4]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][5]['visibility'][1], 'protected');
-        $this->assertEquals($class['methods'][6]['visibility'][1], 'private');
-        $this->assertEquals($class['methods'][7]['visibility'][1], 'public');
+        $this->assertEquals($class['methods'][$index]['visibility'][1], $visibility);
+    }
+
+    public function checkVisibility(): array
+    {
+        return [
+            [0, 'public'],
+            [1, 'protected'],
+            [2, 'private'],
+            [3, 'public'],
+            [4, 'public'],
+            [5, 'protected'],
+            [6, 'private'],
+            [7, 'public'],
+        ];
     }
 
     /**
