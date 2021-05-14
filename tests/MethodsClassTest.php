@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
+use function file_get_contents;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
 use function token_get_all;
-use function file_get_contents;
 
 class MethodsClassTest extends TestCase
 {
@@ -45,11 +45,11 @@ class MethodsClassTest extends TestCase
     {
         $class = $this->classToken;
 
-        $this->assertEquals( $class['methods'][0]['is_static'], false);
-        $this->assertEquals( $class['methods'][4]['is_static'], TRUE );
-        $this->assertEquals( $class['methods'][5]['is_static'], TRUE );
-        $this->assertEquals( $class['methods'][6]['is_static'], TRUE );
-        $this->assertEquals( $class['methods'][7]['is_static'], TRUE );
+        $this->assertEquals($class['methods'][0]['is_static'], false);
+        $this->assertEquals($class['methods'][4]['is_static'], true );
+        $this->assertEquals($class['methods'][5]['is_static'], true );
+        $this->assertEquals($class['methods'][6]['is_static'], true );
+        $this->assertEquals($class['methods'][7]['is_static'], true );
     }
 
     /** @test */
@@ -57,14 +57,14 @@ class MethodsClassTest extends TestCase
     {
         $class = $this->classToken;
 
-        $this->assertEquals( $class['methods'][0]['visibility'][1], 'public' );
-        $this->assertEquals( $class['methods'][1]['visibility'][1], 'protected' );
-        $this->assertEquals( $class['methods'][2]['visibility'][1], 'private' );
-        $this->assertEquals( $class['methods'][3]['visibility'][1], 'public' );
-        $this->assertEquals( $class['methods'][4]['visibility'][1], 'public' );
-        $this->assertEquals( $class['methods'][5]['visibility'][1], 'protected' );
-        $this->assertEquals( $class['methods'][6]['visibility'][1], 'private' );
-        $this->assertEquals( $class['methods'][7]['visibility'][1], 'public' );
+        $this->assertEquals($class['methods'][0]['visibility'][1], 'public' );
+        $this->assertEquals($class['methods'][1]['visibility'][1], 'protected' );
+        $this->assertEquals($class['methods'][2]['visibility'][1], 'private' );
+        $this->assertEquals($class['methods'][3]['visibility'][1], 'public' );
+        $this->assertEquals($class['methods'][4]['visibility'][1], 'public' );
+        $this->assertEquals($class['methods'][5]['visibility'][1], 'protected' );
+        $this->assertEquals($class['methods'][6]['visibility'][1], 'private' );
+        $this->assertEquals($class['methods'][7]['visibility'][1], 'public' );
     }
 
     /**

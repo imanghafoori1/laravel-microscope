@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
+use function array_filter;
+use function file_get_contents;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
+use function is_array;
 use Orchestra\Testbench\TestCase;
 use function range;
 use function substr;
-use function is_array;
-use function array_filter;
 use function token_get_all;
-use function file_get_contents;
 
 class AbstractMethodsClassTest extends TestCase
 {
@@ -33,10 +33,10 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = $this->classToken;
         // Checks all the methods are abstract
-        foreach( range( 0, 25 ) as $index ) {
-            $this->assertTrue( $class['methods'][$index]['is_abstract'] );
+        foreach (range(0, 25) as $index) {
+            $this->assertTrue($class['methods'][$index]['is_abstract']);
         }
-        $this->assertFalse( $class['methods'][26]['is_abstract'] );
+        $this->assertFalse($class['methods'][26]['is_abstract']);
     }
 
     /** @test */
@@ -62,13 +62,13 @@ class AbstractMethodsClassTest extends TestCase
     /** @test
      * @dataProvider checkVisibility
      */
-    public function check_visibility_test($index,$visibility)
+    public function check_visibility_test($index, $visibility)
     {
         $class = $this->classToken;
-        $this->assertEquals( $class['methods'][$index]['visibility'][1], $visibility );
+        $this->assertEquals($class['methods'][$index]['visibility'][1], $visibility);
     }
 
-    public function checkVisibility() : array
+    public function checkVisibility(): array
     {
         return [
             [0, 'public'],
@@ -92,7 +92,7 @@ class AbstractMethodsClassTest extends TestCase
     public function check_is_static_method_test()
     {
         $class = $this->classToken;
-        foreach ([3,4,5,25] as $index){
+        foreach ([3, 4, 5, 25] as $index) {
             $this->assertTrue($class['methods'][$index]['is_static']);
         }
     }
