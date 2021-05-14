@@ -1,11 +1,25 @@
 <?php
 
-abstract class abstract_sample
+namespace Imanghafoori\LaravelMicroscope\Analyzers;
+
+use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
+use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
+use Orchestra\Testbench\TestCase;
+
+abstract class abstract_sample extends TestCase
 {
+    static $lastToken = [null, null, null];
+
+    private $secLastToken;
+
+    public $token = [null, null, null];
+
     // simple methods
     abstract public function abstract_0();
 
     abstract public function abstract_1();
+
+    private static $secLastToken2;
 
     abstract protected function abstract_2();
 
@@ -57,4 +71,8 @@ abstract class abstract_sample
     abstract protected function abstract_with_parameter_24();
 
     abstract public static function abstract_static_25();
+
+    public function hello4()
+    {
+    }
 }
