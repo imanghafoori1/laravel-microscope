@@ -44,11 +44,11 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = $this->classToken;
         //check is nullable return types
-        $this->assertEquals($class['methods'][0]['nullable_return_type'], null);
-        $this->assertEquals($class['methods'][6]['nullable_return_type'], false);
-        $this->assertEquals($class['methods'][13]['nullable_return_type'], true);
+        $this->assertNull($class['methods'][0]['nullable_return_type']);
+        $this->assertFalse($class['methods'][6]['nullable_return_type']);
+        $this->assertTrue($class['methods'][13]['nullable_return_type']);
 
-        $this->assertEquals($class['methods'][0]['returnType'], null);
+        $this->assertNull($class['methods'][0]['returnType']);
         $this->assertEquals($class['methods'][6]['returnType'][1], 'test');
         $this->assertEquals($class['methods'][7]['returnType'][1], 'string');
         $this->assertEquals($class['methods'][8]['returnType'][1], 'bool');
