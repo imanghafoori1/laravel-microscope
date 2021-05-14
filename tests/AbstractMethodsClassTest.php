@@ -5,6 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
+use function range;
+use function substr;
+use function is_array;
+use function array_filter;
+use function token_get_all;
+use function file_get_contents;
 
 class AbstractMethodsClassTest extends TestCase
 {
@@ -26,34 +32,11 @@ class AbstractMethodsClassTest extends TestCase
     public function check_is_abstract_method_test()
     {
         $class = $this->classToken;
-
         // Checks all the methods are abstract
-        $this->assertTrue($class['methods'][0]['is_abstract']);
-        $this->assertTrue($class['methods'][1]['is_abstract']);
-        $this->assertTrue($class['methods'][2]['is_abstract']);
-        $this->assertTrue($class['methods'][3]['is_abstract']);
-        $this->assertTrue($class['methods'][4]['is_abstract']);
-        $this->assertTrue($class['methods'][5]['is_abstract']);
-        $this->assertTrue($class['methods'][6]['is_abstract']);
-        $this->assertTrue($class['methods'][8]['is_abstract']);
-        $this->assertTrue($class['methods'][9]['is_abstract']);
-        $this->assertTrue($class['methods'][10]['is_abstract']);
-        $this->assertTrue($class['methods'][11]['is_abstract']);
-        $this->assertTrue($class['methods'][12]['is_abstract']);
-        $this->assertTrue($class['methods'][13]['is_abstract']);
-        $this->assertTrue($class['methods'][14]['is_abstract']);
-        $this->assertTrue($class['methods'][15]['is_abstract']);
-        $this->assertTrue($class['methods'][16]['is_abstract']);
-        $this->assertTrue($class['methods'][17]['is_abstract']);
-        $this->assertTrue($class['methods'][18]['is_abstract']);
-        $this->assertTrue($class['methods'][19]['is_abstract']);
-        $this->assertTrue($class['methods'][20]['is_abstract']);
-        $this->assertTrue($class['methods'][21]['is_abstract']);
-        $this->assertTrue($class['methods'][22]['is_abstract']);
-        $this->assertTrue($class['methods'][23]['is_abstract']);
-        $this->assertTrue($class['methods'][24]['is_abstract']);
-        $this->assertTrue($class['methods'][25]['is_abstract']);
-        $this->assertFalse($class['methods'][26]['is_abstract']);
+        foreach( range( 0, 25 ) as $index ) {
+            $this->assertTrue( $class['methods'][$index]['is_abstract'] );
+        }
+        $this->assertFalse( $class['methods'][26]['is_abstract'] );
     }
 
     /** @test */
@@ -76,25 +59,33 @@ class AbstractMethodsClassTest extends TestCase
         $this->assertEquals($class['methods'][13]['returnType'][1], 'string');
     }
 
-    /** @test */
-    public function check_visibility_test()
+    /** @test
+     * @dataProvider checkVisibility
+     */
+    public function check_visibility_test($index,$visibility)
     {
         $class = $this->classToken;
-        $this->assertEquals($class['methods'][0]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][1]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][2]['visibility'][1], 'protected');
-        $this->assertEquals($class['methods'][3]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][4]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][5]['visibility'][1], 'protected');
-        $this->assertEquals($class['methods'][6]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][7]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][8]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][9]['visibility'][1], 'public');
+        $this->assertEquals( $class['methods'][$index]['visibility'][1], $visibility );
+    }
 
-        $this->assertEquals($class['methods'][22]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][23]['visibility'][1], 'public');
-        $this->assertEquals($class['methods'][24]['visibility'][1], 'protected');
-        $this->assertEquals($class['methods'][25]['visibility'][1], 'public');
+    public function checkVisibility() : array
+    {
+        return [
+            [0, 'public'],
+            [1, 'public'],
+            [2, 'protected'],
+            [3, 'public'],
+            [4, 'public'],
+            [5, 'protected'],
+            [6, 'public'],
+            [7, 'public'],
+            [8, 'public'],
+            [9, 'public'],
+            [22, 'public'],
+            [23, 'public'],
+            [24, 'protected'],
+            [25, 'public'],
+        ];
     }
 
     /** @test */
@@ -111,7 +102,7 @@ class AbstractMethodsClassTest extends TestCase
     public function abstract_class_general_body_test()
     {
         $class = $this->classToken;
-        $this->assertEquals($class['name'], [311, 'abstract_sample', 9]);
+        $this->assertEquals($class['name'], [311, 'abstract_sample', 7]);
         $this->assertCount(27, $class['methods']);
         $this->assertTrue($class['is_abstract']);
         $this->assertEquals($class['type'], 364);
