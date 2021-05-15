@@ -30,8 +30,8 @@ class ClassMethodsTest extends TestCase
         $this->assertEquals(false, $class['methods'][0]['is_static']);
         $this->assertEquals(null, $class['methods'][0]['returnType']);
         $this->assertEquals(null, $class['methods'][0]['nullable_return_type']);
-        $this->assertEquals($class['methods'][0]['signature'], []);
-        $this->assertEquals($class['methods'][0]['name'], [311, 'hello1', 5]);
+        $this->assertEquals([], $class['methods'][0]['signature']);
+        $this->assertEquals([311, 'hello1', 5], $class['methods'][0]['name']);
 
         $this->assertEquals('public', $class['methods'][0]['visibility'][1]);
         $this->assertEquals('protected', $class['methods'][1]['visibility'][1]);
