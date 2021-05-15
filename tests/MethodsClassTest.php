@@ -30,14 +30,14 @@ class MethodsClassTest extends TestCase
         $class = $this->classToken;
 
         $this->assertFalse($class['is_abstract']);
-        $this->assertEquals( T_CLASS, $class['type']);
+        $this->assertEquals(T_CLASS, $class['type']);
         $this->assertCount(8, $class['methods']);
         $this->assertFalse($class['methods'][0]['is_abstract']);
 
         $this->assertNull($class['methods'][0]['returnType']);
         $this->assertNull($class['methods'][0]['nullable_return_type']);
-        $this->assertEquals( [], $class['methods'][0]['signature']);
-        $this->assertEquals( [311, 'hello1', 5], $class['methods'][0]['name']);
+        $this->assertEquals([], $class['methods'][0]['signature']);
+        $this->assertEquals([311, 'hello1', 5], $class['methods'][0]['name']);
     }
 
     /** @test */
