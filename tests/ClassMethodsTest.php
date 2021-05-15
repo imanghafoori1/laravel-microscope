@@ -48,4 +48,18 @@ class ClassMethodsTest extends TestCase
         $this->assertEquals(true, $class['methods'][6]['is_static']);
         $this->assertEquals(true, $class['methods'][7]['is_static']);
     }
+
+    /** @test */
+    public function can_detect_method_visibility_on_interfaces()
+    {
+        $string = file_get_contents(__DIR__.'/stubs/PasswordBroker.php');
+        $tokens = token_get_all($string);
+
+        $class = ClassMethods::read($tokens);
+
+        $this->assertCount(2, $class['methods']);
+        $this->assertEquals(T_INTERFACE, $class['type']);
+        $this->assertEquals('public', $class['methods'][0]['visibility'][1]);
+        $this->assertEquals('public', $class['methods'][1]['visibility'][1]);
+    }
 }
