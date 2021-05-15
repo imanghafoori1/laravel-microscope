@@ -6,15 +6,17 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
 
-class ExampleTest extends TestCase
+class ClassMethodsTest extends TestCase
 {
+    use CallsPrivateMethods;
+
     protected function getPackageProviders($app)
     {
         return [LaravelMicroscopeServiceProvider::class];
     }
 
     /** @test */
-    public function true_is_true()
+    public function can_detect_method_visibility()
     {
         $string = file_get_contents(__DIR__.'/stubs/sample_class.php');
         $tokens = token_get_all($string);
