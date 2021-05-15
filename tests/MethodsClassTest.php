@@ -2,11 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use function file_get_contents;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
-use function token_get_all;
 
 class MethodsClassTest extends TestCase
 {
