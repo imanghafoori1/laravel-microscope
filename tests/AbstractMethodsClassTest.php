@@ -8,7 +8,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
 use function is_array;
 use Orchestra\Testbench\TestCase;
-use function range;
 use function substr;
 use function token_get_all;
 
@@ -33,9 +32,31 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = $this->classToken;
         // Checks all the methods are abstract
-        foreach (range(0, 25) as $index) {
-            $this->assertTrue($class['methods'][$index]['is_abstract']);
-        }
+        $this->assertTrue($class['methods'][0]['is_abstract']);
+        $this->assertTrue($class['methods'][1]['is_abstract']);
+        $this->assertTrue($class['methods'][2]['is_abstract']);
+        $this->assertTrue($class['methods'][3]['is_abstract']);
+        $this->assertTrue($class['methods'][4]['is_abstract']);
+        $this->assertTrue($class['methods'][5]['is_abstract']);
+        $this->assertTrue($class['methods'][6]['is_abstract']);
+        $this->assertTrue($class['methods'][8]['is_abstract']);
+        $this->assertTrue($class['methods'][9]['is_abstract']);
+        $this->assertTrue($class['methods'][10]['is_abstract']);
+        $this->assertTrue($class['methods'][11]['is_abstract']);
+        $this->assertTrue($class['methods'][12]['is_abstract']);
+        $this->assertTrue($class['methods'][13]['is_abstract']);
+        $this->assertTrue($class['methods'][14]['is_abstract']);
+        $this->assertTrue($class['methods'][15]['is_abstract']);
+        $this->assertTrue($class['methods'][16]['is_abstract']);
+        $this->assertTrue($class['methods'][17]['is_abstract']);
+        $this->assertTrue($class['methods'][18]['is_abstract']);
+        $this->assertTrue($class['methods'][19]['is_abstract']);
+        $this->assertTrue($class['methods'][20]['is_abstract']);
+        $this->assertTrue($class['methods'][21]['is_abstract']);
+        $this->assertTrue($class['methods'][22]['is_abstract']);
+        $this->assertTrue($class['methods'][23]['is_abstract']);
+        $this->assertTrue($class['methods'][24]['is_abstract']);
+        $this->assertTrue($class['methods'][25]['is_abstract']);
         $this->assertFalse($class['methods'][26]['is_abstract']);
     }
 
@@ -49,14 +70,14 @@ class AbstractMethodsClassTest extends TestCase
         $this->assertTrue($class['methods'][13]['nullable_return_type']);
 
         $this->assertNull($class['methods'][0]['returnType']);
-        $this->assertEquals($class['methods'][6]['returnType'][1], 'test');
-        $this->assertEquals($class['methods'][7]['returnType'][1], 'string');
-        $this->assertEquals($class['methods'][8]['returnType'][1], 'bool');
-        $this->assertEquals($class['methods'][9]['returnType'][1], 'int');
-        $this->assertEquals($class['methods'][10]['returnType'][1], 'array');
-        $this->assertEquals($class['methods'][11]['returnType'][1], 'void');
-        $this->assertEquals($class['methods'][12]['returnType'][1], 'float');
-        $this->assertEquals($class['methods'][13]['returnType'][1], 'string');
+        $this->assertEquals( 'test', $class['methods'][6]['returnType'][1] );
+        $this->assertEquals( 'string', $class['methods'][7]['returnType'][1] );
+        $this->assertEquals( 'bool', $class['methods'][8]['returnType'][1] );
+        $this->assertEquals( 'int', $class['methods'][9]['returnType'][1] );
+        $this->assertEquals( 'array', $class['methods'][10]['returnType'][1] );
+        $this->assertEquals( 'void', $class['methods'][11]['returnType'][1] );
+        $this->assertEquals( 'float', $class['methods'][12]['returnType'][1] );
+        $this->assertEquals( 'string', $class['methods'][13]['returnType'][1] );
     }
 
     /** @test
@@ -92,19 +113,20 @@ class AbstractMethodsClassTest extends TestCase
     public function check_is_static_method_test()
     {
         $class = $this->classToken;
-        foreach ([3, 4, 5, 25] as $index) {
-            $this->assertTrue($class['methods'][$index]['is_static']);
-        }
+        $this->assertTrue($class['methods'][3]['is_static']);
+        $this->assertTrue($class['methods'][4]['is_static']);
+        $this->assertTrue($class['methods'][5]['is_static']);
+        $this->assertTrue($class['methods'][25]['is_static']);
     }
 
     /** @test  */
     public function abstract_class_general_body_test()
     {
         $class = $this->classToken;
-        $this->assertEquals($class['name'], [311, 'abstract_sample', 7]);
+        $this->assertEquals( [311, 'abstract_sample', 7], $class['name'] );
         $this->assertCount(27, $class['methods']);
         $this->assertTrue($class['is_abstract']);
-        $this->assertEquals($class['type'], 364);
+        $this->assertEquals( 364, $class['type'] );
     }
 
     /** @test */
@@ -112,13 +134,13 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = $this->classToken;
         // check function has parameter
-        $this->assertEquals($class['methods'][14]['signature'][0][1], '$parameter1');
+        $this->assertEquals( '$parameter1', $class['methods'][14]['signature'][0][1] );
         // check nullable type cast method parameters
-        $this->assertEquals($class['methods'][15]['signature'][0], '?');
-        $this->assertEquals($class['methods'][15]['signature'][1][1], 'int');
-        $this->assertEquals($class['methods'][15]['signature'][3][1], '$parameter1');
+        $this->assertEquals( '?', $class['methods'][15]['signature'][0] );
+        $this->assertEquals( 'int', $class['methods'][15]['signature'][1][1] );
+        $this->assertEquals( '$parameter1', $class['methods'][15]['signature'][3][1] );
         // check type casting of parameters
-        $this->assertEquals($class['methods'][16]['signature'][0][1], 'int');
+        $this->assertEquals( 'int', $class['methods'][16]['signature'][0][1] );
         // number of parameter
         $signatures = $class['methods'][17]['signature'];
         $parameters = array_filter($signatures, function ($item) {
@@ -130,21 +152,21 @@ class AbstractMethodsClassTest extends TestCase
         });
         $this->assertCount(3, $parameters);
         // check multi parameter with type
-        $this->assertEquals($class['methods'][18]['signature'][0][1], '...');
-        $this->assertEquals($class['methods'][18]['signature'][1][1], '$parameter2');
+        $this->assertEquals( '...', $class['methods'][18]['signature'][0][1] );
+        $this->assertEquals( '$parameter2', $class['methods'][18]['signature'][1][1] );
         // check multi parameter with type casting
-        $this->assertEquals($class['methods'][19]['signature'][0][1], 'string');
-        $this->assertEquals($class['methods'][19]['signature'][2][1], '...');
-        $this->assertEquals($class['methods'][19]['signature'][3][1], '$parameter1');
+        $this->assertEquals( 'string', $class['methods'][19]['signature'][0][1] );
+        $this->assertEquals( '...', $class['methods'][19]['signature'][2][1] );
+        $this->assertEquals( '$parameter1', $class['methods'][19]['signature'][3][1] );
         // check method with nullable multi parameter
-        $this->assertEquals($class['methods'][20]['signature'][0], '?');
-        $this->assertEquals($class['methods'][20]['signature'][1][1], 'string');
-        $this->assertEquals($class['methods'][20]['signature'][3][1], '...');
-        $this->assertEquals($class['methods'][20]['signature'][4][1], '$parameter1');
+        $this->assertEquals( '?', $class['methods'][20]['signature'][0] );
+        $this->assertEquals( 'string', $class['methods'][20]['signature'][1][1] );
+        $this->assertEquals( '...', $class['methods'][20]['signature'][3][1] );
+        $this->assertEquals( '$parameter1', $class['methods'][20]['signature'][4][1] );
         // check default value of parameters
-        $this->assertEquals($class['methods'][21]['signature'][0][1], '$parameter1');
-        $this->assertEquals($class['methods'][21]['signature'][2], '=');
-        $this->assertEquals($class['methods'][21]['signature'][4][1], 'null');
+        $this->assertEquals( '$parameter1', $class['methods'][21]['signature'][0][1] );
+        $this->assertEquals( '=', $class['methods'][21]['signature'][2] );
+        $this->assertEquals( 'null', $class['methods'][21]['signature'][4][1] );
     }
 
     /**
