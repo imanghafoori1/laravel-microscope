@@ -43,7 +43,7 @@ class ReplaceLine
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
 
-        $contextClass = self::getNamespaceFromRelativePath($absPath);
+        $contextClass = NamespaceCorrector::getNamespaceFromRelativePath($absPath);
 
         if (\count($correct) !== 1) {
             return [false, $correct];
@@ -59,24 +59,6 @@ class ReplaceLine
         }
 
         return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
-    }
-
-    public static function getNamespaceFromRelativePath($relPath)
-    {
-        // Remove .php from class path
-        $relPath = str_replace([base_path(), '.php'], '', $relPath);
-
-        $autoload = ComposerJson::readAutoload();
-        uksort($autoload, function ($a, $b) {
-            return strlen($b) <=> strlen($a);
-        });
-
-        $namespaces = array_keys($autoload);
-        $paths = array_values($autoload);
-
-        $relPath = \str_replace('\\', '/', $relPath);
-
-        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
     }
 
     private static function applyToFile($file, $lineChanger)
