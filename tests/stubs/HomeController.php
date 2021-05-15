@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-class HomeController extends Controller
+use Countable;
+use Illuminate\Contracts\Support\Renderable;
+
+class HomeController extends Controller implements Countable, MyInterface
 {
     /**
      * Create a new controller instance.
@@ -12,6 +15,11 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function count()
+    {
+        // TODO: Implement count() method.
     }
 
     /**
