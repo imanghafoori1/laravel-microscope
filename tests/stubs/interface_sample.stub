@@ -1,0 +1,59 @@
+<?php
+
+use PHPUnit\Framework\IncompleteTest;
+
+/**
+ * Interface interface_sample
+ */
+interface interface_sample extends IncompleteTest {
+
+
+    public const test = 'test';
+    const A = 'a';
+    const B = 'b';
+
+    //public method
+    function method_0();
+
+    public function method_1();
+
+    //static methods
+    public static function method_2();
+
+    static function method_3();
+
+    // methods with returns type
+    public function method_4(): test;
+
+    public function method_5(): string;
+
+    public function method_6(): bool;
+
+    public function method_7(): int;
+
+    public function method_8(): array;
+
+    public function method_9(): void;
+
+    public function method_10(): float;
+
+    public function method_11(): ?string;
+
+    // with parameters
+    public function method_12($parameter1);
+
+    public function method_13(?int $parameter1);
+
+    public function method_14(int $parameter1);
+
+    public function method_15(int $parameter1, $parameter2, string $parameter3);
+
+    public function method_16(...$parameter2);
+
+    public function method_17(string ...$parameter1);
+
+    public function method_18(?string ...$parameter1);
+
+    public function method_19($parameter1 = null);
+
+}
