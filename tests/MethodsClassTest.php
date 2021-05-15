@@ -27,13 +27,13 @@ class MethodsClassTest extends TestCase
     {
         $class = $this->classToken;
 
-        $this->assertFalse($class['is_abstract']);
+        $this->assertEquals(false,$class['is_abstract']);
         $this->assertEquals(T_CLASS, $class['type']);
         $this->assertCount(8, $class['methods']);
-        $this->assertFalse($class['methods'][0]['is_abstract']);
+        $this->assertEquals(false,$class['methods'][0]['is_abstract']);
 
-        $this->assertNull($class['methods'][0]['returnType']);
-        $this->assertNull($class['methods'][0]['nullable_return_type']);
+        $this->assertEquals(null,$class['methods'][0]['returnType']);
+        $this->assertEquals(null,$class['methods'][0]['nullable_return_type']);
         $this->assertEquals([], $class['methods'][0]['signature']);
         $this->assertEquals([311, 'hello1', 5], $class['methods'][0]['name']);
     }
@@ -43,11 +43,11 @@ class MethodsClassTest extends TestCase
     {
         $class = $this->classToken;
 
-        $this->assertFalse($class['methods'][0]['is_static']);
-        $this->assertTrue($class['methods'][4]['is_static']);
-        $this->assertTrue($class['methods'][5]['is_static']);
-        $this->assertTrue($class['methods'][6]['is_static']);
-        $this->assertTrue($class['methods'][7]['is_static']);
+        $this->assertEquals(false,$class['methods'][0]['is_static']);
+        $this->assertEquals(true,$class['methods'][4]['is_static']);
+        $this->assertEquals(true,$class['methods'][5]['is_static']);
+        $this->assertEquals(true,$class['methods'][6]['is_static']);
+        $this->assertEquals(true,$class['methods'][7]['is_static']);
     }
 
     /** @test

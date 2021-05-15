@@ -19,33 +19,33 @@ class AbstractMethodsClassTest extends TestCase
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
 
         // Checks all the methods are abstract
-        $this->assertTrue($class['methods'][0]['is_abstract']);
-        $this->assertTrue($class['methods'][1]['is_abstract']);
-        $this->assertTrue($class['methods'][2]['is_abstract']);
-        $this->assertTrue($class['methods'][3]['is_abstract']);
-        $this->assertTrue($class['methods'][4]['is_abstract']);
-        $this->assertTrue($class['methods'][5]['is_abstract']);
-        $this->assertTrue($class['methods'][6]['is_abstract']);
-        $this->assertTrue($class['methods'][7]['is_abstract']);
-        $this->assertTrue($class['methods'][8]['is_abstract']);
-        $this->assertTrue($class['methods'][9]['is_abstract']);
-        $this->assertTrue($class['methods'][10]['is_abstract']);
-        $this->assertTrue($class['methods'][11]['is_abstract']);
-        $this->assertTrue($class['methods'][12]['is_abstract']);
-        $this->assertTrue($class['methods'][13]['is_abstract']);
-        $this->assertTrue($class['methods'][14]['is_abstract']);
-        $this->assertTrue($class['methods'][15]['is_abstract']);
-        $this->assertTrue($class['methods'][16]['is_abstract']);
-        $this->assertTrue($class['methods'][17]['is_abstract']);
-        $this->assertTrue($class['methods'][18]['is_abstract']);
-        $this->assertTrue($class['methods'][19]['is_abstract']);
-        $this->assertTrue($class['methods'][20]['is_abstract']);
-        $this->assertTrue($class['methods'][21]['is_abstract']);
-        $this->assertTrue($class['methods'][22]['is_abstract']);
-        $this->assertTrue($class['methods'][23]['is_abstract']);
-        $this->assertTrue($class['methods'][24]['is_abstract']);
-        $this->assertTrue($class['methods'][25]['is_abstract']);
-        $this->assertFalse($class['methods'][26]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][0]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][1]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][2]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][3]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][4]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][5]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][6]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][7]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][8]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][9]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][10]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][11]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][12]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][13]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][14]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][15]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][16]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][17]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][18]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][19]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][20]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][21]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][22]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][23]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][24]['is_abstract']);
+        $this->assertEquals(true,$class['methods'][25]['is_abstract']);
+        $this->assertEquals(false,$class['methods'][26]['is_abstract']);
     }
 
     /** @test */
@@ -53,11 +53,11 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         // check is nullable return types
-        $this->assertNull($class['methods'][0]['nullable_return_type']);
-        $this->assertFalse($class['methods'][6]['nullable_return_type']);
-        $this->assertTrue($class['methods'][13]['nullable_return_type']);
+        $this->assertEquals(null,$class['methods'][0]['nullable_return_type']);
+        $this->assertEquals(false,$class['methods'][6]['nullable_return_type']);
+        $this->assertEquals(true,$class['methods'][13]['nullable_return_type']);
 
-        $this->assertNull($class['methods'][0]['returnType']);
+        $this->assertEquals(null,$class['methods'][0]['returnType']);
         $this->assertEquals('test', $class['methods'][6]['returnType'][1]);
         $this->assertEquals('string', $class['methods'][7]['returnType'][1]);
         $this->assertEquals('bool', $class['methods'][8]['returnType'][1]);
@@ -101,10 +101,10 @@ class AbstractMethodsClassTest extends TestCase
     public function check_is_static_method_test()
     {
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
-        $this->assertTrue($class['methods'][3]['is_static']);
-        $this->assertTrue($class['methods'][4]['is_static']);
-        $this->assertTrue($class['methods'][5]['is_static']);
-        $this->assertTrue($class['methods'][25]['is_static']);
+        $this->assertEquals(true,$class['methods'][3]['is_static']);
+        $this->assertEquals(true,$class['methods'][4]['is_static']);
+        $this->assertEquals(true,$class['methods'][5]['is_static']);
+        $this->assertEquals(true,$class['methods'][25]['is_static']);
     }
 
     /** @test  */
@@ -113,7 +113,7 @@ class AbstractMethodsClassTest extends TestCase
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         $this->assertEquals([311, 'abstract_sample', 7], $class['name']);
         $this->assertCount(27, $class['methods']);
-        $this->assertTrue($class['is_abstract']);
+        $this->assertEquals(true,$class['is_abstract']);
         $this->assertEquals(T_CLASS, $class['type']);
     }
 

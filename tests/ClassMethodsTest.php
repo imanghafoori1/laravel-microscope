@@ -23,7 +23,7 @@ class ClassMethodsTest extends TestCase
 
         $class = ClassMethods::read($tokens);
 
-        $this->assertFalse($class['is_abstract']);
+        $this->assertEquals(false,$class['is_abstract']);
         $this->assertEquals(T_CLASS, $class['type']);
         $this->assertCount(8, $class['methods']);
         $this->assertEquals(false, $class['methods'][0]['is_abstract']);
