@@ -33,7 +33,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Imanghafoori\\LaravelMicroscope\\": "src",
             "Imanghafoori\\LaravelMicroscope\\Tests\\": "tests"
         }
     },

@@ -2,14 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use function array_filter;
-use function file_get_contents;
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
 use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use function is_array;
 use Orchestra\Testbench\TestCase;
-use function substr;
-use function token_get_all;
 
 class AbstractMethodsClassTest extends TestCase
 {
@@ -30,7 +25,8 @@ class AbstractMethodsClassTest extends TestCase
     /** @test */
     public function check_is_abstract_method_test()
     {
-        $class = $this->classToken;
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
+
         // Checks all the methods are abstract
         $this->assertTrue($class['methods'][0]['is_abstract']);
         $this->assertTrue($class['methods'][1]['is_abstract']);
@@ -39,6 +35,7 @@ class AbstractMethodsClassTest extends TestCase
         $this->assertTrue($class['methods'][4]['is_abstract']);
         $this->assertTrue($class['methods'][5]['is_abstract']);
         $this->assertTrue($class['methods'][6]['is_abstract']);
+        $this->assertTrue($class['methods'][7]['is_abstract']);
         $this->assertTrue($class['methods'][8]['is_abstract']);
         $this->assertTrue($class['methods'][9]['is_abstract']);
         $this->assertTrue($class['methods'][10]['is_abstract']);
@@ -63,6 +60,11 @@ class AbstractMethodsClassTest extends TestCase
     /** @test */
     public function check_return_types_test()
     {
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
+        // check is nullable return types
+        $this->assertEquals(null, $class['methods'][0]['nullable_return_type']);
+        $this->assertEquals(false, $class['methods'][6]['nullable_return_type']);
+        $this->assertEquals(true, $class['methods'][13]['nullable_return_type']);
         $class = $this->classToken;
         //check is nullable return types
         $this->assertNull($class['methods'][0]['nullable_return_type']);
@@ -85,7 +87,7 @@ class AbstractMethodsClassTest extends TestCase
      */
     public function check_visibility_test($index, $visibility)
     {
-        $class = $this->classToken;
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         $this->assertEquals($class['methods'][$index]['visibility'][1], $visibility);
     }
 
@@ -112,7 +114,7 @@ class AbstractMethodsClassTest extends TestCase
     /** @test */
     public function check_is_static_method_test()
     {
-        $class = $this->classToken;
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         $this->assertTrue($class['methods'][3]['is_static']);
         $this->assertTrue($class['methods'][4]['is_static']);
         $this->assertTrue($class['methods'][5]['is_static']);
@@ -122,24 +124,24 @@ class AbstractMethodsClassTest extends TestCase
     /** @test  */
     public function abstract_class_general_body_test()
     {
-        $class = $this->classToken;
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         $this->assertEquals([311, 'abstract_sample', 7], $class['name']);
         $this->assertCount(27, $class['methods']);
         $this->assertTrue($class['is_abstract']);
-        $this->assertEquals(364, $class['type']);
+        $this->assertEquals(T_CLASS, $class['type']);
     }
 
     /** @test */
     public function check_parameter_methods()
     {
-        $class = $this->classToken;
+        $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         // check function has parameter
         $this->assertEquals('$parameter1', $class['methods'][14]['signature'][0][1]);
         // check nullable type cast method parameters
         $this->assertEquals('?', $class['methods'][15]['signature'][0]);
         $this->assertEquals('int', $class['methods'][15]['signature'][1][1]);
         $this->assertEquals('$parameter1', $class['methods'][15]['signature'][3][1]);
-        // check type casting of parameters
+        // check type hinting of parameters
         $this->assertEquals('int', $class['methods'][16]['signature'][0][1]);
         // number of parameter
         $signatures = $class['methods'][17]['signature'];
@@ -174,8 +176,8 @@ class AbstractMethodsClassTest extends TestCase
      *
      * @return array
      */
-    private function getTokens()
+    private function getTokens($path)
     {
-        return token_get_all(file_get_contents(__DIR__.'/stubs/abstract_sample_class.php'));
+        return token_get_all(file_get_contents(__DIR__.$path));
     }
 }
