@@ -8,11 +8,6 @@ use Orchestra\Testbench\TestCase;
 
 class AbstractMethodsClassTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     protected function getPackageProviders($app)
     {
         return [LaravelMicroscopeServiceProvider::class];
