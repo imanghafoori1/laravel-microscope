@@ -8,13 +8,9 @@ use Orchestra\Testbench\TestCase;
 
 class AbstractMethodsClassTest extends TestCase
 {
-    /** @var array */
-    private $classToken;
-
     protected function setUp(): void
     {
         parent::setUp();
-        $this->classToken = ClassMethods::read($this->getTokens());
     }
 
     protected function getPackageProviders($app)
@@ -62,11 +58,6 @@ class AbstractMethodsClassTest extends TestCase
     {
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
         // check is nullable return types
-        $this->assertEquals(null, $class['methods'][0]['nullable_return_type']);
-        $this->assertEquals(false, $class['methods'][6]['nullable_return_type']);
-        $this->assertEquals(true, $class['methods'][13]['nullable_return_type']);
-        $class = $this->classToken;
-        //check is nullable return types
         $this->assertNull($class['methods'][0]['nullable_return_type']);
         $this->assertFalse($class['methods'][6]['nullable_return_type']);
         $this->assertTrue($class['methods'][13]['nullable_return_type']);
