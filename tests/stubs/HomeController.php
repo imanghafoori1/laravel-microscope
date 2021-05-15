@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Countable;
-use Illuminate\Contracts\Support\Renderable;
 
 class HomeController extends Controller implements Countable, MyInterface
 {
