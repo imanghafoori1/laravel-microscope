@@ -62,4 +62,22 @@ class ClassMethodsTest extends TestCase
         $this->assertEquals('public', $class['methods'][0]['visibility'][1]);
         $this->assertEquals('public', $class['methods'][1]['visibility'][1]);
     }
+
+    /** @test */
+    public function can_detect_methods_on_traits()
+    {
+        $string = file_get_contents(__DIR__.'/stubs/Authenticatable.php');
+        $tokens = token_get_all($string);
+
+        $trait = ClassMethods::read($tokens);
+
+        $this->assertCount(6, $trait['methods']);
+        $this->assertEquals(T_TRAIT, $trait['type']);
+        //check visibility
+        $this->assertEquals('public', $trait['methods'][0]['visibility'][1]);
+        $this->assertEquals('public', $trait['methods'][1]['visibility'][1]);
+        //check return type
+        $this->assertEquals('string', $trait['methods'][5]['returnType'][1]);
+        $this->assertStringContainsString('return $this->rememberTokenName;', $trait['methods'][5]['body']);
+    }
 }
