@@ -103,7 +103,7 @@ class InterfaceMethodsTest extends BaseTestClass
     {
         $class = ClassMethods::read($this->getTokens('/stubs/interface_sample.stub'));
 
-        $this->assertEquals([311, 'interface_sample', 8], $class['name']);
+        $this->assertEquals([T_STRING, 'interface_sample', 8], $class['name']);
         $this->assertEquals(T_INTERFACE, $class['type']);
         $this->assertArrayNotHasKey('is_abstract', $class);
         $this->assertCount(20, $class['methods']);
