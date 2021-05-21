@@ -23,7 +23,6 @@ class NamespaceCorrectorTests extends BaseTestClass
         $class2 = "$ns\Ghafoori";
         $class3 = "$ns\Hello\Ghafoori";
 
-
         $this->assertEquals(true, NamespaceCorrector::haveSameNamespace('A', 'A'));
         $this->assertEquals(true, NamespaceCorrector::haveSameNamespace('A', 'B'));
         $this->assertEquals(true, NamespaceCorrector::haveSameNamespace($class1, $class2));
