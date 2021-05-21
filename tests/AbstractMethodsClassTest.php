@@ -3,16 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use Orchestra\Testbench\TestCase;
 
-class AbstractMethodsClassTest extends TestCase
+class AbstractMethodsClassTest extends BaseTestClass
 {
-    protected function getPackageProviders($app)
-    {
-        return [LaravelMicroscopeServiceProvider::class];
-    }
-
     /** @test */
     public function check_is_abstract_method_test()
     {

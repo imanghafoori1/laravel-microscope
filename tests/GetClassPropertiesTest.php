@@ -3,18 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use Orchestra\Testbench\TestCase;
 
-class GetClassPropertiesTest extends TestCase
+class GetClassPropertiesTest extends BaseTestClass
 {
-    use CallsPrivateMethods;
-
-    protected function getPackageProviders($app)
-    {
-        return [LaravelMicroscopeServiceProvider::class];
-    }
-
     /** @test */
     public function can_detect_method_visibility()
     {

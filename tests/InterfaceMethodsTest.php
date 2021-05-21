@@ -3,16 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use Orchestra\Testbench\TestCase;
 
-class InterfaceMethodsTest extends TestCase
+class InterfaceMethodsTest extends BaseTestClass
 {
-    protected function getPackageProviders($app)
-    {
-        return [LaravelMicroscopeServiceProvider::class];
-    }
-
     /** @test */
     public function check_methods_has_no_parameters_test()
     {
