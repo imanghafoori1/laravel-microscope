@@ -13,8 +13,8 @@ class NamespaceCorrectorTest extends BaseTestClass
         $class = "$ns\NamespaceCorrector";
 
         $this->assertEquals($ns, NamespaceCorrector::getNamespaceFromFullClass($class));
-        $this->assertEquals('', 'A');
-        $this->assertEquals('B', 'B\A');
+        $this->assertEquals('', NamespaceCorrector::getNamespaceFromFullClass('A'));
+        $this->assertEquals('B', NamespaceCorrector::getNamespaceFromFullClass('B\A'));
     }
 
     /** @test */
