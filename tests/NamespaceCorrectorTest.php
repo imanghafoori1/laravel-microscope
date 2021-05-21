@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 
-class NamespaceCorrectorTests extends BaseTestClass
+class NamespaceCorrectorTest extends BaseTestClass
 {
     /** @test */
     public function can_extract_namespace()
@@ -13,6 +13,8 @@ class NamespaceCorrectorTests extends BaseTestClass
         $class = "$ns\NamespaceCorrector";
 
         $this->assertEquals($ns, NamespaceCorrector::getNamespaceFromFullClass($class));
+        $this->assertEquals('', 'A');
+        $this->assertEquals('B', 'B\A');
     }
 
     /** @test */
