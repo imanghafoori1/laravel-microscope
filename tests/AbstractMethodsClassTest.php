@@ -102,7 +102,7 @@ class AbstractMethodsClassTest extends BaseTestClass
     {
         $class = ClassMethods::read($this->getTokens('/stubs/abstract_sample_class.php'));
 
-        $this->assertEquals([311, 'abstract_sample', 7], $class['name']);
+        $this->assertEquals([T_STRING, 'abstract_sample', 7], $class['name']);
         $this->assertCount(27, $class['methods']);
         $this->assertEquals(true, $class['is_abstract']);
         $this->assertEquals(T_CLASS, $class['type']);
