@@ -3,8 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use Orchestra\Testbench\TestCase;
 
 class FilePathAnalyzerTest extends BaseTestClass
 {
@@ -14,7 +12,7 @@ class FilePathAnalyzerTest extends BaseTestClass
         $path = '/usr/laravel\\\\framework/app\Http\..\..\\..//database';
         $normalizedPath = FilePath::normalize($path);
 
-        $this->assertEquals(implode(DIRECTORY_SEPARATOR, ['', 'usr','laravel','database']), $normalizedPath);
+        $this->assertEquals(implode(DIRECTORY_SEPARATOR, ['', 'usr', 'laravel', 'database']), $normalizedPath);
         $this->assertStringNotContainsString('\\\\', $normalizedPath);
         $this->assertStringNotContainsString('//', $normalizedPath);
         $this->assertStringNotContainsString('..', $normalizedPath);
