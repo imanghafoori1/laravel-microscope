@@ -6,7 +6,7 @@ class ParseUseStatement
 {
     private static $cache = [];
 
-    public static function getUseStatementsByPath($namespacedClassName, $absPath = null)
+    public static function getUseStatementsByPath($namespacedClassName, $absPath)
     {
         if (! isset(self::$cache[$namespacedClassName])) {
             self::$cache = self::parseUseStatements(token_get_all(file_get_contents($absPath)), $namespacedClassName)[0] + self::$cache;
