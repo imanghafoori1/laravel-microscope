@@ -149,9 +149,4 @@ class AbstractMethodsClassTest extends BaseTestClass
         $this->assertEquals('=', $methods[21]['signature'][2]);
         $this->assertEquals('null', $methods[21]['signature'][4][1]);
     }
-
-    private function getTokens($path)
-    {
-        return token_get_all(file_get_contents(__DIR__.$path));
-    }
 }

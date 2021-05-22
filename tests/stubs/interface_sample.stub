@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\IncompleteTest;
+use Countable;
 
 /**
  * Interface interface_sample
