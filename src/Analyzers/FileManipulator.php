@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 
-class ReplaceLine
+class FileManipulator
 {
     public static function removeLine($file, $_line = null)
     {

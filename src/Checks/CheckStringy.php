@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckStringy
@@ -50,7 +50,7 @@ class CheckStringy
                 $classPath = trim(class_basename($classPath), '\\');
             }
 
-            ReplaceLine::replaceFirst($absFilePath, $token[1], $classPath);
+            FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
             $command->info('====================================');
         }
     }

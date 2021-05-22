@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
-use Imanghafoori\LaravelMicroscope\Analyzers\ReplaceLine;
+use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClasses
@@ -84,7 +84,7 @@ class CheckClasses
 
             $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
 
-            [$isCorrected, $corrects] = ReplaceLine::fixReference($absFilePath, $class, $line, '', true);
+            [$isCorrected, $corrects] = FileManipulator::fixReference($absFilePath, $class, $line, '', true);
 
             if ($isInUserSpace && $isCorrected) {
                 $printer->printFixation($absFilePath, $class, $line, $corrects);
@@ -132,7 +132,7 @@ class CheckClasses
 
             if (! \class_exists($class)) {
                 $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
-                $result = ReplaceLine::fixReference($absFilePath, $class, $token[2]);
+                $result = FileManipulator::fixReference($absFilePath, $class, $token[2]);
                 if ($isInUserSpace && $result[0]) {
                     $printer->printFixation($absFilePath, $class, $token[2], $result[1]);
                 } else {
@@ -155,7 +155,7 @@ class CheckClasses
 
     private static function fix($absFilePath, $class, $line, $nonImportedClass)
     {
-        $result = ReplaceLine::fixReference($absFilePath, $class, $line);
+        $result = FileManipulator::fixReference($absFilePath, $class, $line);
 
         if ($result[0]) {
             return $result;
@@ -163,7 +163,7 @@ class CheckClasses
 
         $baseClassName = \str_replace($nonImportedClass.'\\', '', $class);
 
-        return $result = ReplaceLine::fixReference($absFilePath, $baseClassName, $line, '\\');
+        return $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
     }
 
     private static function checkNotImportedClasses($tokens, $absFilePath)

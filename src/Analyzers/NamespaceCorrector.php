@@ -23,7 +23,7 @@ class NamespaceCorrector
         [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
 
         $oldLine = \ltrim($oldLine, '\\');
-        ReplaceLine::replaceFirst($classFilePath, $oldLine, $newline);
+        FileManipulator::replaceFirst($classFilePath, $oldLine, $newline);
     }
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
@@ -47,15 +47,12 @@ class NamespaceCorrector
 
     private static function getNewLine($incorrectNamespace, $correctNamespace)
     {
-        // in case there is no namespace specified in the file:
-        if (! $incorrectNamespace) {
-            $incorrectNamespace = '<?php';
-            $newline = '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL;
-        } else {
-            $newline = $correctNamespace;
+        if ($incorrectNamespace) {
+            return [$incorrectNamespace, $correctNamespace];
         }
 
-        return [$incorrectNamespace, $newline];
+        // In case there is no namespace specified in the file:
+        return ['<?php', '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL];
     }
 
     public static function getRelativePathFromNamespace($namespace)
@@ -68,23 +65,5 @@ class NamespaceCorrector
         $paths = array_values($autoload);
 
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
-    }
-
-    public static function getNamespaceFromRelativePath($relPath)
-    {
-        // Remove .php from class path
-        $relPath = str_replace([base_path(), '.php'], '', $relPath);
-
-        $autoload = ComposerJson::readAutoload();
-        uksort($autoload, function ($a, $b) {
-            return strlen($b) <=> strlen($a);
-        });
-
-        $namespaces = array_keys($autoload);
-        $paths = array_values($autoload);
-
-        $relPath = \str_replace('\\', '/', $relPath);
-
-        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
     }
 }
