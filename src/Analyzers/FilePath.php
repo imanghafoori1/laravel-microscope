@@ -8,8 +8,8 @@ use Symfony\Component\Finder\Finder;
 class FilePath
 {
     /**
-     * normalize file path to standard formal
-     * for a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
+     * Normalize file path to standard formal
+     * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
      *
      * @param string $path directory path
      *
@@ -42,7 +42,7 @@ class FilePath
      */
     public static function getRelativePath($absFilePath)
     {
-        return \trim(Str::replaceFirst(base_path(), '', $absFilePath), DIRECTORY_SEPARATOR);
+        return \trim(Str::replaceFirst(base_path(), '', $absFilePath), '/\\');
     }
 
     /**

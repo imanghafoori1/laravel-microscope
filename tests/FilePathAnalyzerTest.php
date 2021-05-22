@@ -30,14 +30,18 @@ class FilePathAnalyzerTest extends BaseTestClass
     {
         $path = base_path().'/database/factories/';
         $normalizedPath = FilePath::getRelativePath($path);
-
-        $this->assertEquals('/database/factories/', $normalizedPath);
-        $this->assertStringNotContainsString(base_path(), $normalizedPath);
+        $this->assertEquals('database/factories', $normalizedPath);
 
         $path = base_path().'/database/factories';
         $normalizedPath = FilePath::getRelativePath($path);
+        $this->assertEquals('database/factories', $normalizedPath);
 
-        $this->assertEquals('/database/factories', $normalizedPath);
-        $this->assertStringNotContainsString(base_path(), $normalizedPath);
+        $path = base_path().'\database\factories\\';
+        $normalizedPath = FilePath::getRelativePath($path);
+        $this->assertEquals('database\factories', $normalizedPath);
+
+        $path = base_path().'\database\factories';
+        $normalizedPath = FilePath::getRelativePath($path);
+        $this->assertEquals('database\factories', $normalizedPath);
     }
 }
