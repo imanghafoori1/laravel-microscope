@@ -15,9 +15,9 @@ class FilePathAnalyzerTest extends BaseTestClass
         $normalizedPath = FilePath::normalize($path);
         $ds = DIRECTORY_SEPARATOR;
 
-        $this->assertEquals( "{$ds}usr{$ds}laravel{$ds}database", $normalizedPath);
-        $this->assertEquals( "{$ds}usr{$ds}laravel{$ds}database", FilePath::normalize($path2));
-        $this->assertEquals( "{$ds}usr{$ds}framework{$ds}database", FilePath::normalize($path3));
+        $this->assertEquals("{$ds}usr{$ds}laravel{$ds}database", $normalizedPath);
+        $this->assertEquals("{$ds}usr{$ds}laravel{$ds}database", FilePath::normalize($path2));
+        $this->assertEquals("{$ds}usr{$ds}framework{$ds}database", FilePath::normalize($path3));
         $this->assertStringNotContainsString('\\\\', $normalizedPath);
         $this->assertStringNotContainsString('//', $normalizedPath);
         $this->assertStringNotContainsString('..', $normalizedPath);
