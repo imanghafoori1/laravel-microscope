@@ -110,21 +110,15 @@ class ParseUseStatement
     public static function fetch(&$tokens, $take)
     {
         $result = null;
+
+        $neutral = [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT,];
+
         while ($token = \current($tokens)) {
-            [
-                $token,
-                $s,
-            ] = \is_array($token) ? $token : [
-                $token,
-                $token,
-            ];
+            [$token, $s,] = \is_array($token) ? $token : [$token, $token];
+
             if (\in_array($token, (array) $take, true)) {
                 $result .= $s;
-            } elseif (! \in_array($token, [
-                T_DOC_COMMENT,
-                T_WHITESPACE,
-                T_COMMENT,
-            ], true)) {
+            } elseif (! \in_array($token, $neutral, true)) {
                 break;
             }
             \next($tokens);
@@ -149,11 +143,10 @@ class ParseUseStatement
 
     private static function FetchNS(&$tokens)
     {
-        // php 8.0
-        if (defined('T_NAME_QUALIFIED')) {
-            return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR, T_NAME_QUALIFIED]);
-        }
+        $endings = [T_STRING, T_NS_SEPARATOR];
 
-        return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]);
+        defined('T_NAME_QUALIFIED') && $endings[] =  T_NAME_QUALIFIED; // php 8.0
+
+        return self::fetch($tokens, $endings);
     }
 }
