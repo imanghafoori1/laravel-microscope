@@ -109,7 +109,7 @@ class ParseUseStatement
 
     public static function fetch(&$tokens, $take)
     {
-        $res = null;
+        $result = null;
         while ($token = \current($tokens)) {
             [
                 $token,
@@ -119,7 +119,7 @@ class ParseUseStatement
                 $token,
             ];
             if (\in_array($token, (array) $take, true)) {
-                $res .= $s;
+                $result .= $s;
             } elseif (! \in_array($token, [
                 T_DOC_COMMENT,
                 T_WHITESPACE,
@@ -130,7 +130,7 @@ class ParseUseStatement
             \next($tokens);
         }
 
-        return $res;
+        return $result;
     }
 
     /**
@@ -149,6 +149,11 @@ class ParseUseStatement
 
     private static function FetchNS(&$tokens)
     {
+        // php 8.0
+        if (defined('T_NAME_QUALIFIED')) {
+            return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR, T_NAME_QUALIFIED]);
+        }
+
         return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]);
     }
 }
