@@ -32,8 +32,8 @@ class ParseUseStatementTest extends BaseTestClass
             'DirectoryNotFoundException' => ["Symfony\Component\Finder\Exception\DirectoryNotFoundException", 6],
             'Action' => ["Imanghafoori\LaravelMicroscope\Checks\ActionsComments", 5],
             'Finder' => ["Symfony\Component\Finder\Symfony\Component\Finder\Finder", 6],
-            'Closure' => ["Closure", 11],
-            'PasswordBroker' => ["Illuminate\Contracts\Auth\PasswordBroker", 10]
+            'Closure' => ['Closure', 11],
+            'PasswordBroker' => ["Illuminate\Contracts\Auth\PasswordBroker", 10],
 
         ];
 

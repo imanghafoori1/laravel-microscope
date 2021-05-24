@@ -111,7 +111,7 @@ class ParseUseStatement
     {
         $result = null;
 
-        $neutral = [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT,];
+        $neutral = [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT];
 
         while ($token = \current($tokens)) {
             [$token, $s,] = \is_array($token) ? $token : [$token, $token];
@@ -145,7 +145,7 @@ class ParseUseStatement
     {
         $endings = [T_STRING, T_NS_SEPARATOR];
 
-        defined('T_NAME_QUALIFIED') && $endings[] =  T_NAME_QUALIFIED; // php 8.0
+        defined('T_NAME_QUALIFIED') && $endings[] = T_NAME_QUALIFIED; // php 8.0
 
         return self::fetch($tokens, $endings);
     }
