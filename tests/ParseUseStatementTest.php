@@ -51,32 +51,32 @@ class ParseUseStatementTest extends BaseTestClass
 
         $this->assertEquals([
             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\A\Hello',
-            "line" => 14,
+            'line' => 14,
         ], $classes[0]);
 
         $this->assertEquals([
-            "class" => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
-            "line" => 22,
+            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
+            'line' => 22,
         ], $classes[1]);
 
         $this->assertEquals([
-            "class" => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
-            "line" => 30,
+            'class' => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
+            'line' => 30,
         ], $classes[2]);
 
         $this->assertEquals([
-            "class" => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
-            "line" => 33,
+            'class' => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
+            'line' => 33,
         ], $classes[3]);
 
         $this->assertEquals([
-            "class" => "\YetAnotherclass",
-            "line" => 34,
+            'class' => "\YetAnotherclass",
+            'line' => 34,
         ], $classes[4]);
 
         $this->assertEquals([
-            "class" => "Illuminate\Contracts\HalfImported\TheRest",
-            "line" => 35,
+            'class' => "Illuminate\Contracts\HalfImported\TheRest",
+            'line' => 35,
         ], $classes[5]);
     }
 }
