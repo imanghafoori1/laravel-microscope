@@ -51,31 +51,31 @@ class ParseUseStatementTest extends BaseTestClass
         $this->assertEquals([
             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\A\Hello',
             'line' => 13,
-            "namespace" => "Imanghafoori\LaravelMicroscope\FileReaders",
+            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
         ], $classes[0]);
 
         $this->assertEquals([
-            "class" => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
-            "line" => 21,
-            "namespace" => "Imanghafoori\LaravelMicroscope\FileReaders",
+            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
+            'line' => 21,
+            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
         ], $classes[1]);
 
         $this->assertEquals([
-            "class" => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
-            "line" => 29,
-            "namespace" => "Imanghafoori\LaravelMicroscope\FileReaders",
+            'class' => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
+            'line' => 29,
+            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
         ], $classes[2]);
 
         $this->assertEquals([
-            "class" => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
-            "line" => 32,
-            "namespace" => "Imanghafoori\LaravelMicroscope\FileReaders",
+            'class' => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
+            'line' => 32,
+            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
         ], $classes[3]);
 
         $this->assertEquals([
-            "class" => "\YetAnotherclass",
-            "line" => 33,
-            "namespace" => "Imanghafoori\LaravelMicroscope\FileReaders",
+            'class' => "\YetAnotherclass",
+            'line' => 33,
+            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
         ], $classes[4]);
     }
 }
