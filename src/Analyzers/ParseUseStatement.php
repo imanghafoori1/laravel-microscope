@@ -41,7 +41,7 @@ class ParseUseStatement
     public static function parseUseStatements($tokens, $forClass = null)
     {
         $namespace = $class = $classLevel = $level = null;
-        $res = $uses = [];
+        $output = $uses = [];
         while ($token = \current($tokens)) {
             \next($tokens);
             switch (\is_array($token) ? $token[0] : $token) {
@@ -56,9 +56,9 @@ class ParseUseStatement
                     if ($name = self::fetch($tokens, T_STRING)) {
                         $class = $namespace.$name;
                         $classLevel = $level + 1;
-                        $res[$class] = $uses;
+                        $output[$class] = $uses;
                         if ($class === $forClass) {
-                            return [$res, $uses];
+                            return [$output, $uses];
                         }
                     }
                     break;
@@ -104,7 +104,7 @@ class ParseUseStatement
             }
         }
 
-        return [$res, $uses];
+        return [$output, $uses];
     }
 
     public static function fetch(&$tokens, $take)

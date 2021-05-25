@@ -139,9 +139,9 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == '?') {
-//              for a syntax like this:
-//              public function __construct(?Payment $payment) { ... }
-//              we skip collecting
+                // for a syntax like this:
+                // public function __construct(?Payment $payment) { ... }
+                // we skip collecting
                 self::forward();
                 continue;
             } elseif ($t == T_DOUBLE_COLON) {
