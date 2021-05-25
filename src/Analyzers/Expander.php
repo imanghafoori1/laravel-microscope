@@ -27,10 +27,11 @@ class Expander
 
     public static function expendReferences($classes, $imports)
     {
-        // Here we implode the tokens to form the full namespaced class path
+        // here we implode the tokens to form the full namespaced class path
         $results = [];
         $namespace = '';
-        foreach ($classes as $i => $importeds) {
+        $c = 0;
+        foreach ($classes as $importeds) {
             if ($importeds[0][0] == T_NAMESPACE) {
                 unset($importeds[0]);
                 foreach ($importeds as $row) {
@@ -39,36 +40,39 @@ class Expander
                 continue;
             }
 
-            $results[$i]['class'] = '';
+            $results[$c]['class'] = '';
 
             // attach the current namespace if it does not begin with '\'
             if ($importeds[0][1][0] != '\\') {
-                $results[$i]['class'] = $namespace ? $namespace.'\\' : '';
+                $results[$c]['class'] = $namespace ? $namespace.'\\' : '';
             }
 
             foreach ($importeds as $row) {
                 if (self::isBuiltinType($row[1])) {
-                    unset($results[$i]);
+                    unset($results[$c]);
                     continue;
                 }
-                if ($importeds[0][1] != '\\') {
-                    if (isset(array_values($imports)[0][$importeds[0][1]][0])) {
-                        $results[$i]['class'] = array_values($imports)[0][$importeds[0][1]][0];
 
-                        for ($j = 1; $j < count($importeds); $j++) {
-                            $results[$i]['class'] .= $importeds[$j][1];
-                        }
-                    } else {
-                        $results[$i]['class'] .= $row[1];
-                    }
-                } else {
-                    $results[$i]['class'] .= $row[1];
+                // if starts with "\" or is not imported by the "use"
+                if ($importeds[0][1] == '\\' || ! isset(array_values($imports)[0][$importeds[0][1]][0])) {
+                    $results[$c]['class'] .= $row[1];
+                    $results[$c]['line'] = $row[2];
+                    continue;
                 }
-                $results[$i]['line'] = $row[2];
-                $results[$i]['namespace'] = $namespace;
+
+                // reads the import from the top
+                $results[$c]['class'] = array_values($imports)[0][$importeds[0][1]][0];
+
+                // for half imported references
+                for ($j = 1; $j < count($importeds); $j++) {
+                    $results[$c]['class'] .= $importeds[$j][1];
+                }
+
+                $results[$c]['line'] = $row[2];
             }
+            $c++;
         }
 
-        return $results;
+        return [$results, $namespace];
     }
 }

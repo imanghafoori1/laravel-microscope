@@ -34,6 +34,7 @@ class ParseUseStatementTest extends BaseTestClass
             'Finder' => ["Symfony\Component\Finder\Symfony\Component\Finder\Finder", 6],
             'Closure' => ['Closure', 11],
             'PasswordBroker' => ["Illuminate\Contracts\Auth\PasswordBroker", 10],
+            'HalfImported' =>  ["Illuminate\Contracts\HalfImported", 12],
 
         ];
 
@@ -45,37 +46,37 @@ class ParseUseStatementTest extends BaseTestClass
     {
         $tokens = $this->getTokens('/stubs/group_import.stub');
 
-        $classes = ParseUseStatement::findClassReferences($tokens, '');
-        $classes = array_values($classes);
+        [$classes, $namespace] = ParseUseStatement::findClassReferences($tokens, '');
+        $this->assertEquals("Imanghafoori\LaravelMicroscope\FileReaders", $namespace);
 
         $this->assertEquals([
             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\A\Hello',
-            'line' => 13,
-            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
+            "line" => 14,
         ], $classes[0]);
 
         $this->assertEquals([
-            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
-            'line' => 21,
-            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
+            "class" => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
+            "line" => 22,
         ], $classes[1]);
 
         $this->assertEquals([
-            'class' => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
-            'line' => 29,
-            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
+            "class" => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
+            "line" => 30,
         ], $classes[2]);
 
         $this->assertEquals([
-            'class' => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
-            'line' => 32,
-            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
+            "class" => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
+            "line" => 33,
         ], $classes[3]);
 
         $this->assertEquals([
-            'class' => "\YetAnotherclass",
-            'line' => 33,
-            'namespace' => "Imanghafoori\LaravelMicroscope\FileReaders",
+            "class" => "\YetAnotherclass",
+            "line" => 34,
         ], $classes[4]);
+
+        $this->assertEquals([
+            "class" => "Illuminate\Contracts\HalfImported\TheRest",
+            "line" => 35,
+        ], $classes[5]);
     }
 }

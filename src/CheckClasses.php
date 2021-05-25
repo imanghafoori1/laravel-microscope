@@ -168,7 +168,7 @@ class CheckClasses
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        $nonImportedClasses = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+        [$nonImportedClasses, $namespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
 
@@ -184,7 +184,7 @@ class CheckClasses
                 return $printer->wrongImport($absFilePath, $class, $line);
             }
 
-            [$isFixed, $corrections] = self::fix($absFilePath, $class, $line, $nonImportedClass['namespace']);
+            [$isFixed, $corrections] = self::fix($absFilePath, $class, $line, $namespace);
 
             $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
 

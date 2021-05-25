@@ -9,6 +9,7 @@ use Symfony\Component\Finder\{
 };
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Closure;
+use Illuminate\Contracts\HalfImported;
 
 class Paths implements A\Hello
 {
@@ -31,5 +32,6 @@ class Paths implements A\Hello
         }
         MyAmIClass::con;
         \YetAnotherclass::koo();
+        HalfImported\TheRest::class;
     }
 }

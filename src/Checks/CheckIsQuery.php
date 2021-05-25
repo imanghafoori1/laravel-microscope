@@ -11,7 +11,7 @@ class CheckIsQuery
 {
     public static function check($tokens, $absPath)
     {
-        $classes = ParseUseStatement::findClassReferences($tokens, $absPath);
+        [$classes,] = ParseUseStatement::findClassReferences($tokens, $absPath);
 
         foreach ($classes as $class) {
             $c = $class['class'];
