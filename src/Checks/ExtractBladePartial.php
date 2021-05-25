@@ -135,7 +135,6 @@ class ExtractBladePartial
             $isInFolder = preg_match("/^(.*)\/([^\/]+)$/", $filepath, $filepathMatches);
             if ($isInFolder) {
                 $folderName = $filepathMatches[1];
-//                $fileName = $filepathMatches[2];
                 if (! is_dir($folderName)) {
                     mkdir($folderName, 0777, true);
                 }

@@ -10,7 +10,7 @@ use Symfony\Component\Finder\{
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Closure;
 
-class Paths
+class Paths implements A\Hello
 {
     public static function getAbsFilePaths($dirs)
     {
@@ -29,5 +29,7 @@ class Paths
         } catch (DirectoryNotFoundException $e) {
             return [];
         }
+        MyAmIClass::con;
+        \YetAnotherclass::koo();
     }
 }
