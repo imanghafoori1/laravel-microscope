@@ -8,7 +8,7 @@ class GetClassProperties
     {
         $fp = fopen($filePath, 'r');
         $buffer = fread($fp, config('microscope.class_search_buffer', 2500));
-        // in order to ensure docblocks are closed if there is any opeinging we add "/**/"
+        // In order to ensure doc blocks are closed if there is any opening we add "/**/"
         $tokens = token_get_all($buffer.'/**/');
 
         if (strpos($buffer, '{') === false) {

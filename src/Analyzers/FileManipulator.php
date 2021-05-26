@@ -49,6 +49,7 @@ class FileManipulator
             return [false, $correct];
         }
 
+        // We just remove the wrong import if import is not needed.
         if (NamespaceCorrector::haveSameNamespace($contextClass, $correct[0])) {
             if ($isUsed) {
                 return [self::removeLine($absPath, $lineNum), [' Deleted!']];
