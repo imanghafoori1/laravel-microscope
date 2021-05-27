@@ -36,9 +36,7 @@ class CheckEndIf extends Command
                 try {
                     $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
                 } catch (\Exception $e) {
-                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
-                    dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
-                    dump('Send us the contents of: '.$path);
+                    self::requestIssue($path);
                     continue;
                 }
 
@@ -88,5 +86,12 @@ class CheckEndIf extends Command
         $this->warn('This command is going to make changes to your files!');
 
         return $this->output->confirm('Do you have committed everything in git?', true);
+    }
+
+    private static function requestIssue(string $path)
+    {
+        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
+        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
+        dump('Send us the contents of: '.$path);
     }
 }
