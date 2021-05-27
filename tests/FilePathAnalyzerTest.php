@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 
 class FilePathAnalyzerTest extends BaseTestClass
 {

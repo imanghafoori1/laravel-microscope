@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use ReflectionException;

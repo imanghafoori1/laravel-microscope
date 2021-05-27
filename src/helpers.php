@@ -34,7 +34,7 @@ if (! function_exists('microscope_dd_listeners')) {
                 $sp = '     ';
                 foreach ($listernsInfo as $i => $listenerInfo) {
                     dump($sp.($i + 1).' - '.$listenerInfo[0]);
-                    $relPath = \Imanghafoori\LaravelMicroscope\Analyzers\FilePath::getRelativePath($listenerInfo[1]['file']);
+                    $relPath = \Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath::getRelativePath($listenerInfo[1]['file']);
                     dump($sp.'    at '.$relPath.':'.$listenerInfo[1]['line']);
                 }
                 dump('------------------------------------------');

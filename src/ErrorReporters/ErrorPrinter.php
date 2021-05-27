@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class ErrorPrinter
@@ -304,5 +304,29 @@ class ErrorPrinter
         $command->line('<fg=blue>|  \(^_^)/    Regards, Iman Ghafoori    \(^_^)/   |</>');
         $command->line('<fg=blue>|-------------------------------------------------|</>');
         $command->line('https://github.com/imanghafoori1/microscope');
+    }
+
+    public static function warnIncorrectNamespace($currentNamespace, $relativePath, $class)
+    {
+        /**
+         * @var $p ErrorPrinter
+         */
+        $p = app(ErrorPrinter::class);
+        $msg = 'Incorrect namespace: '.$p->yellow("namespace $currentNamespace;");
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
+        $p->end();
+        $currentNamespace && $p->printHeader('Incorrect namespace: '.$p->yellow("namespace $currentNamespace;"));
+        ! $currentNamespace && $p->printHeader('Namespace Not Found: '.$class);
+        $p->printLink($relativePath, 3);
+    }
+
+
+    public static function ask($command, $correctNamespace)
+    {
+        if ($command->option('force')) {
+            return true;
+        }
+
+        return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
     }
 }

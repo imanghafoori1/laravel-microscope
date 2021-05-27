@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\FilePath;
 
 class LaravelPaths
 {

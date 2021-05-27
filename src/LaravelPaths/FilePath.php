@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzers;
+namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
