@@ -40,11 +40,7 @@ class CheckPsr4 extends Command
             $this->fixReferences($autoload, $olds, $news);
         }
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln('');
-            $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
-            $this->getOutput()->writeln('==============================');
-            $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-            $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
+            $this->reportResult($autoload);
             $this->printErrorsCount($errorPrinter, $time);
         } else {
             $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
@@ -175,7 +171,7 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function report(string $_path, $line)
+    private function report($_path, $line)
     {
         app(ErrorPrinter::class)->simplePendError($_path, $line, '', 'ns_replacement', 'Namespace replacement:');
     }
@@ -183,12 +179,26 @@ class CheckPsr4 extends Command
     private function printErrorsCount($errorPrinter, $time)
     {
         if ($errorCount = $errorPrinter->errorsList['total']) {
-            $errorCount && $this->warn(PHP_EOL.$errorCount.' error(s) found in namespaces');
+            $this->warn(PHP_EOL.$errorCount.' error(s) found in namespaces');
         } else {
-            $time = microtime(true) - $time;
-            $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
-            $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
-            $this->line('');
+            $this->noErrorFound($time);
         }
+    }
+
+    private function reportResult($autoload)
+    {
+        $this->getOutput()->writeln('');
+        $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
+        $this->getOutput()->writeln('==============================');
+        $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
+        $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
+    }
+
+    private function noErrorFound($time)
+    {
+        $time = microtime(true) - $time;
+        $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
+        $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
+        $this->line('');
     }
 }
