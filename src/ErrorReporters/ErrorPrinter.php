@@ -320,7 +320,6 @@ class ErrorPrinter
         $p->printLink($relativePath, 3);
     }
 
-
     public static function ask($command, $correctNamespace)
     {
         if ($command->option('force')) {
