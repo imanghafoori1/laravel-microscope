@@ -10,13 +10,13 @@ class ComposerJson
 
     public static function readKey($key, $composerPath = null)
     {
-        $path = $composerPath ?: app()->basePath();
+        $path = $composerPath ?: '';
 
         if (isset(self::$result[$path][$key])) {
             return self::$result[$path][$key];
         }
 
-        $composer = \json_decode(\file_get_contents($path.DIRECTORY_SEPARATOR.'composer.json'), true);
+        $composer = \json_decode(\file_get_contents(app()->basePath($path.'composer.json')), true);
 
         $value = (array) data_get($composer, $key, []);
 
@@ -45,7 +45,7 @@ class ComposerJson
         $res = [];
         foreach ($composers as $path) {
             // We avoid autoload-dev for repositories.
-            $res = $res + self::readKey('autoload.psr-4', app()->basePath($path));
+            $res = $res + self::readKey('autoload.psr-4', $path);
         }
 
         // add the root composer.json

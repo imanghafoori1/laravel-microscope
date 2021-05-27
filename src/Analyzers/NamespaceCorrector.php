@@ -66,4 +66,22 @@ class NamespaceCorrector
 
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
+
+    public static function getNamespaceFromRelativePath($relPath)
+    {
+        // Remove .php from class path
+        $relPath = str_replace([base_path(), '.php'], '', $relPath);
+
+        $autoload = ComposerJson::readAutoload();
+        uksort($autoload, function ($a, $b) {
+            return strlen($b) <=> strlen($a);
+        });
+
+        $namespaces = array_keys($autoload);
+        $paths = array_values($autoload);
+
+        $relPath = \str_replace('\\', '/', $relPath);
+
+        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
+    }
 }
