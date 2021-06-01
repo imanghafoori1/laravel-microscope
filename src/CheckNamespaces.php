@@ -59,9 +59,7 @@ class CheckNamespaces
                 continue;
             }
 
-            if ($detailed) {
-                event('microscope.checking', [$classFilePath->getRelativePathname(), $command]);
-            }
+            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname(), $command]);
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
