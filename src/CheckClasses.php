@@ -158,7 +158,7 @@ class CheckClasses
         $baseClassName = \str_replace($namespace.'\\', '', $class);
 
         $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
-        
+
         if ($result[0]) {
             return $result;
         }

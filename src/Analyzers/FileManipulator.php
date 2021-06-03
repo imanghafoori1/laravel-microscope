@@ -75,7 +75,7 @@ class FileManipulator
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         // if there is any use statement at the top of the file
-        if (count($uses) && !isset($uses[$className])) {
+        if (count($uses) && ! isset($uses[$className])) {
             foreach ($uses as $use) {
                 self::replaceFirst($absPath, $class, $className, $lineNum);
                 $lineNum = $use[1];
