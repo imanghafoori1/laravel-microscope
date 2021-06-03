@@ -32,7 +32,7 @@ class FileManipulator
         return self::applyToFile($file, $lineChanger);
     }
 
-    public static function insertAtLine($file, $replace = '', $_line)
+    public static function insertAtLine($file, $replace, $_line)
     {
         $lineChanger = function ($lineNum, $line) use ($replace, $_line) {
             if ($lineNum == $_line) {
