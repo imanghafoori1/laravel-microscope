@@ -49,6 +49,10 @@ class ClassMethods
                 [$body, $i] = FunctionCall::readBody($tokens, $charIndex);
             } elseif ($char == ';') {
                 $body = [];
+            } else {
+                $code = Refactor::toString($tokens);
+                self::requestIssue($code);
+                continue;
             }
 
             $i++;
@@ -68,6 +72,14 @@ class ClassMethods
         $class['methods'] = $methods;
 
         return $class;
+    }
+
+    private static function requestIssue($content)
+    {
+        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
+        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
+        dump('Send us the content and mention your php version ('.phpversion().')');
+        dump($content);
     }
 
     private static function findVisibility($tokens, $i)
