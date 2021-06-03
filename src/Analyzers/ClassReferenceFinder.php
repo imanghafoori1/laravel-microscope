@@ -177,6 +177,7 @@ class ClassReferenceFinder
                 // we do not want to collect the new keyword itself
                 continue;
             } elseif ($t == '|') {
+                $c++;
                 self::forward();
 
                 continue;
