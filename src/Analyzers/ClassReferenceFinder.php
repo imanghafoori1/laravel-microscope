@@ -59,7 +59,7 @@ class ClassReferenceFinder
             } elseif ($t == T_NAMESPACE) {
                 $force_close = false;
                 $collect = true;
-            // continue;   // why we do not continue?? (0_o)
+                // continue;   // why we do not continue?? (0_o)
             } elseif (\in_array($t, [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
                 $isInsideMethod = false;
             } elseif ($t == T_FUNCTION) {
@@ -175,6 +175,10 @@ class ClassReferenceFinder
                 self::forward();
 
                 // we do not want to collect the new keyword itself
+                continue;
+            } elseif ($t == '|') {
+                self::forward();
+
                 continue;
             }
 
