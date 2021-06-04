@@ -8,10 +8,10 @@ class NamespaceCorrector
 {
     public static function getNamespaceFromFullClass($class)
     {
-        $arr = explode('\\', $class);
-        array_pop($arr);
+        $segments = explode('\\', $class);
+        array_pop($segments); // removes the last part
 
-        return trim(implode('\\', $arr), '\\');
+        return trim(implode('\\', $segments), '\\');
     }
 
     public static function haveSameNamespace($class1, $class2)

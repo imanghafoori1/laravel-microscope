@@ -38,8 +38,6 @@ class FileManipulator
             if ($lineNum == $atLine) {
                 return $newLine.PHP_EOL.$currentLine;
             }
-
-            return $currentLine;
         };
 
         return self::applyToEachLine($absPath, $lineChanger);
