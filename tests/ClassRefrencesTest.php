@@ -29,10 +29,10 @@ class ClassRefrencesTest extends BaseTestClass
         $this->assertEquals([[311, 'Trait2', 16]], $output[4]);
         $this->assertEquals([[311, 'Trait3', 16]], $output[5]);
 
-        $this->assertEquals([[311, 'TypeHint1', 17]], $output[3+3]);
-        $this->assertEquals([[311, 'TypeHint2', 17]], $output[4+3]);
-        $this->assertEquals([[311, 'Finder', 23]], $output[5+3]);
-        $this->assertEquals([[311, 'DirectoryNotFoundException', 31]], $output[6+3]);
+        $this->assertEquals([[311, 'TypeHint1', 17]], $output[3 + 3]);
+        $this->assertEquals([[311, 'TypeHint2', 17]], $output[4 + 3]);
+        $this->assertEquals([[311, 'Finder', 23]], $output[5 + 3]);
+        $this->assertEquals([[311, 'DirectoryNotFoundException', 31]], $output[6 + 3]);
         //$this->assertEquals([[311, 'Finder', 36]], $output[7+3]);
         //$this->assertEquals([[393, '\\', 37], [311, 'Exception', 37],], $output[8+3]);
         //$this->assertEquals([[393, '\\', 37], [311, 'ErrorException', 37]], $output[9+3]);

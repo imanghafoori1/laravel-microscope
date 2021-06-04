@@ -2,18 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
-use Imanghafoori\LaravelMicroscope\Checks\ActionsComments as Action;
-use Symfony\Component\Finder\{
-    Exception\DirectoryNotFoundException,
-    Symfony\Component\Finder\Finder
-};
-use Illuminate\Contracts\Auth\PasswordBroker;
-use Closure;
-use \Backy;
 use Illuminate\Contracts\HalfImported;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
+use Symfony\Component\Finder\Symfony\Component\Finder\Finder;
 
 class Paths extends ParentClass implements InterF1, InterF2
-{   use Trait1, Trait2;use Trait3;
+{
+    use Trait1, Trait2;
+    use Trait3;
+
     public static function getAbsFilePaths(TypeHint1 $dirs, ?TypeHint2 $dir3, $arg = [1, 2])
     {
         if (! $dirs) {
