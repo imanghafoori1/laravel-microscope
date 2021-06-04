@@ -68,7 +68,7 @@ class ClassMethodsTest extends BaseTestClass
         $this->assertEquals('public', $trait['methods'][0]['visibility'][1]);
         $this->assertEquals('public', $trait['methods'][1]['visibility'][1]);
         //check return type
-        $this->assertEquals('string', $trait['methods'][5]['returnType'][1]);
+        $this->assertEquals('string', $trait['methods'][5]['returnType'][0][1]);
         $this->assertStringContainsString('return $this->rememberTokenName;', $trait['methods'][5]['body']);
     }
 }

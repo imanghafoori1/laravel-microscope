@@ -52,7 +52,7 @@ class ClassMethods
             } else {
                 $code = Refactor::toString($tokens);
                 self::requestIssue($code);
-                continue;
+                break;
             }
 
             $i++;
@@ -98,10 +98,11 @@ class ClassMethods
         return [$visibility, $isStatic, $isAbstract];
     }
 
-    private static function processReturnType($char, $tokens, $charIndex)
+    private static function processReturnType($endingChar, $tokens, $charIndex)
     {
-        if ($char != ':') {
-            return [null, null, $char, $charIndex];
+        // No return type is defined.
+        if ($endingChar != ':') {
+            return [null, null, $endingChar, $charIndex];
         }
 
         [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
@@ -113,8 +114,16 @@ class ClassMethods
             [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
         }
 
-        [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+        [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
 
-        return [$returnType, $hasNullableReturnType, $char, $charIndex];
+        $returnType = [$returnType];
+
+        while ($endingChar == '|') {
+            [$returnType2, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+            $returnType[] = $returnType2;
+            [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+        }
+
+        return [$returnType, $hasNullableReturnType, $endingChar, $charIndex];
     }
 }

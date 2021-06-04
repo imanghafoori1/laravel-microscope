@@ -52,14 +52,14 @@ class AbstractMethodsClassTest extends BaseTestClass
         $this->assertEquals(true, $methods[13]['nullable_return_type']);
 
         $this->assertEquals(null, $methods[0]['returnType']);
-        $this->assertEquals('test', $methods[6]['returnType'][1]);
-        $this->assertEquals('string', $methods[7]['returnType'][1]);
-        $this->assertEquals('bool', $methods[8]['returnType'][1]);
-        $this->assertEquals('int', $methods[9]['returnType'][1]);
-        $this->assertEquals('array', $methods[10]['returnType'][1]);
-        $this->assertEquals('void', $methods[11]['returnType'][1]);
-        $this->assertEquals('float', $methods[12]['returnType'][1]);
-        $this->assertEquals('string', $methods[13]['returnType'][1]);
+        $this->assertEquals('test', $methods[6]['returnType'][0][1]);
+        $this->assertEquals('string', $methods[7]['returnType'][0][1]);
+        $this->assertEquals('bool', $methods[8]['returnType'][0][1]);
+        $this->assertEquals('int', $methods[9]['returnType'][0][1]);
+        $this->assertEquals('array', $methods[10]['returnType'][0][1]);
+        $this->assertEquals('void', $methods[11]['returnType'][0][1]);
+        $this->assertEquals('float', $methods[12]['returnType'][0][1]);
+        $this->assertEquals('string', $methods[13]['returnType'][0][1]);
     }
 
     /** @test */
