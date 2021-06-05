@@ -20,14 +20,14 @@ class ClassReferencesTest extends BaseTestClass
         $this->assertEquals([[311, 'Trait2', 11]], $output[4]);
         $this->assertEquals([[311, 'Trait3', 13]], $output[5]);
 
-        $this->assertEquals([[311, 'TypeHint1', 17]], $output[3+3]);
-        $this->assertEquals([[311, 'TypeHint2', 17]], $output[4+3]);
-        $this->assertEquals([[311, 'Finder', 23]], $output[5+3]);
-        $this->assertEquals([[311, 'DirectoryNotFoundException', 31]], $output[6+3]);
-        $this->assertEquals([[311, 'Finder', 36]], $output[7+3]);
-        $this->assertEquals([[311, 'MyAmIClass', 41]], $output[10+3]);
-        $this->assertEquals([[311, 'TypeHint1', 51]], $output[13+3]);
-        $this->assertEquals([[311, "Newed", 59]], $output[14+3]);
+        $this->assertEquals([[311, 'TypeHint1', 17]], $output[6]);
+        $this->assertEquals([[311, 'TypeHint2', 17]], $output[7]);
+        $this->assertEquals([[311, 'Finder', 23]], $output[8]);
+        $this->assertEquals([[311, 'DirectoryNotFoundException', 31]], $output[9]);
+        $this->assertEquals([[311, 'Finder', 36]], $output[10]);
+        $this->assertEquals([[311, 'MyAmIClass', 41]], $output[13]);
+        $this->assertEquals([[311, 'TypeHint1', 51]], $output[16]);
+        $this->assertEquals([[311, "Newed", 59]], $output[17]);
 
         if (version_compare(phpversion(), '8.0.0') !== 1) {
             $this->assertEquals([
