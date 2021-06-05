@@ -8,6 +8,8 @@ class StubFileManager
 {
     const STUBS_FOLDER_NAME = 'Stubs';
 
+    const STUBS_FILE_FORMAT = '.stub';
+    
     /**
      * Render The Stub With Passed Paramt into typeHintClassPath
      * 
@@ -51,9 +53,9 @@ class StubFileManager
      */
     private static function getStubContentByFileName($stubName)
     {
-        $stubName = str_replace('.stub', '', $stubName);
+        $stubName = str_replace(self::STUBS_FILE_FORMAT, '', $stubName);
 
-        $stubFilePath = __DIR__ . DIRECTORY_SEPARATOR . self::STUBS_FOLDER_NAME . DIRECTORY_SEPARATOR . $stubName . '.stub';
+        $stubFilePath = __DIR__ . DIRECTORY_SEPARATOR . self::STUBS_FOLDER_NAME . DIRECTORY_SEPARATOR . $stubName . self::STUBS_FILE_FORMAT;
 
         if (!(file_exists($stubFilePath) && is_readable($stubFilePath))) {
             throw new InvalidArgumentException("$stubName is not found in stubs folder");
