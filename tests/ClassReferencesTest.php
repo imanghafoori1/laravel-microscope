@@ -9,7 +9,7 @@ class ClassReferencesTest extends BaseTestClass
     /** @test */
     public function can_extract_namespace()
     {
-        $string = file_get_contents(__DIR__.'/stubs/class_refrences.php');
+        $string = file_get_contents(__DIR__.'/stubs/class_refrences.stub');
         $tokens = token_get_all($string);
 
         $output = array_values(ClassReferenceFinder::process($tokens));

@@ -44,7 +44,7 @@ class ParseUseStatementTest extends BaseTestClass
     /** @test */
     public function can_find_class_references()
     {
-        $tokens = $this->getTokens('/stubs/class_refrences.php');
+        $tokens = $this->getTokens('/stubs/class_refrences.stub');
 
         [$classes, $namespace] = ParseUseStatement::findClassReferences($tokens, 'class_refrences.stub');
         $this->assertEquals("Imanghafoori\LaravelMicroscope\FileReaders", $namespace);
