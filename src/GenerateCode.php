@@ -47,7 +47,17 @@ class GenerateCode
                 continue;
             }
             $prefix = strtolower(str_replace('ServiceProvider', '', $className));
-            file_put_contents($absFilePath, ServiceProviderStub::providerContent($correctNamespace, $className, $prefix));
+
+            $stubContent = StubFileManager::getRenderedStub(
+                'microscopeServiceProvider',
+                [
+                    'correctNamespace' => $correctNamespace,
+                    'className' => $className,
+                    'name' => $prefix,
+                ]
+            );
+            
+            file_put_contents($absFilePath, $stubContent);
 
             self::generateFolderStructure($classFilePath, $correctNamespace, $prefix);
             self::addToProvidersArray($correctNamespace . '\\' . $className);
