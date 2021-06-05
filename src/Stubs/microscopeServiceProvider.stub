@@ -1,20 +1,20 @@
+<?php
 
-
-namespace $correctNamespace;
+namespace {{$correctNamespace}};
 
 use Illuminate\Support\ServiceProvider;
 
-class $className extends ServiceProvider
+class {{$className}} extends ServiceProvider
 {
     public function register()
     {
-        // $this->mergeConfigFrom(__DIR__.'/config/$name_config.php', '$name');
+        // $this->mergeConfigFrom(__DIR__.'/config/$name_config.php', '{{$name}}');
     }
 
     public function boot()
     {
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadRoutesFrom(__DIR__.'/$name_routes.php');
-        $this->loadViewsFrom(__DIR__.'/views', '$name');
+        $this->loadViewsFrom(__DIR__.'/views', '{{$name}}');
     }
 }
