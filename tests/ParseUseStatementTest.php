@@ -44,39 +44,99 @@ class ParseUseStatementTest extends BaseTestClass
     /** @test */
     public function can_find_class_references()
     {
-        $tokens = $this->getTokens('/stubs/group_import.stub');
+        $tokens = $this->getTokens('/stubs/class_refrences.php');
 
-        [$classes, $namespace] = ParseUseStatement::findClassReferences($tokens, '');
+        [$classes, $namespace] = ParseUseStatement::findClassReferences($tokens, 'class_refrences.stub');
         $this->assertEquals("Imanghafoori\LaravelMicroscope\FileReaders", $namespace);
 
         $this->assertEquals([
-            'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\A\Hello',
-            'line' => 14,
+            'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\InterF1',
+            'line' => 9,
         ], $classes[0]);
 
         $this->assertEquals([
-            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
-            'line' => 22,
+            'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\InterF2',
+            'line' => 9,
         ], $classes[1]);
+
+         $this->assertEquals([
+             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\Trait1',
+             'line' => 11
+         ], $classes[2]);
+
+         $this->assertEquals([
+             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\Trait2',
+             'line' => 11
+         ], $classes[3]);
+
+         $this->assertEquals([
+             'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\Trait3',
+             'line' => 13
+         ], $classes[4]);
+
+        $this->assertEquals([
+            'class' => "Imanghafoori\LaravelMicroscope\FileReaders\TypeHint1",
+            'line' => 17,
+        ], $classes[5]);
+        $this->assertEquals([
+            'class' => "Imanghafoori\LaravelMicroscope\FileReaders\TypeHint2",
+            'line' => 17,
+        ], $classes[6]);
+
+        $this->assertEquals([
+            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
+            'line' => 23,
+        ], $classes[7]);
+
 
         $this->assertEquals([
             'class' => "Symfony\Component\Finder\Exception\DirectoryNotFoundException",
-            'line' => 30,
-        ], $classes[2]);
+            'line' => 31,
+        ], $classes[8]);
 
         $this->assertEquals([
+            'class' => "Symfony\Component\Finder\Symfony\Component\Finder\Finder",
+            'line' => 36,
+        ], $classes[9]);
+
+        $this->assertEquals([
+            'class' => "\Exception",
+            'line' => 37,
+        ], $classes[10]);
+
+        $this->assertEquals([
+            'class' => "\ErrorException",
+            'line' => 37,
+        ], $classes[11]);
+
+      $this->assertEquals([
             'class' => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
-            'line' => 33,
-        ], $classes[3]);
+            'line' => 41,
+        ], $classes[12]);
 
-        $this->assertEquals([
+      $this->assertEquals([
             'class' => "\YetAnotherclass",
-            'line' => 34,
-        ], $classes[4]);
+            'line' => 42,
+        ], $classes[13]);
 
-        $this->assertEquals([
-            'class' => "Illuminate\Contracts\HalfImported\TheRest",
-            'line' => 35,
-        ], $classes[5]);
+      $this->assertEquals([
+          'class' => 'Illuminate\Contracts\HalfImported\TheRest',
+          'line' => 43
+      ], $classes[14]);
+
+      $this->assertEquals([
+          'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\TypeHint1',
+          'line' => 51
+      ], $classes[15]);
+
+      $this->assertEquals([
+          'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\Newed',
+          'line' => 59
+      ], $classes[16]);
+
+      $this->assertEquals([
+          'class' => 'Imanghafoori\LaravelMicroscope\FileReaders\A\Newed',
+          'line' => 60
+      ], $classes[17]);
     }
 }

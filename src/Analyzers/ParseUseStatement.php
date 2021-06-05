@@ -143,10 +143,6 @@ class ParseUseStatement
 
     private static function FetchNS(&$tokens)
     {
-        $endings = [T_STRING, T_NS_SEPARATOR];
-
-        defined('T_NAME_QUALIFIED') && $endings[] = T_NAME_QUALIFIED; // php 8.0
-
-        return self::fetch($tokens, $endings);
+        return self::fetch($tokens, [T_STRING, T_NS_SEPARATOR, T_NAME_QUALIFIED]);
     }
 }

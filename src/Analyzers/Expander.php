@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Illuminate\Support\Str;
+
 class Expander
 {
     /**
@@ -12,13 +14,6 @@ class Expander
     public static function isBuiltinType($type)
     {
         return \in_array(strtolower($type), [
-            'string',
-            'int',
-            'float',
-            'bool',
-            'array',
-            'callable',
-            '::',
             'self',
             'static',
             'parent',
@@ -54,18 +49,34 @@ class Expander
                 }
 
                 // if starts with "\" or is not imported by the "use"
-                if ($importeds[0][1] == '\\' || ! isset(array_values($imports)[0][$importeds[0][1]][0])) {
+                if ($importeds[0][1][0] != '\\' && Str::contains($importeds[0][1], '\\')) {
+                    // for php 8.x
+                    $tmp = explode('\\', $importeds[0][1]);
+                } else {
+                    $tmp = [$importeds[0][1]];
+                }
+
+                if ($importeds[0][1] == '\\' || ! isset(array_values($imports)[0][$tmp[0]][0])) {
                     $results[$c]['class'] .= $row[1];
                     $results[$c]['line'] = $row[2];
                     continue;
                 }
 
                 // reads the import from the top
-                $results[$c]['class'] = array_values($imports)[0][$importeds[0][1]][0];
+                $results[$c]['class'] = array_values($imports)[0][$tmp[0]][0];
 
                 // for half imported references
-                for ($j = 1; $j < count($importeds); $j++) {
-                    $results[$c]['class'] .= $importeds[$j][1];
+                if ($importeds[0][1][0] != '\\' && Str::contains($importeds[0][1], '\\')) {
+                    // for php 8.x
+                    $tmp = explode('\\', $importeds[0][1]);
+                    for ($j = 1; $j < count($tmp); $j++) {
+                        $results[$c]['class'] .= '\\'.$tmp[$j];
+                    }
+                } else {
+                    // for php 7.x
+                    for ($j = 1; $j < count($importeds); $j++) {
+                        $results[$c]['class'] .= $importeds[$j][1];
+                    }
                 }
 
                 $results[$c]['line'] = $row[2];

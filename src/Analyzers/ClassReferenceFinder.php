@@ -48,7 +48,8 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
                 // new class {... }
-                if (self::$lastToken[0] == T_NEW) {
+                // ::class
+                if (self::$lastToken[0] == T_NEW || self::$lastToken[0] == T_DOUBLE_COLON) {
                     self::forward();
                     continue;
                 }
@@ -167,6 +168,11 @@ class ClassReferenceFinder
                 if (self::$lastToken[0] == T_STRING && $collect && ! isset($classes[$c])) {
                     $classes[$c][] = self::$lastToken;
                 }
+            } elseif ($t == T_NAME_QUALIFIED || $t == T_NAME_FULLY_QUALIFIED) {
+                if ($isInSideClass) {
+                    $collect = true;
+                }
+                //self::forward();
             } elseif ($t == T_NEW) {
                 // we start to collect tokens after the new keyword.
                 // unless we reach a variable name.
@@ -208,14 +214,14 @@ class ClassReferenceFinder
         return \in_array($token[1], [
             'string',
             'int',
+            'private',
+            'public',
+            'protected',
             'float',
             'bool',
             'array',
             'callable',
             '::',
-            'self',
-            'static',
-            'parent',
         ], true);
     }
 }
