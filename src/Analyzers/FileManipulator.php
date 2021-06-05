@@ -15,10 +15,10 @@ class FileManipulator
             }
         };
 
-        return self::applyToFile($file, $lineChanger);
+        return self::applyToEachLine($file, $lineChanger);
     }
 
-    public static function replaceFirst($file, $search, $replace = '', $_line = null)
+    public static function replaceFirst($absPath, $search, $replace = '', $_line = null)
     {
         $lineChanger = function ($lineNum, $line, $isReplaced) use ($search, $replace, $_line) {
             // Replace only the first occurrence in the file
@@ -29,7 +29,18 @@ class FileManipulator
             }
         };
 
-        return self::applyToFile($file, $lineChanger);
+        return self::applyToEachLine($absPath, $lineChanger);
+    }
+
+    public static function insertAtLine($absPath, $newLine, $atLine)
+    {
+        $lineChanger = function ($lineNum, $currentLine) use ($newLine, $atLine) {
+            if ($lineNum == $atLine) {
+                return $newLine.PHP_EOL.$currentLine;
+            }
+        };
+
+        return self::applyToEachLine($absPath, $lineChanger);
     }
 
     public static function fixReference($absPath, $class, $lineNum, $prefix = '', $isUsed = false)
@@ -43,14 +54,14 @@ class FileManipulator
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];
 
-        $contextClass = NamespaceCorrector::getNamespaceFromRelativePath($absPath);
+        $contextClassNamespace = NamespaceCorrector::getNamespaceFromRelativePath($absPath);
 
         if (\count($correct) !== 1) {
             return [false, $correct];
         }
 
         // We just remove the wrong import if import is not needed.
-        if (NamespaceCorrector::haveSameNamespace($contextClass, $correct[0])) {
+        if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $correct[0])) {
             if ($isUsed) {
                 return [self::removeLine($absPath, $lineNum), [' Deleted!']];
             }
@@ -59,13 +70,31 @@ class FileManipulator
             $prefix = '';
         }
 
+        $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
+
+        // if there is any use statement at the top of the file
+        if (count($uses) && ! isset($uses[$className])) {
+            foreach ($uses as $use) {
+                self::replaceFirst($absPath, $class, $className, $lineNum);
+                $lineNum = $use[1];
+                $fullClassPath = trim($prefix, '\\').$correct[0];
+
+                return [self::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
+            }
+        }
+        $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
+
+        if (isset($uses[$className])) {
+            return [self::replaceFirst($absPath, $class, $className, $lineNum), $correct];
+        }
+
         return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
     }
 
-    private static function applyToFile($file, $lineChanger)
+    private static function applyToEachLine($absPath, $lineChanger)
     {
-        $reading = fopen($file, 'r');
-        $tmpFile = fopen($file.'._tmp', 'w');
+        $reading = fopen($absPath, 'r');
+        $tmpFile = fopen($absPath.'._tmp', 'w');
 
         $isReplaced = false;
 
@@ -86,9 +115,9 @@ class FileManipulator
         fclose($tmpFile);
         // Might as well not overwrite the file if we didn't replace anything
         if ($isReplaced) {
-            rename($file.'._tmp', $file);
+            rename($absPath.'._tmp', $absPath);
         } else {
-            unlink($file.'._tmp');
+            unlink($absPath.'._tmp');
         }
 
         return $isReplaced;

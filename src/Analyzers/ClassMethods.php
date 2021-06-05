@@ -49,6 +49,10 @@ class ClassMethods
                 [$body, $i] = FunctionCall::readBody($tokens, $charIndex);
             } elseif ($char == ';') {
                 $body = [];
+            } else {
+                $code = Refactor::toString($tokens);
+                self::requestIssue($code);
+                break;
             }
 
             $i++;
@@ -70,6 +74,14 @@ class ClassMethods
         return $class;
     }
 
+    private static function requestIssue($content)
+    {
+        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
+        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
+        dump('Send us the content and mention your php version ('.phpversion().')');
+        dump($content);
+    }
+
     private static function findVisibility($tokens, $i)
     {
         $isStatic = $tokens[$i][0] === T_STATIC && $i -= 2;
@@ -86,10 +98,11 @@ class ClassMethods
         return [$visibility, $isStatic, $isAbstract];
     }
 
-    private static function processReturnType($char, $tokens, $charIndex)
+    private static function processReturnType($endingChar, $tokens, $charIndex)
     {
-        if ($char != ':') {
-            return [null, null, $char, $charIndex];
+        // No return type is defined.
+        if ($endingChar != ':') {
+            return [null, null, $endingChar, $charIndex];
         }
 
         [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
@@ -101,8 +114,16 @@ class ClassMethods
             [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
         }
 
-        [$char, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+        [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
 
-        return [$returnType, $hasNullableReturnType, $char, $charIndex];
+        $returnType = [$returnType];
+
+        while ($endingChar == '|') {
+            [$returnType2, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+            $returnType[] = $returnType2;
+            [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+        }
+
+        return [$returnType, $hasNullableReturnType, $endingChar, $charIndex];
     }
 }

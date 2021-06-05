@@ -153,17 +153,17 @@ class CheckClasses
         self::checkImportedClassesExist($imports, $absPath);
     }
 
-    private static function fix($absFilePath, $class, $line, $nonImportedClass)
+    private static function fix($absFilePath, $class, $line, $namespace)
     {
-        $result = FileManipulator::fixReference($absFilePath, $class, $line);
+        $baseClassName = \str_replace($namespace.'\\', '', $class);
+
+        $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
 
         if ($result[0]) {
             return $result;
         }
 
-        $baseClassName = \str_replace($nonImportedClass.'\\', '', $class);
-
-        return $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
+        return $result = FileManipulator::fixReference($absFilePath, $class, $line);
     }
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
@@ -172,6 +172,7 @@ class CheckClasses
 
         $printer = app(ErrorPrinter::class);
 
+        loopStart:
         foreach ($nonImportedClasses as $nonImportedClass) {
             $class = $nonImportedClass['class'];
             $line = $nonImportedClass['line'];
@@ -181,14 +182,19 @@ class CheckClasses
             }
 
             if (! ComposerJson::isInAppSpace($class)) {
-                return $printer->wrongImport($absFilePath, $class, $line);
+                $printer->wrongImport($absFilePath, $class, $line);
+                continue;
             }
 
             [$isFixed, $corrections] = self::fix($absFilePath, $class, $line, $namespace);
 
             $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
-
             $printer->$method($absFilePath, $class, $line, $corrections);
+            if ($isFixed) {
+                $tokens = token_get_all(file_get_contents($absFilePath));
+                ([$nonImportedClasses, $namespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath));
+                goto loopStart;
+            }
         }
     }
 }

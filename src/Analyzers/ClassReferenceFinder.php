@@ -20,7 +20,7 @@ class ClassReferenceFinder
         $classes = [];
         $c = 0;
         $force_close = $implements = $collect = false;
-        $isDefiningFunction = $isCatchException = $isSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
+        $trait = $isDefiningFunction = $isCatchException = $isSignature = $isDefiningMethod = $isInsideMethod = $isInSideClass = false;
 
         while (self::$token = current($tokens)) {
             next($tokens);
@@ -29,7 +29,7 @@ class ClassReferenceFinder
             if ($t == T_USE) {
                 // function () use ($var) {...}
                 // for this type of use we do not care and continue;
-                // who cares ?!
+                // who cares?!
                 if (self::$lastToken == ')') {
                     self::forward();
                     continue;
@@ -41,13 +41,14 @@ class ClassReferenceFinder
                     $force_close = true;
                     $collect = false;
                 } else {
+                    $trait = true;
                     $collect = true;
                 }
                 self::forward();
                 continue;
             } elseif ($t == T_CLASS || $t == T_TRAIT) {
                 // new class {... }
-                if (self::$token[1] == 'class') {
+                if (self::$lastToken[0] == T_NEW) {
                     self::forward();
                     continue;
                 }
@@ -69,7 +70,7 @@ class ClassReferenceFinder
                 }
             } elseif ($t == T_VARIABLE || $t == T_ELLIPSIS) {
                 if ($isDefiningFunction) {
-                    $c++;
+                    //$c++;
                 }
                 $collect = false;
                 self::forward();
@@ -77,7 +78,7 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == T_IMPLEMENTS) {
                 $collect = $implements = true;
-                $c++;
+                //$c++;
                 self::forward();
                 continue;
             } elseif ($t == T_WHITESPACE || $t == '&') {
@@ -85,7 +86,7 @@ class ClassReferenceFinder
                 // white spaces or collect them
                 continue;
             } elseif (in_array($t, [';', '}', T_BOOLEAN_AND, T_BOOLEAN_OR, T_LOGICAL_OR, T_LOGICAL_AND])) {
-                $force_close = false;
+                $trait = $force_close = false;
                 if ($collect) {
                     $c++;
                 }
@@ -96,7 +97,7 @@ class ClassReferenceFinder
             } elseif ($t == ',') {
                 // to avoid mistaking commas in default array values with commas between args
                 // example:   function hello($arg = [1, 2]) { ... }
-                $collect = ($isSignature && self::$lastToken[0] == T_VARIABLE) || $implements;
+                $collect = ($isSignature && self::$lastToken[0] == T_VARIABLE) || $implements || $trait;
                 $isInSideClass && ($force_close = false);
                 // for method calls: foo(new Hello, $var);
                 // we do not want to collect after comma.
@@ -105,7 +106,7 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == ']') {
                 $force_close = $collect = false;
-                $c++;
+                //$c++;
                 self::forward();
                 continue;
             } elseif ($t == '{') {
@@ -176,9 +177,14 @@ class ClassReferenceFinder
 
                 // we do not want to collect the new keyword itself
                 continue;
+            } elseif ($t == '|') {
+                $c++;
+                self::forward();
+
+                continue;
             }
 
-            if ($collect) {
+            if ($collect && ! self::isBuiltinType(self::$token)) {
                 $classes[$c][] = self::$token;
             }
             self::forward();
@@ -191,5 +197,25 @@ class ClassReferenceFinder
     {
         self::$secLastToken = self::$lastToken;
         self::$lastToken = self::$token;
+    }
+
+    public static function isBuiltinType($token)
+    {
+        if ($token[0] !== T_STRING) {
+            return false;
+        }
+
+        return \in_array($token[1], [
+            'string',
+            'int',
+            'float',
+            'bool',
+            'array',
+            'callable',
+            '::',
+            'self',
+            'static',
+            'parent',
+        ], true);
     }
 }

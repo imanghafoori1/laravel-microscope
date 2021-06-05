@@ -2,14 +2,16 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Illuminate\Support\Str;
+
 class NamespaceCorrector
 {
     public static function getNamespaceFromFullClass($class)
     {
-        $arr = explode('\\', $class);
-        array_pop($arr);
+        $segments = explode('\\', $class);
+        array_pop($segments); // removes the last part
 
-        return trim(implode('\\', $arr), '\\');
+        return trim(implode('\\', $segments), '\\');
     }
 
     public static function haveSameNamespace($class1, $class2)
@@ -28,11 +30,12 @@ class NamespaceCorrector
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
     {
-        // remove the filename.php from the end of the string
-        $p = \explode(DIRECTORY_SEPARATOR, $relativeClassPath);
-        array_pop($p);
+        // removes the filename.php from the end of the string
+        $classPath = \explode(DIRECTORY_SEPARATOR, $relativeClassPath);
+        // removes the filename
+        array_pop($classPath);
         // ensure back slashes.
-        $p = \implode('\\', $p);
+        $classPath = \implode('\\', $classPath);
 
         $composerPath = \str_replace('/', '\\', $composerPath);
 
@@ -42,7 +45,7 @@ class NamespaceCorrector
          *      "App\\": "app/"
          *  }.
          */
-        return \str_replace(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $p);
+        return Str::replaceFirst(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $classPath);
     }
 
     private static function getNewLine($incorrectNamespace, $correctNamespace)
