@@ -82,36 +82,36 @@ class ClassMethodsTest extends BaseTestClass
             $actual = ClassMethods::read($tokens);
 
             $expected = [
-                "name" => [
+                'name' => [
                     0 => 311,
-                    1 => "php8syntax",
+                    1 => 'php8syntax',
                     2 => 5,
                 ],
-                "methods" => [
+                'methods' => [
                     0 => [
-                        "name" => [311, "__construct", 7],
-                        "visibility" => [360, "public", 7],
-                        "signature" => [
-                            [358, "private", 7],
-                            [393, " ", 7],
-                            [311, "Hello", 7],
-                            [393, " ", 7],
+                        'name' => [311, '__construct', 7],
+                        'visibility' => [360, 'public', 7],
+                        'signature' => [
+                            [358, 'private', 7],
+                            [393, ' ', 7],
+                            [311, 'Hello', 7],
+                            [393, ' ', 7],
                             [315, '$foo', 7],
                         ],
-                        "body" => "",
-                        "startBodyIndex" => [34, 36],
-                        "returnType" => [
-                            [311, "G1", 7],
-                            [311, "G2", 7],
-                            [311, "G3", 7],
+                        'body' => '',
+                        'startBodyIndex' => [34, 36],
+                        'returnType' => [
+                            [311, 'G1', 7],
+                            [311, 'G2', 7],
+                            [311, 'G3', 7],
                         ],
-                        "nullable_return_type" => false,
-                        "is_static" => false,
-                        "is_abstract" => false,
+                        'nullable_return_type' => false,
+                        'is_static' => false,
+                        'is_abstract' => false,
                     ],
                 ],
-                "type" => 366,
-                "is_abstract" => false,
+                'type' => 366,
+                'is_abstract' => false,
             ];
             $this->assertEquals($expected, $actual);
         } else {

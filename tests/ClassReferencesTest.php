@@ -27,7 +27,7 @@ class ClassReferencesTest extends BaseTestClass
         $this->assertEquals([[311, 'Finder', 36]], $output[10]);
         $this->assertEquals([[311, 'MyAmIClass', 41]], $output[13]);
         $this->assertEquals([[311, 'TypeHint1', 51]], $output[16]);
-        $this->assertEquals([[311, "Newed", 59]], $output[17]);
+        $this->assertEquals([[311, 'Newed', 59]], $output[17]);
 
         if (version_compare(phpversion(), '8.0.0') !== 1) {
             $this->assertEquals([
@@ -39,11 +39,11 @@ class ClassReferencesTest extends BaseTestClass
                 [311, 'FileReaders', 3],
             ], $output[0]);
 
-            $this->assertEquals([[393, '\\', 37], [311, 'Exception', 37],], $output[8+3]);
-            $this->assertEquals([[393, '\\', 37], [311, 'ErrorException', 37]], $output[9+3]);
-            $this->assertEquals([[393, '\\', 42,], [311, 'YetAnotherclass', 42]], $output[11+3]);
-            $this->assertEquals([[311, 'HalfImported', 43], [393, '\\', 43,], [311, 'TheRest', 43],], $output[12+3]);
-            $this->assertEquals([[311, "A", 60 ], [ 393, "\\", 60 ], [ 311, "Newed", 60 ]], $output[15+3]);
+            $this->assertEquals([[393, '\\', 37], [311, 'Exception', 37]], $output[8 + 3]);
+            $this->assertEquals([[393, '\\', 37], [311, 'ErrorException', 37]], $output[9 + 3]);
+            $this->assertEquals([[393, '\\', 42], [311, 'YetAnotherclass', 42]], $output[11 + 3]);
+            $this->assertEquals([[311, 'HalfImported', 43], [393, '\\', 43], [311, 'TheRest', 43]], $output[12 + 3]);
+            $this->assertEquals([[311, 'A', 60], [393, '\\', 60], [311, 'Newed', 60]], $output[15 + 3]);
         }
     }
 }
