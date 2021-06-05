@@ -27,7 +27,7 @@ class GenerateCode
             /**
              * @var $classFilePath \Symfony\Component\Finder\SplFileInfo
              */
-            if (! Str::endsWith($classFilePath->getFilename(), ['ServiceProvider.php'])) {
+            if (!Str::endsWith($classFilePath->getFilename(), ['ServiceProvider.php'])) {
                 continue;
             }
             $absFilePath = $classFilePath->getRealPath();
@@ -42,15 +42,15 @@ class GenerateCode
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
 
             $className = \str_replace('.php', '', $classFilePath->getFilename());
-            $answer = self::ask($command, $correctNamespace.'\\'.$className);
-            if (! $answer) {
+            $answer = self::ask($command, $correctNamespace . '\\' . $className);
+            if (!$answer) {
                 continue;
             }
             $prefix = strtolower(str_replace('ServiceProvider', '', $className));
             file_put_contents($absFilePath, ServiceProviderStub::providerContent($correctNamespace, $className, $prefix));
 
             self::generateFolderStructure($classFilePath, $correctNamespace, $prefix);
-            self::addToProvidersArray($correctNamespace.'\\'.$className);
+            self::addToProvidersArray($correctNamespace . '\\' . $className);
         }
     }
 
@@ -62,7 +62,7 @@ class GenerateCode
      */
     protected static function makeDirectory($path)
     {
-        if (! is_dir($path)) {
+        if (!is_dir($path)) {
             @mkdir($path, 0777, true);
         }
 
@@ -71,7 +71,7 @@ class GenerateCode
 
     private static function ask($command, $name)
     {
-        return $command->getOutput()->confirm('Do you want to generate a service provider: '.$name, true);
+        return $command->getOutput()->confirm('Do you want to generate a service provider: ' . $name, true);
     }
 
     private static function isProvidersKey($tokens, $i)
@@ -88,7 +88,7 @@ class GenerateCode
         $tokens = token_get_all(file_get_contents(config_path('app.php')));
 
         foreach ($tokens as $i => $token) {
-            if (! self::isProvidersKey($tokens, $i)) {
+            if (!self::isProvidersKey($tokens, $i)) {
                 continue;
             }
             $closeBracketIndex = FunctionCall::readBody($tokens, $i + 15, ']')[1];
@@ -100,7 +100,7 @@ class GenerateCode
             // put a comma at the end of the array if it is not there
             $tokens[$j] !== ',' && array_splice($tokens, $j + 1, 0, [[',']]);
 
-            array_splice($tokens, (int) $closeBracketIndex, 0, [["\n        ".$providerPath.'::class,'."\n    "]]);
+            array_splice($tokens, (int) $closeBracketIndex, 0, [["\n        " . $providerPath . '::class,' . "\n    "]]);
             file_put_contents(config_path('app.php'), Refactor::toString($tokens));
         }
 
@@ -109,12 +109,12 @@ class GenerateCode
 
     protected static function generateFolderStructure($classFilePath, $namespace, $prefix)
     {
-        $_basePath = $classFilePath->getPath().DIRECTORY_SEPARATOR;
-        file_put_contents($_basePath.$prefix.'_routes.php', self::routeContent($namespace));
-        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
-        self::makeDirectory($_basePath.'views');
-        self::makeDirectory($_basePath.'Http');
-        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'Models');
+        $_basePath = $classFilePath->getPath() . DIRECTORY_SEPARATOR;
+        file_put_contents($_basePath . $prefix . '_routes.php', self::routeContent($namespace));
+        self::makeDirectory($_basePath . 'Database' . DIRECTORY_SEPARATOR . 'migrations');
+        self::makeDirectory($_basePath . 'views');
+        self::makeDirectory($_basePath . 'Http');
+        self::makeDirectory($_basePath . 'Database' . DIRECTORY_SEPARATOR . 'Models');
     }
 
     protected static function routeContent($namespace)
