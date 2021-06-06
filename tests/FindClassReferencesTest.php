@@ -81,7 +81,7 @@ class FindClassReferencesTest extends BaseTestClass
         $this->assertEquals([
             'class' => "Imanghafoori\LaravelMicroscope\FileReaders\MyAmIClass",
             'line' => 41,
-        ], $classes[1+12]);
+        ], $classes[1 + 12]);
 
         $this->assertEquals([
             'class' => "\YetAnotherclass",
