@@ -10,6 +10,7 @@ class Ifs
     public static function mergeIfs($tokens, $i)
     {
         $token = $tokens[$i];
+
         if ($token[0] !== T_IF) {
             return null;
         }
