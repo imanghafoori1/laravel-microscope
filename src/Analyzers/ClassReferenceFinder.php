@@ -88,9 +88,10 @@ class ClassReferenceFinder
                 continue;
             } elseif (in_array($t, [';', '}', T_BOOLEAN_AND, T_BOOLEAN_OR, T_LOGICAL_OR, T_LOGICAL_AND])) {
                 $trait = $force_close = false;
-                if ($collect) {
-                    $c++;
-                }
+
+                // Interface methods end up with ";"
+                $t == ';' && $isSignature = false;
+                $collect && $c++;
                 $collect = false;
 
                 self::forward();
@@ -111,11 +112,10 @@ class ClassReferenceFinder
                 self::forward();
                 continue;
             } elseif ($t == '{') {
-                $implements = $isSignature = false;
                 if ($isDefiningMethod) {
-                    $isDefiningMethod = false;
                     $isInsideMethod = true;
                 }
+                $isDefiningMethod = $implements = $isSignature = false;
                 // after "extends \Some\other\Class_v"
                 // we need to switch to the next level.
                 if ($collect) {
@@ -188,6 +188,13 @@ class ClassReferenceFinder
                 self::forward();
 
                 continue;
+            } elseif ($t == ':') {
+                if ($isSignature) {
+                    $collect = true;
+                    self::forward();
+
+                    continue;
+                }
             }
 
             if ($collect && ! self::isBuiltinType(self::$token)) {

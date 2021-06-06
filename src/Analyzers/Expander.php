@@ -45,6 +45,7 @@ class Expander
             foreach ($importeds as $row) {
                 if (self::isBuiltinType($row[1])) {
                     unset($results[$c]);
+                    $c--;
                     continue;
                 }
 
