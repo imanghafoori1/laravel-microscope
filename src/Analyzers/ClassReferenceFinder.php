@@ -215,6 +215,7 @@ class ClassReferenceFinder
     public static function isBuiltinType($token)
     {
         return \in_array($token[1], [
+            'object',
             'string',
             'int',
             'private',
