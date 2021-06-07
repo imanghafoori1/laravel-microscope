@@ -8,11 +8,7 @@ class ParseUseStatement
 
     public static function getUseStatementsByPath($namespacedClassName, $absPath)
     {
-        if (! isset(self::$cache[$namespacedClassName])) {
-            self::$cache = self::parseUseStatements(token_get_all(file_get_contents($absPath)), $namespacedClassName)[0] + self::$cache;
-        }
-
-        return self::$cache[$namespacedClassName];
+        return self::parseUseStatements(token_get_all(file_get_contents($absPath)), $namespacedClassName)[1];
     }
 
     public static function findClassReferences(&$tokens, $absFilePath)
