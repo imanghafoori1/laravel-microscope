@@ -222,6 +222,7 @@ class ClassReferenceFinder
             'protected',
             'float',
             'void',
+            'null',
             'bool',
             'array',
             'callable',
