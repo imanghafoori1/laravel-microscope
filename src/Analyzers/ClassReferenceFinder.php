@@ -50,6 +50,7 @@ class ClassReferenceFinder
                 // new class {... }
                 // ::class
                 if (self::$lastToken[0] == T_NEW || self::$lastToken[0] == T_DOUBLE_COLON) {
+                    $collect = false;
                     self::forward();
                     continue;
                 }
@@ -174,11 +175,10 @@ class ClassReferenceFinder
                 }
                 //self::forward();
             } elseif ($t == T_NEW) {
-                // we start to collect tokens after the new keyword.
+                // We start to collect tokens after the new keyword.
                 // unless we reach a variable name.
                 // currently tokenizer recognizes CONST NEW = 1; as new keyword.
-                // (self::$lastToken[0] != T_CONST) && $collect = true;
-                $collect = true;
+                (self::$lastToken[0] != T_CONST) && $collect = true;
                 self::forward();
 
                 // we do not want to collect the new keyword itself
@@ -214,10 +214,6 @@ class ClassReferenceFinder
 
     public static function isBuiltinType($token)
     {
-        if ($token[0] !== T_STRING) {
-            return false;
-        }
-
         return \in_array($token[1], [
             'string',
             'int',

@@ -53,6 +53,10 @@ class GetClassProperties
             }
         }
 
+        if ($class == 'extends') {
+            $class = null;
+        }
+
         return [
             \ltrim($namespace, '\\'),
             $class,
