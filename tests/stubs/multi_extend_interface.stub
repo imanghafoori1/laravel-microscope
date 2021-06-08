@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Models\Support;
+
+use BaseInterface as AnotherBaseInterface;
+
+interface BaseInterface extends AnotherBaseInterface, Arrayable, Jsonable, JsonSerializable
+{
+    //
+}

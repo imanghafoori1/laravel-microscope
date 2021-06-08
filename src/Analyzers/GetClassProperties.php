@@ -45,7 +45,7 @@ class GetClassProperties
             }
 
             if (! $parent) {
-                [$i, $parent] = self::collectAfterKeyword($tokens, $i, T_EXTENDS, [T_IMPLEMENTS]);
+                [$i, $parent] = self::collectAfterKeyword($tokens, $i, T_EXTENDS, [T_IMPLEMENTS], ',');
             }
 
             if (! $interfaces) {
