@@ -34,7 +34,7 @@ class GetClassPropertiesTest extends BaseTestClass
     {
         [$namespace, $name, $type, $parent, $interfaces] = GetClassProperties::fromFilePath(__DIR__.'/stubs/interface_sample.stub');
 
-        $this->assertEquals("", $namespace);
+        $this->assertEquals('', $namespace);
         $this->assertEquals('interface_sample', $name);
         $this->assertEquals(T_INTERFACE, $type);
         $this->assertEquals('IncompleteTest', $parent);
@@ -45,7 +45,7 @@ class GetClassPropertiesTest extends BaseTestClass
     {
         [$namespace, $name, $type, $parent, $interfaces] = GetClassProperties::fromFilePath(__DIR__.'/stubs/I_am_simple.stub');
 
-        $this->assertEquals("", $namespace);
+        $this->assertEquals('', $namespace);
         $this->assertEquals('I_am_simple', $name);
         $this->assertEquals(T_CLASS, $type);
         $this->assertEquals('', $parent);
