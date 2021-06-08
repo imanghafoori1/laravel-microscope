@@ -81,7 +81,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     public function register()
     {
         ! defined('T_NAME_QUALIFIED') && define('T_NAME_QUALIFIED', 3030);
-        ! defined('T_NAME_FULLY_QUALIFIED') && define('T_NAME_FULLY_QUALIFIED', 3030);
+        ! defined('T_NAME_FULLY_QUALIFIED') && define('T_NAME_FULLY_QUALIFIED', 3031);
 
         if (! $this->canRun()) {
             return;
