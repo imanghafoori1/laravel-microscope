@@ -27,6 +27,15 @@ class ClassReferenceFinder
             $t = self::$token[0];
 
             if ($t == T_USE) {
+                // use function Name\Space\function_name;
+                next($tokens);
+                if (current($tokens)[0] == T_FUNCTION) {
+                    // we do not collect the namespaced function name
+                    $force_close = true;
+                    self::forward();
+                    continue;
+                }
+
                 // function () use ($var) {...}
                 // for this type of use we do not care and continue;
                 // who cares?!
