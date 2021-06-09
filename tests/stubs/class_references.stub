@@ -5,13 +5,13 @@ namespace Imanghafoori\LaravelMicroscope\FileReaders;
 use Illuminate\Contracts\HalfImported;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Symfony\Component\Finder\Finder;
-
+use function foo\bar_func;
 class Paths extends ParentClass implements InterF1, InterF2, \Inline\InterF3
 {
     use Trait1, Trait2;
 
     use Trait3;
-
+    const NEW = 1;
 
 
     public static function getAbsFilePaths(TypeHint1 $dirs, ?TypeHint2 $dir3, $arg = [1, 2])

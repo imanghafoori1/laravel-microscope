@@ -57,7 +57,7 @@ class ClassMethodsTest extends BaseTestClass
     /** @test */
     public function can_detect_methods_on_traits()
     {
-        $string = file_get_contents(__DIR__.'/stubs/Authenticatable.php');
+        $string = file_get_contents(__DIR__.'/stubs/sample_trait.stub');
         $tokens = token_get_all($string);
 
         $trait = ClassMethods::read($tokens);

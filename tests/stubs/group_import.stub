@@ -10,7 +10,7 @@ use Symfony\Component\Finder\{
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Closure;
 use Illuminate\Contracts\HalfImported;
-
+use function foo\bar_func;
 class Paths implements A\Hello
 {
     public static function getAbsFilePaths($dirs)
