@@ -92,8 +92,8 @@ class ClassReferenceFinder
                 //$c++;
                 self::forward();
                 continue;
-            } elseif ($t == T_WHITESPACE || $t == '&') {
-                // we do not want to keep track of
+            } elseif ($t == T_WHITESPACE || $t == '&' || $t == T_COMMENT) {
+                // We do not want to keep track of
                 // white spaces or collect them
                 continue;
             } elseif (in_array($t, [';', '}', T_BOOLEAN_AND, T_BOOLEAN_OR, T_LOGICAL_OR, T_LOGICAL_AND])) {
@@ -126,7 +126,7 @@ class ClassReferenceFinder
                     $isInsideMethod = true;
                 }
                 $isDefiningMethod = $implements = $isSignature = false;
-                // after "extends \Some\other\Class_v"
+                // After "extends \Some\other\Class_v"
                 // we need to switch to the next level.
                 if ($collect) {
                     $c++;

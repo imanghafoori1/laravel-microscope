@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Illuminate\Contracts\HalfImported;
-use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException; // comment
 use Symfony\Component\Finder\Symfony\Component\Finder\Finder;
 use function foo\bar_func;
 class Paths extends ParentClass implements InterF1, InterF2, \Inline\InterF3
@@ -38,22 +38,22 @@ class Paths extends ParentClass implements InterF1, InterF2, \Inline\InterF3
             return [];
         }
 
-        MyAmIClass::con;
+        MyAmIClass::con; // a comment
         \YetAnotherclass::koo();$goo::koo();
         HalfImported\TheRest::class;
     }
 
-    public function returny_Method(string $string): int
+    public function returny_Method(string $string): int // a comment
     {
-        new $tt;
+        new $tt; // a comment
     }
 
-    public function returny_nullable(TypeHint1 $dirs): ?ReturnyType2
+    public function returny_nullable(TypeHint1 $dirs): ?ReturnyType2 // a comment
     {
         new class {};
     }
 
-    public function returny_string(?string $string): self
+    public function returny_string(?string $string): self // a comment
     {
         $tt = '';
         new Newed();
@@ -67,7 +67,7 @@ class Paths extends ParentClass implements InterF1, InterF2, \Inline\InterF3
         InConstructor::$method();
     }
 
-    public function foo () : \A\ReturnType
+    public function foo () : /*comment*/ \A\ReturnType
     {
         //
     }
