@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ClassReferenceFinder;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 
 class ParseUseStatementTest extends BaseTestClass
@@ -39,5 +40,18 @@ class ParseUseStatementTest extends BaseTestClass
         ];
 
         $this->assertEquals($expected, $uses);
+    }
+
+    /** @test */
+    public function can_skip_imported_global_functions()
+    {
+        $tokens = $this->getTokens('/stubs/auth.stub');
+
+        [$result, $uses] = ParseUseStatement::parseUseStatements($tokens);
+
+        $this->assertEquals([], $uses);
+        $this->assertEquals([], $result);
+
+        $this->assertEquals([], ClassReferenceFinder::process($tokens));
     }
 }

@@ -31,6 +31,7 @@ class ClassReferenceFinder
                 next($tokens);
                 if (current($tokens)[0] == T_FUNCTION) {
                     // we do not collect the namespaced function name
+                    next($tokens);
                     $force_close = true;
                     self::forward();
                     continue;
