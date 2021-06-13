@@ -33,7 +33,7 @@ class CheckImports extends Command
 
         $this->checkFilePaths(RoutePaths::get());
         $this->checkFilePaths(Paths::getAbsFilePaths(app()->configPath()));
-        $this->checkFilePaths(Paths::getAbsFilePaths(app()->databasePath('seeds')));
+        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::seeders()));
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
 

@@ -75,35 +75,6 @@ class CheckPsr4 extends Command
         return $changed;
     }
 
-    private function bladeFilePaths()
-    {
-        $bladeFiles = [];
-        $hints = self::getNamespacedPaths();
-        $hints['1'] = View::getFinder()->getPaths();
-
-        foreach ($hints as $paths) {
-            foreach ($paths as $path) {
-                $files = is_dir($path) ? Finder::create()->name('*.blade.php')->files()->in($path) : [];
-                foreach ($files as $blade) {
-                    /**
-                     * @var \Symfony\Component\Finder\SplFileInfo $blade
-                     */
-                    $bladeFiles[] = $blade->getRealPath();
-                }
-            }
-        }
-
-        return $bladeFiles;
-    }
-
-    private static function getNamespacedPaths()
-    {
-        $hints = View::getFinder()->getHints();
-        unset($hints['notifications'], $hints['pagination']);
-
-        return $hints;
-    }
-
     private function deriveVariants($olds)
     {
         $newOld = [];
@@ -125,8 +96,8 @@ class CheckPsr4 extends Command
             Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
             Paths::getAbsFilePaths(config_path()),
             Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(app()->databasePath('seeds')),
-            $this->bladeFilePaths(),
+            Paths::getAbsFilePaths(LaravelPaths::seeders()),
+            LaravelPaths::bladeFilePaths(),
         ];
 
         return $this->mergePaths($paths);

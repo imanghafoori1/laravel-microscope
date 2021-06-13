@@ -3,10 +3,19 @@
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\Finder;
 
 class LaravelPaths
 {
+    public static function seeders()
+    {
+        $dir = app()->databasePath('seeds');
+
+        return is_dir($dir) ? $dir : null;
+    }
+
     public static function factoryDirs()
     {
         try {
@@ -53,5 +62,34 @@ class LaravelPaths
         }
 
         return false;
+    }
+
+    public static function bladeFilePaths()
+    {
+        $bladeFiles = [];
+        $hints = self::getNamespacedPaths();
+        $hints['1'] = View::getFinder()->getPaths();
+
+        foreach ($hints as $paths) {
+            foreach ($paths as $path) {
+                $files = is_dir($path) ? Finder::create()->name('*.blade.php')->files()->in($path) : [];
+                foreach ($files as $blade) {
+                    /**
+                     * @var \Symfony\Component\Finder\SplFileInfo $blade
+                     */
+                    $bladeFiles[] = $blade->getRealPath();
+                }
+            }
+        }
+
+        return $bladeFiles;
+    }
+
+    private static function getNamespacedPaths()
+    {
+        $hints = View::getFinder()->getHints();
+        unset($hints['notifications'], $hints['pagination']);
+
+        return $hints;
     }
 }

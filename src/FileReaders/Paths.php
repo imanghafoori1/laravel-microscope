@@ -12,6 +12,7 @@ class Paths
         if (! $dirs) {
             return [];
         }
+
         try {
             $files = Finder::create()->files()->name('*.php')->in($dirs);
 

@@ -27,7 +27,7 @@ class CheckDD extends Command
 
         $this->checkPaths(RoutePaths::get());
         $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
-        $this->checkPaths(Paths::getAbsFilePaths(app()->databasePath('seeds')));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::seeders()));
         $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
         $this->checkPsr4Classes();
 

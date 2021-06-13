@@ -60,7 +60,7 @@ class Psr4Classes
                  *      "App\\": "app/"
                  *  }.
                  */
-                $ns = \str_replace(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $filePath);
+                $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $filePath);
                 $t = \str_replace('.php', '', [$ns, $fileName]);
                 $t = \str_replace('/', '\\', $t); // for linux environments.
 

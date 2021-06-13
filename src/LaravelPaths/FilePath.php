@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
 
 class FilePath
@@ -54,6 +55,10 @@ class FilePath
      */
     public static function getAllPhpFiles($path)
     {
-        return Finder::create()->files()->name('*.php')->in(base_path($path));
+        try {
+            return Finder::create()->files()->name('*.php')->in(base_path($path));
+        } catch (DirectoryNotFoundException $e) {
+            return [];
+        }
     }
 }
