@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 
 class CheckClassReferences
 {
@@ -23,6 +24,15 @@ class CheckClassReferences
 
     private static function exists($class)
     {
-        return class_exists($class) || interface_exists($class);
+        try {
+            return class_exists($class) || interface_exists($class);
+        } catch (\Error $e) {
+            $path = FilePath::getRelativePath($e->getFile());
+            
+                
+            app(ErrorPrinter::class)->simplePendError($path, $e->getLine(), $e->getMessage(), 'error', 'File error');
+
+            return true;
+        }
     }
 }
