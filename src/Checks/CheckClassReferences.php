@@ -27,9 +27,9 @@ class CheckClassReferences
         try {
             return class_exists($class) || interface_exists($class);
         } catch (\Error $e) {
-            $path = FilePath::getRelativePath($e->getFile());
+            $relPath = FilePath::getRelativePath($e->getFile());
 
-            app(ErrorPrinter::class)->simplePendError($path, $e->getMessage(), $e->getLine(), 'error', 'File error');
+            app(ErrorPrinter::class)->simplePendError($e->getMessage(), $relPath, $e->getLine(), 'error', 'File error');
 
             return true;
         }

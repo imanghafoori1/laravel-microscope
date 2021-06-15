@@ -140,9 +140,9 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function report($_path, $line)
+    private function report($_path, $lineNumber)
     {
-        app(ErrorPrinter::class)->simplePendError($_path, '', $line, 'ns_replacement', 'Namespace replacement:');
+        app(ErrorPrinter::class)->simplePendError('', $_path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
     }
 
     private function printErrorsCount($errorPrinter, $time)

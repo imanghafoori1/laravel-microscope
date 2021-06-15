@@ -17,16 +17,9 @@ class ErrorPrinter
 
     public $pended = [];
 
-    public function view($absPath, $lineContent, $lineNumber, $fileName)
+    public function view($absPath, $message, $lineNumber, $fileName)
     {
-        if (LaravelPaths::isIgnored($absPath)) {
-            return;
-        }
-
-        ($this->errorsList['view'][] = (new PendingError('view'))
-            ->header(\trim($lineContent))
-            ->errorData($this->yellow($fileName.'.blade.php').' does not exist')
-            ->link($absPath, $lineNumber));
+        $this->simplePendError($fileName.'.blade.php', $absPath, $lineNumber, 'view', \trim($message), ' does not exist');
     }
 
     public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
@@ -34,24 +27,12 @@ class ErrorPrinter
         $header = $wrongClass.'  <===  Did not exist';
         $msg = 'Auto-corrected to:   '.substr($correct[0], 0, 55);
 
-        $this->simplePendError($absPath, $msg, $lineNumber, 'ns_replacement', $header);
+        $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
     }
 
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
-        if (LaravelPaths::isIgnored($absPath)) {
-            return;
-        }
-
-        ($this->errorsList['route'][] = (new PendingError('route'))
-            ->header($errorIt)
-            ->errorData($errorTxt.$this->yellow($path))
-            ->link($absPath, $lineNumber));
-    }
-
-    public function bladeImport($class, $absPath, $lineNumber)
-    {
-        $this->pendError($absPath, $lineNumber, $class, 'bladeImport', 'Class does not exist:');
+        $this->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, '', $errorTxt);
     }
 
     public function authConf()
@@ -63,49 +44,34 @@ class ErrorPrinter
     {
         $header = 'Wrong model is passed in relation:';
 
-        $this->pendError($absPath, $lineNumber, $relatedModel, 'badRelation', $header);
+        $this->doesNotExist($relatedModel, $absPath, $lineNumber, 'badRelation', $header);
     }
 
-    public function pendError($path, $lineNumber, $absent, $key, $header)
+    public function doesNotExist($yellowText, $absPath, $lineNumber, $key, $header)
     {
-        if (LaravelPaths::isIgnored($path)) {
-            return;
-        }
-
-        ($this->errorsList[$key][] = (new PendingError($key))
-            ->header($header)
-            ->errorData($this->yellow($absent).'   <==== does not exist')
-            ->link($path, $lineNumber));
+        $this->simplePendError($yellowText, $absPath, $lineNumber, $key, $header, '   <==== does not exist');
     }
 
-    public function routelessAction($absPath, $lineNumber, $action)
+    public function routelessAction($absPath, $lineNumber, $msg)
+    {
+        $this->simplePendError($msg, $absPath, $lineNumber, 'routelessCtrl', 'No route is defined for controller action:');
+    }
+
+    public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
         if (LaravelPaths::isIgnored($absPath)) {
             return;
         }
 
-        $key = 'routelessCtrl';
-        ($this->errorsList[$key][] = (new PendingError($key))
-            ->header('No route is defined for controller action:')
-            ->errorData($this->yellow($action))
-            ->link($absPath, $lineNumber));
-    }
-
-    public function simplePendError($path, $yellowText, $lineNumber, $key, $header)
-    {
-        if (LaravelPaths::isIgnored($path)) {
-            return;
-        }
-
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($this->yellow($yellowText))
-            ->link($path, $lineNumber));
+            ->errorData($pre.$this->yellow($yellowText). $rest)
+            ->link($absPath, $lineNumber));
     }
 
     public function wrongImport($absPath, $class, $lineNumber)
     {
-        $this->pendError($absPath, $lineNumber, "use $class;", 'wrongImport', 'Wrong import:');
+        $this->doesNotExist("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
     }
 
     public function compactError($path, $lineNumber, $absent, $key, $header)
@@ -159,7 +125,7 @@ class ErrorPrinter
 
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
-        $this->pendError($absPath, $lineNumber, $class, 'wrongUsedClassError', 'Class does not exist:');
+        $this->doesNotExist($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 
     public function queryInBlade($absPath, $class, $lineNumber)
@@ -177,7 +143,7 @@ class ErrorPrinter
 
     public function wrongMethodError($absPath, $class, $lineNumber)
     {
-        $this->pendError($absPath, $lineNumber, $class, 'wrongMethodError', 'Method does not exist:');
+        $this->doesNotExist($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
     }
 
     public function yellow($msg)
@@ -234,8 +200,8 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $filePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
-            $this->print('at <fg=green>'.$filePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
+            $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
+            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
         }
     }
 
