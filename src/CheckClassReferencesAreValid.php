@@ -182,7 +182,7 @@ class CheckClassReferencesAreValid
             }
 
             if (! ComposerJson::isInAppSpace($class)) {
-                $printer->wrongImport($absFilePath, $class, $line);
+                $printer->pendError($absFilePath, $line, $class, 'wrongReference', 'Wrong Reference:');
                 continue;
             }
 
