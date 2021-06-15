@@ -68,8 +68,8 @@ class ConsolePrinterInstaller
             $data = $event->data;
             app(ErrorPrinter::class)->simplePendError(
                 $data['absPath'],
-                $data['lineNumber'],
                 $data['name'],
+                $data['lineNumber'],
                 'ddFound',
                 'Debug function found: '
             );
@@ -89,8 +89,8 @@ class ConsolePrinterInstaller
             $data = $event->data;
             app(ErrorPrinter::class)->simplePendError(
                 $data['absPath'],
-                $data['lineNumber'],
                 $data['name'],
+                $data['lineNumber'],
                 'envFound',
                 'env() function found: '
             );

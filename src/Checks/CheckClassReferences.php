@@ -29,7 +29,7 @@ class CheckClassReferences
         } catch (\Error $e) {
             $path = FilePath::getRelativePath($e->getFile());
 
-            app(ErrorPrinter::class)->simplePendError($path, $e->getLine(), $e->getMessage(), 'error', 'File error');
+            app(ErrorPrinter::class)->simplePendError($path, $e->getMessage(), $e->getLine(), 'error', 'File error');
 
             return true;
         }

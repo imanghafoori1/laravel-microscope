@@ -34,7 +34,7 @@ class ErrorPrinter
         $header = $wrongClass.'  <===  Did not exist';
         $msg = 'Auto-corrected to:   '.substr($correct[0], 0, 55);
 
-        $this->simplePendError($absPath, $lineNumber, $msg, 'ns_replacement', $header);
+        $this->simplePendError($absPath, $msg, $lineNumber, 'ns_replacement', $header);
     }
 
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
@@ -91,7 +91,7 @@ class ErrorPrinter
             ->link($absPath, $lineNumber));
     }
 
-    public function simplePendError($path, $lineNumber, $yellowText, $key, $header)
+    public function simplePendError($path, $yellowText, $lineNumber, $key, $header)
     {
         if (LaravelPaths::isIgnored($path)) {
             return;
