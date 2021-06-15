@@ -11,12 +11,12 @@ use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class CheckClasses
+class CheckClassReferencesAreValid
 {
     public static function check($tokens, $absFilePath)
     {
         try {
-            self::checkImports($tokens, $absFilePath);
+            self::checkReferences($tokens, $absFilePath);
         } catch (\ErrorException $e) {
             // In case a file is moved or deleted,
             // composer will need a dump autoload.
@@ -37,7 +37,7 @@ class CheckClasses
         $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
     }
 
-    private static function checkImports($tokens, $absFilePath)
+    private static function checkReferences($tokens, $absFilePath)
     {
         // If file is empty or does not begin with <?php
         if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {

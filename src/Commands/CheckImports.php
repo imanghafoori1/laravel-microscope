@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\CheckClasses;
+use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
@@ -37,7 +37,7 @@ class CheckImports extends Command
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
 
-        Psr4Classes::check([CheckClasses::class]);
+        Psr4Classes::check([CheckClassReferencesAreValid::class]);
 
         // Checks the blade files for class references.
         BladeFiles::check([CheckClassReferences::class]);
@@ -59,7 +59,7 @@ class CheckImports extends Command
         foreach ($paths as $path) {
             $tokens = token_get_all(file_get_contents($path));
             CheckClassReferences::check($tokens, $path);
-            CheckClasses::checkAtSignStrings($tokens, $path, true);
+            CheckClassReferencesAreValid::checkAtSignStrings($tokens, $path, true);
         }
     }
 }

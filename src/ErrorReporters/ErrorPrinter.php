@@ -91,7 +91,7 @@ class ErrorPrinter
             ->link($absPath, $lineNumber));
     }
 
-    public function simplePendError($path, $lineNumber, $absent, $key, $header)
+    public function simplePendError($path, $lineNumber, $yellowText, $key, $header)
     {
         if (LaravelPaths::isIgnored($path)) {
             return;
@@ -99,7 +99,7 @@ class ErrorPrinter
 
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($this->yellow($absent))
+            ->errorData($this->yellow($yellowText))
             ->link($path, $lineNumber));
     }
 
