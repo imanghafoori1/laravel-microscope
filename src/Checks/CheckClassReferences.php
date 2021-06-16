@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 
 class CheckClassReferences
 {
@@ -14,10 +13,11 @@ class CheckClassReferences
     {
         [$classes, $_] = ParseUseStatement::findClassReferences($tokens, $absPath);
 
+        $p = app(ErrorPrinter::class);
         foreach ($classes as $class) {
             self::$refCount++;
             if (! self::exists($class['class'])) {
-                app(ErrorPrinter::class)->wrongUsedClassError($absPath, $class['class'], $class['line']);
+                $p->wrongUsedClassError($absPath, $class['class'], $class['line']);
             }
         }
     }
@@ -27,9 +27,7 @@ class CheckClassReferences
         try {
             return class_exists($class) || interface_exists($class);
         } catch (\Error $e) {
-            $relPath = FilePath::getRelativePath($e->getFile());
-
-            app(ErrorPrinter::class)->simplePendError($e->getMessage(), $relPath, $e->getLine(), 'error', 'File error');
+            app(ErrorPrinter::class)->simplePendError($e->getMessage(), $e->getFile(), $e->getLine(), 'error', 'File error');
 
             return true;
         }

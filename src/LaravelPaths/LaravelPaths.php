@@ -51,6 +51,7 @@ class LaravelPaths
     public static function isIgnored($path)
     {
         $ignorePatterns = config('microscope.ignore');
+
         if (! $ignorePatterns || ! is_array($ignorePatterns)) {
             return false;
         }
