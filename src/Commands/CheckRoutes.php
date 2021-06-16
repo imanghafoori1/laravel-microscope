@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Illuminate\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
@@ -31,6 +32,7 @@ class CheckRoutes extends Command
         $this->info('Checking route definitions...');
 
         $errorPrinter->printer = $this->output;
+        app(Filesystem::class)->delete(app()->getCachedRoutesPath());
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
         $this->checkRouteDefinitions($errorPrinter, $routes);
@@ -61,7 +63,7 @@ class CheckRoutes extends Command
             $msg = 'url: '.$route->uri();
         }
 
-        return 'Error on route '.$msg;
+        return $msg;
     }
 
     private function checkRouteDefinitions($errorPrinter, $routes)
@@ -79,18 +81,17 @@ class CheckRoutes extends Command
                 $ctrlObj = app()->make($ctrlClass);
             } catch (Exception $e) {
                 $msg1 = $this->getRouteId($route);
-                $msg2 = 'The controller can not be resolved: ';
+                $msg2 = 'The controller can not be resolved: ('.$msg1.')' ;
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                $errorPrinter->route($ctrlClass, $msg1, $msg2, $path, $line);
+                $errorPrinter->route($ctrlClass, $msg2, '', $path, $line);
 
                 continue;
             }
 
             if (! method_exists($ctrlObj, $method)) {
-                $msg1 = $this->getRouteId($route);
-                $msg2 = 'Absent Method: ';
+                $msg2 = 'Absent method for route'.' '.$this->getRouteId($route);
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                $errorPrinter->route($ctrl, $msg1, $msg2, $path, $line);
+                $errorPrinter->route($ctrl, $msg2, '', $path, $line);
             }
         }
     }

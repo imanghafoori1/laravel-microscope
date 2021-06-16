@@ -48,7 +48,7 @@ class CheckRouteCalls
     public static function printError($value, $absPath, $lineNumber)
     {
         $p = app(ErrorPrinter::class);
-        $p->route(null, "route name $value does not exist: ", "route($value)  <=== is wrong", $absPath, $lineNumber);
+        $p->route("route($value)", "route name $value does not exist: ", "  <=== is wrong", $absPath, $lineNumber);
     }
 
     public static function checkRouteExists($line, $routeName, $absPath)

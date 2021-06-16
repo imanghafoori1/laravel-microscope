@@ -25,14 +25,14 @@ class ErrorPrinter
     public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
         $header = $wrongClass.'  <===  Did not exist';
-        $msg = 'Auto-corrected to:   '.substr($correct[0], 0, 55);
+        $msg = 'Auto-imported:   '.substr($correct[0], 0, 55);
 
         $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
     }
 
     public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
-        $this->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, '', $errorTxt);
+        $this->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);
     }
 
     public function authConf()
