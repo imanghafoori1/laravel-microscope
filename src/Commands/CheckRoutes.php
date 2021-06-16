@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
@@ -11,7 +12,6 @@ use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
-use Illuminate\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
@@ -58,9 +58,9 @@ class CheckRoutes extends Command
     private function getRouteId($route)
     {
         if ($routeName = $route->getName()) {
-            $msg = 'name: '.$routeName;
+            $msg = 'name: "'.$routeName.'"';
         } else {
-            $msg = 'url: '.$route->uri();
+            $msg = 'url: "'.$route->uri().'"';
         }
 
         return $msg;
@@ -81,7 +81,7 @@ class CheckRoutes extends Command
                 $ctrlObj = app()->make($ctrlClass);
             } catch (Exception $e) {
                 $msg1 = $this->getRouteId($route);
-                $msg2 = 'The controller can not be resolved: ('.$msg1.')' ;
+                $msg2 = 'The controller can not be resolved: ('.$msg1.')';
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
                 $errorPrinter->route($ctrlClass, $msg2, '', $path, $line);
 

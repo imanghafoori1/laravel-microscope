@@ -182,7 +182,7 @@ class CheckClasses
             }
 
             if (! ComposerJson::isInAppSpace($class)) {
-                $printer->doesNotExist($class, $absFilePath, $line, 'wrongReference', 'Wrong Reference:');
+                $printer->doesNotExist($class, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
                 continue;
             }
 

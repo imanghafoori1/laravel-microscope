@@ -39,7 +39,7 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
-        $this->info(''.(round(microtime(true) - $t1, 2)).' (s)');
+        $errorPrinter->printer->writeln('time: '.round(microtime(true) - $t1, 2).' (sec)', 2);
 
         if (random_int(1, 5) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:al')) {
             ErrorPrinter::thanks($this);

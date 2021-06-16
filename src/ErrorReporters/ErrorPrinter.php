@@ -65,7 +65,7 @@ class ErrorPrinter
 
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($pre.$this->yellow($yellowText). $rest)
+            ->errorData($pre.$this->yellow($yellowText).$rest)
             ->link($absPath, $lineNumber));
     }
 
