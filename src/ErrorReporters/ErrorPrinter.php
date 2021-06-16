@@ -49,7 +49,7 @@ class ErrorPrinter
 
     public function doesNotExist($yellowText, $absPath, $lineNumber, $key, $header)
     {
-        $this->simplePendError($yellowText, $absPath, $lineNumber, $key, $header, '   <==== does not exist');
+        $this->simplePendError($yellowText, $absPath, $lineNumber, $key, $header);
     }
 
     public function routelessAction($absPath, $lineNumber, $msg)
@@ -247,7 +247,7 @@ class ErrorPrinter
     public function wrongImportPossibleFixes($absPath, $class, $line, $fixes)
     {
         $fixes = self::possibleFixMsg($fixes);
-        $this->wrongUsedClassError($absPath, $class.'   <===  \(-_-)/  '.$fixes, $line);
+        $this->wrongUsedClassError($absPath, $class.' '.$fixes, $line);
     }
 
     public function getCount($key)

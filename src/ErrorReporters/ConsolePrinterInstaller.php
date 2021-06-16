@@ -54,7 +54,7 @@ class ConsolePrinterInstaller
     {
         Event::listen(BladeFile::class, function (BladeFile $event) {
             $data = $event->data;
-            $msg = 'Blade does not exist';
+            $msg = 'The blade file is missing:';
 
             app(ErrorPrinter::class)->view(
                 $data['absPath'],
