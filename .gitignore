@@ -5,3 +5,5 @@ vendor
 coverage
 .idea
 phpunit
+test.bat
+test8.bat
