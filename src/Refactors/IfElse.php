@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 
 class IfElse
 {
@@ -11,7 +12,7 @@ class IfElse
         if (Refactor::isBlocky($elseBody[1]) && self::shouldBeFlipped(\count($elseBody[1]), \count($ifBody[1]))) {
             return self::flipElseIf($tokens, $condition, $ifBody, $elseBody);
         } elseif (Refactor::isBlocky($ifBody[1])) {
-            return self::removeTokens($tokens, $ifBody[2], $elseBody[0], $elseBody[2]);
+            return TokenManager::removeTokens($tokens, $ifBody[2], $elseBody[0], $elseBody[2]);
         } else {
             return null;
         }
@@ -22,23 +23,6 @@ class IfElse
         $ifIsLonger = ($elseCount + 10) < $ifBody;
 
         return $ifIsLonger || ($elseCount < $ifBody * 0.7);
-    }
-
-    private static function removeTokens($tokens, $from, $to, $at)
-    {
-        $refactoredTokens = [];
-        foreach ($tokens as $i => $oldToken) {
-            if ($i > $from && $i <= $to) {
-                continue;
-            }
-
-            if ($i == $at) {
-                continue;
-            }
-            $refactoredTokens[] = $oldToken;
-        }
-
-        return $refactoredTokens;
     }
 
     private static function flipElseIf($tokens, $condition, $ifBody, $elseBody)

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 
 class ViewsData
 {
@@ -38,7 +39,7 @@ class ViewsData
                 if (
                     $token[0] == T_VARIABLE
                     &&
-                    FunctionCall::getNextToken($tokens, $i)[0] !== '='
+                    TokenManager::getNextToken($tokens, $i)[0] !== '='
                 ) {
                     $vars[$token[1]] = null;
                 }

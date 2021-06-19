@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
+use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 
 class SyntaxNormalizer
 {
@@ -40,7 +40,7 @@ class SyntaxNormalizer
                 // forward to end of parenthesis
                 [, , $u] = Ifs::readCondition($tokens, $i);
                 // read first char after the parenthesis
-                [$next, $u] = FunctionCall::getNextToken($tokens, $u);
+                [$next, $u] = TokenManager::getNextToken($tokens, $u);
                 if ($next == ':') {
                     $tokens[$u] = $opening(':');
                     // Adds a closing curly brace "}" before elseif.
@@ -50,10 +50,10 @@ class SyntaxNormalizer
 
             if ($t[0] == T_ELSE || $t[0] == T_IF) {
                 if ($t[0] == T_ELSE) {
-                    [$next_T, $next_I] = FunctionCall::getNextToken($tokens, $i);
+                    [$next_T, $next_I] = TokenManager::getNextToken($tokens, $i);
                 } else {
                     [, , $u] = Ifs::readCondition($tokens, $i);
-                    [$next_T, $next_I] = FunctionCall::getNextToken($tokens, $u);
+                    [$next_T, $next_I] = TokenManager::getNextToken($tokens, $u);
                 }
 
                 if (\in_array($next_T[0], [T_FOR, T_FOREACH, T_WHILE])) {
@@ -61,8 +61,8 @@ class SyntaxNormalizer
                     $refactoredTokens[] = $t;
                     $i++;
                     [, , $u] = Ifs::readCondition($tokens, $next_I + 1);
-                    [, $u] = FunctionCall::getNextToken($tokens, $u);
-                    [, $u] = FunctionCall::readBody($tokens, $u);
+                    [, $u] = TokenManager::getNextToken($tokens, $u);
+                    [, $u] = TokenManager::readBody($tokens, $u);
                     array_splice($tokens, $u, 0, [$closing]);
 
                     // we update the count since the number of elements is changed.
@@ -78,8 +78,8 @@ class SyntaxNormalizer
                      */
                     $refactoredTokens[] = $t;
                     array_splice($tokens, $next_I - 1, 0, [$opening()]);
-                    [, $endIndex] = FunctionCall::forwardTo($tokens, $i, [';']);
-                    $NEXT = FunctionCall::getNextToken($tokens, $endIndex);
+                    [, $endIndex] = TokenManager::forwardTo($tokens, $i, [';']);
+                    $NEXT = TokenManager::getNextToken($tokens, $endIndex);
                     if ($NEXT[0][0] == T_ELSE && $t[0] == T_ELSE) {
                         $ia = array_pop($ifIf);
                         array_splice($refactoredTokens, $ia, 0, [$opening()]);
@@ -94,7 +94,7 @@ class SyntaxNormalizer
                 }
             }
 
-            [$next, $u] = FunctionCall::getNextToken($tokens, $i);
+            [$next, $u] = TokenManager::getNextToken($tokens, $i);
 
             if ($next == ':' && $t[0] == T_ELSE) {
                 $tokens[$u] = $opening(':');
@@ -110,7 +110,7 @@ class SyntaxNormalizer
 
     private static function removeSemi(&$tokens, $i)
     {
-        [$next, $u] = FunctionCall::getNextToken($tokens, $i);
+        [$next, $u] = TokenManager::getNextToken($tokens, $i);
         // replaces ";" token with a neutral token.
         $next == ';' && $tokens[$u] = ['', ''];
     }

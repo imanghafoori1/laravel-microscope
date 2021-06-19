@@ -16,15 +16,15 @@ class Ifs
         }
         $condition1 = self::readCondition($tokens, $i);
 
-        [$char, $if1BlockStartIndex] = FunctionCall::getNextToken($tokens, $condition1[2]);
+        [$char, $if1BlockStartIndex] = TokenManager::getNextToken($tokens, $condition1[2]);
         // if with no curly brace.
         if ($char[0] == T_IF) {
-            [$char,] = FunctionCall::getNextToken($tokens, $if1BlockStartIndex);
+            [$char,] = TokenManager::getNextToken($tokens, $if1BlockStartIndex);
             $condition2 = self::readCondition($tokens, $if1BlockStartIndex);
 
             $if2Body = self::readBody($tokens, $condition2[2]);
 
-            $afterSecondIf = FunctionCall::getNextToken($tokens, $if2Body[2]);
+            $afterSecondIf = TokenManager::getNextToken($tokens, $if2Body[2]);
 
             if (T_ELSEIF !== $afterSecondIf[0][0] && T_ELSE !== $afterSecondIf[0][0]) {
                 return NestedIf::merge($tokens, $condition1[2], $condition2[0], -1);
@@ -45,14 +45,14 @@ class Ifs
         $condition2 = self::readCondition($tokens, $if2index);
 
         $if2Body = self::readBody($tokens, $condition2[2]);
-        [, $if1BodyCloseIndex] = FunctionCall::readBody($tokens, $if1BlockStartIndex);
+        [, $if1BodyCloseIndex] = TokenManager::readBody($tokens, $if1BlockStartIndex);
         $if1closeIndexCandid = self::forwardTo($tokens, $if2Body[2]);
 
         if ($if1closeIndexCandid !== $if1BodyCloseIndex) {
             return null;
         }
 
-        $afterFirstIf = FunctionCall::getNextToken($tokens, $if1BodyCloseIndex);
+        $afterFirstIf = TokenManager::getNextToken($tokens, $if1BodyCloseIndex);
 
         if (T_ELSEIF == $afterFirstIf[0][0] || T_ELSE == $afterFirstIf[0][0]) {
             return null;
@@ -75,7 +75,7 @@ class Ifs
             return null;
         }
 
-        [$afterIf, $afterIfIndex] = FunctionCall::getNextToken($tokens, $ifBody[2]);
+        [$afterIf, $afterIfIndex] = TokenManager::getNextToken($tokens, $ifBody[2]);
 
         // in order to cover both   } else {   and   else:   syntax.
         if (T_ELSE !== $afterIf[0] && $tokens[$ifBody[2]][0] !== T_ELSE) {
@@ -93,21 +93,21 @@ class Ifs
 
     public static function readCondition($tokens, $i)
     {
-        [, $conditionStartIndex] = FunctionCall::forwardTo($tokens, $i, ['(']);
-        [$condition, $conditionCloseIndex] = FunctionCall::readBody($tokens, $conditionStartIndex, ')');
+        [, $conditionStartIndex] = TokenManager::forwardTo($tokens, $i, ['(']);
+        [$condition, $conditionCloseIndex] = TokenManager::readBody($tokens, $conditionStartIndex, ')');
 
         return [$conditionStartIndex, $condition, $conditionCloseIndex];
     }
 
     private static function readBody($tokens, $afterIfIndex)
     {
-        [$char, $elseBodyStartIndex] = FunctionCall::getNextToken($tokens, $afterIfIndex);
+        [$char, $elseBodyStartIndex] = TokenManager::getNextToken($tokens, $afterIfIndex);
         // if with no curly brace.
         if ($char[0] !== '{') {
             return [null, null, null];
         }
 
-        [$elseBody, $elseBodyEndIndex] = FunctionCall::readBody($tokens, $elseBodyStartIndex);
+        [$elseBody, $elseBodyEndIndex] = TokenManager::readBody($tokens, $elseBodyStartIndex);
 
         return [$elseBodyStartIndex, $elseBody, $elseBodyEndIndex];
     }

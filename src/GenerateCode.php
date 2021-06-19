@@ -91,7 +91,7 @@ class GenerateCode
             if (! self::isProvidersKey($tokens, $i)) {
                 continue;
             }
-            $closeBracketIndex = FunctionCall::readBody($tokens, $i + 15, ']')[1];
+            $closeBracketIndex = Analyzers\TokenManager::readBody($tokens, $i + 15, ']')[1];
 
             $j = $closeBracketIndex;
             while ($tokens[--$j][0] == T_WHITESPACE && $tokens[--$j][0] == T_COMMENT) {

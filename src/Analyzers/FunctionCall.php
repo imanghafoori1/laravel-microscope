@@ -4,46 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class FunctionCall
 {
-    public static function getNextToken($tokens, $i)
-    {
-        $i++;
-        $token = $tokens[$i] ?? '_';
-        while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
-            $i++;
-            $token = $tokens[$i] ?? [null, null];
-        }
-
-        return [$token, $i];
-    }
-
-    public static function forwardTo($tokens, $i, $tokenType)
-    {
-        $i++;
-        $nextToken = $tokens[$i] ?? '_';
-        while (! \in_array($nextToken[0], $tokenType)) {
-            $i++;
-            $nextToken = $tokens[$i] ?? [null, null];
-        }
-
-        return [$nextToken, $i];
-    }
-
-    public static function getPrevToken($tokens, $i)
-    {
-        $i--;
-        $token = $tokens[$i];
-        while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
-            $i--;
-            $token = $tokens[$i];
-        }
-
-        return [$token, $i];
-    }
-
     public static function isSolidString($tokens)
     {
-        [$nextToken, $i] = self::getNextToken($tokens, 0);
+        [$nextToken,] = TokenManager::getNextToken($tokens, 0);
 
+        // we make sure that the string is not concatinated.
         return ($tokens[0][0] == T_CONSTANT_ENCAPSED_STRING) && ($nextToken !== '.');
     }
 
@@ -59,7 +24,7 @@ class FunctionCall
         }
 
         $index = array_pop($indexes);
-        [$prev, $p2] = self::getPrevToken($tokens, $index);
+        [$prev, $p2] = TokenManager::getPrevToken($tokens, $index);
         $ops = [T_DOUBLE_COLON, T_OBJECT_OPERATOR, T_NEW, T_FUNCTION];
 
         if (\in_array($prev[0], $ops)) {
@@ -104,7 +69,7 @@ class FunctionCall
         $results = [];
         foreach ($expectedTokens as $i => $expectedToken) {
             try {
-                [$actualToken, $j] = self::getPrevToken($tokens, $j);
+                [$actualToken, $j] = TokenManager::getPrevToken($tokens, $j);
             } catch (\Throwable $e) {
                 return [];
             }
@@ -123,7 +88,7 @@ class FunctionCall
         $p = 0;
         $level = 1;
         while (true) {
-            [$nextToken, $i] = self::getNextToken($tokens, $i);
+            [$nextToken, $i] = TokenManager::getNextToken($tokens, $i);
 
             $level = self::level($nextToken, $level);
 
@@ -166,97 +131,6 @@ class FunctionCall
 
          return [$params, $i];
      }*/
-
-    public static function readBackUntil(&$tokens, $i, $chars = ['}'])
-    {
-        $orphanBlock = [];
-        while (true) {
-            [$token, $i] = self::getPrevToken($tokens, $i);
-
-            $depth = 0;
-            if (\in_array($token[0], $chars)) {
-                [$ifBody, $openIfIndex] = FunctionCall::readBodyBack($tokens, $i);
-                [, $closeParenIndex] = FunctionCall::getPrevToken($tokens, $openIfIndex);
-                [$condition, $openParenIndex] = FunctionCall::readBodyBack($tokens, $closeParenIndex);
-                [$ownerOfClosing] = FunctionCall::getPrevToken($tokens, $openParenIndex);
-
-                if ($ownerOfClosing[0] == T_IF) {
-                    break;
-                } else {
-                    return [null, null];
-                }
-            }
-
-            if ($token[0] == '{') {
-                $depth--;
-
-                if ($depth === -1) {
-                    return [null, null];
-                }
-            }
-
-            $orphanBlock[] = $token;
-        }
-
-        return [[$ifBody, [$openIfIndex, $i]], [$condition, [$openParenIndex, $closeParenIndex]], $orphanBlock, $i];
-    }
-
-    public static function readBodyBack(&$tokens, $i)
-    {
-        $body = [];
-        $level = 0;
-        while (true) {
-            [$token, $i] = self::getPrevToken($tokens, $i);
-
-            if (\in_array($token[0], [']', ')', '}'])) {
-                $level--;
-            }
-
-            $isOpening = \in_array($token[0], ['[', '(', '{', T_CURLY_OPEN]);
-
-            if ($level == 0 && $isOpening) {
-                break;
-            }
-
-            if ($isOpening) {
-                $level++;
-            }
-
-            $body[] = $token;
-        }
-
-        return [$body, $i];
-    }
-
-    public static function readBody(&$tokens, $i, $until = '}')
-    {
-        $body = [];
-        $level = 0;
-        while (true) {
-            $i++;
-            $nextToken = $tokens[$i] ?? '_';
-
-            if ($nextToken == '_') {
-                break;
-            }
-
-            if ($level == 0 && $nextToken[0] == $until) {
-                break;
-            }
-
-            if (\in_array($nextToken[0], ['[', '(', '{', T_CURLY_OPEN])) {
-                $level++;
-            }
-
-            if (\in_array($nextToken[0], [']', ')', '}'])) {
-                $level--;
-            }
-
-            $body[] = $nextToken;
-        }
-
-        return [$body, $i];
-    }
 
     private static function isEqual($expectedToken, $actualToken)
     {

@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Refactors;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 
 class EarlyReturns
 {
@@ -29,7 +30,7 @@ class EarlyReturns
             }
 
             // fast-forward to the start of function body
-            [$firstChar, $methodBodyStartIndex] = FunctionCall::forwardTo($tokens, $i, ['{', ';']);
+            [$firstChar, $methodBodyStartIndex] = TokenManager::forwardTo($tokens, $i, ['{', ';']);
 
             // in order to avoid checking abstract methods (with no body) and do/while
             if ($firstChar === ';' && $token[0] !== T_FOR) {
@@ -38,10 +39,10 @@ class EarlyReturns
 
             try {
                 // fast-forward to the end of function body
-                [, $methodBodyCloseIndex] = FunctionCall::readBody($tokens, $methodBodyStartIndex);
+                [, $methodBodyCloseIndex] = TokenManager::readBody($tokens, $methodBodyStartIndex);
 
                 // get the very last token of function (or foreach) body.
-                [$ifBody, $condition] = FunctionCall::readBackUntil($tokens, $methodBodyCloseIndex);
+                [$ifBody, $condition] = TokenManager::readBackUntil($tokens, $methodBodyCloseIndex);
             } catch (\Exception $e) {
                 continue;
             }
@@ -51,7 +52,7 @@ class EarlyReturns
             }
 
             // in order to avoid touching the else without curly braces.
-            if (\in_array(FunctionCall::getNextToken($tokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
+            if (\in_array(TokenManager::getNextToken($tokens, $ifBody[1][1])[0][0], [T_ELSE, T_ELSEIF])) {
                 continue;
             }
 

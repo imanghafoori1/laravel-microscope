@@ -41,12 +41,12 @@ class ClassMethods
 
             [$visibility, $isStatic, $isAbstract] = self::findVisibility($tokens, $i - 2);
             [, $signature, $endSignature] = Ifs::readCondition($tokens, $i + 2);
-            [$char, $charIndex] = FunctionCall::forwardTo($tokens, $endSignature, [':', ';', '{']);
+            [$char, $charIndex] = TokenManager::forwardTo($tokens, $endSignature, [':', ';', '{']);
 
             [$returnType, $hasNullableReturnType, $char, $charIndex] = self::processReturnType($char, $tokens, $charIndex);
 
             if ($char == '{') {
-                [$body, $i] = FunctionCall::readBody($tokens, $charIndex);
+                [$body, $i] = TokenManager::readBody($tokens, $charIndex);
             } elseif ($char == ';') {
                 $body = [];
             } else {
@@ -105,23 +105,23 @@ class ClassMethods
             return [null, null, $endingChar, $charIndex];
         }
 
-        [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+        [$returnType, $returnTypeIndex] = TokenManager::getNextToken($tokens, $charIndex);
 
         // In case the return type is like this: function c() : ?string {...
         $hasNullableReturnType = ($returnType == '?');
 
         if ($hasNullableReturnType) {
-            [$returnType, $returnTypeIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+            [$returnType, $returnTypeIndex] = TokenManager::getNextToken($tokens, $returnTypeIndex);
         }
 
-        [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $returnTypeIndex);
+        [$endingChar, $charIndex] = TokenManager::getNextToken($tokens, $returnTypeIndex);
 
         $returnType = [$returnType];
 
         while ($endingChar == '|') {
-            [$returnType2, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+            [$returnType2, $charIndex] = TokenManager::getNextToken($tokens, $charIndex);
             $returnType[] = $returnType2;
-            [$endingChar, $charIndex] = FunctionCall::getNextToken($tokens, $charIndex);
+            [$endingChar, $charIndex] = TokenManager::getNextToken($tokens, $charIndex);
         }
 
         return [$returnType, $hasNullableReturnType, $endingChar, $charIndex];

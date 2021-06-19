@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
+use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
@@ -105,7 +106,7 @@ class CheckCompact extends Command
     private function readMethodBodyAsTokens($tokens, $i)
     {
         // fast-forward to the start of function body
-        [$char, $methodBodyStartIndex] = FunctionCall::forwardTo($tokens, $i, ['{', ';']);
+        [$char, $methodBodyStartIndex] = TokenManager::forwardTo($tokens, $i, ['{', ';']);
 
         // in order to avoid checking abstract methods (with no body) and do/while
         if ($char === ';') {
@@ -114,7 +115,7 @@ class CheckCompact extends Command
 
         try {
             // fast-forward to the end of function body
-            [$methodBody,] = FunctionCall::readBody($tokens, $methodBodyStartIndex);
+            [$methodBody,] = TokenManager::readBody($tokens, $methodBodyStartIndex);
 
             return $methodBody;
         } catch (\Exception $e) {
