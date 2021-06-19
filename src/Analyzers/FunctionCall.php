@@ -131,6 +131,12 @@ class FunctionCall
                 break;
             }
 
+            // Fixes: https://github.com/imanghafoori1/laravel-microscope/issues/135
+            // To avoid infinite loop in case of wrong syntax
+            if ($nextToken == '_') {
+                break;
+            }
+
             if ($level == 1 && $nextToken == ',') {
                 $p++;
                 continue;
