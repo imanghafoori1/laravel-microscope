@@ -147,4 +147,9 @@ class TokenManager
 
         return [[$ifBody, [$openIfIndex, $i]], [$condition, [$openParenIndex, $closeParenIndex]], $orphanBlock, $i];
     }
+
+    public static function isEqual($expectedToken, $actualToken)
+    {
+        return $expectedToken[0] == $actualToken[0] && ($expectedToken[1] ?? '') == ($actualToken[1] ?? '');
+    }
 }

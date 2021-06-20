@@ -73,7 +73,7 @@ class FunctionCall
             } catch (\Throwable $e) {
                 return [];
             }
-            if (! self::isEqual($expectedToken, $actualToken)) {
+            if (! TokenManager::isEqual($expectedToken, $actualToken)) {
                 return [];
             }
             $results[] = $j;
@@ -131,11 +131,6 @@ class FunctionCall
 
          return [$params, $i];
      }*/
-
-    private static function isEqual($expectedToken, $actualToken)
-    {
-        return $expectedToken[0] == $actualToken[0] && ($expectedToken[1] ?? '') == ($actualToken[1] ?? '');
-    }
 
     private static function level($nextToken, $level)
     {
