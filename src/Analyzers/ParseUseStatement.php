@@ -4,8 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 class ParseUseStatement
 {
-    private static $cache = [];
-
     public static function getUseStatementsByPath($namespacedClassName, $absPath)
     {
         return self::parseUseStatements(token_get_all(file_get_contents($absPath)), $namespacedClassName)[1];
