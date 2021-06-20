@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 
 class ViewsData

@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
 

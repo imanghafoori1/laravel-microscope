@@ -75,7 +75,7 @@ class ClassReferenceFinder
                 next($tokens);
                 $namespace = '';
                 while (current($tokens)[0] !== ';') {
-                    (!in_array(current($tokens)[0], [T_COMMENT, T_WHITESPACE])) && $namespace .= current($tokens)[1];
+                    (! in_array(current($tokens)[0], [T_COMMENT, T_WHITESPACE])) && $namespace .= current($tokens)[1];
                     next($tokens);
                 }
                 next($tokens);
@@ -89,7 +89,7 @@ class ClassReferenceFinder
                 }
             } elseif ($t == T_VARIABLE || $t == T_ELLIPSIS) {
                 //if ($isDefiningFunction) {
-                    //$c++;
+                //$c++;
                 //}
                 $collect = false;
                 self::forward();
