@@ -17,6 +17,7 @@ class ClassReferenceFinder
      */
     public static function process(&$tokens)
     {
+        $namespace = '';
         $classes = [];
         $c = 0;
         $force_close = $implements = $collect = false;
@@ -27,8 +28,8 @@ class ClassReferenceFinder
             $t = self::$token[0];
 
             if ($t == T_USE) {
-                // use function Name\Space\function_name;
                 next($tokens);
+                // use function Name\Space\function_name;
                 if (current($tokens)[0] == T_FUNCTION) {
                     // we do not collect the namespaced function name
                     next($tokens);
@@ -70,9 +71,15 @@ class ClassReferenceFinder
                 $isCatchException = true;
                 continue;
             } elseif ($t == T_NAMESPACE) {
-                $force_close = false;
-                $collect = true;
-            // continue;   // why we do not continue?? (0_o)
+                $collect = false;
+                next($tokens);
+                $namespace = '';
+                while (current($tokens)[0] !== ';') {
+                    (!in_array(current($tokens)[0], [T_COMMENT, T_WHITESPACE])) && $namespace .= current($tokens)[1];
+                    next($tokens);
+                }
+                next($tokens);
+                continue;
             } elseif (\in_array($t, [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
                 $isInsideMethod = false;
             } elseif ($t == T_FUNCTION) {
@@ -81,9 +88,9 @@ class ClassReferenceFinder
                     $isDefiningMethod = true;
                 }
             } elseif ($t == T_VARIABLE || $t == T_ELLIPSIS) {
-                if ($isDefiningFunction) {
+                //if ($isDefiningFunction) {
                     //$c++;
-                }
+                //}
                 $collect = false;
                 self::forward();
                 // we do not want to collect variables
@@ -218,7 +225,7 @@ class ClassReferenceFinder
             self::forward();
         }
 
-        return $classes;
+        return [$classes, $namespace];
     }
 
     protected static function forward()
@@ -232,6 +239,7 @@ class ClassReferenceFinder
         return \in_array($token[1], [
             'object',
             'string',
+            'noreturn',
             'int',
             'private',
             'public',

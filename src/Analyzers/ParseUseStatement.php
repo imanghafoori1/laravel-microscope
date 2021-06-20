@@ -14,9 +14,9 @@ class ParseUseStatement
         try {
             $imports = self::parseUseStatements($tokens);
             $imports = $imports[0] ?: [$imports[1]];
-            $classes = ClassReferenceFinder::process($tokens);
+            [$classes, $namespace] = ClassReferenceFinder::process($tokens);
 
-            return Expander::expendReferences($classes, $imports);
+            return Expander::expendReferences($classes, $imports, $namespace);
         } catch (\ErrorException $e) {
             self::requestIssue($absFilePath);
 

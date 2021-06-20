@@ -11,7 +11,7 @@ class Expander
      *
      * @return bool
      */
-    public static function isBuiltinType($type)
+    public static function isKeywordType($type)
     {
         return \in_array(strtolower($type), [
             'self',
@@ -20,21 +20,12 @@ class Expander
         ], true);
     }
 
-    public static function expendReferences($classes, $imports)
+    public static function expendReferences($classes, $imports, $namespace)
     {
         // Here we implode the tokens to form the full namespaced class path
         $results = [];
-        $namespace = '';
         $c = 0;
         foreach ($classes as $importeds) {
-            if ($importeds[0][0] == T_NAMESPACE) {
-                unset($importeds[0]);
-                foreach ($importeds as $row) {
-                    $namespace .= $row[1];
-                }
-                continue;
-            }
-
             $results[$c]['class'] = '';
 
             // attach the current namespace if it does not begin with '\'
@@ -43,7 +34,7 @@ class Expander
             }
 
             foreach ($importeds as $row) {
-                if (self::isBuiltinType($row[1])) {
+                if (self::isKeywordType($row[1])) {
                     unset($results[$c]);
                     $c--;
                     continue;
