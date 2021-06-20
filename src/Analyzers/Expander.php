@@ -22,7 +22,7 @@ class Expander
 
     public static function expendReferences($classes, $imports)
     {
-        // here we implode the tokens to form the full namespaced class path
+        // Here we implode the tokens to form the full namespaced class path
         $results = [];
         $namespace = '';
         $c = 0;

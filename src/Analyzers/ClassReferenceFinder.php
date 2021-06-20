@@ -90,7 +90,12 @@ class ClassReferenceFinder
                 continue;
             } elseif ($t == T_IMPLEMENTS) {
                 $collect = $implements = true;
-                //$c++;
+                isset($classes[$c]) && $c++;
+                self::forward();
+                continue;
+            } elseif ($t == T_EXTENDS) {
+                $collect = $extends = true;
+                //isset($classes[$c]) && $c++;
                 self::forward();
                 continue;
             } elseif ($t == T_WHITESPACE || $t == '&' || $t == T_COMMENT) {
@@ -102,7 +107,7 @@ class ClassReferenceFinder
 
                 // Interface methods end up with ";"
                 $t == ';' && $isSignature = false;
-                $collect && $c++;
+                $collect && isset($classes[$c]) && $c++;
                 $collect = false;
 
                 self::forward();
@@ -114,12 +119,12 @@ class ClassReferenceFinder
                 $isInSideClass && ($force_close = false);
                 // for method calls: foo(new Hello, $var);
                 // we do not want to collect after comma.
-                $c++;
+                isset($classes[$c]) && $c++;
                 self::forward();
                 continue;
             } elseif ($t == ']') {
                 $force_close = $collect = false;
-                //$c++;
+                isset($classes[$c]) && $c++;
                 self::forward();
                 continue;
             } elseif ($t == '{') {
@@ -130,7 +135,7 @@ class ClassReferenceFinder
                 // After "extends \Some\other\Class_v"
                 // we need to switch to the next level.
                 if ($collect) {
-                    $c++;
+                    isset($classes[$c]) && $c++;
                     $collect = false;
                 }
                 self::forward();
@@ -148,7 +153,7 @@ class ClassReferenceFinder
                     $isDefiningFunction = false;
                     $isCatchException = false;
                 }
-                $c++;
+                isset($classes[$c]) && $c++;
                 self::forward();
                 continue;
             } elseif ($t == '?') {
@@ -165,7 +170,7 @@ class ClassReferenceFinder
                     $classes[$c][] = self::$lastToken;
                 }
                 $collect = false;
-                $c++;
+                isset($classes[$c]) && $c++;
                 self::forward();
                 continue;
             } elseif ($t == T_NS_SEPARATOR) {
@@ -194,7 +199,7 @@ class ClassReferenceFinder
                 // we do not want to collect the new keyword itself
                 continue;
             } elseif ($t == '|') {
-                $c++;
+                isset($classes[$c]) && $c++;
                 self::forward();
 
                 continue;
