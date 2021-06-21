@@ -157,8 +157,7 @@ class ClassReferenceFinder
                     $collect = false;
                 }
                 if ($t == ')') {
-                    $isDefiningFunction = false;
-                    $isCatchException = false;
+                    $isCatchException = $isDefiningFunction = false;
                 }
                 isset($classes[$c]) && $c++;
                 self::forward();
