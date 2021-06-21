@@ -34,7 +34,8 @@ class RoutePaths
             }
 
             foreach ($methodCalls as $calls) {
-                $routePaths[] = self::fullPath($calls, $providerClass, $path);
+                $routeFilePath = self::fullPath($calls, $providerClass, $path);
+                file_exists($routeFilePath) && $routePaths[] = $routeFilePath;
             }
         }
 
@@ -44,12 +45,13 @@ class RoutePaths
     private static function fullPath($calls, $providerClass, $path)
     {
         $fullPath = '';
+
         foreach ($calls[0] as $token) {
             if ($token[0] == T_DIR) {
                 // remove class name from the end of string.
-                $relativeDir = \trim(\str_replace(class_basename($providerClass), '', $path), '\\');
+                $relativeDirPath = \trim(Str::replaceLast(class_basename($providerClass), '', $path), '\\');
 
-                $fullPath .= $relativeDir;
+                $fullPath .= $relativeDirPath;
             } elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
                 $firstParam = \trim($token[1], '\'\"');
                 $fullPath .= $firstParam;
