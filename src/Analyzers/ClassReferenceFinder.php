@@ -70,10 +70,9 @@ class ClassReferenceFinder
                 $collect = true;
                 $isCatchException = true;
                 continue;
-            } elseif ($t == T_NAMESPACE) {
+            } elseif ($t == T_NAMESPACE && !$namespace && self::$lastToken[0] !== T_DOUBLE_COLON) {
                 $collect = false;
                 next($tokens);
-                $namespace = '';
                 while (current($tokens)[0] !== ';') {
                     (! in_array(current($tokens)[0], [T_COMMENT, T_WHITESPACE])) && $namespace .= current($tokens)[1];
                     next($tokens);
