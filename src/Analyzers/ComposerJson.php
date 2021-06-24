@@ -8,6 +8,8 @@ class ComposerJson
 {
     private static $result = [];
 
+    public static $fakeComposerPath = null;
+
     public static function readKey($key, $composerPath = null)
     {
         $path = $composerPath ?: '';
@@ -15,8 +17,8 @@ class ComposerJson
         if (isset(self::$result[$path][$key])) {
             return self::$result[$path][$key];
         }
-
-        $composer = \json_decode(\file_get_contents(app()->basePath($path.'composer.json')), true);
+        $fullPath = self::$fakeComposerPath ?: app()->basePath($path.'composer.json');
+        $composer = \json_decode(\file_get_contents($fullPath), true);
 
         $value = (array) data_get($composer, $key, []);
 

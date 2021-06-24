@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Psr4Classes;
 
 class FileManipulator
@@ -24,7 +25,7 @@ class FileManipulator
             // Replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
                 if (! $_line || $lineNum == $_line) {
-                    return \str_replace($search, $replace, $line);
+                    return Str::replaceFirst($search, $replace, $line);
                 }
             }
         };

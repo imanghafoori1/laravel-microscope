@@ -70,14 +70,14 @@ class NamespaceCorrector
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
 
-    public static function getNamespaceFromRelativePath($relPath)
+    public static function getNamespaceFromRelativePath($relPath, $autoload = null)
     {
         // Remove .php from class path
         $relPath = str_replace([base_path(), '.php'], '', $relPath);
 
-        $autoload = ComposerJson::readAutoload();
-        uksort($autoload, function ($a, $b) {
-            return strlen($b) <=> strlen($a);
+        ($autoload === null) && $autoload = ComposerJson::readAutoload();
+        uksort($autoload, function ($namespace1, $namespace2) {
+            return strlen($namespace2) <=> strlen($namespace1);
         });
 
         $namespaces = array_keys($autoload);

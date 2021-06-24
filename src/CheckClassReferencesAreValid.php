@@ -155,7 +155,7 @@ class CheckClassReferencesAreValid
 
     private static function fix($absFilePath, $class, $line, $namespace)
     {
-        $baseClassName = \str_replace($namespace.'\\', '', $class);
+        $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
 
         $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
 
@@ -163,7 +163,7 @@ class CheckClassReferencesAreValid
             return $result;
         }
 
-        return $result = FileManipulator::fixReference($absFilePath, $class, $line);
+        return FileManipulator::fixReference($absFilePath, $class, $line);
     }
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
