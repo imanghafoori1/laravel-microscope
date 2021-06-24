@@ -57,9 +57,9 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals('App\\appollo', $result);
 
         $autoload = [
-            "App\\"=> "app/",
-            "App\\lication\\"=> "app/s/",
-            "Database\\Seeders\\"=> "database/seeders/"
+            'App\\'=> 'app/',
+            'App\\lication\\'=> 'app/s/',
+            'Database\\Seeders\\'=> 'database/seeders/',
         ];
 
         $result = NamespaceCorrector::getNamespaceFromRelativePath('app/s/Hello.php', $autoload);
