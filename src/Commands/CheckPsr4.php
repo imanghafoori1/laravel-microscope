@@ -22,21 +22,23 @@ class CheckPsr4 extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->line('');
-        $this->info('Start checking PSR-4 namespaces...');
+        $this->info('Started checking PSR-4 namespaces...');
         $time = microtime(true);
 
         $errorPrinter->printer = $this->output;
 
         $autoload = ComposerJson::readAutoload();
         $this->checkNamespaces($autoload);
-        $olds = \array_keys(CheckNamespaces::$changedNamespaces);
-        $news = \array_values(CheckNamespaces::$changedNamespaces);
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        if (! config('microscope.no_fix')) {
+        if (CheckNamespaces::$changedNamespaces && ! config('microscope.no_fix')) {
+            $olds = \array_keys(CheckNamespaces::$changedNamespaces);
+            $news = \array_values(CheckNamespaces::$changedNamespaces);
+
             $this->fixReferences($autoload, $olds, $news);
         }
+
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->reportResult($autoload);
             $this->printErrorsCount($errorPrinter, $time);
@@ -113,7 +115,7 @@ class CheckPsr4 extends Command
 
     private function fixReferences($autoload, $olds, $news)
     {
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
+        foreach ($autoload as $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
                 $_path = $classFilePath->getRealPath();
