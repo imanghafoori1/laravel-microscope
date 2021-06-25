@@ -18,13 +18,13 @@ class CheckEndIf extends Command
     public function handle()
     {
         if (! $this->startWarning()) {
-            return;
+            return null;
         }
 
         $psr4 = ComposerJson::readAutoload();
 
         $fixedFilesCount = 0;
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
+        foreach ($psr4 as $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $file) {
                 $path = $file->getRealPath();
@@ -55,17 +55,10 @@ class CheckEndIf extends Command
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
-    private function fix($filePath, $tokens, $tries)
-    {
-        Refactor::saveTokens($filePath, $tokens, $this->option('test'));
-
-        $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
-    }
-
     private function printFinalMsg($fixed)
     {
         if ($fixed > 0) {
-            $msg = 'Hooray!!!, '.$fixed.' files were flattened by the microscope.';
+            $msg = 'Hooray!, '.$fixed.' files were transformed by the microscope.';
         } else {
             $msg = 'Congratulations, your code base does not seems to need any fix.';
         }
