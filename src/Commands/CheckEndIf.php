@@ -75,7 +75,7 @@ class CheckEndIf extends Command
 
     private function startWarning()
     {
-        $this->info('Checking for Early Returns...');
+        $this->info('Checking for endif\'s...');
         $this->warn('This command is going to make changes to your files!');
 
         return $this->output->confirm('Do you have committed everything in git?', true);
