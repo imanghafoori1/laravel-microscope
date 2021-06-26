@@ -8,25 +8,22 @@ class ComposerJson
 {
     private static $result = [];
 
+    /**
+     * Used for testing purposes.
+     */
     public static $fakeComposerPath = null;
 
-    public static function readKey($key, $composerPath = null)
+    public static function readKey($key, $composerPath = '')
     {
-        $path = $composerPath ?: '';
-
-        if (isset(self::$result[$path][$key])) {
-            return self::$result[$path][$key];
-        }
-        $fullPath = self::$fakeComposerPath ?: app()->basePath($path.'composer.json');
-        $composer = \json_decode(\file_get_contents($fullPath), true);
+        $composer = self::readComposerFileData($composerPath);
 
         $value = (array) data_get($composer, $key, []);
 
         if (\in_array($key, ['autoload.psr-4', 'autoload-dev.psr-4'])) {
-            $value = self::normalizePaths($value, $path);
+            $value = self::normalizePaths($value, $composerPath);
         }
 
-        return self::$result[$path][$key] = $value;
+        return $value;
     }
 
     public static function isInAppSpace($class)
@@ -44,16 +41,16 @@ class ComposerJson
             }
         }
 
-        $res = [];
+        $result = [];
         foreach ($composers as $path) {
             // We avoid autoload-dev for repositories.
-            $res = $res + self::readKey('autoload.psr-4', $path);
+            $result = $result + self::readKey('autoload.psr-4', $path);
         }
 
         // add the root composer.json
         $root = self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
 
-        return self::removedIgnored($res + $root);
+        return self::removedIgnored($result + $root);
     }
 
     private static function normalizePaths($value, $path)
@@ -80,5 +77,21 @@ class ComposerJson
         }
 
         return $result;
+    }
+
+    /**
+     * @param $composerPath
+     *
+     * @return array
+     */
+    private static function readComposerFileData($composerPath)
+    {
+        $fullPath = self::$fakeComposerPath ?: app()->basePath($composerPath.'composer.json');
+
+        if (! isset(self::$result[$fullPath])) {
+            self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath), true);
+        }
+
+        return self::$result[$fullPath];
     }
 }
