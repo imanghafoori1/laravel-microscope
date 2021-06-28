@@ -200,7 +200,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Event::listen('microscope.finished.checks', function () {
             CheckViews::$checkedCallsNum = 0;
             CheckClassReferences::$refCount = 0;
-            Psr4Classes::$checkedFilesNum = 0;
+            ForPsr4LoadedClasses::$checkedFilesNum = 0;
         });
     }
 

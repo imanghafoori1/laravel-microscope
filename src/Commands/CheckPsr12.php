@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Checks\PSR12\CurlyBraces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckPsr12 extends Command
@@ -30,7 +30,7 @@ class CheckPsr12 extends Command
 
         ActionsComments::$command = $this;
 
-        Psr4Classes::check([CurlyBraces::class]);
+        ForPsr4LoadedClasses::check([CurlyBraces::class]);
 
         $this->finishCommand($errorPrinter);
 

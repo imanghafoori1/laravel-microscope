@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 
-class Psr4Classes
+class ForPsr4LoadedClasses
 {
     /**
      * @var array
@@ -21,14 +21,14 @@ class Psr4Classes
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
+            foreach ($files as $phpFilePath) {
                 self::$checkedFilesNum++;
-                $absFilePath = $classFilePath->getRealPath();
+                $absFilePath = $phpFilePath->getRealPath();
 
                 $tokens = token_get_all(file_get_contents($absFilePath));
 
                 foreach ($checks as $check) {
-                    $check::check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace);
+                    $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace);
                 }
             }
         }

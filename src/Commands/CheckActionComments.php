@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckActionComments extends Command
@@ -24,7 +24,7 @@ class CheckActionComments extends Command
 
         ActionsComments::$command = $this;
 
-        Psr4Classes::check([ActionsComments::class]);
+        ForPsr4LoadedClasses::check([ActionsComments::class]);
 
         $this->finishCommand($errorPrinter);
 

@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
@@ -43,7 +43,7 @@ class CheckRoutes extends Command
             CheckRoutes::$skippedRoutesNum.' skipped)'
         );
         $this->info('Checking route names exists...');
-        Psr4Classes::check([CheckRouteCalls::class]);
+        ForPsr4LoadedClasses::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
 
         $this->getOutput()->writeln(' - '.CheckRouteCalls::$checkedRouteCallsNum.

@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -37,13 +37,13 @@ class CheckImports extends Command
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
         $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
 
-        Psr4Classes::check([CheckClassReferencesAreValid::class]);
+        ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class]);
 
         // Checks the blade files for class references.
         BladeFiles::check([CheckClassReferences::class]);
 
         $this->finishCommand($errorPrinter);
-        $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' class references were checked within: '.Psr4Classes::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
+        $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' class references were checked within: '.ForPsr4LoadedClasses::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
 
         $errorPrinter->printTime();
 

@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\ActionsUnDocblock;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckGenericActionComments extends Command
@@ -24,7 +24,7 @@ class CheckGenericActionComments extends Command
 
         ActionsUnDocblock::$command = $this;
 
-        Psr4Classes::check([ActionsUnDocblock::class]);
+        ForPsr4LoadedClasses::check([ActionsUnDocblock::class]);
 
         $this->finishCommand($errorPrinter);
 

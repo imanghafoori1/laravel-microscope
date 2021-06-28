@@ -168,7 +168,7 @@ class CheckClassReferencesAreValid
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        [$nonImportedClasses, $namespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+        [$nonImportedClasses, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
 
@@ -179,20 +179,25 @@ class CheckClassReferencesAreValid
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
+            } else {
+                $wrongClassRef = $class;
+                unset($class);
             }
 
-            if (! ComposerJson::isInAppSpace($class)) {
-                $printer->doesNotExist($class, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
+            if (! ComposerJson::isInUserSpace($wrongClassRef)) {
+                $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
                 continue;
             }
 
-            [$isFixed, $corrections] = self::fix($absFilePath, $class, $line, $namespace);
+            [$isFixed, $corrections] = self::fix($absFilePath, $wrongClassRef, $line, $hostNamespace);
 
+            // print
             $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
-            $printer->$method($absFilePath, $class, $line, $corrections);
+            $printer->$method($absFilePath, $wrongClassRef, $line, $corrections);
+
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                ([$nonImportedClasses, $namespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath));
+                [$nonImportedClasses, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
                 goto loopStart;
             }
         }

@@ -26,7 +26,7 @@ class ComposerJson
         return $value;
     }
 
-    public static function isInAppSpace($class)
+    public static function isInUserSpace($class)
     {
         return Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
     }
@@ -70,6 +70,7 @@ class ComposerJson
     {
         $result = [];
         $ignored = config('microscope.ignored_namespaces', []);
+
         foreach ($mapping as $namespace => $path) {
             if (! in_array($namespace, $ignored)) {
                 $result[$namespace] = $path;

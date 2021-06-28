@@ -33,6 +33,7 @@ class ClassReferencesProcessTest extends BaseTestClass
         $this->assertEquals([[311, 'self', 56]], $output[19]);
 
         $this->assertEquals("Imanghafoori\LaravelMicroscope\FileReaders", $namespace);
+
         if (version_compare(phpversion(), '8.0.0') !== 1) {
             $this->assertEquals([[393, '\\', 9], [311, 'Inline', 9], [393, '\\', 9], [311, 'InterF3', 9]], $output[3]);
 
@@ -44,5 +45,13 @@ class ClassReferencesProcessTest extends BaseTestClass
             $this->assertEquals([[311, 'HalfImported', 43], [393, '\\', 43], [311, 'TheRest', 43]], $output[16]);
             $this->assertEquals([[311, 'A', 60], [393, '\\', 60], [311, 'Newed', 60]], $output[21]);
         }
+        $this->assertEquals([[311, 'InConstructor', 67]], $output[23]);
+        $this->assertEquals([
+            [393, "\\", 70],
+            [311, "A", 70],
+            [393, "\\", 70],
+            [311, "ReturnType", 70],
+        ], $output[24]);
+        $this->assertEquals([[311, 'F', 72]], $output[25]);
     }
 }

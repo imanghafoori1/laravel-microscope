@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class FileManipulator
 {
@@ -50,7 +50,7 @@ class FileManipulator
             return [false, []];
         }
 
-        $class_list = Psr4Classes::classList();
+        $class_list = ForPsr4LoadedClasses::classList();
         $cls = \explode('\\', $class);
         $className = array_pop($cls);
         $correct = $class_list[$className] ?? [];

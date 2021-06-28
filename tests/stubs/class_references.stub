@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace /*HEHE*/ Imanghafoori\LaravelMicroscope\FileReaders;
 
@@ -69,6 +69,6 @@ class Paths extends \A\ParentClass implements InterF1, InterF2, \Inline\InterF3
 
     public function foo () : /*comment*/ \A\ReturnType
     {
-        //
+        $r = function (F $f) use ($g) {};
     }
 }

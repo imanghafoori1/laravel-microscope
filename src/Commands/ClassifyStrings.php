@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckStringy;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class ClassifyStrings extends Command
@@ -25,7 +25,7 @@ class ClassifyStrings extends Command
             return $this;
         });
         $errorPrinter->printer = $this->output;
-        Psr4Classes::check([CheckStringy::class]);
+        ForPsr4LoadedClasses::check([CheckStringy::class]);
         $this->getOutput()->writeln(' - Finished looking for stringy classes.');
 
         $this->finishCommand($errorPrinter);

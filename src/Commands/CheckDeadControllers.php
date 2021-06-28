@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Classes;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckDeadControllers extends Command
@@ -25,7 +25,7 @@ class CheckDeadControllers extends Command
 
         // checks calls like this: route('admin.user')
         // in the psr-4 loaded classes.
-        Psr4Classes::check([RoutelessActions::class]);
+        ForPsr4LoadedClasses::check([RoutelessActions::class]);
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
