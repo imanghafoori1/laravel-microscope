@@ -75,35 +75,20 @@ class ActionsComments
 
     protected static function getMsg($methods, $route)
     {
-        $msg = '/**'."\n";
-        $prefix = '         * ';
-
+        $routeName = $route->getName() ?: '';
+        $middlewares = self::gatherMiddlewares($route);
         [$file, $line] = self::getCallsiteInfo($methods[0], $route);
 
-        if ($file) {
-            $msg .= $prefix.'@at('.$file.':'.$line.')';
-        }
+        $viewData = [
+            'middlewares' => $middlewares,
+            'routeName' => $routeName,
+            'file' => $file,
+            'line' => $line,
+            'methods' => $methods,
+            'url' => $route->uri(),
+        ];
 
-        $nameBlock = $prefix."@name('".($route->getName() ?: '')."')";
-        $msg .= "\n".$prefix;
-        if (\count($methods) > 1) {
-            $msg .= '@methods('.\implode(', ', $methods).')'."\n".$prefix.'@uri(\'/'.$route->uri().'\')'."\n".$nameBlock;
-        } else {
-            $msg .= '@'.strtolower(\implode('', $methods)).'(\'/'.$route->uri().'\')'."\n".$nameBlock;
-        }
-
-        $middlewares = $route->gatherMiddleware();
-
-        foreach ($middlewares as $i => $m) {
-            if (! is_string($m)) {
-                $middlewares[$i] = 'Closure';
-            }
-        }
-        $msg .= "\n".$prefix.'@middlewares('.\implode(', ', $middlewares).')';
-
-        $msg .= "\n         */";
-
-        return $msg;
+        return view('action_comment', $viewData)->render();
     }
 
     public static function getCallsiteInfo($methods, $route)
@@ -114,5 +99,18 @@ class ActionsComments
         $file = \trim(str_replace(base_path(), '', $file), '\\/');
 
         return [$file, $line];
+    }
+
+    private static function gatherMiddlewares($route)
+    {
+        $middlewares = $route->gatherMiddleware();
+
+        foreach ($middlewares as $i => $m) {
+            if (! is_string($m)) {
+                $middlewares[$i] = 'Closure';
+            }
+        }
+
+        return $middlewares;
     }
 }

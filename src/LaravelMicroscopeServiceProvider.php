@@ -56,6 +56,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         if (! $this->canRun()) {
             return;
         }
+        $this->loadViewsFrom(__DIR__.'/../templates', 'microscope_package');
 
         Event::listen('microscope.start.command', function () {
             ! defined('microscope_start') && define('microscope_start', microtime(true));

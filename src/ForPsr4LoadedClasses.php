@@ -44,13 +44,14 @@ class ForPsr4LoadedClasses
 
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
+
             foreach ($files as $classFilePath) {
                 $fileName = $classFilePath->getFilename();
                 if (Str::endsWith($fileName, ['.blade.php'])) {
                     continue;
                 }
 
-                $filePath = \str_replace(base_path(), '', $classFilePath->getRealPath());
+                $relativePath = \str_replace(base_path(), '', $classFilePath->getRealPath());
 
                 $composerPath = \str_replace('/', '\\', $psr4Path);
 
@@ -60,7 +61,8 @@ class ForPsr4LoadedClasses
                  *      "App\\": "app/"
                  *  }.
                  */
-                $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $filePath);
+                // calculate namespace
+                $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $relativePath);
                 $t = \str_replace('.php', '', [$ns, $fileName]);
                 $t = \str_replace('/', '\\', $t); // for linux environments.
 
