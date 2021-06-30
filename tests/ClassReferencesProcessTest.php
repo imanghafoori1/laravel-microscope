@@ -45,10 +45,10 @@ class ClassReferencesProcessTest extends BaseTestClass
             $this->assertEquals([[311, 'HalfImported', 43], [393, '\\', 43], [311, 'TheRest', 43]], $output[16]);
             $this->assertEquals([[311, 'A', 60], [393, '\\', 60], [311, 'Newed', 60]], $output[21]);
             $this->assertEquals([
-                [393, "\\", 70],
-                [311, "A", 70],
-                [393, "\\", 70],
-                [311, "ReturnType", 70],
+                [393, '\\', 70],
+                [311, 'A', 70],
+                [393, '\\', 70],
+                [311, 'ReturnType', 70],
             ], $output[24]);
         }
         $this->assertEquals([[311, 'InConstructor', 67]], $output[23]);
