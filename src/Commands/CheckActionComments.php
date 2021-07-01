@@ -26,7 +26,7 @@ class CheckActionComments extends Command
 
         ForPsr4LoadedClasses::check([ActionsComments::class]);
 
-        $this->finishCommand($errorPrinter);
+        //$this->finishCommand($errorPrinter);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
