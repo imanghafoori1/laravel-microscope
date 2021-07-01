@@ -88,7 +88,7 @@ class ActionsComments
             'url' => $route->uri(),
         ];
 
-        return view('action_comment', $viewData)->render();
+        return view(config('microscope.action_comment_template', 'microscope_package::action_comment'), $viewData)->render();
     }
 
     public static function getCallsiteInfo($methods, $route)
