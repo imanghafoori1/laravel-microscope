@@ -20,7 +20,7 @@ class ParseUseStatement
         } catch (\ErrorException $e) {
             self::requestIssue($absFilePath);
 
-            return [null, null];
+            return [[], ''];
         }
     }
 

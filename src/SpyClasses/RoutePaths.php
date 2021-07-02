@@ -35,7 +35,7 @@ class RoutePaths
 
             foreach ($methodCalls as $calls) {
                 $routeFilePath = self::fullPath($calls, $providerClass, $path);
-                file_exists($routeFilePath) && $routePaths[] = $routeFilePath;
+                is_file($routeFilePath) && $routePaths[] = $routeFilePath;
             }
         }
 
