@@ -18,6 +18,10 @@ trait LogsErrors
         $commandType = Str::after($commandName, 'Check');
         $commandType = strtolower($commandType);
 
+        if (Str::is('all', $commandType)) {
+            $commandType = 'checks';
+        }
+
         if (! $errorPrinter->logErrors) {
             return;
         }
