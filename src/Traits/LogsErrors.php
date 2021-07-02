@@ -16,7 +16,7 @@ trait LogsErrors
     {
         $commandName = class_basename($this);
         $commandType = Str::after($commandName, 'Check');
-        $commandType = strtolower($commandType);
+        $commandType = $this->commandType ?? strtolower($commandType);
 
         if (! $errorPrinter->logErrors) {
             return;
