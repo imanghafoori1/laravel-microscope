@@ -15,6 +15,8 @@ class CheckAll extends Command
 
     protected $description = 'Run all checks with one command';
 
+    protected $commandType = 'checks';
+
     public function handle(ErrorPrinter $errorPrinter)
     {
         $t1 = microtime(true);
