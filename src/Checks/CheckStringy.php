@@ -21,12 +21,17 @@ class CheckStringy
         $namespaces = array_keys($psr4);
         $errorPrinter = resolve(ErrorPrinter::class);
         foreach ($tokens as $token) {
-            if (! $this->isPossiblyClassyString($token, $namespaces)) {
+            if ($token[0] !== T_CONSTANT_ENCAPSED_STRING) {
                 continue;
             }
 
             $classPath = \trim($token[1], '\'\"');
-            if (! \class_exists($classPath)) {
+
+            if (! $this->isPossiblyClassyString($namespaces, $classPath)) {
+                continue;
+            }
+
+            if (! \class_exists(str_replace('\\\\', '\\', $classPath))) {
                 if (self::refersToDir($classPath)) {
                     continue;
                 }
@@ -63,15 +68,14 @@ class CheckStringy
         return str_replace('\\\\', '\\', $string);
     }
 
-    private function isPossiblyClassyString($token, $namespaces)
+    private function isPossiblyClassyString($namespaces, $classPath)
     {
         $chars = ['@', ' ', ',', ':', '/', '.', '-'];
 
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING &&
-            Str::contains($token[1], $namespaces) &&
-            ! in_array($token[1], $namespaces) &&
-            ! Str::contains($token[1], $chars) &&
-            ! Str::endsWith($token[1], '\\');
+        return Str::contains($classPath, $namespaces) &&
+            ! in_array($classPath, $namespaces) &&
+            ! Str::contains($classPath, $chars) &&
+            ! Str::endsWith($classPath, '\\');
     }
 
     private static function ask($command, $token, $absFilePath)
