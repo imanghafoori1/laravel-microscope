@@ -13,11 +13,11 @@ class CheckClassReferences
     {
         [$classes,] = ParseUseStatement::findClassReferences($tokens, $absPath);
 
-        $p = app(ErrorPrinter::class);
+        $printer = app(ErrorPrinter::class);
         foreach ($classes as $class) {
             self::$refCount++;
             if (! self::exists($class['class'])) {
-                $p->wrongUsedClassError($absPath, $class['class'], $class['line']);
+                $printer->wrongUsedClassError($absPath, $class['class'], $class['line']);
             }
         }
     }
@@ -25,7 +25,7 @@ class CheckClassReferences
     private static function exists($class)
     {
         try {
-            return class_exists($class) || interface_exists($class);
+            return class_exists($class) || interface_exists($class) || function_exists($class);
         } catch (\Error $e) {
             app(ErrorPrinter::class)->simplePendError($e->getMessage(), $e->getFile(), $e->getLine(), 'error', 'File error');
 
