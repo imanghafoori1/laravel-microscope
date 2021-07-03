@@ -130,6 +130,8 @@ class CheckClassReferencesAreValid
                 continue;
             }
 
+            $class = str_replace('\\\\', '\\', $class);
+
             if (! \class_exists($class)) {
                 $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
                 $result = FileManipulator::fixReference($absFilePath, $class, $token[2]);
