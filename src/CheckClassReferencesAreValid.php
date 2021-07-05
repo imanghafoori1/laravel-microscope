@@ -84,7 +84,7 @@ class CheckClassReferencesAreValid
 
             $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
 
-            if ($isInUserSpace && !self::isAliased($class, $as)) {
+            if ($isInUserSpace && ! self::isAliased($class, $as)) {
                 [$isCorrected, $corrects] = FileManipulator::fixReference($absFilePath, $class, $line, '', true);
             } else {
                 [$isCorrected, $corrects] = [false, []];
@@ -148,7 +148,6 @@ class CheckClassReferencesAreValid
                 } else {
                     $printer->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
-
             } elseif (! \method_exists($class, $method)) {
                 $printer->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
