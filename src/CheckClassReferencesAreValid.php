@@ -138,12 +138,17 @@ class CheckClassReferencesAreValid
 
             if (! \class_exists($class)) {
                 $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
-                $result = FileManipulator::fixReference($absFilePath, $class, $token[2]);
-                if ($isInUserSpace && $result[0]) {
+                $result = [false];
+                if ($isInUserSpace) {
+                    $result = FileManipulator::fixReference($absFilePath, $class, $token[2]);
+                }
+
+                if ($result[0]) {
                     $printer->printFixation($absFilePath, $class, $token[2], $result[1]);
                 } else {
                     $printer->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
+
             } elseif (! \method_exists($class, $method)) {
                 $printer->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
