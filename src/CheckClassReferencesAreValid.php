@@ -71,7 +71,7 @@ class CheckClassReferencesAreValid
     {
         $printer = app(ErrorPrinter::class);
 
-        foreach ($imports as $i => $import) {
+        foreach ($imports as $as => $import) {
             [$class, $line] = $import;
 
             if (! self::isAbsent($class)) {
@@ -84,9 +84,13 @@ class CheckClassReferencesAreValid
 
             $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
 
-            [$isCorrected, $corrects] = FileManipulator::fixReference($absFilePath, $class, $line, '', true);
+            if ($isInUserSpace && !self::isAliased($class, $as)) {
+                [$isCorrected, $corrects] = FileManipulator::fixReference($absFilePath, $class, $line, '', true);
+            } else {
+                [$isCorrected, $corrects] = [false, []];
+            }
 
-            if ($isInUserSpace && $isCorrected) {
+            if ($isCorrected) {
                 $printer->printFixation($absFilePath, $class, $line, $corrects);
             } else {
                 $printer->wrongImport($absFilePath, $class, $line);
@@ -203,5 +207,10 @@ class CheckClassReferencesAreValid
                 goto loopStart;
             }
         }
+    }
+
+    private static function isAliased($class, $as)
+    {
+        return class_basename($class) !== $as;
     }
 }
