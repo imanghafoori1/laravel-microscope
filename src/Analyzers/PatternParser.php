@@ -91,7 +91,7 @@ class PatternParser
             return false;
         }
 
-        if ($pToken[0] === T_CONSTANT_ENCAPSED_STRING && $pToken[1] === null) {
+        if (in_array($pToken[0], [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE]) && $pToken[1] === null) {
             return 'placeholder';
         }
 
@@ -150,7 +150,10 @@ class PatternParser
     {
         if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<string>'") {
             return T_CONSTANT_ENCAPSED_STRING;
-            //return trim($token[1], '\'<>');
+        }
+
+        if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<variable>'") {
+            return T_VARIABLE;
         }
     }
 }

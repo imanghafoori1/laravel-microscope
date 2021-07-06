@@ -15,7 +15,15 @@ class RefactorPatternParsingTest extends BaseTestClass
 
         $matches = PatternParser::search($patterns, $sampleFileTokens);
 
-        $this->assertEquals($matches[0][0], [['start' => 87, 'end' =>126], [[315, "'hi'", 18]]]);
-        $this->assertEquals($matches[0][1], [['start' => 151, 'end' => 184], [[315, "'Hello'", 24]]]);
+        $this->assertEquals($matches[0][0], [['start' => 87, 'end' =>126],
+            [
+                [T_VARIABLE, '$user', 15],
+                [T_CONSTANT_ENCAPSED_STRING, "'hi'", 18]
+            ]
+        ]);
+        $this->assertEquals($matches[0][1], [['start' => 151, 'end' => 184], [
+            [T_VARIABLE, '$club', 23],
+            [T_CONSTANT_ENCAPSED_STRING, "'Hello'", 24]
+        ]]);
     }
 }

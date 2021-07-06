@@ -20,7 +20,7 @@ class PostController extends Controller
     }
     public function index2(User $user, Club $club, Request $request)
     {
-        if(!$user){
+        if(!$club){
             return response()->json(['message' => __('Hello')], 404);
         }
     }
