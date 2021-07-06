@@ -21,7 +21,7 @@ class RefactorPatternParsingTest extends BaseTestClass
                 [T_CONSTANT_ENCAPSED_STRING, "'hi'", 18]
             ]
         ]);
-        $this->assertEquals($matches[0][1], [['start' => 151, 'end' => 184], [
+        $this->assertEquals($matches[0][1], [['start' => 151, 'end' => 185], [
             [T_VARIABLE, '$club', 23],
             [T_CONSTANT_ENCAPSED_STRING, "'Hello'", 24]
         ]]);

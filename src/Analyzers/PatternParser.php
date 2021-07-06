@@ -91,12 +91,16 @@ class PatternParser
             return false;
         }
 
-        if (in_array($pToken[0], [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE]) && $pToken[1] === null) {
+        if (in_array($pToken[0], [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE], true) && $pToken[1] === null) {
             return 'placeholder';
         }
 
         if (! isset($pToken[1]) || ! isset($token[1])) {
             return true;
+        }
+
+        if ($token[0] === T_CONSTANT_ENCAPSED_STRING) {
+            return trim($pToken[1], '\'\"') === trim($token[1], '\'\"');
         }
 
         return $pToken[1] === $token[1];
@@ -138,7 +142,7 @@ class PatternParser
     {
         $i++;
         $token = $tokens[$i] ?? '_';
-        while ($token[0] == T_WHITESPACE || $token[0] == T_COMMENT) {
+        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ','], true)) {
             $i++;
             $token = $tokens[$i] ?? [null, null];
         }

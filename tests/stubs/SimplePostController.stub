@@ -15,13 +15,13 @@ class PostController extends Controller
         if (! $user) {
            //asdcasdc
             return response()
-                ->json(['message' => __('hi')], 404);
+                ->json(["message" => __('hi')], 404);
         }
     }
     public function index2(User $user, Club $club, Request $request)
     {
         if(!$club){
-            return response()->json(['message' => __('Hello')], 404);
+            return response()->json(['message' => __('Hello'),], 404);
         }
     }
 }
