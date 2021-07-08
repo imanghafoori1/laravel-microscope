@@ -1,11 +1,13 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzers;
+namespace Imanghafoori\LaravelMicroscope\Refactor;
 
 use Illuminate\Support\Str;
 
 class PatternParser
 {
+    private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING,];
+
     public static function parsePatterns($refactorPatterns)
     {
         $tokens_to_search_for = [];
@@ -32,9 +34,10 @@ class PatternParser
                 }*/
             }
             $tokens_to_search_for[] = [$tokens];
-            /*
+            /**
              * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
-             * */
+             *
+             */
         }
 
         return $tokens_to_search_for;
@@ -42,9 +45,9 @@ class PatternParser
 
     public static function search($patterns, array $sampleFileTokens)
     {
-        $patternsTokens = PatternParser::parsePatterns($patterns);
+        $patternsTokens = self::parsePatterns($patterns);
 
-        return PatternParser::findMatches($patternsTokens, $sampleFileTokens);
+        return self::findMatches($patternsTokens, $sampleFileTokens);
     }
 
     public static function findMatches($patterns, array $fileTokens): array
@@ -63,7 +66,7 @@ class PatternParser
                         if ($isMatch) {
                             [$k, $matchedValues] = $isMatch;
                             $matches[$pIndex][] = [['start' => $i, 'end' => $k], $matchedValues];
-                            $i = $k; // fast-forward
+                            $i = $k - 1; // fast-forward
                         }
                     }
                     $i++;
@@ -91,7 +94,7 @@ class PatternParser
             return false;
         }
 
-        if (in_array($pToken[0], [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE], true) && $pToken[1] === null) {
+        if (in_array($pToken[0], self::$placeHolders, true) && $pToken[1] === null) {
             return 'placeholder';
         }
 
@@ -103,12 +106,16 @@ class PatternParser
             return trim($pToken[1], '\'\"') === trim($token[1], '\'\"');
         }
 
+        if ($pToken[0] === T_STRING && (in_array(strtolower($pToken[1]), ['true', 'false', 'null'], true))) {
+            return strtolower($pToken[1]) === strtolower($token[1]);
+        }
+
         return $pToken[1] === $token[1];
     }
 
     public static function compareTokens($pattern, $tokens, int $i)
     {
-        $j = 0;
+        $pi = $j = 0;
         $tCount = count($tokens);
         $pCount = count($pattern);
         $placeholderValues = [];
@@ -127,12 +134,13 @@ class PatternParser
                 $placeholderValues[] = $tToken;
             }
 
+            $pi = $i;
             [$tToken, $i] = self::getNextToken($tokens, $i);
             [$pToken, $j] = self::getNextToken($pattern, $j);
         }
 
         if ($pCount === $j) {
-            return [$i, $placeholderValues];
+            return [$pi, $placeholderValues];
         }
 
         return false;
@@ -152,12 +160,17 @@ class PatternParser
 
     private static function isPlaceHolder($token)
     {
-        if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<string>'") {
-            return T_CONSTANT_ENCAPSED_STRING;
+        if ($token[0] !== T_CONSTANT_ENCAPSED_STRING) {
+            return false;
         }
+        $map = [
+            "'<string>'" => T_CONSTANT_ENCAPSED_STRING,
+            "'<variable>'" => T_VARIABLE,
+            "'<number>'" => T_LNUMBER,
+            "'<name>'" => T_STRING,
+            "'<boolean>'" => T_STRING,
+        ];
 
-        if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<variable>'") {
-            return T_VARIABLE;
-        }
+        return $map[$token[1]] ?? false;
     }
 }

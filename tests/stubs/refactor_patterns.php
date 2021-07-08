@@ -1,6 +1,6 @@
 <?php
 
 return [
-    "if (!'<variable>') { return response()->json(['message' => __('<string>')], 404); }" =>
-        'Foo::bar("<1>")',
+    "if (!'<variable>' && '<boolean>') { return response()->'<name>'(['message' => __('<string>')], '<number>'); }" => 'Foo::bar("<1>")',
+    'foo(false, true, null);' => '',
 ];

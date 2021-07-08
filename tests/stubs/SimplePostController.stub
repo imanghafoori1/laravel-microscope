@@ -12,7 +12,7 @@ class PostController extends Controller
 {
     public function index(User $user, Club $club, Request $request)
     {
-        if (! $user) {
+        if (! $user && true) {
            //asdcasdc
             return response()
                 ->json(["message" => __('hi')], 404);
@@ -20,8 +20,10 @@ class PostController extends Controller
     }
     public function index2(User $user, Club $club, Request $request)
     {
-        if(!$club){
-            return response()->json(['message' => __('Hello'),], 404);
+        if(!$club && FALSE){
+            return response()->json(['message' => __('Hello'),], 403);
         }
+        foo(FALSE, TRUE, NULL);
+        foo(false, true, null);
     }
 }
