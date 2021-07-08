@@ -6,15 +6,26 @@ use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
 class RefactorPatternParsingTest extends BaseTestClass
 {
+
+    /** @test */
+    public function can_parse_patterns2()
+    {
+        $patterns = require __DIR__.'/stubs/refactor_patterns.php';
+        $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
+        $resultFile = file_get_contents(__DIR__.'/stubs/ResultSimplePostController.stub');
+
+        $this->assertEquals($resultFile, PatternParser::searchReplace($patterns, token_get_all($startFile)));
+    }
+
     /** @test */
     public function can_parse_patterns()
     {
         $patterns = require __DIR__.'/stubs/refactor_patterns.php';
         $sampleFileTokens =  token_get_all(file_get_contents(__DIR__.'/stubs/SimplePostController.stub'));
 
-
         $matches = PatternParser::search($patterns, $sampleFileTokens);
-        $this->assertEquals($matches[0][0][1],
+
+        $this->assertEquals($matches[0][0]['values'],
             [
                 [T_VARIABLE, '$user', 15],
                 [T_STRING, 'true', 15],
@@ -30,7 +41,7 @@ class RefactorPatternParsingTest extends BaseTestClass
         $end = $matches[0][0][0]['end'];
         $this->assertEquals($sampleFileTokens[$end], '}');
 
-        $this->assertEquals($matches[0][1][1],
+        $this->assertEquals($matches[0][1]['values'],
             [
                 [T_VARIABLE, '$club', 23],
                 [T_STRING, 'FALSE', 23],

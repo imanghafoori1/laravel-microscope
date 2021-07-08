@@ -3,9 +3,30 @@
 namespace Imanghafoori\LaravelMicroscope\Refactor;
 
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class PatternParser
 {
+    public static function replaceTokens($tokens, $from, $to, string $with)
+    {
+        $refactoredTokens = [];
+        foreach ($tokens as $i => $oldToken) {
+            if ($i === $from) {
+                $refactoredTokens[] = [T_STRING, $with, 1];
+                continue;
+            }
+
+            if ($i > $from && $i <= $to) {
+                $refactoredTokens[] = [T_STRING, '', 1];
+                continue;
+            }
+
+            $refactoredTokens[] = $oldToken;
+        }
+
+        return $refactoredTokens;
+    }
+
     private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING,];
 
     public static function parsePatterns($refactorPatterns)
@@ -33,10 +54,9 @@ class PatternParser
                     $j++;
                 }*/
             }
-            $tokens_to_search_for[] = [$tokens];
+            $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
             /**
              * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
-             *
              */
         }
 
@@ -50,22 +70,42 @@ class PatternParser
         return self::findMatches($patternsTokens, $sampleFileTokens);
     }
 
-    public static function findMatches($patterns, array $fileTokens): array
+    public static function searchReplace($patterns, array $sampleFileTokens)
+    {
+        $matches = self::search($patterns, $sampleFileTokens);
+
+        $replacePatterns = array_values($patterns);
+
+        $replacement = [];
+        foreach ($matches as $pi => $p_match) {
+            foreach ($p_match as $i => $match) {
+                $newValue = $replacePatterns[$pi];
+                foreach ($match['values'] as $number => $value) {
+                    $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
+                }
+                $replacement[$pi][$i] = ['value' => $newValue, 'range' => $match[0]];
+                $sampleFileTokens = self::replaceTokens($sampleFileTokens, $match[0]['start'], $match[0]['end'], $newValue);
+            }
+        }
+
+        return Refactor::toString($sampleFileTokens);
+    }
+
+    public static function findMatches($patterns, array $fileTokens)
     {
         $matches = [];
 
         foreach ($patterns as $pIndex => $pattern) {
-            foreach ($pattern as $patternChunkTokens) {
-                $pToken = $patternChunkTokens[0];
+            foreach ($pattern['search'] as $pToken) {
                 $i = 0;
                 $allCount = count($fileTokens);
                 while ($i < $allCount) {
                     $token = $fileTokens[$i];
                     if (PatternParser::areTheSame($pToken, $token)) {
-                        $isMatch = PatternParser::compareTokens($patternChunkTokens, $fileTokens, $i);
+                        $isMatch = PatternParser::compareTokens($pattern['search'], $fileTokens, $i);
                         if ($isMatch) {
                             [$k, $matchedValues] = $isMatch;
-                            $matches[$pIndex][] = [['start' => $i, 'end' => $k], $matchedValues];
+                            $matches[$pIndex][] = [['start' => $i, 'end' => $k], 'values' => $matchedValues];
                             $i = $k - 1; // fast-forward
                         }
                     }
@@ -165,10 +205,13 @@ class PatternParser
         }
         $map = [
             "'<string>'" => T_CONSTANT_ENCAPSED_STRING,
+            "'<str>'" => T_CONSTANT_ENCAPSED_STRING,
             "'<variable>'" => T_VARIABLE,
+            "'<var>'" => T_VARIABLE,
             "'<number>'" => T_LNUMBER,
             "'<name>'" => T_STRING,
             "'<boolean>'" => T_STRING,
+            "'<bool>'" => T_STRING,
         ];
 
         return $map[$token[1]] ?? false;
