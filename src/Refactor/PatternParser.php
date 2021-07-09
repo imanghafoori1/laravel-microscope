@@ -43,7 +43,7 @@ class PatternParser
             foreach ($tokens as $i => $token) {
                 // transform placeholders
                 if ($placeHolder = self::isPlaceHolder($token)) {
-                    $token = $tokens[$i] = [$placeHolder, null];
+                    $tokens[$i] = [$placeHolder, null];
                 }
 
                 /*
@@ -74,21 +74,7 @@ class PatternParser
     {
         $matches = self::search($patterns, $sampleFileTokens);
 
-        $replacePatterns = array_values($patterns);
-
-        $replacement = [];
-        foreach ($matches as $pi => $p_match) {
-            foreach ($p_match as $i => $match) {
-                $newValue = $replacePatterns[$pi];
-                foreach ($match['values'] as $number => $value) {
-                    $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
-                }
-                $replacement[$pi][$i] = ['value' => $newValue, 'range' => $match[0]];
-                $sampleFileTokens = self::replaceTokens($sampleFileTokens, $match[0]['start'], $match[0]['end'], $newValue);
-            }
-        }
-
-        return Refactor::toString($sampleFileTokens);
+        return self::applyPatterns($patterns, $matches, $sampleFileTokens);
     }
 
     public static function findMatches($patterns, array $fileTokens)
@@ -215,5 +201,22 @@ class PatternParser
         ];
 
         return $map[$token[1]] ?? false;
+    }
+
+    public static function applyPatterns($patterns, array $matches, $sampleFileTokens)
+    {
+        $replacePatterns = array_values($patterns);
+
+        foreach ($matches as $pi => $p_match) {
+            foreach ($p_match as $i => $match) {
+                $newValue = $replacePatterns[$pi];
+                foreach ($match['values'] as $number => $value) {
+                    $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
+                }
+                $sampleFileTokens = self::replaceTokens($sampleFileTokens, $match[0]['start'], $match[0]['end'], $newValue);
+            }
+        }
+
+        return Refactor::toString($sampleFileTokens);
     }
 }

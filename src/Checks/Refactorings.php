@@ -8,25 +8,18 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
 class Refactorings
 {
-    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $params)
+    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
         //$psr4 = ComposerJson::readAutoload();
         //$namespaces = array_keys($psr4);
         //$errorPrinter = resolve(ErrorPrinter::class);
+        $matches = PatternParser::findMatches($patterns[0], $tokens);
 
-        [$tokens_to_find, $replacement, $placeholders] = $params;
 
-        foreach ($tokens_to_find as $i => $token_to_find) {
-            foreach ($tokens as $t) {
-                if (self::match($t, $token_to_find)) {
-                }
-            }
-
-            self::sequence_in_array($token_to_find, $tokens) && dd($absFilePath);
-        }
     }
 
     private static function match($t, $token_to_find): bool

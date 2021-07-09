@@ -2,14 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
-use Imanghafoori\LaravelMicroscope\Checks\CheckStringy;
 use Imanghafoori\LaravelMicroscope\Checks\Refactorings;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Mockery\Matcher\Pattern;
 
 class CheckRefactors extends Command
 {
@@ -28,13 +27,12 @@ class CheckRefactors extends Command
         app()->singleton('current.command', function () {
             return $this;
         });
+        $errorPrinter->printer = $this->output;
 
         $refactors = require base_path('/refactor.php');
-        [$tokens_to_search_for, $placeholders] = self::parsePatterns($refactors);
+        $patterns = PatternParser::parsePatterns($refactors);
 
-
-        $errorPrinter->printer = $this->output;
-        ForPsr4LoadedClasses::check([Refactorings::class], [$tokens_to_search_for, array_values($refactors), $placeholders]);
+        ForPsr4LoadedClasses::check([Refactorings::class], [$patterns, $refactors]);
         $this->getOutput()->writeln(' - Finished refactors.');
 
         $this->finishCommand($errorPrinter);
