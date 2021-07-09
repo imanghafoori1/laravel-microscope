@@ -165,7 +165,8 @@ class ErrorPrinter
 
     public function print($msg, $path = '|  ', $len = null)
     {
-        ! $len && $len = PendingError::$maxLength + 1;
+        $len === null && $len = PendingError::$maxLength + 1;
+        
         $msgLen = strlen($msg);
         if (strpos($msg, 'yellow')) {
             $msgLen = $msgLen - 14;
@@ -174,8 +175,13 @@ class ErrorPrinter
         if ($len < 0) {
             $len = 0;
         }
+        if ($len === 0) {
+            $trail = '';
+        } else {
+            $trail = str_repeat(' ', $len).'|';
+        }
 
-        $this->printer->writeln($path.$msg.str_repeat(' ', $len).'|');
+        $this->printer->writeln($path.$msg.$trail);
     }
 
     public function printHeader($msg)
@@ -196,11 +202,13 @@ class ErrorPrinter
         $this->printer->writeln('|'.str_repeat('*', 3 + PendingError::$maxLength).'|');
     }
 
-    public function printLink($path, $lineNumber = 4)
+    public function printLink($path, $lineNumber = 4, $len = null)
     {
+        $len === null && ($len = PendingError::$maxLength + 30);
+        
         if ($path) {
             $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
-            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', PendingError::$maxLength + 30);
+            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', $len);
         }
     }
 

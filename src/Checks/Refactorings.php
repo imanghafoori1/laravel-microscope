@@ -2,11 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use App\Finder;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
@@ -14,40 +10,36 @@ class Refactorings
 {
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
-        //$psr4 = ComposerJson::readAutoload();
-        //$namespaces = array_keys($psr4);
-        //$errorPrinter = resolve(ErrorPrinter::class);
         $matches = PatternParser::findMatches($patterns[0], $tokens);
 
+        if ($matches) {
+            [$newVersion, $lineNums] = PatternParser::applyPatterns($patterns[1], $matches, $tokens);
 
+            self::printLinks($lineNums, $absFilePath, $patterns[1]);
+
+            self::askToRefactor($absFilePath) && file_put_contents($absFilePath, $newVersion);
+        }
     }
 
-    private static function match($t, $token_to_find): bool
+    private static function printLinks($lineNums, $absFilePath, $patterns)
     {
-        return $t == $token_to_find;
+        $printer = app(ErrorPrinter::class);
+        // Print Replacement Links
+        foreach ($patterns as $from => $to) {
+            $printer->print('Replacing:    <fg=yellow>'. Str::limit($from).'</>', '', 0);
+            $printer->print('With:         <fg=yellow>'. Str::limit($to).'</>', '', 0);
+        }
+
+        $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
+        foreach ($lineNums as $lineNum) {
+            $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
+        }
     }
 
-    public static function sequence_in_array(array $needle, array $haystack)
+    private static function askToRefactor($absFilePath)
     {
-        $haystackCount = count($haystack);
-        $needleCount = count($needle);
+        $text = 'Do you want to replace '.basename($absFilePath).' with new version of it?';
 
-        if ($needleCount > $haystack) {
-            throw new InvalidArgumentException('$needle array must be smaller than $haystack array.');
-        }
-
-        for ($i = 0; $i <= $haystackCount - $needleCount; $i++) {
-            $matchCount = 0;
-            for ($j = 0; $j < $needleCount; $j++) {
-                if ($needle[$j] == $haystack[$i + $j]) {
-                    $matchCount++;
-                    if ($matchCount == $needleCount) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        return app('current.command')->getOutput()->confirm($text, true);
     }
 }
