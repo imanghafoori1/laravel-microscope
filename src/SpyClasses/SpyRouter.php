@@ -59,7 +59,6 @@ class SpyRouter extends Router
                 $this->routeError($info, $err, 'Incorrect namespace.');
             }
         } catch (\Throwable $e) {
-
         }
     }
 
