@@ -13,8 +13,10 @@ class RefactorPatternParsingTest extends BaseTestClass
         $patterns = require __DIR__.'/stubs/refactor_patterns.php';
         $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
         $resultFile = file_get_contents(__DIR__.'/stubs/ResultSimplePostController.stub');
+        [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
-        $this->assertEquals($resultFile, PatternParser::searchReplace($patterns, token_get_all($startFile)));
+        $this->assertEquals($resultFile, $newVersion);
+        $this->assertEquals([15, 23, 26, 27], $replacedAt);
     }
 
     /** @test */

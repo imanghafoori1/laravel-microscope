@@ -193,8 +193,7 @@ class ErrorPrinter
 
     public function end()
     {
-        $this->print('');
-        $this->printer->writeln('|'.str_repeat('*', 3 + PendingError::$maxLength).'|  ');
+        $this->printer->writeln('|'.str_repeat('*', 3 + PendingError::$maxLength).'|');
     }
 
     public function printLink($path, $lineNumber = 4)

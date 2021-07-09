@@ -9,22 +9,22 @@ class PatternParser
 {
     public static function replaceTokens($tokens, $from, $to, string $with)
     {
-        $refactoredTokens = [];
-        foreach ($tokens as $i => $oldToken) {
+        $lineNumber = 0;
+
+        for ($i = $from; $i <= $to; $i++) {
             if ($i === $from) {
-                $refactoredTokens[] = [T_STRING, $with, 1];
+                $lineNumber = $tokens[$i][2] ?? 0;
+                $tokens[$i] = [T_STRING, $with, 1];
                 continue;
             }
 
             if ($i > $from && $i <= $to) {
-                $refactoredTokens[] = [T_STRING, '', 1];
-                continue;
+                ! $lineNumber && ($lineNumber = $tokens[$i][2] ?? 0);
+                $tokens[$i] = [T_STRING, '', 1];
             }
-
-            $refactoredTokens[] = $oldToken;
         }
 
-        return $refactoredTokens;
+        return [$tokens, $lineNumber];
     }
 
     private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING,];
@@ -207,16 +207,18 @@ class PatternParser
     {
         $replacePatterns = array_values($patterns);
 
+        $replacementLines = [];
         foreach ($matches as $pi => $p_match) {
             foreach ($p_match as $i => $match) {
                 $newValue = $replacePatterns[$pi];
                 foreach ($match['values'] as $number => $value) {
                     $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
                 }
-                $sampleFileTokens = self::replaceTokens($sampleFileTokens, $match[0]['start'], $match[0]['end'], $newValue);
+                [$sampleFileTokens, $lineNum] = self::replaceTokens($sampleFileTokens, $match[0]['start'], $match[0]['end'], $newValue);
+                $replacementLines[] = $lineNum;
             }
         }
 
-        return Refactor::toString($sampleFileTokens);
+        return [Refactor::toString($sampleFileTokens), $replacementLines];
     }
 }
