@@ -34,28 +34,32 @@ class SpyRouter extends Router
     {
         parent::updateGroupStack($attributes);
 
-        $e = $this->groupStack;
-        $newAttr = end($e);
+        try {
+            $e = $this->groupStack;
+            $newAttr = end($e);
 
-        $i = 2;
-        while (
-            ($info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $i + 1)[$i])
-            &&
-            $this->isExcluded($info)
-        ) {
-            $i++;
-        }
-        $ns = $newAttr['namespace'] ?? null;
-        $dir = NamespaceCorrector::getRelativePathFromNamespace($ns);
+            $i = 2;
+            while (
+                ($info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $i + 1)[$i])
+                &&
+                $this->isExcluded($info)
+            ) {
+                $i++;
+            }
+            $ns = $newAttr['namespace'] ?? null;
+            $dir = NamespaceCorrector::getRelativePathFromNamespace($ns);
 
-        if (isset($attributes['middlewares'])) {
-            $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
-            $this->routeError($info, $err, "Incorrect 'middlewares' key.");
-        }
+            if (isset($attributes['middlewares'])) {
+                $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
+                $this->routeError($info, $err, "Incorrect 'middlewares' key.");
+            }
 
-        if ($ns && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ns) !== $dir) {
-            $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
-            $this->routeError($info, $err, 'Incorrect namespace.');
+            if ($ns && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ns) !== $dir) {
+                $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
+                $this->routeError($info, $err, 'Incorrect namespace.');
+            }
+        } catch (\Throwable $e) {
+
         }
     }
 

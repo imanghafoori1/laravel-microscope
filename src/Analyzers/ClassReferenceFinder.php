@@ -214,6 +214,11 @@ class ClassReferenceFinder
                     self::forward();
 
                     continue;
+                } else {
+                    $collect = false;
+                    isset($classes[$c]) && $c++;
+                    self::forward();
+                    continue;
                 }
             }
 
