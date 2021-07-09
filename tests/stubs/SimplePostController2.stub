@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Club;
+use App\Events\MemberCommentedClubPost;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class PostController extends Controller
+{
+    public function index(User $user, Club $club, Request $request)
+    {
+        if (! $user && true) {
+           //asdcasdc
+            response()
+                ->json(["message" => __('hi')], 404)->throwResponse();
+        }
+    }
+    public function index2(User $user, Club $club, Request $request)
+    {
+        if(!$club && FALSE){
+            response()->json(['message' => __('Hello'),], 403)->throwResponse();
+        }
+        foo(FALSE, TRUE, NULL);
+        foo(false, true, null);
+    }
+}

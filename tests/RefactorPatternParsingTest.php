@@ -6,6 +6,21 @@ use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
 class RefactorPatternParsingTest extends BaseTestClass
 {
+    /** @test */
+    public function can_parse_pattern3()
+    {
+        $patterns = [
+            'return response()"<until>";' => 'response()"<1>"->throwResponse();'
+        ];
+
+        $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
+        $resultFile = file_get_contents(__DIR__.'/stubs/SimplePostController2.stub');
+        [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
+
+        $this->assertEquals($resultFile, $newVersion);
+
+        $this->assertEquals([17, 24], $replacedAt);
+    }
 
     /** @test */
     public function can_parse_patterns2()
