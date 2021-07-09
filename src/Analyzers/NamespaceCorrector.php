@@ -16,7 +16,7 @@ class NamespaceCorrector
 
     public static function haveSameNamespace($class1, $class2)
     {
-        return self::getNamespaceFromFullClass($class1) == self::getNamespaceFromFullClass($class2);
+        return self::getNamespaceFromFullClass($class1) === self::getNamespaceFromFullClass($class2);
     }
 
     public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)

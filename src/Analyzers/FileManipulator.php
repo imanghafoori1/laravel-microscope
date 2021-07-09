@@ -86,7 +86,7 @@ class FileManipulator
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         if (isset($uses[$className])) {
-            return [self::replaceFirst($absPath, $class, $className, $lineNum), $correct];
+            return [self::replaceFirst($absPath, $class, $correct[0], $lineNum), $correct];
         }
 
         return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
