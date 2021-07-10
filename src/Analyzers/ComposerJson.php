@@ -28,7 +28,7 @@ class ComposerJson
 
     public static function isInUserSpace($class)
     {
-        return Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
+        return Str::startsWith(ltrim($class, '\\'), \array_keys(ComposerJson::readAutoload()));
     }
 
     public static function readAutoload()
