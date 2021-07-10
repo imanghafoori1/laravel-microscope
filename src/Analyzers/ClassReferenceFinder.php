@@ -249,6 +249,8 @@ class ClassReferenceFinder
             'protected',
             'float',
             'void',
+            'false',
+            'true',
             'null',
             'bool',
             'array',
