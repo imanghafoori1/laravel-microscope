@@ -178,18 +178,19 @@ class CheckClassReferencesAreValid
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        [$nonImportedClasses, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+        [$classReference, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
 
         loopStart:
-        foreach ($nonImportedClasses as $nonImportedClass) {
-            $class = $nonImportedClass['class'];
-            $line = $nonImportedClass['line'];
+        foreach ($classReference as $classReference) {
+            $class = $classReference['class'];
+            $line = $classReference['line'];
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             } else {
+                // renames the variable
                 $wrongClassRef = $class;
                 unset($class);
             }
@@ -207,7 +208,7 @@ class CheckClassReferencesAreValid
 
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                [$nonImportedClasses, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+                [$classReference, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
                 goto loopStart;
             }
         }
