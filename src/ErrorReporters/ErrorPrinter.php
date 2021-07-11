@@ -25,7 +25,7 @@ class ErrorPrinter
     public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
         $header = $wrongClass.'  <===  Did not exist';
-        $msg = 'Auto-imported:   '.substr($correct[0], 0, 55);
+        $msg = 'Fixed to:   '.substr($correct[0], 0, 55);
 
         $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
     }

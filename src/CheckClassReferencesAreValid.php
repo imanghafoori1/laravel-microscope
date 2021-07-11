@@ -62,9 +62,9 @@ class CheckClassReferencesAreValid
 
         self::checkAtSignStrings($tokens, $absFilePath);
 
-        self::checkNotImportedClasses($tokens, $absFilePath);
-
         self::checkImportedClasses($currentNamespace, $class, $absFilePath);
+
+        self::checkNotImportedClasses($tokens, $absFilePath);
     }
 
     private static function checkImportedClassesExist($imports, $absFilePath)
@@ -72,28 +72,29 @@ class CheckClassReferencesAreValid
         $printer = app(ErrorPrinter::class);
 
         foreach ($imports as $as => $import) {
-            [$class, $line] = $import;
+            [$classImport, $line] = $import;
 
-            if (! self::isAbsent($class)) {
+            if (! self::isAbsent($classImport)) {
                 continue;
             }
 
-            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($class)))) {
+            // for half imported namespaces
+            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($classImport)))) {
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($class, array_keys(ComposerJson::readAutoload()));
+            $isInUserSpace = Str::startsWith($classImport, array_keys(ComposerJson::readAutoload()));
 
-            if ($isInUserSpace && ! self::isAliased($class, $as)) {
-                [$isCorrected, $corrects] = FileManipulator::fixReference($absFilePath, $class, $line, '', true);
+            if ($isInUserSpace) {
+                [$isCorrected, $corrects] = FileManipulator::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
             } else {
                 [$isCorrected, $corrects] = [false, []];
             }
 
             if ($isCorrected) {
-                $printer->printFixation($absFilePath, $class, $line, $corrects);
+                $printer->printFixation($absFilePath, $classImport, $line, $corrects);
             } else {
-                $printer->wrongImport($absFilePath, $class, $line);
+                $printer->wrongImport($absFilePath, $classImport, $line);
             }
         }
     }
@@ -166,9 +167,9 @@ class CheckClassReferencesAreValid
     private static function fixClassReference($absFilePath, $class, $line, $namespace)
     {
         $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
-        
+
         // imports the correct namespace
-        [$wasCorrected, $corrections] = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
+        [$wasCorrected, $corrections] = FileManipulator::fixReference($absFilePath, $baseClassName, $line);
 
         if ($wasCorrected) {
             return [$wasCorrected, $corrections];
@@ -179,14 +180,14 @@ class CheckClassReferencesAreValid
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        [$classReference, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+        [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
 
         loopStart:
-        foreach ($classReference as $classRefernce) {
-            $class = $classRefernce['class'];
-            $line = $classRefernce['line'];
+        foreach ($classReferences as $classReference) {
+            $class = $classReference['class'];
+            $line = $classReference['line'];
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
@@ -200,7 +201,6 @@ class CheckClassReferencesAreValid
                 continue;
             }
 
-
             [$isFixed, $corrections] = self::fixClassReference($absFilePath, $wrongClassRef, $line, $hostNamespace);
 
             // print
@@ -209,7 +209,7 @@ class CheckClassReferencesAreValid
 
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                [$classReference, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+                [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
                 goto loopStart;
             }
         }

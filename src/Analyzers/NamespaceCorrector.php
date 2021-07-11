@@ -70,7 +70,7 @@ class NamespaceCorrector
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
 
-    public static function getNamespaceFromRelativePath($relPath, $autoload = null)
+    public static function getNamespacedClassFromRelativePath($relPath, $autoload = null)
     {
         // Remove .php from class path
         $relPath = str_replace([base_path(), '.php'], '', $relPath);

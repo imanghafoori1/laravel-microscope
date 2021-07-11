@@ -19,6 +19,31 @@ class FileManipulator
         return self::applyToEachLine($file, $lineChanger);
     }
 
+    public static function fixImport($absPath, $import, $lineNum, $isAliased)
+    {
+        if (config('microscope.no_fix')) {
+            return [false, []];
+        }
+
+        [$classBaseName, $correct] = self::getCorrect($import);
+
+        if (\count($correct) !== 1) {
+            return [false, $correct];
+        }
+
+        $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromRelativePath($absPath);
+        // We just remove the wrong import if it is not needed.
+        if (!$isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
+            $chars = 'use '.$import.';';
+
+            $result = self::replaceFirst($absPath, $chars, '', $lineNum);
+
+            return [$result, [' Deleted!']];
+        }
+
+        return [self::replaceFirst($absPath, $import, $correct[0], $lineNum), $correct];
+    }
+
     public static function replaceFirst($absPath, $search, $replace = '', $_line = null)
     {
         $lineChanger = function ($lineNum, $line, $isReplaced) use ($search, $replace, $_line) {
@@ -44,7 +69,7 @@ class FileManipulator
         return self::applyToEachLine($absPath, $lineChanger);
     }
 
-    public static function fixReference($absPath, $inlinedClassRef, $lineNum, $prefix = '', $isUsed = false)
+    public static function fixReference($absPath, $inlinedClassRef, $lineNum)
     {
         if (config('microscope.no_fix')) {
             return [false, []];
@@ -52,42 +77,40 @@ class FileManipulator
 
         [$classBaseName, $correct] = self::getCorrect($inlinedClassRef);
 
-        $contextClassNamespace = NamespaceCorrector::getNamespaceFromRelativePath($absPath);
-
         if (\count($correct) !== 1) {
             return [false, $correct];
         }
 
-        // We just remove the wrong import if import is not needed.
+        $contextClassNamespace = NamespaceCorrector::getNamespacedClassFromRelativePath($absPath);
+        // We just remove the wrong import if it is not needed.
         if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $correct[0])) {
-            if ($isUsed) {
-                return [self::removeLine($absPath, $lineNum), [' Deleted!']];
-            }
+            $baseName = trim(class_basename($correct[0]), '\\');
 
-            $correct[0] = trim(class_basename($correct[0]), '\\');
-            $prefix = '';
+            return [self::replaceFirst($absPath, $inlinedClassRef, $baseName, $lineNum), $correct];
         }
 
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
-        // if there is any use statement at the top of the file
+        // if there is any use statement at the top
         if (count($uses) && ! isset($uses[$classBaseName])) {
-            foreach ($uses as $use) {
-                // replace in the class reference
-                self::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
-                $lineNum = $use[1];
-                $fullClassPath = trim($prefix, '\\').$correct[0];
+            // replace in the class reference
+            self::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
 
-                return [self::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
-            }
+            // insert a new import at the top
+            $lineNum = array_values($uses)[0][1]; // first use statement
+
+            $fullClassPath = $correct[0];
+
+            return [self::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
         }
+
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         if (isset($uses[$classBaseName])) {
-            return [self::replaceFirst($absPath, $inlinedClassRef, $correct[0], $lineNum), $correct];
+            return [self::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum), $correct];
         }
 
-        return [self::replaceFirst($absPath, $inlinedClassRef, $prefix.$correct[0], $lineNum), $correct];
+        return [self::replaceFirst($absPath, $inlinedClassRef, $correct[0], $lineNum), $correct];
     }
 
     private static function applyToEachLine($absPath, $lineChanger)
