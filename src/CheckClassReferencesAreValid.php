@@ -85,7 +85,7 @@ class CheckClassReferencesAreValid
 
             $isCorrected = self::tryToFix($classImport, $absFilePath, $line, $as, $printer);
 
-            if (!$isCorrected) {
+            if (! $isCorrected) {
                 $printer->wrongImport($absFilePath, $classImport, $line);
             }
         }
@@ -184,7 +184,7 @@ class CheckClassReferencesAreValid
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             }
-            # renames the variable
+            // renames the variable
             $wrongClassRef = $class;
             unset($class);
 

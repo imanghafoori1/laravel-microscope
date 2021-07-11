@@ -3,9 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
@@ -28,10 +25,10 @@ class Refactorings
         $printer = app(ErrorPrinter::class);
         // Print Replacement Links
         foreach ($patterns as $from => $to) {
-            $printer->print('Replacing:    <fg=yellow>'. Str::limit($from).'</>', '', 0);
-            $printer->print('With:         <fg=yellow>'. Str::limit($to).'</>', '', 0);
+            $printer->print('Replacing:    <fg=yellow>'.Str::limit($from).'</>', '', 0);
+            $printer->print('With:         <fg=yellow>'.Str::limit($to).'</>', '', 0);
         }
-       
+
         $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
         foreach ($lineNums as $lineNum) {
             $lineNum && $printer->printLink($absFilePath, $lineNum, 0);

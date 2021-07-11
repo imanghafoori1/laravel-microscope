@@ -33,7 +33,7 @@ class FileManipulator
 
         $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromRelativePath($absPath);
         // We just remove the wrong import if it is not needed.
-        if (!$isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
+        if (! $isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
             $chars = 'use '.$import.';';
 
             $result = self::replaceFirst($absPath, $chars, '', $lineNum);

@@ -27,7 +27,7 @@ class PatternParser
         return [$tokens, $lineNumber];
     }
 
-    private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING,];
+    private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING];
 
     public static function parsePatterns($refactorPatterns)
     {
@@ -56,7 +56,7 @@ class PatternParser
             }
             $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
             /**
-             * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
+             * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);.
              */
         }
 
@@ -106,6 +106,7 @@ class PatternParser
     public static function parseWildcard($token)
     {
         $t = ltrim($token[1], '\'-');
+
         return rtrim($t, ' token\'');
     }
 
