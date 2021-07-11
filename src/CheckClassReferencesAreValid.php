@@ -163,14 +163,15 @@ class CheckClassReferencesAreValid
         self::checkImportedClassesExist($imports, $absPath);
     }
 
-    private static function fix($absFilePath, $class, $line, $namespace)
+    private static function fixClassReference($absFilePath, $class, $line, $namespace)
     {
         $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
+        
+        // imports the correct namespace
+        [$wasCorrected, $corrections] = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
 
-        $result = FileManipulator::fixReference($absFilePath, $baseClassName, $line, '\\');
-
-        if ($result[0]) {
-            return $result;
+        if ($wasCorrected) {
+            return [$wasCorrected, $corrections];
         }
 
         return FileManipulator::fixReference($absFilePath, $class, $line);
@@ -183,9 +184,9 @@ class CheckClassReferencesAreValid
         $printer = app(ErrorPrinter::class);
 
         loopStart:
-        foreach ($classReference as $classReference) {
-            $class = $classReference['class'];
-            $line = $classReference['line'];
+        foreach ($classReference as $classRefernce) {
+            $class = $classRefernce['class'];
+            $line = $classRefernce['line'];
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
@@ -194,13 +195,13 @@ class CheckClassReferencesAreValid
                 $wrongClassRef = $class;
                 unset($class);
             }
-
             if (! ComposerJson::isInUserSpace($wrongClassRef)) {
                 $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
                 continue;
             }
 
-            [$isFixed, $corrections] = self::fix($absFilePath, $wrongClassRef, $line, $hostNamespace);
+
+            [$isFixed, $corrections] = self::fixClassReference($absFilePath, $wrongClassRef, $line, $hostNamespace);
 
             // print
             $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';

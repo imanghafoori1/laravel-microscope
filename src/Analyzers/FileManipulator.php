@@ -44,16 +44,13 @@ class FileManipulator
         return self::applyToEachLine($absPath, $lineChanger);
     }
 
-    public static function fixReference($absPath, $class, $lineNum, $prefix = '', $isUsed = false)
+    public static function fixReference($absPath, $inlinedClassRef, $lineNum, $prefix = '', $isUsed = false)
     {
         if (config('microscope.no_fix')) {
             return [false, []];
         }
 
-        $class_list = ForPsr4LoadedClasses::classList();
-        $cls = \explode('\\', $class);
-        $className = array_pop($cls);
-        $correct = $class_list[$className] ?? [];
+        [$classBaseName, $correct] = self::getCorrect($inlinedClassRef);
 
         $contextClassNamespace = NamespaceCorrector::getNamespaceFromRelativePath($absPath);
 
@@ -74,9 +71,10 @@ class FileManipulator
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         // if there is any use statement at the top of the file
-        if (count($uses) && ! isset($uses[$className])) {
+        if (count($uses) && ! isset($uses[$classBaseName])) {
             foreach ($uses as $use) {
-                self::replaceFirst($absPath, $class, $className, $lineNum);
+                // replace in the class reference
+                self::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
                 $lineNum = $use[1];
                 $fullClassPath = trim($prefix, '\\').$correct[0];
 
@@ -85,11 +83,11 @@ class FileManipulator
         }
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
-        if (isset($uses[$className])) {
-            return [self::replaceFirst($absPath, $class, $correct[0], $lineNum), $correct];
+        if (isset($uses[$classBaseName])) {
+            return [self::replaceFirst($absPath, $inlinedClassRef, $correct[0], $lineNum), $correct];
         }
 
-        return [self::replaceFirst($absPath, $class, $prefix.$correct[0], $lineNum), $correct];
+        return [self::replaceFirst($absPath, $inlinedClassRef, $prefix.$correct[0], $lineNum), $correct];
     }
 
     private static function applyToEachLine($absPath, $lineChanger)
@@ -122,5 +120,15 @@ class FileManipulator
         }
 
         return $isReplaced;
+    }
+
+    private static function getCorrect($class)
+    {
+        $class_list = ForPsr4LoadedClasses::classList();
+        $cls = \explode('\\', $class);
+        $className = array_pop($cls);
+        $correct = $class_list[$className] ?? [];
+
+        return [$className, $correct];
     }
 }
