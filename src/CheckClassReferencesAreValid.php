@@ -83,17 +83,9 @@ class CheckClassReferencesAreValid
                 continue;
             }
 
-            $isInUserSpace = Str::startsWith($classImport, array_keys(ComposerJson::readAutoload()));
+            $isCorrected = self::tryToFix($classImport, $absFilePath, $line, $as, $printer);
 
-            if ($isInUserSpace) {
-                [$isCorrected, $corrects] = FileManipulator::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
-            } else {
-                [$isCorrected, $corrects] = [false, []];
-            }
-
-            if ($isCorrected) {
-                $printer->printFixation($absFilePath, $classImport, $line, $corrects);
-            } else {
+            if (!$isCorrected) {
                 $printer->wrongImport($absFilePath, $classImport, $line);
             }
         }
@@ -191,11 +183,11 @@ class CheckClassReferencesAreValid
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
-            } else {
-                // renames the variable
-                $wrongClassRef = $class;
-                unset($class);
             }
+            # renames the variable
+            $wrongClassRef = $class;
+            unset($class);
+
             if (! ComposerJson::isInUserSpace($wrongClassRef)) {
                 $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
                 continue;
@@ -218,5 +210,21 @@ class CheckClassReferencesAreValid
     private static function isAliased($class, $as)
     {
         return class_basename($class) !== $as;
+    }
+
+    private static function tryToFix($classImport, $absFilePath, $line, $as, $printer)
+    {
+        $isInUserSpace = Str::startsWith($classImport, array_keys(ComposerJson::readAutoload()));
+        if (! $isInUserSpace) {
+            return false;
+        }
+
+        [$isCorrected, $corrects] = FileManipulator::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
+
+        if ($isCorrected) {
+            $printer->printFixation($absFilePath, $classImport, $line, $corrects);
+        }
+
+        return $isCorrected;
     }
 }
