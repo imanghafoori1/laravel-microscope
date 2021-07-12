@@ -11,7 +11,7 @@ class FileManipulator
     {
         $lineChanger = function ($lineNum) use ($_line) {
             // Replace only the first occurrence in the file
-            if ($lineNum == $_line) {
+            if ($lineNum === $_line) {
                 return '';
             }
         };
@@ -31,7 +31,7 @@ class FileManipulator
             return [false, $correct];
         }
 
-        $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromRelativePath($absPath);
+        $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromPath($absPath);
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
             $chars = 'use '.$import.';';
@@ -49,7 +49,7 @@ class FileManipulator
         $lineChanger = function ($lineNum, $line, $isReplaced) use ($search, $replace, $_line) {
             // Replace only the first occurrence in the file
             if (! $isReplaced && strstr($line, $search)) {
-                if (! $_line || $lineNum == $_line) {
+                if (! $_line || $lineNum === $_line) {
                     return Str::replaceFirst($search, $replace, $line);
                 }
             }
@@ -80,13 +80,12 @@ class FileManipulator
         if (\count($correct) !== 1) {
             return [false, $correct];
         }
+        $fullClassPath = $correct[0];
 
-        $contextClassNamespace = NamespaceCorrector::getNamespacedClassFromRelativePath($absPath);
-        // We just remove the wrong import if it is not needed.
-        if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $correct[0])) {
-            $baseName = trim(class_basename($correct[0]), '\\');
+        $contextClassNamespace = NamespaceCorrector::getNamespacedClassFromPath($absPath);
 
-            return [self::replaceFirst($absPath, $inlinedClassRef, $baseName, $lineNum), $correct];
+        if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
+            return [self::replaceFirst($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
         }
 
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
@@ -99,18 +98,12 @@ class FileManipulator
             // insert a new import at the top
             $lineNum = array_values($uses)[0][1]; // first use statement
 
-            $fullClassPath = $correct[0];
-
             return [self::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
         }
 
-        $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
+        isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
 
-        if (isset($uses[$classBaseName])) {
-            return [self::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum), $correct];
-        }
-
-        return [self::replaceFirst($absPath, $inlinedClassRef, $correct[0], $lineNum), $correct];
+        return [self::replaceFirst($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
     }
 
     private static function applyToEachLine($absPath, $lineChanger)

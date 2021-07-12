@@ -59,7 +59,7 @@ class ForPsr4LoadedClasses
                 /**
                  *  "psr-4": {
                  *      "App\\": "app/"
-                 *  }.
+                 *  }
                  */
                 // calculate namespace
                 $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $relativePath);

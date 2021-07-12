@@ -49,7 +49,7 @@ class CheckStringy
             $classPath = $this->getClassyPath($classPath);
             $command->info('Replacing: '.$token[1].'  with: '.$classPath);
 
-            $contextClass = NamespaceCorrector::getNamespacedClassFromRelativePath($absFilePath);
+            $contextClass = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
 
             if (NamespaceCorrector::haveSameNamespace($contextClass, $classPath)) {
                 $classPath = trim(class_basename($classPath), '\\');
