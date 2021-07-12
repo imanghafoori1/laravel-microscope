@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FileManipulator;
 use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
@@ -133,7 +132,7 @@ class CheckClassReferencesAreValid
                 $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
                 $result = [false];
                 if ($isInUserSpace) {
-                    $result = FileManipulator::fixReference($absFilePath, $class, $token[2]);
+                    $result = Analyzers\Fixer::fixReference($absFilePath, $class, $token[2]);
                 }
 
                 if ($result[0]) {
@@ -161,13 +160,13 @@ class CheckClassReferencesAreValid
         $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
 
         // imports the correct namespace
-        [$wasCorrected, $corrections] = FileManipulator::fixReference($absFilePath, $baseClassName, $line);
+        [$wasCorrected, $corrections] = Analyzers\Fixer::fixReference($absFilePath, $baseClassName, $line);
 
         if ($wasCorrected) {
             return [$wasCorrected, $corrections];
         }
 
-        return FileManipulator::fixReference($absFilePath, $class, $line);
+        return Analyzers\Fixer::fixReference($absFilePath, $class, $line);
     }
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
@@ -219,7 +218,7 @@ class CheckClassReferencesAreValid
             return false;
         }
 
-        [$isCorrected, $corrects] = FileManipulator::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
+        [$isCorrected, $corrects] = Analyzers\Fixer::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
 
         if ($isCorrected) {
             $printer->printFixation($absFilePath, $classImport, $line, $corrects);
