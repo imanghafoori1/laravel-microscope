@@ -256,6 +256,7 @@ class ClassReferenceFinder
             'array',
             'callable',
             '::',
+            'iterable',
         ], true);
     }
 }

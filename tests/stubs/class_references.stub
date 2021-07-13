@@ -53,7 +53,7 @@ class Paths extends \A\ParentClass implements InterF1, InterF2, \Inline\InterF3
         new class {};
     }
 
-    public function returny_string(?string $string): self // a comment
+    public function returny_string(?string $string, iterable $t): self // a comment
     {
         $tt = '';
         new Newed();
@@ -67,7 +67,7 @@ class Paths extends \A\ParentClass implements InterF1, InterF2, \Inline\InterF3
         InConstructor::$method();
     }
 
-    public function foo () : /*comment*/ \A\ReturnType
+    public function foo (iterable $t) : /*comment*/ \A\ReturnType
     {
         $r = function (F $f) use ($g) {};
         true ? new a\a : new b\b;
