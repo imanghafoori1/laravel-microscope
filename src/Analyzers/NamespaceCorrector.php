@@ -58,21 +58,28 @@ class NamespaceCorrector
         return ['<?php', '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL];
     }
 
-    public static function getRelativePathFromNamespace($namespace)
+    public static function getRelativePathFromNamespace($namespace, $autoload = null)
     {
-        $autoload = ComposerJson::readAutoload();
-        uksort($autoload, function ($a, $b) {
-            return strlen($b) <=> strlen($a);
-        });
-        $namespaces = array_keys($autoload);
-        $paths = array_values($autoload);
+        [$namespaces, $paths] = self::getSortedAutoload($autoload);
 
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
 
     public static function getNamespacedClassFromPath($path, $autoload = null)
     {
+        [$namespaces, $paths] = self::getSortedAutoload($autoload);
+
+        // Remove .php from class path
+        $relPath = str_replace([base_path(), '.php'], '', $path);
+        $relPath = \str_replace('\\', '/', $relPath);
+
+        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
+    }
+
+    private static function getSortedAutoload($autoload): array
+    {
         ($autoload === null) && $autoload = ComposerJson::readAutoload();
+
         uksort($autoload, function ($namespace1, $namespace2) {
             return strlen($namespace2) <=> strlen($namespace1);
         });
@@ -80,10 +87,6 @@ class NamespaceCorrector
         $namespaces = array_keys($autoload);
         $paths = array_values($autoload);
 
-        // Remove .php from class path
-        $relPath = str_replace([base_path(), '.php'], '', $path);
-        $relPath = \str_replace('\\', '/', $relPath);
-
-        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
+        return [$namespaces, $paths];
     }
 }
