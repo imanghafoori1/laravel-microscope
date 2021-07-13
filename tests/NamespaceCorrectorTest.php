@@ -50,10 +50,10 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function get_namespace_from_relative_path()
     {
-        $result = NamespaceCorrector::getNamespaceFromRelativePath('app/Hello.php');
+        $result = NamespaceCorrector::getNamespacedClassFromPath('app/Hello.php');
         $this->assertEquals('App\\Hello', $result);
 
-        $result = NamespaceCorrector::getNamespaceFromRelativePath('app/appollo.php');
+        $result = NamespaceCorrector::getNamespacedClassFromPath('app/appollo.php');
         $this->assertEquals('App\\appollo', $result);
 
         $autoload = [
@@ -62,10 +62,10 @@ class NamespaceCorrectorTest extends BaseTestClass
             'Database\\Seeders\\'=> 'database/seeders/',
         ];
 
-        $result = NamespaceCorrector::getNamespaceFromRelativePath('app/s/Hello.php', $autoload);
+        $result = NamespaceCorrector::getNamespacedClassFromPath('app/s/Hello.php', $autoload);
         $this->assertEquals('App\\lication\\Hello', $result);
 
-        $result = NamespaceCorrector::getNamespaceFromRelativePath('app/appollo.php', $autoload);
+        $result = NamespaceCorrector::getNamespacedClassFromPath('app/appollo.php', $autoload);
         $this->assertEquals('App\\appollo', $result);
     }
 }
