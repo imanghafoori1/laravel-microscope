@@ -58,16 +58,37 @@ class CheckPsr4 extends Command
         }
     }
 
+    private function str_contains($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (mb_strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function fixRefs($_path, $olds, $news)
     {
         $lines = file($_path);
         $changed = [];
-        $olds = $this->deriveVariants($olds);
-        $news = $this->deriveVariants($news);
-        foreach ($lines as $i => $line) {
-            $count = 0;
-            $lines[$i] = \str_replace($olds, $news, $line, $count);
-            $count && $changed[] = ($i + 1);
+        foreach ($lines as $lineIndex => $lineContent) {
+            if ($this->str_contains($lineContent, $olds)) {
+                $count = 0;
+                $lines[$lineIndex] = \str_replace($this->variants($olds), $this->variants($news), $lineContent, $count);
+                if ($count === 0) {
+                    app(ErrorPrinter::class)->printLink($_path, $lineIndex + 1);
+                    $this->info($lineContent);
+                    if ($this->confirm('Do you want to change the old namespace?', true)) {
+                        $count = 0;
+                        $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
+                        $changed[] = ($lineIndex + 1);
+                    }
+                } else {
+                    $changed[] = ($lineIndex + 1);
+                }
+            }
         }
 
         $changed && \file_put_contents($_path, \implode('', $lines));
@@ -75,18 +96,41 @@ class CheckPsr4 extends Command
         return $changed;
     }
 
-    private function deriveVariants($olds)
+    private function variants($namespaces)
     {
-        $newOld = [];
-        foreach ($olds as $old) {
-            $newOld[] = $old.'(';
-            $newOld[] = $old.'::';
-            $newOld[] = $old.';';
-            $newOld[] = $old."\n";
-            $newOld[] = $old."\r";
+        $variants = [];
+        foreach ($namespaces as $namespace) {
+            $variants[] = '|'.$namespace.' ';
+            $variants[] = '|'.$namespace.'|';
+            $variants[] = '|\\'.$namespace.' ';
+            $variants[] = '|\\'.$namespace.'|';
+            $variants[] = '@param \\'.$namespace.' ';
+            $variants[] = '@param  \\'.$namespace.' ';
+            $variants[] = '@param '.$namespace.' ';
+            $variants[] = '@param '.$namespace."\n";
+            $variants[] = '@param  '.$namespace."\n";
+            $variants[] = '@param '.$namespace."\r\n";
+            $variants[] = '@param  '.$namespace."\r\n";
+            $variants[] = '@param  '.$namespace.' ';
+           /* $variants[] = '@return \\'.$namespace."\n";
+            $variants[] = '@return  \\'.$namespace."\n";
+            $variants[] = '@return '.$namespace."\n";
+            $variants[] = '@return  '.$namespace."\n";
+            $variants[] = '@return \\'.$namespace."\r\n";
+            $variants[] = '@return  \\'.$namespace."\r\n";
+            $variants[] = '@return '.$namespace."\r\n";
+            $variants[] = '@return  '.$namespace."\r\n";*/
+            //$variants[] = ' '.$namespace.' ';
+            //$variants[] = ' \\'.$namespace.' ';
+            $variants[] = $namespace.'(';
+            $variants[] = $namespace.'::';
+            $variants[] = $namespace.';';
+            $variants[] = $namespace."\n";
+            $variants[] = $namespace."\r";
+            $variants[] = $namespace."\r\n";
         }
 
-        return $newOld;
+        return $variants;
     }
 
     private function collectNonPsr4Paths()
@@ -119,18 +163,12 @@ class CheckPsr4 extends Command
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
                 $_path = $classFilePath->getRealPath();
-                $lineNumbers = $this->fixRefs($_path, $olds, $news);
-                foreach ($lineNumbers as $line) {
-                    $this->report($_path, $line);
-                }
+                $this->fixAndReport($_path, $olds, $news);
             }
         }
 
         foreach ($this->collectNonPsr4Paths() as $_path) {
-            $lineNumbers = $this->fixRefs($_path, $olds, $news);
-            foreach ($lineNumbers as $line) {
-                $this->report($_path, $line);
-            }
+            $this->fixAndReport($_path, $olds, $news);
         }
     }
 
@@ -171,5 +209,14 @@ class CheckPsr4 extends Command
         $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
         $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
         $this->line('');
+    }
+
+    private function fixAndReport($_path, $olds, $news)
+    {
+        $lineNumbers = $this->fixRefs($_path, $olds, $news);
+
+        foreach ($lineNumbers as $line) {
+            $this->report($_path, $line);
+        }
     }
 }
