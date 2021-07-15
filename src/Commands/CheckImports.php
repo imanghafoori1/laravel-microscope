@@ -32,10 +32,13 @@ class CheckImports extends Command
         $errorPrinter->printer = $this->output;
 
         $this->checkFilePaths(RoutePaths::get());
-        $this->checkFilePaths(Paths::getAbsFilePaths(app()->configPath()));
-        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::seeders()));
-        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
-        $this->checkFilePaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
+
+        $this->checkFolders([
+            app()->configPath(),
+            LaravelPaths::seeders(),
+            LaravelPaths::migrationDirs(),
+            LaravelPaths::factoryDirs(),
+        ]);
 
         ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class]);
 
@@ -60,6 +63,13 @@ class CheckImports extends Command
             $tokens = token_get_all(file_get_contents($path));
             CheckClassReferences::check($tokens, $path);
             CheckClassReferencesAreValid::checkAtSignStrings($tokens, $path, true);
+        }
+    }
+
+    private function checkFolders($dirs)
+    {
+        foreach ($dirs as $dir) {
+            $this->checkFilePaths(Paths::getAbsFilePaths($dir));
         }
     }
 }
