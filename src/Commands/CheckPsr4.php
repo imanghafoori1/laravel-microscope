@@ -71,29 +71,27 @@ class CheckPsr4 extends Command
 
     private function fixRefs($_path, $olds, $news)
     {
+        [$olds, $occurrences] = $olds;
         $lines = file($_path);
-        $changed = [];
+        $changedLineNums = [];
         foreach ($lines as $lineIndex => $lineContent) {
-            if ($this->str_contains($lineContent, $olds)) {
-                $count = 0;
-                $lines[$lineIndex] = \str_replace($this->variants($olds), $this->variants($news), $lineContent, $count);
-                if ($count === 0) {
-                    app(ErrorPrinter::class)->printLink($_path, $lineIndex + 1);
-                    $this->info($lineContent);
-                    if ($this->confirm('Do you want to change the old namespace?', true)) {
-                        $count = 0;
-                        $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
-                        $changed[] = ($lineIndex + 1);
-                    }
-                } else {
-                    $changed[] = ($lineIndex + 1);
+            if ($this->str_contains(\str_replace(' ', '', $lineContent), $occurrences)) {
+                $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
+                $count && $changedLineNums[] = ($lineIndex + 1);
+            } elseif ($this->str_contains($lineContent, $olds)) {
+                app(ErrorPrinter::class)->printLink($_path, $lineIndex + 1);
+                $this->info($lineContent);
+                if ($this->confirm('Do you want to change the old namespace?', true)) {
+                    $count = 0;
+                    $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
+                    $count && $changedLineNums[] = ($lineIndex + 1);
                 }
             }
         }
 
-        $changed && \file_put_contents($_path, \implode('', $lines));
+        $changedLineNums && \file_put_contents($_path, \implode('', $lines));
 
-        return $changed;
+        return $changedLineNums;
     }
 
     private function variants($namespaces)
@@ -101,36 +99,25 @@ class CheckPsr4 extends Command
         $variants = [];
         foreach ($namespaces as $namespace) {
             $variants[] = '|'.$namespace.' ';
-            $variants[] = '|'.$namespace.'|';
-            $variants[] = '|\\'.$namespace.' ';
-            $variants[] = '|\\'.$namespace.'|';
-            $variants[] = '@param \\'.$namespace.' ';
-            $variants[] = '@param  \\'.$namespace.' ';
-            $variants[] = '@param '.$namespace.' ';
-            $variants[] = '@param '.$namespace."\n";
-            $variants[] = '@param  '.$namespace."\n";
-            $variants[] = '@param '.$namespace."\r\n";
-            $variants[] = '@param  '.$namespace."\r\n";
-            $variants[] = '@param  '.$namespace.' ';
-           /* $variants[] = '@return \\'.$namespace."\n";
-            $variants[] = '@return  \\'.$namespace."\n";
-            $variants[] = '@return '.$namespace."\n";
-            $variants[] = '@return  '.$namespace."\n";
-            $variants[] = '@return \\'.$namespace."\r\n";
-            $variants[] = '@return  \\'.$namespace."\r\n";
-            $variants[] = '@return '.$namespace."\r\n";
-            $variants[] = '@return  '.$namespace."\r\n";*/
-            //$variants[] = ' '.$namespace.' ';
-            //$variants[] = ' \\'.$namespace.' ';
-            $variants[] = $namespace.'(';
-            $variants[] = $namespace.'::';
-            $variants[] = $namespace.';';
-            $variants[] = $namespace."\n";
-            $variants[] = $namespace."\r";
-            $variants[] = $namespace."\r\n";
+            $variants[] = ' '.$namespace.' ';
+            $variants[] = ' \\'.$namespace.' ';
         }
 
         return $variants;
+    }
+
+    private function possibleOccurrence($olds): array
+    {
+        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ',',];
+
+        $occurrences = [];
+        foreach ($olds as $old) {
+            foreach ($keywords as $keyword) {
+                $occurrences[] = $old.$keyword;
+            }
+        }
+
+        return $occurrences;
     }
 
     private function collectNonPsr4Paths()
@@ -159,6 +146,7 @@ class CheckPsr4 extends Command
 
     private function fixReferences($autoload, $olds, $news)
     {
+        $olds = [$olds, $this->possibleOccurrence($olds)];
         foreach ($autoload as $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {
