@@ -76,6 +76,7 @@ class CheckPsr4 extends Command
         $changedLineNums = [];
         foreach ($lines as $lineIndex => $lineContent) {
             if ($this->str_contains(\str_replace(' ', '', $lineContent), $occurrences)) {
+                $count = 0;
                 $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
                 $count && $changedLineNums[] = ($lineIndex + 1);
             } elseif ($this->str_contains($lineContent, $olds)) {
@@ -89,6 +90,7 @@ class CheckPsr4 extends Command
             }
         }
 
+        // saves the file into disk.
         $changedLineNums && \file_put_contents($_path, \implode('', $lines));
 
         return $changedLineNums;
