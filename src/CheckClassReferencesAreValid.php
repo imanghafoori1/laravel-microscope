@@ -59,10 +59,14 @@ class CheckClassReferencesAreValid
         event('laravel_microscope.checking_file', [$absFilePath]);
         // @todo better to do it an event listener.
 
+
         $isFixed = self::checkAtSignStrings($tokens, $absFilePath);
+
         $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
-        self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
+        $isFixed = self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
+
+        $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
         self::checkNotImportedClasses($tokens, $absFilePath);
     }
@@ -70,6 +74,7 @@ class CheckClassReferencesAreValid
     private static function checkImportedClassesExist($imports, $absFilePath)
     {
         $printer = app(ErrorPrinter::class);
+        $fixed = false;
 
         foreach ($imports as $as => $import) {
             [$classImport, $line] = $import;
@@ -87,8 +92,12 @@ class CheckClassReferencesAreValid
 
             if (! $isCorrected) {
                 $printer->wrongImport($absFilePath, $classImport, $line);
+            } else {
+                $fixed = true;
             }
         }
+
+        return $fixed;
     }
 
     public static function isAbsent($class)
@@ -157,7 +166,7 @@ class CheckClassReferencesAreValid
 
         $imports = ParseUseStatement::parseUseStatements($tokens, $namespacedClassName)[1];
 
-        self::checkImportedClassesExist($imports, $absPath);
+        return self::checkImportedClassesExist($imports, $absPath);
     }
 
     private static function fixClassReference($absFilePath, $class, $line, $namespace)
