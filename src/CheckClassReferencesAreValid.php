@@ -59,9 +59,10 @@ class CheckClassReferencesAreValid
         event('laravel_microscope.checking_file', [$absFilePath]);
         // @todo better to do it an event listener.
 
-        self::checkAtSignStrings($tokens, $absFilePath);
+        $isFixed = self::checkAtSignStrings($tokens, $absFilePath);
+        $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
-        self::checkImportedClasses($currentNamespace, $class, $absFilePath);
+        self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
 
         self::checkNotImportedClasses($tokens, $absFilePath);
     }
@@ -103,6 +104,7 @@ class CheckClassReferencesAreValid
     public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
     {
         $printer = app(ErrorPrinter::class);
+        $fix = false;
 
         foreach ($tokens as $token) {
             // If it is a string containing a single '@'
@@ -136,6 +138,7 @@ class CheckClassReferencesAreValid
                 }
 
                 if ($result[0]) {
+                    $fix = true;
                     $printer->printFixation($absFilePath, $class, $token[2], $result[1]);
                 } else {
                     $printer->wrongUsedClassError($absFilePath, $token[1], $token[2]);
@@ -144,13 +147,15 @@ class CheckClassReferencesAreValid
                 $printer->wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
         }
+
+        return $fix;
     }
 
-    private static function checkImportedClasses($currentNamespace, $class, $absPath)
+    private static function checkImports($currentNamespace, $className, $absPath, $tokens)
     {
-        $namespacedClassName = self::fullNamespace($currentNamespace, $class);
+        $namespacedClassName = self::fullNamespace($currentNamespace, $className);
 
-        $imports = ParseUseStatement::getUseStatementsByPath($namespacedClassName, $absPath);
+        $imports = ParseUseStatement::parseUseStatements($tokens, $namespacedClassName)[1];
 
         self::checkImportedClassesExist($imports, $absPath);
     }
