@@ -110,7 +110,7 @@ class CheckPsr4 extends Command
 
     private function possibleOccurrence($olds): array
     {
-        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ',',];
+        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ','];
 
         $occurrences = [];
         foreach ($olds as $old) {
