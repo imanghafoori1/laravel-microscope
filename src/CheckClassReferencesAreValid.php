@@ -59,7 +59,6 @@ class CheckClassReferencesAreValid
         event('laravel_microscope.checking_file', [$absFilePath]);
         // @todo better to do it an event listener.
 
-
         $isFixed = self::checkAtSignStrings($tokens, $absFilePath);
 
         $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
