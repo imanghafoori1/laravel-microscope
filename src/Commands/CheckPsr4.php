@@ -129,7 +129,7 @@ class CheckPsr4 extends Command
             Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
             Paths::getAbsFilePaths(config_path()),
             Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seeders()),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
             LaravelPaths::bladeFilePaths(),
         ];
 

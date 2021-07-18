@@ -9,7 +9,7 @@ use Symfony\Component\Finder\Finder;
 
 class LaravelPaths
 {
-    public static function seeders()
+    public static function seedersDir()
     {
         $dir = app()->databasePath('seeds');
 

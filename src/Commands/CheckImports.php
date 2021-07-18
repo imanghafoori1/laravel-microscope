@@ -35,7 +35,7 @@ class CheckImports extends Command
 
         $this->checkFolders([
             app()->configPath(),
-            LaravelPaths::seeders(),
+            LaravelPaths::seedersDir(),
             LaravelPaths::migrationDirs(),
             LaravelPaths::factoryDirs(),
         ]);
