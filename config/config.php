@@ -46,9 +46,9 @@ return [
 
     /**
      * If a non-default route file is not being scanned,
-     * you can manually add its path here, as below:
+     * you can manually add its path here, as below:.
      */
     'additional_route_files' => [
         // app()->basePath('some_folder/my_route.php''),
-    ]
+    ],
 ];
