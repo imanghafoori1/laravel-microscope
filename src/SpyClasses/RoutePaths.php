@@ -39,6 +39,10 @@ class RoutePaths
             }
         }
 
+        foreach (config('microscope.additional_route_files', []) as $routeFilePath) {
+            is_file($routeFilePath) && $routePaths[] = $routeFilePath;
+        }
+
         return $routePaths;
     }
 

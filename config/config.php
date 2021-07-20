@@ -43,4 +43,12 @@ return [
      * You can change this template to customize the check:action_comments results.
      */
     'action_comment_template' => 'microscope_package::action_comment',
+
+    /**
+     * If a non-default route file is not being scanned,
+     * you can manually add its path here, as below:
+     */
+    'additional_route_files' => [
+        // app()->basePath('some_folder/my_route.php''),
+    ]
 ];
