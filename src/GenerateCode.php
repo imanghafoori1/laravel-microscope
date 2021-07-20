@@ -13,7 +13,7 @@ class GenerateCode
     /**
      * Get all of the listeners and their corresponding events.
      *
-     * @param  iterable  $paths
+     * @param  $paths
      * @param  $composerPath
      * @param  $composerNamespace
      * @param  $command
@@ -78,8 +78,8 @@ class GenerateCode
         $token = $tokens[$i];
 
         return $token[0] == T_CONSTANT_ENCAPSED_STRING &&
-            \trim($token[1], '\'\"') == 'providers' &&
-            \in_array(T_DOUBLE_ARROW, [$tokens[$i + 1][0], $tokens[$i + 2][0]]);
+            \trim($token[1], '\'\"') === 'providers' &&
+            \in_array(T_DOUBLE_ARROW, [$tokens[$i + 1][0], $tokens[$i + 2][0]], true);
     }
 
     private static function addToProvidersArray($providerPath)
@@ -93,7 +93,7 @@ class GenerateCode
             $closeBracketIndex = Analyzers\TokenManager::readBody($tokens, $i + 15, ']')[1];
 
             $j = $closeBracketIndex;
-            while ($tokens[--$j][0] == T_WHITESPACE && $tokens[--$j][0] == T_COMMENT) {
+            while ($tokens[--$j][0] === T_WHITESPACE && $tokens[--$j][0] === T_COMMENT) {
             }
 
             // put a comma at the end of the array if it is not there
