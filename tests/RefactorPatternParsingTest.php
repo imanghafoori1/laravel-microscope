@@ -10,7 +10,7 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function can_parse_pattern3()
     {
         $patterns = [
-            'return response()"<until>";' => 'response()"<1>"->throwResponse();'
+            'return response()"<until>";' => 'response()"<1>"->throwResponse();',
         ];
 
         $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
@@ -38,7 +38,7 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function can_parse_patterns()
     {
         $patterns = require __DIR__.'/stubs/refactor_patterns.php';
-        $sampleFileTokens =  token_get_all(file_get_contents(__DIR__.'/stubs/SimplePostController.stub'));
+        $sampleFileTokens = token_get_all(file_get_contents(__DIR__.'/stubs/SimplePostController.stub'));
 
         $matches = PatternParser::search($patterns, $sampleFileTokens);
 
@@ -79,7 +79,6 @@ class RefactorPatternParsingTest extends BaseTestClass
 
         $end = $matches[1][0][0]['end'];
         $this->assertEquals($sampleFileTokens[$end], ';');
-
 
         $start = $matches[1][1][0]['start'];
         $this->assertEquals($sampleFileTokens[$start][1], 'foo');

@@ -33,7 +33,7 @@ class CheckRefactors extends Command
         } catch (\ErrorException $e) {
             file_put_contents(base_path('/search_replace.php'), $this->stub());
 
-            return ;
+            return;
         }
 
         $patterns = PatternParser::parsePatterns($refactors);

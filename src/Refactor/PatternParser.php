@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactor;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class PatternParser
@@ -156,8 +155,8 @@ class PatternParser
             if (self::isWildcard($pToken)) {
                 $untilTokens = [];
                 $line = 1;
-                for($k = $pi + 1; $tokens[$k] !== $pattern[$j+1]; $k++) {
-                    !$line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
+                for ($k = $pi + 1; $tokens[$k] !== $pattern[$j + 1]; $k++) {
+                    ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
                     $untilTokens[] = $tokens[$k];
                 }
                 $i = $k - 1;

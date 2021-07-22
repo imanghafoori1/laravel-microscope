@@ -166,7 +166,7 @@ class ErrorPrinter
     public function print($msg, $path = '|  ', $len = null)
     {
         $len === null && $len = PendingError::$maxLength + 1;
-        
+
         $msgLen = strlen($msg);
         if (strpos($msg, 'yellow')) {
             $msgLen = $msgLen - 14;
@@ -205,7 +205,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4, $len = null)
     {
         $len === null && ($len = PendingError::$maxLength + 30);
-        
+
         if ($path) {
             $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
             $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', $len);
