@@ -6,14 +6,9 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class Fixer
 {
-    private static function getCorrect($class)
+    private static function guessCorrect($classBaseName)
     {
-        $class_list = ForPsr4LoadedClasses::classList();
-        $segments = \explode('\\', $class);
-        $className = array_pop($segments);
-        $correct = $class_list[$className] ?? [];
-
-        return [$className, $correct];
+        return ForPsr4LoadedClasses::classList()[$classBaseName] ?? [];
     }
 
     public static function fixReference($absPath, $inlinedClassRef, $lineNum)
@@ -22,7 +17,9 @@ class Fixer
             return [false, []];
         }
 
-        [$classBaseName, $correct] = self::getCorrect($inlinedClassRef);
+        $classBaseName = class_basename($inlinedClassRef);
+
+        $correct = self::guessCorrect($classBaseName);
 
         if (\count($correct) !== 1) {
             return [false, $correct];
@@ -59,7 +56,7 @@ class Fixer
             return [false, []];
         }
 
-        [$classBaseName, $correct] = self::getCorrect($import);
+        $correct = self::guessCorrect(class_basename($import));
 
         if (\count($correct) !== 1) {
             return [false, $correct];
