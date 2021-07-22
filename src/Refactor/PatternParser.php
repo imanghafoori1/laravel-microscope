@@ -44,7 +44,7 @@ class PatternParser
                 if ($placeHolder = self::isPlaceHolder($token)) {
                     $tokens[$i] = [$placeHolder, null];
                 }
-                if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<php_eol>'" ) {
+                if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<php_eol>'") {
                     $tokens[$i] = [10102, PHP_EOL, $token[2]];
                 }
 
