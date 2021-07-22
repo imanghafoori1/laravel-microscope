@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Club;
+use App\Events\MemberCommentedClubPost;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class PostController extends Controller
+{
+    public function index(User $user, Club $club, Request $request)
+    {
+        Foo::bar($user, true, json(), 'hi');
+    }
+    public function index2(User $user, Club $club, Request $request)
+    {
+        Foo::bar($club, FALSE, json(), 'Hello');
+        bar("hi");
+        bar("hi");
+    }
+}

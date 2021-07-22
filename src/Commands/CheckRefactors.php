@@ -31,22 +31,24 @@ class CheckRefactors extends Command
         try {
             $refactors = require base_path('/search_replace.php');
         } catch (\ErrorException $e) {
-            file_put_contents(base_path('/search_replace.php'), '<?php
-return ["your_pattern" => "replacement"];
-');
+            file_put_contents(base_path('/search_replace.php'), $this->stub());
 
-            // print a msg
-            return;
+            return ;
         }
         $patterns = PatternParser::parsePatterns($refactors);
 
         ForPsr4LoadedClasses::check([Refactorings::class], [$patterns, $refactors]);
-        /*
+        $this->getOutput()->writeln(' - Finished refactors.');
 
-                $this->getOutput()->writeln(' - Finished refactors.');
+        $this->finishCommand($errorPrinter);
 
-                $this->finishCommand($errorPrinter);
+        return $errorPrinter->hasErrors() ? 1 : 0;
+    }
 
-                return $errorPrinter->hasErrors() ? 1 : 0;*/
+    private function stub()
+    {
+        return '<?php
+return ["your_pattern" => "replacement"];
+';
     }
 }

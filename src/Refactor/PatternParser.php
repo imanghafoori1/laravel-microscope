@@ -56,7 +56,7 @@ class PatternParser
             }
             $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
             /**
-             * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);.
+             * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
              */
         }
 
@@ -112,7 +112,7 @@ class PatternParser
 
     public static function isWildcard($token)
     {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && Str::endsWith($token[1], ' token-\'') && Str::startsWith($token[1], '\'-');
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until>';
     }
 
     public static function areTheSame($pToken, $token)
@@ -151,14 +151,25 @@ class PatternParser
         $pToken = $pattern[$j];
 
         while ($i < $tCount && $j < $pCount) {
-            $same = self::areTheSame($pToken, $tToken);
+            if (self::isWildcard($pToken)) {
+                $untilTokens = [];
+                $line = 1;
+                for($k = $pi + 1; $tokens[$k] !== $pattern[$j+1]; $k++) {
+                    !$line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
+                    $untilTokens[] = $tokens[$k];
+                }
+                $i = $k - 1;
+                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
+            } else {
+                $same = self::areTheSame($pToken, $tToken);
 
-            if (! $same) {
-                return false;
-            }
+                if (! $same) {
+                    return false;
+                }
 
-            if ($same === 'placeholder') {
-                $placeholderValues[] = $tToken;
+                if ($same === 'placeholder') {
+                    $placeholderValues[] = $tToken;
+                }
             }
 
             $pi = $i;
