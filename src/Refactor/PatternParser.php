@@ -44,6 +44,9 @@ class PatternParser
                 if ($placeHolder = self::isPlaceHolder($token)) {
                     $tokens[$i] = [$placeHolder, null];
                 }
+                if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<php_eol>'" ) {
+                    $tokens[$i] = [10102, PHP_EOL, $token[2]];
+                }
 
                 /*
                 if (self::isWildcard($token)) {
@@ -71,6 +74,8 @@ class PatternParser
 
     public static function searchReplace($patterns, $sampleFileTokens)
     {
+        $sampleFileTokens = self::extractPhpEolTokens($sampleFileTokens);
+
         $matches = self::search($patterns, $sampleFileTokens);
 
         [$sampleFileTokens, $replacementLines] = self::applyPatterns($patterns, $matches, $sampleFileTokens);
@@ -114,6 +119,11 @@ class PatternParser
     public static function isWildcard($token)
     {
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until>';
+    }
+
+    private static function isEol($token)
+    {
+        return $token[0] == 10102;
     }
 
     public static function areTheSame($pToken, $token)
@@ -161,6 +171,12 @@ class PatternParser
                 }
                 $i = $k - 1;
                 $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
+            } elseif (self::isEol($pToken)) {
+                $same = self::areTheSame($tokens[$pi + 2], [10101, PHP_EOL]);
+                $i = $pi + 2;
+                if (! $same) {
+                    return false;
+                }
             } else {
                 $same = self::areTheSame($pToken, $tToken);
 
@@ -189,7 +205,7 @@ class PatternParser
     {
         $i++;
         $token = $tokens[$i] ?? '_';
-        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ','], true)) {
+        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ',', 10101], true)) {
             $i++;
             $token = $tokens[$i] ?? [null, null];
         }
@@ -233,5 +249,25 @@ class PatternParser
         }
 
         return [$sampleFileTokens, $replacementLines];
+    }
+
+    public static function extractPhpEolTokens($fileTokens)
+    {
+        $newFileTokens = [];
+
+        for ($i = 0, $count = count($fileTokens); $i < $count; $i++) {
+            if ($fileTokens[$i][0] === T_WHITESPACE || $fileTokens[$i][0] === T_COMMENT) {
+                $segments = explode("\n", str_replace(["\r\n", "\r", "\n"], "\n", $fileTokens[$i][1]));
+                foreach ($segments as $j => $segment) {
+                    $newFileTokens[] = [T_WHITESPACE, $segment, $fileTokens[$i][2] + $j];
+                    $newFileTokens[] = [10101, PHP_EOL, $fileTokens[$i][2] + $j];
+                }
+                array_pop($newFileTokens);
+            } else {
+                $newFileTokens[] = $fileTokens[$i];
+            }
+        }
+
+        return $newFileTokens;
     }
 }
