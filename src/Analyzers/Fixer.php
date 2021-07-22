@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
 class Fixer
 {
@@ -62,16 +63,21 @@ class Fixer
             return [false, $correct];
         }
 
+        $tokens = token_get_all(file_get_contents($absPath));
         $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromPath($absPath);
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
-            $chars = 'use '.$import.';';
-
-            $result = FileManipulator::replaceFirst($absPath, $chars, '', $lineNum);
-
-            return [$result, [' Deleted!']];
+            return [self::replaceSave($import, '', $tokens, $absPath), [' Deleted!']];
         }
 
-        return [FileManipulator::replaceFirst($absPath, $import, $correct[0], $lineNum), $correct];
+        return [self::replaceSave($import, 'use '.$correct[0].';', $tokens, $absPath), $correct];
+    }
+
+    private static function replaceSave($old, $new, array $tokens, $absPath)
+    {
+        [$newVersion, $lines] = PatternParser::searchReplace(['use '.$old.';' => $new], $tokens);
+        file_put_contents($absPath, $newVersion);
+
+        return $lines;
     }
 }
