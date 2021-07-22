@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\Refactorings;
+use Imanghafoori\LaravelMicroscope\Checks\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
@@ -35,9 +35,10 @@ class CheckRefactors extends Command
 
             return ;
         }
+
         $patterns = PatternParser::parsePatterns($refactors);
 
-        ForPsr4LoadedClasses::check([Refactorings::class], [$patterns, $refactors]);
+        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$patterns, $refactors]);
         $this->getOutput()->writeln(' - Finished refactors.');
 
         $this->finishCommand($errorPrinter);

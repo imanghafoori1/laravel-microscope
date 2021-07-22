@@ -55,7 +55,7 @@ class PatternParser
                 }*/
             }
             $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
-            /**
+            /*
              * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
              */
         }
@@ -63,21 +63,23 @@ class PatternParser
         return $tokens_to_search_for;
     }
 
-    public static function search($patterns, array $sampleFileTokens)
+    public static function search($patterns, $sampleFileTokens)
     {
         $patternsTokens = self::parsePatterns($patterns);
 
         return self::findMatches($patternsTokens, $sampleFileTokens);
     }
 
-    public static function searchReplace($patterns, array $sampleFileTokens)
+    public static function searchReplace($patterns, $sampleFileTokens)
     {
         $matches = self::search($patterns, $sampleFileTokens);
 
-        return self::applyPatterns($patterns, $matches, $sampleFileTokens);
+        [$sampleFileTokens, $replacementLines] = self::applyPatterns($patterns, $matches, $sampleFileTokens);
+
+        return [Refactor::toString($sampleFileTokens), $replacementLines];
     }
 
-    public static function findMatches($patterns, array $fileTokens)
+    public static function findMatches($patterns, $fileTokens)
     {
         $matches = [];
 
@@ -215,7 +217,7 @@ class PatternParser
         return $map[$token[1]] ?? false;
     }
 
-    public static function applyPatterns($patterns, array $matches, $sampleFileTokens)
+    public static function applyPatterns($patterns, $matches, $sampleFileTokens)
     {
         $replacePatterns = array_values($patterns);
 
@@ -231,6 +233,6 @@ class PatternParser
             }
         }
 
-        return [Refactor::toString($sampleFileTokens), $replacementLines];
+        return [$sampleFileTokens, $replacementLines];
     }
 }

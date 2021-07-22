@@ -3,20 +3,21 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
-class Refactorings
+class PatternRefactorings
 {
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
         $matches = PatternParser::findMatches($patterns[0], $tokens);
         if ($matches) {
-            [$newVersion, $lineNums] = PatternParser::applyPatterns($patterns[1], $matches, $tokens);
+            [$newVersionTokens, $lineNums] = PatternParser::applyPatterns($patterns[1], $matches, $tokens);
 
             self::printLinks($lineNums, $absFilePath, $patterns[1]);
 
-            self::askToRefactor($absFilePath) && file_put_contents($absFilePath, $newVersion);
+            self::askToRefactor($absFilePath) && file_put_contents($absFilePath, Refactor::toString($newVersionTokens));
         }
     }
 
@@ -30,6 +31,7 @@ class Refactorings
         }
 
         $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
+
         foreach ($lineNums as $lineNum) {
             $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
         }
