@@ -42,7 +42,7 @@ class ForPsr4LoadedClasses
 
         $psr4 = ComposerJson::readAutoload();
         $t = [
-            ComposerJson::$fakeComposerPath => $psr4
+            ComposerJson::$fakeComposerPath => $psr4,
         ];
         ComposerJson::$fakeComposerPath = base_path('vendor/laravel/framework');
         $psr4_ = ComposerJson::readAutoload();
