@@ -38,9 +38,15 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function can_parse_eol()
     {
         $patterns = [
-            "use App\Club;'<php_eol>'use App\Events\MemberCommentedClubPost;" => '',
-            "use App\User;'<php_eol>'" => "\r\n",
+                "use App\Club;'<php_eol>'use App\Events\MemberCommentedClubPost;"
+            =>
+                "use App\Club; use App\Events\MemberCommentedClubPost;",
 
+
+                "use Illuminate\Http\Request;'<php_eol>'"
+            =>
+                ""
+            ,
         ];
         $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
 
@@ -48,7 +54,7 @@ class RefactorPatternParsingTest extends BaseTestClass
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
         $this->assertEquals($resultFile, $newVersion);
-        $this->assertEquals([5, 1, 7], $replacedAt);
+        $this->assertEquals([5, 1, 8], $replacedAt);
     }
 
     /** @test */
