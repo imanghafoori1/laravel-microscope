@@ -56,11 +56,21 @@ class ComposerJson
     private static function normalizePaths($value, $path)
     {
         foreach ($value as $namespace => $_path) {
-            if (! Str::endsWith($_path, ['/'])) {
-                $value[$namespace] .= '/';
-            }
+            if (is_array($_path)) {
+                foreach ($_path as $i => $p) {
+                    if (! Str::endsWith($p, ['/'])) {
+                        $value[$namespace][$i] .= '/';
+                    }
 
-            $value[$namespace] = $path.$value[$namespace];
+                    $value[$namespace][$i] = $path.$value[$namespace][$i];
+                }
+            } else {
+                if (! Str::endsWith($_path, ['/'])) {
+                    $value[$namespace] .= '/';
+                }
+
+                $value[$namespace] = $path.$value[$namespace];
+            }
         }
 
         return $value;
@@ -87,10 +97,12 @@ class ComposerJson
      */
     private static function readComposerFileData($composerPath)
     {
-        $fullPath = self::$fakeComposerPath ?: app()->basePath($composerPath.'composer.json');
+        $fullPath = self::$fakeComposerPath ?: app()->basePath($composerPath);
+
+        self::$fakeComposerPath = str_replace(['/' ,'\\'], DIRECTORY_SEPARATOR, $fullPath);
 
         if (! isset(self::$result[$fullPath])) {
-            self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath), true);
+            self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath.'/composer.json'), true);
         }
 
         return self::$result[$fullPath];

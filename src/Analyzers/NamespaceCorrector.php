@@ -61,6 +61,7 @@ class NamespaceCorrector
     public static function getRelativePathFromNamespace($namespace, $autoload = null)
     {
         [$namespaces, $paths] = self::getSortedAutoload($autoload);
+        [$namespaces, $paths] = self::flatten($paths, $namespaces);
 
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
@@ -73,7 +74,9 @@ class NamespaceCorrector
         $relPath = str_replace([base_path(), '.php'], '', $path);
         $relPath = \str_replace('\\', '/', $relPath);
 
-        return trim(\str_replace('/', '\\', \str_replace($paths, $namespaces, $relPath)), '\\');
+        [$_namespaces, $_paths] = self::flatten($paths, $namespaces);
+
+        return trim(\str_replace('/', '\\', \str_replace($_paths, $_namespaces, $relPath)), '\\');
     }
 
     private static function getSortedAutoload($autoload): array
@@ -88,5 +91,21 @@ class NamespaceCorrector
         $paths = array_values($autoload);
 
         return [$namespaces, $paths];
+    }
+
+    private static function flatten($paths, $namespaces): array
+    {
+        $_namespaces = [];
+        $_paths = [];
+        $counter = 0;
+        foreach ($paths as $k => $_p) {
+            foreach ((array) $_p as $p) {
+                $counter++;
+                $_namespaces[$counter] = $namespaces[$k];
+                $_paths[$counter] = $p;
+            }
+        }
+
+        return [$_namespaces, $_paths];
     }
 }

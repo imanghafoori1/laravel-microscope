@@ -53,10 +53,11 @@ class FilePath
      *
      * @return \Symfony\Component\Finder\Finder
      */
-    public static function getAllPhpFiles($path)
+    public static function getAllPhpFiles($path, $basePath = '')
     {
+        $basePath === null && $path = base_path($path);
         try {
-            return Finder::create()->files()->name('*.php')->in(base_path($path));
+            return Finder::create()->files()->name('*.php')->in($basePath.$path);
         } catch (DirectoryNotFoundException $e) {
             return [];
         }
