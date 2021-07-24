@@ -91,7 +91,10 @@ class ComposerJson
     {
         $fullPath = self::$composerPath ?: app()->basePath($composerPath);
 
-        self::$composerPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
+        $fullPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
+
+        // ensure it does not end with slash
+        $fullPath = self::$composerPath = rtrim($fullPath, DIRECTORY_SEPARATOR);
 
         if (! isset(self::$result[$fullPath])) {
             self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath.'/composer.json'), true);

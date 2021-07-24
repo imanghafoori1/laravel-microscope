@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
@@ -91,7 +92,7 @@ class CheckPsr4 extends Command
         }
 
         // saves the file into disk.
-        $changedLineNums && \file_put_contents($_path, \implode('', $lines));
+        $changedLineNums && FileSystem::$fileSystem::file_put_contents($_path, \implode('', $lines));
 
         return $changedLineNums;
     }

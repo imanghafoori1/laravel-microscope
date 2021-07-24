@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 
@@ -35,10 +36,10 @@ class Fixer
 
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
-        // if there is any use statement at the top
+        // if there is some use statements at the top but the class is not imported.
         if (count($uses) && ! isset($uses[$classBaseName])) {
             // replace in the class reference
-            FileManipulator::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
+            self::doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum);
 
             // insert a new import at the top
             $lineNum = array_values($uses)[0][1]; // first use statement
@@ -48,7 +49,7 @@ class Fixer
 
         isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
 
-        return [FileManipulator::replaceFirst($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
+        return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
@@ -76,8 +77,22 @@ class Fixer
     private static function replaceSave($old, $new, array $tokens, $absPath)
     {
         [$newVersion, $lines] = PatternParser::searchReplace([$old => $new], $tokens);
-        file_put_contents($absPath, $newVersion);
+
+        FileSystem::$fileSystem::file_put_content($absPath, $newVersion);
 
         return $lines;
+    }
+
+    private static function doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum)
+    {
+        if (version_compare(PHP_VERSION, '8.0.0') !== 1) {
+            return FileManipulator::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
+        }
+
+        $tokens = token_get_all(file_get_contents($absPath));
+        [$newVersion, $lines] = PatternParser::searchReplace([$inlinedClassRef => $classBaseName], $tokens);
+        [$lines, $correct] = FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
+
+        return (bool) $lines;
     }
 }
