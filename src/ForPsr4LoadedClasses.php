@@ -41,15 +41,16 @@ class ForPsr4LoadedClasses
         }
 
         $psr4 = ComposerJson::readAutoload();
-        $t = [
-            ComposerJson::$fakeComposerPath => $psr4,
+        $composerFiles = [
+            ComposerJson::$composerPath => $psr4,
         ];
-        ComposerJson::$fakeComposerPath = base_path('vendor/laravel/framework');
-        $psr4_ = ComposerJson::readAutoload();
-        $t[ComposerJson::$fakeComposerPath] = $psr4_;
-        ComposerJson::$fakeComposerPath = null;
 
-        foreach ($t as $baseComposerPath => $psr4) {
+        ComposerJson::$composerPath = base_path('vendor/laravel/framework');
+        $psr4_ = ComposerJson::readAutoload();
+        $composerFiles[ComposerJson::$composerPath] = $psr4_;
+        ComposerJson::$composerPath = null;
+
+        foreach ($composerFiles as $baseComposerPath => $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
                     $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath.'/');

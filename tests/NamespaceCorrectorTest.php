@@ -10,7 +10,7 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function read_autoload()
     {
-        ComposerJson::$fakeComposerPath = __DIR__.'/stubs/composer_json/composer2.json';
+        ComposerJson::$composerPath = __DIR__.'/stubs/composer_json/composer2.json';
 
         $expected = [
             'App\\' => 'app/',
@@ -18,7 +18,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         ];
 
         $this->assertEquals($expected, ComposerJson::readAutoload());
-        ComposerJson::$fakeComposerPath = null;
+        ComposerJson::$composerPath = null;
     }
 
     /** @test */

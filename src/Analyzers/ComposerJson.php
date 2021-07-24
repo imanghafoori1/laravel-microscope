@@ -11,9 +11,9 @@ class ComposerJson
     /**
      * Used for testing purposes.
      */
-    public static $fakeComposerPath = null;
+    public static $composerPath = null;
 
-    public static function readKey($key, $composerPath = '')
+    private static function readKey($key, $composerPath = '')
     {
         $composer = self::readComposerFileData($composerPath);
 
@@ -97,9 +97,9 @@ class ComposerJson
      */
     private static function readComposerFileData($composerPath)
     {
-        $fullPath = self::$fakeComposerPath ?: app()->basePath($composerPath);
+        $fullPath = self::$composerPath ?: app()->basePath($composerPath);
 
-        self::$fakeComposerPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
+        self::$composerPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
 
         if (! isset(self::$result[$fullPath])) {
             self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath.'/composer.json'), true);
