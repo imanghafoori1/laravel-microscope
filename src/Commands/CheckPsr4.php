@@ -165,9 +165,22 @@ class CheckPsr4 extends Command
     private function checkNamespaces(array $autoload)
     {
         foreach ($autoload as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
+            $excludes = $this->getExcludesPath($autoload, $psr4Path);
+            $files = FilePath::getAllPhpFiles($psr4Path, '', $excludes);
             CheckNamespaces::within($files, $psr4Path, $psr4Namespace, $this);
         }
+    }
+
+    private function getExcludesPath($autoload, $psr4Path)
+    {
+        $psr4Path = Str::finish($psr4Path, '/');
+
+        return collect($autoload)->values()
+            ->filter(function ($value) use ($psr4Path) {
+                return Str::startsWith($value, $psr4Path) && $value != $psr4Path;
+            })->map(function ($value) use ($psr4Path) {
+                return Str::after($value, $psr4Path);
+            })->all();
     }
 
     private function report($_path, $lineNumber)
