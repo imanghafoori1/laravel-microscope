@@ -8,7 +8,7 @@ class FakeFileSystem
 
     public static $newVersion;
 
-    public static function file_put_content($absPath, $newVersion, $sdcs)
+    public static function file_put_contents($absPath, $newVersion)
     {
         self::$absPath = $absPath;
         self::$newVersion = $newVersion;

@@ -31,7 +31,7 @@ class Fixer
         $contextClassNamespace = NamespaceCorrector::getNamespacedClassFromPath($absPath);
 
         if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
-            return [FileManipulator::replaceFirst($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
+            return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
         }
 
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
@@ -78,20 +78,20 @@ class Fixer
     {
         [$newVersion, $lines] = PatternParser::searchReplace([$old => $new], $tokens);
 
-        FileSystem::$fileSystem::file_put_content($absPath, $newVersion);
+        FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return $lines;
     }
 
     private static function doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum)
     {
-        if (version_compare(PHP_VERSION, '8.0.0') !== 1) {
+        if (version_compare(PHP_VERSION, '8.0.0') === 1) {
             return FileManipulator::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
         [$newVersion, $lines] = PatternParser::searchReplace([$inlinedClassRef => $classBaseName], $tokens);
-        [$lines, $correct] = FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
+        FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return (bool) $lines;
     }
