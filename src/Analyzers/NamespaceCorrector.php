@@ -83,8 +83,8 @@ class NamespaceCorrector
     {
         ($autoload === null) && $autoload = ComposerJson::readAutoload();
 
-        uksort($autoload, function ($namespace1, $namespace2) {
-            return strlen($namespace2) <=> strlen($namespace1);
+        uasort($autoload, function ($path, $path2) {
+            return strlen($path2) <=> strlen($path);
         });
 
         $namespaces = array_keys($autoload);
