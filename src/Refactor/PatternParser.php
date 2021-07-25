@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactor;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class PatternParser
@@ -44,22 +45,8 @@ class PatternParser
                 if ($placeHolder = self::isPlaceHolder($token)) {
                     $tokens[$i] = [$placeHolder, null];
                 }
-                if ($token[0] === T_CONSTANT_ENCAPSED_STRING && $token[1] === "'<php_eol>'") {
-                    $tokens[$i] = [10102, PHP_EOL, $token[2]];
-                }
-
-                /*
-                if (self::isWildcard($token)) {
-                    $placeholders[$counter][] = self::parseWildcard($token);
-                    $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station)]);
-                    $station = $i + 1;
-                    $j++;
-                }*/
             }
             $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
-            /*
-             * $tokens_to_search_for[$counter] = array_merge($tokens_to_search_for[$counter], [$j => array_slice($tokens, $station, $i - $station + 1)]);
-             */
         }
 
         return $tokens_to_search_for;
@@ -74,10 +61,16 @@ class PatternParser
 
     public static function searchReplace($patterns, $sampleFileTokens)
     {
-        $sampleFileTokens = self::extractPhpEolTokens($sampleFileTokens);
+        $contains = false;
+        foreach ($patterns as $pattern => $replacement) {
+            $contains = Str::contains($pattern, "'<php_eol>'");
+            if ($contains) {
+                break;
+            }
+        }
 
+        $contains && $sampleFileTokens = self::extractPhpEolTokens($sampleFileTokens);
         $matches = self::search($patterns, $sampleFileTokens);
-
         [$sampleFileTokens, $replacementLines] = self::applyPatterns($patterns, $matches, $sampleFileTokens);
 
         return [Refactor::toString($sampleFileTokens), $replacementLines];
@@ -109,21 +102,24 @@ class PatternParser
         return $matches;
     }
 
-    public static function parseWildcard($token)
-    {
-        $t = ltrim($token[1], '\'-');
-
-        return rtrim($t, ' token\'');
-    }
-
     public static function isWildcard($token)
     {
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until>';
     }
 
+    public static function isWhiteSpace($token)
+    {
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<white_space>';
+    }
+
+    public static function isOptional($token)
+    {
+        return Str::endsWith(trim($token, '\'\"'), '?');
+    }
+
     private static function isEol($token)
     {
-        return $token[0] == 10102;
+        return $token[0] == T_WHITESPACE;
     }
 
     public static function areTheSame($pToken, $token)
@@ -171,12 +167,23 @@ class PatternParser
                 }
                 $i = $k - 1;
                 $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
-            } elseif (self::isEol($pToken)) {
-                $same = self::areTheSame($tokens[$pi + 2], [10101, PHP_EOL]);
-                $i = $pi + 2;
-                if (! $same) {
-                    return false;
+            } elseif (self::isWhiteSpace($pToken)) {
+                if ($tToken[0] !== T_WHITESPACE) {
+                    if (self::isOptional($pToken[1])) {
+                        $i--;
+                        $placeholderValues[] = [T_WHITESPACE, ''];
+                    } else {
+                        return false;
+                    }
+                } else {
+                    $placeholderValues[] = $tToken;
                 }
+            //} elseif (self::isEol($pToken)) {
+            //    $same = self::areTheSame($tokens[$pi + 2], [T_WHITESPACE, PHP_EOL]);
+            //    $i = $pi + 2;
+            //    if (! $same) {
+            //        return false;
+            //    }
             } else {
                 $same = self::areTheSame($pToken, $tToken);
 
@@ -189,9 +196,15 @@ class PatternParser
                 }
             }
 
-            $pi = $i;
-            [$tToken, $i] = self::getNextToken($tokens, $i);
             [$pToken, $j] = self::getNextToken($pattern, $j);
+
+            if (! self::isWhiteSpace($pToken)) {
+                $pi = $i;
+                [$tToken, $i] = self::getNextToken($tokens, $i);
+            } else {
+                $pi = $i;
+                $tToken = $tokens[++$i] ?? [null, null];
+            }
         }
 
         if ($pCount === $j) {
@@ -205,7 +218,7 @@ class PatternParser
     {
         $i++;
         $token = $tokens[$i] ?? '_';
-        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ',', 10101], true)) {
+        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ','], true)) {
             $i++;
             $token = $tokens[$i] ?? [null, null];
         }
@@ -227,6 +240,7 @@ class PatternParser
             "'<name>'" => T_STRING,
             "'<boolean>'" => T_STRING,
             "'<bool>'" => T_STRING,
+            "'<php_eol>'" => T_WHITESPACE,
         ];
 
         return $map[$token[1]] ?? false;
@@ -256,11 +270,11 @@ class PatternParser
         $newFileTokens = [];
 
         for ($i = 0, $count = count($fileTokens); $i < $count; $i++) {
-            if ($fileTokens[$i][0] === T_WHITESPACE || $fileTokens[$i][0] === T_COMMENT) {
+            if ($fileTokens[$i][0] === T_WHITESPACE) {
                 $segments = explode("\n", str_replace(["\r\n", "\r", "\n"], "\n", $fileTokens[$i][1]));
                 foreach ($segments as $j => $segment) {
-                    $newFileTokens[] = [T_WHITESPACE, $segment, $fileTokens[$i][2] + $j];
-                    $newFileTokens[] = [10101, PHP_EOL, $fileTokens[$i][2] + $j];
+                    $segment !== "" && $newFileTokens[] = [T_WHITESPACE, $segment, $fileTokens[$i][2] + $j];
+                    $newFileTokens[] = [T_WHITESPACE, PHP_EOL, $fileTokens[$i][2] + $j];
                 }
                 array_pop($newFileTokens);
             } else {
