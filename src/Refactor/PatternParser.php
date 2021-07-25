@@ -61,15 +61,6 @@ class PatternParser
 
     public static function searchReplace($patterns, $sampleFileTokens)
     {
-        $contains = false;
-        foreach ($patterns as $pattern => $replacement) {
-            $contains = Str::contains($pattern, "'<php_eol>'");
-            if ($contains) {
-                break;
-            }
-        }
-
-        $contains && $sampleFileTokens = self::extractPhpEolTokens($sampleFileTokens);
         $matches = self::search($patterns, $sampleFileTokens);
         [$sampleFileTokens, $replacementLines] = self::applyPatterns($patterns, $matches, $sampleFileTokens);
 
@@ -115,11 +106,6 @@ class PatternParser
     public static function isOptional($token)
     {
         return Str::endsWith(trim($token, '\'\"'), '?');
-    }
-
-    private static function isEol($token)
-    {
-        return $token[0] == T_WHITESPACE;
     }
 
     public static function areTheSame($pToken, $token)
@@ -178,12 +164,6 @@ class PatternParser
                 } else {
                     $placeholderValues[] = $tToken;
                 }
-            //} elseif (self::isEol($pToken)) {
-            //    $same = self::areTheSame($tokens[$pi + 2], [T_WHITESPACE, PHP_EOL]);
-            //    $i = $pi + 2;
-            //    if (! $same) {
-            //        return false;
-            //    }
             } else {
                 $same = self::areTheSame($pToken, $tToken);
 
@@ -240,7 +220,6 @@ class PatternParser
             "'<name>'" => T_STRING,
             "'<boolean>'" => T_STRING,
             "'<bool>'" => T_STRING,
-            "'<php_eol>'" => T_WHITESPACE,
         ];
 
         return $map[$token[1]] ?? false;
@@ -263,25 +242,5 @@ class PatternParser
         }
 
         return [$sampleFileTokens, $replacementLines];
-    }
-
-    public static function extractPhpEolTokens($fileTokens)
-    {
-        $newFileTokens = [];
-
-        for ($i = 0, $count = count($fileTokens); $i < $count; $i++) {
-            if ($fileTokens[$i][0] === T_WHITESPACE) {
-                $segments = explode("\n", str_replace(["\r\n", "\r", "\n"], "\n", $fileTokens[$i][1]));
-                foreach ($segments as $j => $segment) {
-                    $segment !== "" && $newFileTokens[] = [T_WHITESPACE, $segment, $fileTokens[$i][2] + $j];
-                    $newFileTokens[] = [T_WHITESPACE, PHP_EOL, $fileTokens[$i][2] + $j];
-                }
-                array_pop($newFileTokens);
-            } else {
-                $newFileTokens[] = $fileTokens[$i];
-            }
-        }
-
-        return $newFileTokens;
     }
 }

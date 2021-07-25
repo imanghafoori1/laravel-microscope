@@ -38,7 +38,7 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function can_parse_eol()
     {
         $patterns = [
-            "use App\Club;'<php_eol>'use App\Events\MemberCommentedClubPost;" => "use App\Club; use App\Events\MemberCommentedClubPost;",
+            "use App\Club;'<white_space>'use App\Events\MemberCommentedClubPost;" => "use App\Club; use App\Events\MemberCommentedClubPost;",
 
             "use Illuminate\Http\Request;'<white_space>'" => '',
         ];
