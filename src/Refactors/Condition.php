@@ -62,8 +62,8 @@ class Condition
     {
         $level = $found = 0;
         foreach ($conditionTokens as $t) {
-            $t == '(' && $level++;
-            $t == ')' && $level--;
+            $t === '(' && $level++;
+            $t === ')' && $level--;
             if ($level === 0 && \in_array($t[1] ?? $t[0], $ops)) {
                 $found++;
             }
