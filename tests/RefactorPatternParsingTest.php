@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 class RefactorPatternParsingTest extends BaseTestClass
 {
     /** @test */
-    public function can_parse_pattern3()
+    public function until_placeholder()
     {
         $patterns = [
             'return response()"<until>";' => 'response()"<1>"->throwResponse();',
@@ -25,7 +25,10 @@ class RefactorPatternParsingTest extends BaseTestClass
     /** @test */
     public function can_parse_patterns2()
     {
-        $patterns = require __DIR__.'/stubs/refactor_patterns.php';
+        $patterns = [
+            "if (!'<variable>' && '<boolean>') { return response()->'<name>'(['message' => __('<string>')], '<number>'); }" => 'Foo::bar("<1>", "<2>", "<3>"(), "<4>");',
+            'foo(false, true, null);' => 'bar("hi");',
+        ];
         $startFile = file_get_contents(__DIR__.'/stubs/SimplePostController.stub');
         $resultFile = file_get_contents(__DIR__.'/stubs/ResultSimplePostController.stub');
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
@@ -35,7 +38,7 @@ class RefactorPatternParsingTest extends BaseTestClass
     }
 
     /** @test */
-    public function can_parse_eol()
+    public function white_space()
     {
         $patterns = [
             "use App\Club;'<white_space>'use App\Events\MemberCommentedClubPost;" => "use App\Club; use App\Events\MemberCommentedClubPost;",
@@ -79,6 +82,22 @@ class RefactorPatternParsingTest extends BaseTestClass
 
         $this->assertEquals($resultFile, $newVersion);
         $this->assertEquals([17, 24,], $replacedAt);
+    }
+
+    /** @test */
+    public function until_matching()
+    {
+        $patterns = [
+            "if('<until_match>'){}" => 'if(true) {"<1>"}',
+        ];
+
+        $startFile = "<?php if(foo()->bar()) {}";
+        [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
+
+        $resultFile = "<?php if(true) {foo()->bar()}";
+        $this->assertEquals($resultFile, $newVersion);
+
+        $this->assertEquals([1], $replacedAt);
     }
 
     /** @test */

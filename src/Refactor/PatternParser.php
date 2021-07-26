@@ -98,6 +98,11 @@ class PatternParser
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until>';
     }
 
+    public static function isUntilMatch($token)
+    {
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until_match>';
+    }
+
     public static function isWhiteSpace($token)
     {
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<white_space>';
@@ -151,6 +156,38 @@ class PatternParser
                     ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
                     $untilTokens[] = $tokens[$k];
                 }
+                $i = $k - 1;
+                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
+            } elseif (self::isUntilMatch($pToken)) {
+                $untilTokens = [];
+                $line = 1;
+                $level = 0;
+                $startingToken = ($pattern[$j - 1]); // may use getPreviousToken()
+                if (in_array($startingToken, ['(', '[', '{'], true)) {
+                    $anti = self::getAnti($startingToken);
+                } else {
+                    dd('pattern invalid');
+                }
+                if ($anti !== $pattern[$j + 1]) {
+                    dd('pattern invalid');
+                }
+
+                for ($k = $pi + 1; true; $k++) {
+                    if ($tokens[$k] === $anti && $level === 0) {
+                        break;
+                    }
+
+                    if ($startingToken === $tokens[$k]) {
+                        $level--;
+                    }
+                    if ($anti === $tokens[$k]) {
+                        $level++;
+                    }
+                    ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
+                    $untilTokens[] = $tokens[$k];
+
+                }
+
                 $i = $k - 1;
                 $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
             } elseif (self::isWhiteSpace($pToken)) {
@@ -242,5 +279,14 @@ class PatternParser
         }
 
         return [$sampleFileTokens, $replacementLines];
+    }
+
+    private static function getAnti(string $startingToken)
+    {
+        return [
+            '(' => ')',
+            '{' => '}',
+            '[' => ']',
+        ][$startingToken];
     }
 }
