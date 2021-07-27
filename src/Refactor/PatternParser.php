@@ -108,6 +108,11 @@ class PatternParser
         return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<white_space>';
     }
 
+    public static function isComment($token)
+    {
+        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<comment>';
+    }
+
     public static function isOptional($token)
     {
         return Str::endsWith(trim($token, '\'\"'), '?');
@@ -201,6 +206,17 @@ class PatternParser
                 } else {
                     $placeholderValues[] = $tToken;
                 }
+            } elseif (self::isComment($pToken)) {
+                if ($tToken[0] !== T_COMMENT) {
+                    if (self::isOptional($pToken[1])) {
+                        $i--;
+                        $placeholderValues[] = [T_WHITESPACE, ''];
+                    } else {
+                        return false;
+                    }
+                } else {
+                    $placeholderValues[] = $tToken;
+                }
             } else {
                 $same = self::areTheSame($pToken, $tToken);
 
@@ -215,12 +231,12 @@ class PatternParser
 
             [$pToken, $j] = self::getNextToken($pattern, $j);
 
-            if (! self::isWhiteSpace($pToken)) {
-                $pi = $i;
-                [$tToken, $i] = self::getNextToken($tokens, $i);
-            } else {
+            if (self::isWhiteSpace($pToken) || self::isComment($pToken)) {
                 $pi = $i;
                 $tToken = $tokens[++$i] ?? [null, null];
+            } else {
+                $pi = $i;
+                [$tToken, $i] = self::getNextToken($tokens, $i);
             }
         }
 

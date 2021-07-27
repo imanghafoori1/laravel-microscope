@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests\pattern_matching;
 use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
 use Imanghafoori\LaravelMicroscope\Tests\BaseTestClass;
 
-class RefactorPatternParsingTest extends BaseTestClass
+class WhitespaceTest extends BaseTestClass
 {
     /** @test */
     public function white_space()
@@ -42,7 +42,7 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function optional_white_space_placeholder()
     {
         $patterns = [
-            "response()'<white_space>?'->json" => 'response()"<1>"->mson',
+            "response('<white_space>?')'<white_space>?'->json" => 'response()"<2>"->mson',
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
 
@@ -51,5 +51,31 @@ class RefactorPatternParsingTest extends BaseTestClass
 
         $this->assertEquals($resultFile, $newVersion);
         $this->assertEquals([17, 24,], $replacedAt);
+    }
+
+    /** @test */
+    public function optional_comment_placeholder()
+    {
+        $patterns = [
+            ";'<white_space>?''<comment>';" => ';"<1>""<2>"',
+        ];
+        $startFile = '<?php ; /*H*/ ;';
+
+        $resultFile = '<?php ; /*H*/';
+        [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
+
+        $this->assertEquals($resultFile, $newVersion);
+        $this->assertEquals([1, 1,], $replacedAt);
+
+        $patterns = [
+            ";'<white_space>?''<comment>?';" => ';"<2>"',
+        ];
+        $startFile = '<?php ; ;';
+
+        $resultFile = '<?php ;';
+        [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
+
+        $this->assertEquals($resultFile, $newVersion);
+        $this->assertEquals([1, 1,], $replacedAt);
     }
 }
