@@ -28,23 +28,21 @@ class WhitespaceTest extends BaseTestClass
     public function white_space_placeholder()
     {
         $patterns = [
-            ")'<white_space>'{" => ['replace' => "){"],
+            ")'<white_space>'{" => ['replace' => '){'],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
         $resultFile = file_get_contents(__DIR__.'/../stubs/NoWhiteSpaceSimplePostController.stub');
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
         $this->assertEquals($resultFile, $newVersion);
-        $this->assertEquals([13, 15, 21,], $replacedAt);
+        $this->assertEquals([13, 15, 21], $replacedAt);
     }
 
     /** @test */
     public function optional_white_space_placeholder()
     {
         $patterns = [
-            "response('<white_space>?')'<white_space>?'->json"
-                =>
-            ['replace' => 'response()"<2>"->mson'],
+            "response('<white_space>?')'<white_space>?'->json" => ['replace' => 'response()"<2>"->mson'],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
 
@@ -52,7 +50,7 @@ class WhitespaceTest extends BaseTestClass
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
         $this->assertEquals($resultFile, $newVersion);
-        $this->assertEquals([17, 24,], $replacedAt);
+        $this->assertEquals([17, 24], $replacedAt);
     }
 
     /** @test */
@@ -67,7 +65,7 @@ class WhitespaceTest extends BaseTestClass
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
         $this->assertEquals($resultFile, $newVersion);
-        $this->assertEquals([1, 1,], $replacedAt);
+        $this->assertEquals([1, 1], $replacedAt);
 
         $patterns = [
             ";'<white_space>?''<comment>?';" => ['replace' => ';"<2>"'],
@@ -78,6 +76,6 @@ class WhitespaceTest extends BaseTestClass
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, token_get_all($startFile));
 
         $this->assertEquals($resultFile, $newVersion);
-        $this->assertEquals([1, 1,], $replacedAt);
+        $this->assertEquals([1, 1], $replacedAt);
     }
 }

@@ -59,7 +59,7 @@ return ["your_pattern" => "replacement"];
         foreach ($refactors as $i => $ref) {
             is_string($ref) && $refactors[$i] = ['replace' => $ref];
 
-            isset($ref['directory']) && $refactors[$i]['directory'] = str_replace(["\\", '/'], DIRECTORY_SEPARATOR, $ref['directory']);
+            isset($ref['directory']) && $refactors[$i]['directory'] = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ref['directory']);
         }
 
         return $refactors;

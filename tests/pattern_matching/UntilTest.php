@@ -30,8 +30,8 @@ class UntilTest extends BaseTestClass
             "if('<until_match>'){}" => ['replace' => 'if(true) {"<1>";}'],
         ];
 
-        $startFile = "<?php if(foo()->bar()) {}";
-        $resultFile = "<?php if(true) {foo()->bar();}";
+        $startFile = '<?php if(foo()->bar()) {}';
+        $resultFile = '<?php if(true) {foo()->bar();}';
 
         $tokens = token_get_all($startFile);
         [$newVersion, $replacedAt] = PatternParser::searchReplace($patterns, $tokens);

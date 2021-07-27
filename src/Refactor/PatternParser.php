@@ -163,7 +163,6 @@ class PatternParser
                     }
                     ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
                     $untilTokens[] = $tokens[$k];
-
                 }
 
                 $i = $k - 1;
