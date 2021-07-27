@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Refactor;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 
 class PatternParser
@@ -26,8 +25,6 @@ class PatternParser
 
         return [$tokens, $lineNumber];
     }
-
-    private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING];
 
     public static function parsePatterns($refactorPatterns)
     {
@@ -60,175 +57,10 @@ class PatternParser
         $matches = [];
 
         foreach ($patterns as $pIndex => $pattern) {
-            $matches = self::getMatch($pattern['search'], $fileTokens, $matches, $pIndex);
+            $matches = TokenCompare::getMatch($pattern['search'], $fileTokens, $matches, $pIndex);
         }
 
         return $matches;
-    }
-
-    public static function isWildcard($token)
-    {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until>';
-    }
-
-    public static function isUntilMatch($token)
-    {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') == '<until_match>';
-    }
-
-    public static function isWhiteSpace($token)
-    {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<white_space>';
-    }
-
-    public static function isComment($token)
-    {
-        return $token[0] == T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') == '<comment>';
-    }
-
-    public static function isOptional($token)
-    {
-        return Str::endsWith(trim($token, '\'\"'), '?');
-    }
-
-    public static function areTheSame($pToken, $token)
-    {
-        if ($pToken[0] !== $token[0]) {
-            return false;
-        }
-
-        if (in_array($pToken[0], self::$placeHolders, true) && $pToken[1] === null) {
-            return 'placeholder';
-        }
-
-        if (! isset($pToken[1]) || ! isset($token[1])) {
-            return true;
-        }
-
-        if ($token[0] === T_CONSTANT_ENCAPSED_STRING) {
-            return trim($pToken[1], '\'\"') === trim($token[1], '\'\"');
-        }
-
-        if ($pToken[0] === T_STRING && (in_array(strtolower($pToken[1]), ['true', 'false', 'null'], true))) {
-            return strtolower($pToken[1]) === strtolower($token[1]);
-        }
-
-        return $pToken[1] === $token[1];
-    }
-
-    public static function compareTokens($pattern, $tokens, int $i)
-    {
-        $pi = $j = 0;
-        $tCount = count($tokens);
-        $pCount = count($pattern);
-        $placeholderValues = [];
-
-        $tToken = $tokens[$i];
-        $pToken = $pattern[$j];
-
-        while ($i < $tCount && $j < $pCount) {
-            if (self::isWildcard($pToken)) {
-                $untilTokens = [];
-                $line = 1;
-                for ($k = $pi + 1; $tokens[$k] !== $pattern[$j + 1]; $k++) {
-                    ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
-                    $untilTokens[] = $tokens[$k];
-                }
-                $i = $k - 1;
-                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
-            } elseif (self::isUntilMatch($pToken)) {
-                $untilTokens = [];
-                $line = 1;
-                $level = 0;
-                $startingToken = ($pattern[$j - 1]); // may use getPreviousToken()
-                if (in_array($startingToken, ['(', '[', '{'], true)) {
-                    $anti = self::getAnti($startingToken);
-                } else {
-                    dd('pattern invalid');
-                }
-                if ($anti !== $pattern[$j + 1]) {
-                    dd('pattern invalid');
-                }
-
-                for ($k = $pi + 1; true; $k++) {
-                    if ($tokens[$k] === $anti && $level === 0) {
-                        break;
-                    }
-
-                    if ($startingToken === $tokens[$k]) {
-                        $level--;
-                    }
-                    if ($anti === $tokens[$k]) {
-                        $level++;
-                    }
-                    ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
-                    $untilTokens[] = $tokens[$k];
-                }
-
-                $i = $k - 1;
-                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
-            } elseif (self::isWhiteSpace($pToken)) {
-                if ($tToken[0] !== T_WHITESPACE) {
-                    if (self::isOptional($pToken[1])) {
-                        $i--;
-                        $placeholderValues[] = [T_WHITESPACE, ''];
-                    } else {
-                        return false;
-                    }
-                } else {
-                    $placeholderValues[] = $tToken;
-                }
-            } elseif (self::isComment($pToken)) {
-                if ($tToken[0] !== T_COMMENT) {
-                    if (self::isOptional($pToken[1])) {
-                        $i--;
-                        $placeholderValues[] = [T_WHITESPACE, ''];
-                    } else {
-                        return false;
-                    }
-                } else {
-                    $placeholderValues[] = $tToken;
-                }
-            } else {
-                $same = self::areTheSame($pToken, $tToken);
-
-                if (! $same) {
-                    return false;
-                }
-
-                if ($same === 'placeholder') {
-                    $placeholderValues[] = $tToken;
-                }
-            }
-
-            [$pToken, $j] = self::getNextToken($pattern, $j);
-
-            if (self::isWhiteSpace($pToken) || self::isComment($pToken)) {
-                $pi = $i;
-                $tToken = $tokens[++$i] ?? [null, null];
-            } else {
-                $pi = $i;
-                [$tToken, $i] = self::getNextToken($tokens, $i);
-            }
-        }
-
-        if ($pCount === $j) {
-            return [$pi, $placeholderValues];
-        }
-
-        return false;
-    }
-
-    public static function getNextToken($tokens, $i)
-    {
-        $i++;
-        $token = $tokens[$i] ?? '_';
-        while (in_array($token[0], [T_WHITESPACE, T_COMMENT, ','], true)) {
-            $i++;
-            $token = $tokens[$i] ?? [null, null];
-        }
-
-        return [$token, $i];
     }
 
     private static function isPlaceHolder($token)
@@ -256,7 +88,7 @@ class PatternParser
 
         $replacementLines = [];
         foreach ($matches as $pi => $p_match) {
-            foreach ($p_match as $i => $match) {
+            foreach ($p_match as $match) {
                 $newValue = $replacePatterns[$pi]['replace'];
                 foreach ($match['values'] as $number => $value) {
                     $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
@@ -267,15 +99,6 @@ class PatternParser
         }
 
         return [$sampleFileTokens, $replacementLines];
-    }
-
-    private static function getAnti(string $startingToken)
-    {
-        return [
-            '(' => ')',
-            '{' => '}',
-            '[' => ']',
-        ][$startingToken];
     }
 
     private static function analyzeTokens($pattern)
@@ -291,27 +114,5 @@ class PatternParser
         }
 
         return $tokens;
-    }
-
-    public static function getMatch($search, $fileTokens, array $matches, $pIndex)
-    {
-        foreach ($search as $pToken) {
-            $i = 0;
-            $allCount = count($fileTokens);
-            while ($i < $allCount) {
-                $token = $fileTokens[$i];
-                if (PatternParser::areTheSame($pToken, $token)) {
-                    $isMatch = PatternParser::compareTokens($search, $fileTokens, $i);
-                    if ($isMatch) {
-                        [$k, $matchedValues] = $isMatch;
-                        $matches[$pIndex][] = [['start' => $i, 'end' => $k], 'values' => $matchedValues];
-                        $i = $k - 1; // fast-forward
-                    }
-                }
-                $i++;
-            }
-        }
-
-        return $matches;
     }
 }
