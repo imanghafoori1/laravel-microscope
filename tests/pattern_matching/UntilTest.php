@@ -11,7 +11,7 @@ class UntilTest extends BaseTestClass
     public function until_placeholder()
     {
         $patterns = [
-            'return response()"<until>";' => 'response()"<1>"->throwResponse();',
+            'return response()"<until>";' => ['replace' => 'response()"<1>"->throwResponse();'],
         ];
 
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
@@ -27,7 +27,7 @@ class UntilTest extends BaseTestClass
     public function until_matching()
     {
         $patterns = [
-            "if('<until_match>'){}" => 'if(true) {"<1>";}',
+            "if('<until_match>'){}" => ['replace' => 'if(true) {"<1>";}'],
         ];
 
         $startFile = "<?php if(foo()->bar()) {}";

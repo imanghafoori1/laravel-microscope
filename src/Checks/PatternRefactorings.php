@@ -11,7 +11,19 @@ class PatternRefactorings
 {
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
-        $matches = PatternParser::findMatches($patterns[0], $tokens);
+        $matches = [];
+        foreach ($patterns[0] as $pIndex => $pattern) {
+            if (isset($pattern['file']) && ! Str::endsWith($absFilePath, $pattern['file'])) {
+                continue;
+            }
+
+            if (isset($pattern['directory']) && ! Str::startsWith($absFilePath, $pattern['directory'])) {
+                continue;
+            }
+
+            $matches = PatternParser::getMatch($pattern['search'], $tokens, $matches, $pIndex);
+        }
+
         if ($matches) {
             [$newVersionTokens, $lineNums] = PatternParser::applyPatterns($patterns[1], $matches, $tokens);
 
@@ -27,7 +39,7 @@ class PatternRefactorings
         // Print Replacement Links
         foreach ($patterns as $from => $to) {
             $printer->print('Replacing:    <fg=yellow>'.Str::limit($from).'</>', '', 0);
-            $printer->print('With:         <fg=yellow>'.Str::limit($to).'</>', '', 0);
+            $printer->print('With:         <fg=yellow>'.Str::limit($to['replace']).'</>', '', 0);
         }
 
         $printer->print('<fg=red>Replacement will occur at:</>', '', 0);

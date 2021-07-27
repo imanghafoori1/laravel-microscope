@@ -11,8 +11,8 @@ class RefactorPatternParsingTest extends BaseTestClass
     public function capturing_place_holders()
     {
         $patterns = [
-            "if (!'<variable>' && '<boolean>') { return response()->'<name>'(['message' => __('<string>')], '<number>'); }" => 'Foo::bar("<1>", "<2>", "<3>"(), "<4>");',
-            'foo(false, true, null);' => 'bar("hi");',
+            "if (!'<variable>' && '<boolean>') { return response()->'<name>'(['message' => __('<string>')], '<number>'); }" => ['replace' => 'Foo::bar("<1>", "<2>", "<3>"(), "<4>");'],
+            'foo(false, true, null);' => ['replace' => 'bar("hi");'],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
         $resultFile = file_get_contents(__DIR__.'/../stubs/ResultSimplePostController.stub');

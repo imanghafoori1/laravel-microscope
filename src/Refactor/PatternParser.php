@@ -60,22 +60,7 @@ class PatternParser
         $matches = [];
 
         foreach ($patterns as $pIndex => $pattern) {
-            foreach ($pattern['search'] as $pToken) {
-                $i = 0;
-                $allCount = count($fileTokens);
-                while ($i < $allCount) {
-                    $token = $fileTokens[$i];
-                    if (PatternParser::areTheSame($pToken, $token)) {
-                        $isMatch = PatternParser::compareTokens($pattern['search'], $fileTokens, $i);
-                        if ($isMatch) {
-                            [$k, $matchedValues] = $isMatch;
-                            $matches[$pIndex][] = [['start' => $i, 'end' => $k], 'values' => $matchedValues];
-                            $i = $k - 1; // fast-forward
-                        }
-                    }
-                    $i++;
-                }
-            }
+            $matches = self::getMatch($pattern['search'], $fileTokens, $matches, $pIndex);
         }
 
         return $matches;
@@ -273,7 +258,7 @@ class PatternParser
         $replacementLines = [];
         foreach ($matches as $pi => $p_match) {
             foreach ($p_match as $i => $match) {
-                $newValue = $replacePatterns[$pi];
+                $newValue = $replacePatterns[$pi]['replace'];
                 foreach ($match['values'] as $number => $value) {
                     $newValue = str_replace('"<'.($number + 1).'>"', $value[1], $newValue);
                 }
@@ -307,5 +292,27 @@ class PatternParser
         }
 
         return $tokens;
+    }
+
+    public static function getMatch($search, $fileTokens, array $matches, $pIndex)
+    {
+        foreach ($search as $pToken) {
+            $i = 0;
+            $allCount = count($fileTokens);
+            while ($i < $allCount) {
+                $token = $fileTokens[$i];
+                if (PatternParser::areTheSame($pToken, $token)) {
+                    $isMatch = PatternParser::compareTokens($search, $fileTokens, $i);
+                    if ($isMatch) {
+                        [$k, $matchedValues] = $isMatch;
+                        $matches[$pIndex][] = [['start' => $i, 'end' => $k], 'values' => $matchedValues];
+                        $i = $k - 1; // fast-forward
+                    }
+                }
+                $i++;
+            }
+        }
+
+        return $matches;
     }
 }

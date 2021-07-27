@@ -11,9 +11,9 @@ class WhitespaceTest extends BaseTestClass
     public function white_space()
     {
         $patterns = [
-            "use App\Club;'<white_space>'use App\Events\MemberCommentedClubPost;" => "use App\Club; use App\Events\MemberCommentedClubPost;",
+            "use App\Club;'<white_space>'use App\Events\MemberCommentedClubPost;" => ['replace' => "use App\Club; use App\Events\MemberCommentedClubPost;"],
 
-            "use Illuminate\Http\Request;'<white_space>'" => '',
+            "use Illuminate\Http\Request;'<white_space>'" => ['replace' => ''],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
 
@@ -28,7 +28,7 @@ class WhitespaceTest extends BaseTestClass
     public function white_space_placeholder()
     {
         $patterns = [
-            ")'<white_space>'{" => "){",
+            ")'<white_space>'{" => ['replace' => "){"],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
         $resultFile = file_get_contents(__DIR__.'/../stubs/NoWhiteSpaceSimplePostController.stub');
@@ -42,7 +42,9 @@ class WhitespaceTest extends BaseTestClass
     public function optional_white_space_placeholder()
     {
         $patterns = [
-            "response('<white_space>?')'<white_space>?'->json" => 'response()"<2>"->mson',
+            "response('<white_space>?')'<white_space>?'->json"
+                =>
+            ['replace' => 'response()"<2>"->mson'],
         ];
         $startFile = file_get_contents(__DIR__.'/../stubs/SimplePostController.stub');
 
@@ -57,7 +59,7 @@ class WhitespaceTest extends BaseTestClass
     public function optional_comment_placeholder()
     {
         $patterns = [
-            ";'<white_space>?''<comment>';" => ';"<1>""<2>"',
+            ";'<white_space>?''<comment>';" => ['replace' => ';"<1>""<2>"'],
         ];
         $startFile = '<?php ; /*H*/ ;';
 
@@ -68,7 +70,7 @@ class WhitespaceTest extends BaseTestClass
         $this->assertEquals([1, 1,], $replacedAt);
 
         $patterns = [
-            ";'<white_space>?''<comment>?';" => ';"<2>"',
+            ";'<white_space>?''<comment>?';" => ['replace' => ';"<2>"'],
         ];
         $startFile = '<?php ; ;';
 

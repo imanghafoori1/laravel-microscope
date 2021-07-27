@@ -36,6 +36,7 @@ class CheckRefactors extends Command
             return;
         }
 
+        $refactors = $this->normalizePatterns($refactors);
         $patterns = PatternParser::parsePatterns($refactors);
 
         ForPsr4LoadedClasses::check([PatternRefactorings::class], [$patterns, $refactors]);
@@ -51,5 +52,16 @@ class CheckRefactors extends Command
         return '<?php
 return ["your_pattern" => "replacement"];
 ';
+    }
+
+    private function normalizePatterns($refactors)
+    {
+        foreach ($refactors as $i => $ref) {
+            is_string($ref) && $refactors[$i] = ['replace' => $ref];
+
+            isset($ref['directory']) && $refactors[$i]['directory'] = str_replace(["\\", '/'], DIRECTORY_SEPARATOR, $ref['directory']);
+        }
+
+        return $refactors;
     }
 }
