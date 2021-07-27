@@ -32,21 +32,9 @@ class PatternParser
     public static function parsePatterns($refactorPatterns)
     {
         $tokens_to_search_for = [];
-        // $placeholders = [];
-        // $counter = 0;
 
         foreach ($refactorPatterns as $pattern => $to) {
-            $tokens = token_get_all('<?php '.$pattern);
-            array_shift($tokens);
-
-            //$station = $j = 0;
-            foreach ($tokens as $i => $token) {
-                // transform placeholders
-                if ($placeHolder = self::isPlaceHolder($token)) {
-                    $tokens[$i] = [$placeHolder, null];
-                }
-            }
-            $tokens_to_search_for[] = ['search' => $tokens, 'replace' => $to];
+            $tokens_to_search_for[] = ['search' => self::analyzeTokens($pattern)] + $to;
         }
 
         return $tokens_to_search_for;
@@ -304,5 +292,20 @@ class PatternParser
             '{' => '}',
             '[' => ']',
         ][$startingToken];
+    }
+
+    private static function analyzeTokens($pattern)
+    {
+        $tokens = token_get_all('<?php '.$pattern);
+        array_shift($tokens);
+
+        foreach ($tokens as $i => $token) {
+            // transform placeholders
+            if ($placeHolder = self::isPlaceHolder($token)) {
+                $tokens[$i] = [$placeHolder, null];
+            }
+        }
+
+        return $tokens;
     }
 }
