@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassReferenceFinder;
+use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 
 class ClassReferencesProcessTest extends BaseTestClass
 {

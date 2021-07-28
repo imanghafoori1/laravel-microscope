@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
+
 class ParseUseStatement
 {
     public static function getUseStatementsByPath($namespacedClassName, $absPath)
