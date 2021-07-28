@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Refactors;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
-use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class SyntaxNormalizer
 {

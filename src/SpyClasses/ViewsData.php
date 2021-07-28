@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\TokenManager;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class ViewsData
 {

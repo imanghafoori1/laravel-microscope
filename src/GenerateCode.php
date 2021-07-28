@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\Stubs\ServiceProviderStub;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class GenerateCode
 {
@@ -90,7 +91,7 @@ class GenerateCode
             if (! self::isProvidersKey($tokens, $i)) {
                 continue;
             }
-            $closeBracketIndex = Analyzers\TokenManager::readBody($tokens, $i + 15, ']')[1];
+            $closeBracketIndex = TokenManager::readBody($tokens, $i + 15, ']')[1];
 
             $j = $closeBracketIndex;
             while ($tokens[--$j][0] === T_WHITESPACE && $tokens[--$j][0] === T_COMMENT) {

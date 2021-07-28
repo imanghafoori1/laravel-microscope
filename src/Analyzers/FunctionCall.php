@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\TokenManager;
+
 class FunctionCall
 {
     public static function isSolidString($tokens)

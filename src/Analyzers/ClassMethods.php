@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\TokenManager;
+
 class ClassMethods
 {
     public static function read($tokens)

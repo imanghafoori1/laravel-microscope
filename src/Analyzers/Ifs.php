@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Imanghafoori\LaravelMicroscope\Refactors\IfElse;
 use Imanghafoori\LaravelMicroscope\Refactors\NestedIf;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class Ifs
 {
