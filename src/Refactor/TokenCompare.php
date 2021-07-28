@@ -9,17 +9,17 @@ class TokenCompare
 {
     private static $placeHolders = [T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_LNUMBER, T_STRING];
 
-    public static function compareTokens($pattern, $tokens, int $i)
+    private static function compareTokens($pattern, $tokens, $startFrom)
     {
         $pi = $j = 0;
         $tCount = count($tokens);
         $pCount = count($pattern);
         $placeholderValues = [];
 
-        $tToken = $tokens[$i];
+        $tToken = $tokens[$startFrom];
         $pToken = $pattern[$j];
 
-        while ($i < $tCount && $j < $pCount) {
+        while ($startFrom < $tCount && $j < $pCount) {
             if (self::isWildcard($pToken)) {
                 $untilTokens = [];
                 $line = 1;
@@ -27,8 +27,8 @@ class TokenCompare
                     ! $line && isset($tokens[$k][2]) && $line = $tokens[$k][2];
                     $untilTokens[] = $tokens[$k];
                 }
-                $i = $k - 1;
-                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
+                $startFrom = $k - 1;
+                $placeholderValues[] = [T_STRING, Stringify::fromTokens($untilTokens), $line];
             } elseif (self::isUntilMatch($pToken)) {
                 $untilTokens = [];
                 $line = 1;
@@ -58,14 +58,12 @@ class TokenCompare
                     $untilTokens[] = $tokens[$k];
                 }
 
-                $i = $k - 1;
-                $placeholderValues[] = [T_STRING, Refactor::toString($untilTokens), $line];
+                $startFrom = $k - 1;
+                $placeholderValues[] = [T_STRING, Stringify::fromTokens($untilTokens), $line];
             } elseif (self::isWhiteSpace($pToken)) {
-                [$i, $pValue] = self::qqq($tToken, T_WHITESPACE, $pToken[1], $i);
-                $placeholderValues[] = $pValue;
+                $placeholderValues[] = self::process($tToken, T_WHITESPACE, $pToken[1], $startFrom);
             } elseif (self::isComment($pToken)) {
-                [$i, $pValue] = self::qqq($tToken, T_COMMENT, $pToken[1], $i);
-                $placeholderValues[] = $pValue;
+                $placeholderValues[] = self::process($tToken, T_COMMENT, $pToken[1], $startFrom);
             } else {
                 $same = self::areTheSame($pToken, $tToken);
 
@@ -80,12 +78,11 @@ class TokenCompare
 
             [$pToken, $j] = self::getNextToken($pattern, $j);
 
+            $pi = $startFrom;
             if (self::isWhiteSpace($pToken) || self::isComment($pToken)) {
-                $pi = $i;
-                $tToken = $tokens[++$i] ?? [null, null];
+                $tToken = $tokens[++$startFrom] ?? [null, null];
             } else {
-                $pi = $i;
-                [$tToken, $i] = self::getNextToken($tokens, $i);
+                [$tToken, $startFrom] = self::getNextToken($tokens, $startFrom);
             }
         }
 
@@ -96,7 +93,7 @@ class TokenCompare
         return false;
     }
 
-    public static function getNextToken($tokens, $i)
+    private static function getNextToken($tokens, $i)
     {
         $i++;
         $token = $tokens[$i] ?? '_';
@@ -108,17 +105,17 @@ class TokenCompare
         return [$token, $i];
     }
 
-    public static function isWildcard($token)
+    private static function isWildcard($token)
     {
         return $token[0] === T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') === '<until>';
     }
 
-    public static function isUntilMatch($token)
+    private static function isUntilMatch($token)
     {
         return $token[0] === T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"') === '<until_match>';
     }
 
-    public static function isWhiteSpace($token)
+    private static function isWhiteSpace($token)
     {
         return $token[0] === T_CONSTANT_ENCAPSED_STRING && trim($token[1], '\'\"?') === '<white_space>';
     }
@@ -142,7 +139,7 @@ class TokenCompare
         ][$startingToken];
     }
 
-    public static function areTheSame($pToken, $token)
+    private static function areTheSame($pToken, $token)
     {
         if ($pToken[0] !== $token[0]) {
             return false;
@@ -189,19 +186,19 @@ class TokenCompare
         return $matches;
     }
 
-    private static function qqq($tToken, int $type, $token, $i): array
+    private static function process($tToken, int $type, $token, &$i)
     {
         if ($tToken[0] !== $type) {
             if (self::isOptional($token)) {
                 $i--;
-                $p_ = [T_WHITESPACE, ''];
+                $output = [T_WHITESPACE, ''];
             } else {
-                $p_ = null;
+                $output = null;
             }
         } else {
-            $p_ = $tToken;
+            $output = $tToken;
         }
 
-        return [$i, $p_];
+        return $output;
     }
 }

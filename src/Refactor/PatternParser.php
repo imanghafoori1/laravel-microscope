@@ -49,7 +49,7 @@ class PatternParser
         $matches = self::search($patterns, $sampleFileTokens);
         [$sampleFileTokens, $replacementLines] = self::applyPatterns($patterns, $matches, $sampleFileTokens);
 
-        return [Refactor::toString($sampleFileTokens), $replacementLines];
+        return [Stringify::fromTokens($sampleFileTokens), $replacementLines];
     }
 
     public static function findMatches($patterns, $fileTokens)
