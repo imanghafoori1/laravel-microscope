@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;

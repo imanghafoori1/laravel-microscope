@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\FunctionCall;
+use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\Ifs;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
