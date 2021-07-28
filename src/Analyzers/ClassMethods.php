@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\Ifs;
+use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class ClassMethods
@@ -52,9 +54,7 @@ class ClassMethods
             } elseif ($char == ';') {
                 $body = [];
             } else {
-                $code = Refactor::toString($tokens);
-                self::requestIssue($code);
-                break;
+                throw new \ErrorException(Refactor::toString($tokens));
             }
 
             $i++;
@@ -74,14 +74,6 @@ class ClassMethods
         $class['methods'] = $methods;
 
         return $class;
-    }
-
-    private static function requestIssue($content)
-    {
-        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
-        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
-        dump('Send us the content and mention your php version ('.phpversion().')');
-        dump($content);
     }
 
     private static function findVisibility($tokens, $i)

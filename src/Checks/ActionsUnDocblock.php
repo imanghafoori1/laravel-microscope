@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\TokenAnalyzer\Refactor;
 
 class ActionsUnDocblock
 {

@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks\PSR12;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CurlyBraces
 {

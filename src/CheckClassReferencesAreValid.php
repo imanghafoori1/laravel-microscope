@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClassReferencesAreValid
@@ -184,7 +184,7 @@ class CheckClassReferencesAreValid
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+        [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
 
@@ -213,7 +213,7 @@ class CheckClassReferencesAreValid
 
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens, $absFilePath);
+                [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath);
                 goto loopStart;
             }
         }
@@ -238,5 +238,18 @@ class CheckClassReferencesAreValid
         }
 
         return $isCorrected;
+    }
+
+    public static function findClassRefs($tokens, $absFilePath): array
+    {
+        try {
+            [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens);
+
+            return [$classReferences, $hostNamespace];
+        } catch (\ErrorException $e) {
+            self::requestIssue($absFilePath);
+
+            return [[], ''];
+        }
     }
 }

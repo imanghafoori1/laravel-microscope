@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class ParseUseStatementTest extends BaseTestClass
 {

@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ParseUseStatement;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class CheckClassReferences

@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
 use Imanghafoori\SearchReplace\TokenCompare;

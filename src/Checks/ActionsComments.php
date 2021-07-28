@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
-use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
+use Imanghafoori\TokenAnalyzer\Refactor;
 
 class ActionsComments
 {

@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Illuminate\Support\Str;
-
 class FileManipulator
 {
     public static function removeLine($file, $_line = null)
