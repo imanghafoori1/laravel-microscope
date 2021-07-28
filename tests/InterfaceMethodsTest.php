@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
+use Imanghafoori\TokenAnalyzer\ClassMethods;
 
 class InterfaceMethodsTest extends BaseTestClass
 {

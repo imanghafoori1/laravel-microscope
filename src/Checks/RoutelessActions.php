@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Routing\Controller;
-use Imanghafoori\LaravelMicroscope\Analyzers\ClassMethods;
+use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
