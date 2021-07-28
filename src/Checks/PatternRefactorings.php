@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Refactor\PatternParser;
+use Imanghafoori\SearchReplace\PatternParser;
 
 class PatternRefactorings
 {
