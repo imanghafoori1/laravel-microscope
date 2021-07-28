@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Illuminate\Support\Str;
-
 class ComposerJson
 {
     private static $result = [];
