@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\TokenCompare;
 
 class PatternRefactorings
 {
@@ -21,7 +22,7 @@ class PatternRefactorings
                 continue;
             }
 
-            $matches = PatternParser::getMatch($pattern['search'], $tokens, $matches, $pIndex);
+            $matches = TokenCompare::getMatch($pattern['search'], $tokens, $matches, $pIndex);
         }
 
         if ($matches) {

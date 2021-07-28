@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\GetClassProperties;
+use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
@@ -51,7 +51,7 @@ class CheckNamespaces
                 $class,
                 $type,
                 $parent,
-            ] = GetClassProperties::fromFilePath($absFilePath);
+            ] = GetClassProperties::fromFilePath($absFilePath, config('microscope.class_search_buffer', 2500));
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
