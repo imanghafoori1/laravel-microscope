@@ -22,7 +22,7 @@ class PatternRefactorings
                 continue;
             }
 
-            $matches = TokenCompare::getMatch($pattern['search'], $tokens, $matches, $pIndex, $pattern['predicate'], $pattern['mutator']);
+            $matches[$pIndex] = TokenCompare::getMatch($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
         }
 
         if ($matches) {
