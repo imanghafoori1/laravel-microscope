@@ -39,19 +39,19 @@ class Fixer
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         // if there is some use statements at the top but the class is not imported.
-        if (count($uses) && ! isset($uses[$classBaseName])) {
-            // replace in the class reference
-            self::doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum);
+        if (! count($uses) || isset($uses[$classBaseName])) {
+            isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
 
-            // insert a new import at the top
-            $lineNum = array_values($uses)[0][1]; // first use statement
-
-            return [FileManipulator::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
+            return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
         }
 
-        isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
+        // replace in the class reference
+        self::doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum);
 
-        return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
+        // insert a new import at the top
+        $lineNum = array_values($uses)[0][1]; // first use statement
+
+        return [FileManipulator::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
