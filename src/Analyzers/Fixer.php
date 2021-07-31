@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class Fixer

@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\Str;
+
 class ComposerJson
 {
     private static $result = [];
@@ -13,7 +15,7 @@ class ComposerJson
 
     private static function readKey($key, $composerPath = '')
     {
-        $composer = self::readComposerFileData($composerPath);
+        $composer = self::readComposerFileData(app()->basePath($composerPath));
 
         $value = (array) data_get($composer, $key, []);
 
@@ -86,7 +88,7 @@ class ComposerJson
      */
     private static function readComposerFileData($composerPath)
     {
-        $fullPath = self::$composerPath ?: app()->basePath($composerPath);
+        $fullPath = self::$composerPath ?: $composerPath;
 
         $fullPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
 

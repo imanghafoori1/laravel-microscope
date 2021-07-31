@@ -2,6 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Imanghafoori\TokenAnalyzer\FileManipulator;
+use Imanghafoori\TokenAnalyzer\Str;
+
 class NamespaceCorrector
 {
     public static function getNamespaceFromFullClass($class)
