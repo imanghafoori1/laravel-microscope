@@ -12,8 +12,7 @@ class PatternRefactorings
 {
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
-        $matches = [];
-        foreach ($patterns[0] as $pIndex => $pattern) {
+        foreach ($patterns[0] as $pattern) {
             if (isset($pattern['file']) && ! Str::endsWith($absFilePath, $pattern['file'])) {
                 continue;
             }
@@ -22,15 +21,19 @@ class PatternRefactorings
                 continue;
             }
 
-            $matches[$pIndex] = TokenCompare::getMatch($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
-        }
+            $matches = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
 
-        if ($matches) {
-            [$newVersionTokens, $lineNums] = PatternParser::applyPatterns($patterns[1], $matches, $tokens);
-
-            self::printLinks($lineNums, $absFilePath, $patterns[1]);
-
-            self::askToRefactor($absFilePath) && file_put_contents($absFilePath, Refactor::toString($newVersionTokens));
+            if (! $matches) {
+                continue;
+            }
+            foreach ($matches as $match) {
+                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $match, $tokens);
+                self::printLinks($lineNum, $absFilePath, $patterns[1]);
+                if (self::askToRefactor($absFilePath)) {
+                    file_put_contents($absFilePath, Refactor::toString($newTokens));
+                    $tokens = $newTokens;
+                }
+            }
         }
     }
 
@@ -45,9 +48,7 @@ class PatternRefactorings
 
         $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
 
-        foreach ($lineNums as $lineNum) {
-            $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
-        }
+        $lineNums && $printer->printLink($absFilePath, $lineNums, 0);
     }
 
     private static function askToRefactor($absFilePath)
