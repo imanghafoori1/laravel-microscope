@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -21,16 +22,16 @@ class PatternRefactorings
                 continue;
             }
 
-            $matches = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
+            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
 
-            if (! $matches) {
+            if (! $matchedValues) {
                 continue;
             }
-            foreach ($matches as $match) {
-                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $match, $tokens);
+            foreach ($matchedValues as $matchedValue) {
+                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens);
                 self::printLinks($lineNum, $absFilePath, $patterns[1]);
                 if (self::askToRefactor($absFilePath)) {
-                    file_put_contents($absFilePath, Refactor::toString($newTokens));
+                    FileSystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
                     $tokens = $newTokens;
                 }
             }
