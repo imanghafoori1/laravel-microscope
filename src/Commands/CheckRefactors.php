@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Checks\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\SearchReplace\PatternParser;
-
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRefactors extends Command

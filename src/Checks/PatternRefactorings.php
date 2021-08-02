@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\SearchReplace\TokenCompare;
 
 class PatternRefactorings
@@ -27,8 +28,20 @@ class PatternRefactorings
             if (! $matchedValues) {
                 continue;
             }
+
             foreach ($matchedValues as $matchedValue) {
                 [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens);
+                if (isset($pattern['avoid_result_in'])) {
+                    foreach ($pattern['avoid_result_in'] as $key) {
+                        $_matchedValues = TokenCompare::getMatches(PatternParser::analyzeTokens($key), token_get_all(Stringify::fromTokens($newTokens)));
+                        if ($_matchedValues) {
+                            break;
+                        }
+                    }
+                    if ($_matchedValues) {
+                        continue;
+                    }
+                }
                 self::printLinks($lineNum, $absFilePath, $patterns[1]);
                 if (self::askToRefactor($absFilePath)) {
                     FileSystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
