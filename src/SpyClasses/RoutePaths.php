@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class RoutePaths
 {

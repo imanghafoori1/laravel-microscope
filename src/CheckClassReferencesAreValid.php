@@ -5,10 +5,10 @@ namespace Imanghafoori\LaravelMicroscope;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\TokenAnalyzer\GetClassProperties;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckClassReferencesAreValid
 {

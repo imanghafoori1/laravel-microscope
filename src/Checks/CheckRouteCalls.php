@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckRouteCalls
 {

@@ -4,13 +4,13 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\TokenAnalyzer\FunctionCall;
-use Imanghafoori\TokenAnalyzer\Ifs;
-use Imanghafoori\TokenAnalyzer\TokenManager;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\TokenAnalyzer\FunctionCall;
+use Imanghafoori\TokenAnalyzer\Ifs;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class CheckCompact extends Command
 {

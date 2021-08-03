@@ -3,12 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
-use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\SearchReplace\PatternParser;
-use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\SearchReplace\TokenCompare;
+use Imanghafoori\TokenAnalyzer\Refactor;
+use Imanghafoori\SearchReplace\Stringify;
 
 class PatternRefactorings
 {
@@ -23,6 +23,7 @@ class PatternRefactorings
                 continue;
             }
 
+            start:
             $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
 
             if (! $matchedValues) {
@@ -30,26 +31,33 @@ class PatternRefactorings
             }
 
             foreach ($matchedValues as $matchedValue) {
-                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? []);
+                $postReplaces = $pattern['post_replace'] ?? [];
+                [$newTokens, $lineNum, $wasPostReplaced] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? [], $postReplaces);
+
                 if ($lineNum === null) {
                     continue;
                 }
 
-                $tokens = self::saveOnDisk($matchedValue, $tokens, $pattern['replace'], $lineNum, $absFilePath, $newTokens);
+                $tokens = self::save($matchedValue, $tokens, $pattern['replace'], $lineNum, $absFilePath, $newTokens);
+
+                $tokens = token_get_all(Stringify::fromTokens($tokens));
+                goto start;
             }
         }
     }
 
-    private static function printLinks($lineNums, $absFilePath, $portion, $final_result)
+    private static function printLinks($lineNum, $absFilePath, $startingCode, $endResult)
     {
         $printer = app(ErrorPrinter::class);
         // Print Replacement Links
-        $printer->print('Replacing:    <fg=yellow>'.Str::limit($portion).'</>', '', 0);
-        $printer->print('With:         <fg=yellow>'.Str::limit($final_result).'</>', '', 0);
+        $printer->print('Replacing:
+<fg=yellow>'.Str::limit($startingCode, 150).'</>', '', 0);
+        $printer->print('With:
+<fg=yellow>'.Str::limit($endResult, 150).'</>', '', 0);
 
         $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
 
-        $lineNums && $printer->printLink($absFilePath, $lineNums, 0);
+        $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
     }
 
     private static function askToRefactor($absFilePath)
@@ -59,9 +67,9 @@ class PatternRefactorings
         return app('current.command')->getOutput()->confirm($text, true);
     }
 
-    private static function saveOnDisk($matchedValue, $tokens, $replace, $lineNum, $absFilePath, $newTokens)
+    private static function save($matchedValue, $tokens, $replace, $lineNum, $absFilePath, $newTokens)
     {
-        $from = TokenCompare::getPortion($matchedValue['start'], $matchedValue['end'], $tokens);
+        $from = TokenCompare::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
         $to = PatternParser::applyOnReplacements($replace, $matchedValue['values']);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 

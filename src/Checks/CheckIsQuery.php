@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckIsQuery
 {
