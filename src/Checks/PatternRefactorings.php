@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
-use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\SearchReplace\TokenCompare;
 
 class PatternRefactorings
@@ -30,21 +29,12 @@ class PatternRefactorings
             }
 
             foreach ($matchedValues as $matchedValue) {
-                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens);
-                if (isset($pattern['avoid_result_in'])) {
-                    $_matchedValues = self::hasAvoidedResult($pattern['avoid_result_in'], $newTokens);
-                    if ($_matchedValues) {
-                        continue;
-                    }
+                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? []);
+                if (! $newTokens) {
+                    continue;
                 }
 
-                $from = self::getPortion($matchedValue['start'], $matchedValue['end'], $tokens);
-                $to = PatternParser::applyOnReplacements($pattern['replace'], $matchedValue['values']);
-                self::printLinks($lineNum, $absFilePath, $from, $to);
-                if (self::askToRefactor($absFilePath)) {
-                    FileSystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
-                    $tokens = $newTokens;
-                }
+                $tokens = self::saveOnDisk($matchedValue, $tokens, $pattern['replace'], $lineNum, $absFilePath, $newTokens);
             }
         }
     }
@@ -68,25 +58,17 @@ class PatternRefactorings
         return app('current.command')->getOutput()->confirm($text, true);
     }
 
-    private static function hasAvoidedResult($avoidResultIn, $newTokens)
+    private static function saveOnDisk($matchedValue, $tokens, $replace, $lineNum, $absFilePath, $newTokens)
     {
-        foreach ($avoidResultIn as $key) {
-            $_matchedValues = TokenCompare::getMatches(PatternParser::analyzeTokens($key), token_get_all(Stringify::fromTokens($newTokens)));
-            if ($_matchedValues) {
-                break;
-            }
+        $from = TokenCompare::getPortion($matchedValue['start'], $matchedValue['end'], $tokens);
+        $to = PatternParser::applyOnReplacements($replace, $matchedValue['values']);
+        self::printLinks($lineNum, $absFilePath, $from, $to);
+
+        if (self::askToRefactor($absFilePath)) {
+            FileSystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
+            $tokens = $newTokens;
         }
 
-        return $_matchedValues;
-    }
-
-    private static function getPortion($start, $end, $tokens)
-    {
-        $output = '';
-        for ($i = $start - 1; $i < $end; $i++) {
-            $output .= $tokens[$i][1] ?? $tokens[$i][0];
-        }
-
-        return $output;
+        return $tokens;
     }
 }
