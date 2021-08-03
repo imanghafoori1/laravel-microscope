@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\SearchReplace\TokenCompare;
 
 class PatternRefactorings
@@ -30,7 +31,7 @@ class PatternRefactorings
 
             foreach ($matchedValues as $matchedValue) {
                 [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? []);
-                if (! $newTokens) {
+                if ($lineNum === null) {
                     continue;
                 }
 
