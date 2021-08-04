@@ -23,8 +23,9 @@ class PatternRefactorings
                 continue;
             }
 
+            $i = 0;
             start:
-            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator']);
+            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $i);
 
             if (! $matchedValues) {
                 continue;
@@ -39,8 +40,10 @@ class PatternRefactorings
                     continue;
                 }
 
-                $tokens = self::save($matchedValue, $tokens, $pattern['replace'], $lineNum, $absFilePath, $newTokens);
+                $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $pattern['post_replace'] ?? []);
+                $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens, $pattern['post_replace']);
 
+                $i = self::continueFrom($to, $matchedValue);
                 $tokens = token_get_all(Stringify::fromTokens($tokens));
                 goto start;
             }
@@ -68,10 +71,9 @@ class PatternRefactorings
         return app('current.command')->getOutput()->confirm($text, true);
     }
 
-    private static function save($matchedValue, $tokens, $replace, $lineNum, $absFilePath, $newTokens)
+    private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)
     {
         $from = TokenCompare::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
-        $to = PatternParser::applyOnReplacements($replace, $matchedValue['values']);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::askToRefactor($absFilePath)) {
@@ -80,5 +82,12 @@ class PatternRefactorings
         }
 
         return $tokens;
+    }
+
+    private static function continueFrom(string $to, $matchedValue)
+    {
+        $diff = count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
+
+        return $matchedValue['end'] + $diff;
     }
 }
