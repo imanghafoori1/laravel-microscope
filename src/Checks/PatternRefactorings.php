@@ -32,7 +32,8 @@ class PatternRefactorings
 
             foreach ($matchedValues as $matchedValue) {
                 $postReplaces = $pattern['post_replace'] ?? [];
-                [$newTokens, $lineNum, $wasPostReplaced] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? [], $postReplaces);
+                $avoid = $pattern['avoid_result_in'] ?? [];
+                [$newTokens, $lineNum,] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $avoid, $postReplaces);
 
                 if ($lineNum === null) {
                     continue;
