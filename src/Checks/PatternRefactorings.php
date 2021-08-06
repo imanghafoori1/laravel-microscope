@@ -33,18 +33,23 @@ class PatternRefactorings
 
             foreach ($matchedValues as $matchedValue) {
                 $postReplaces = $pattern['post_replace'] ?? [];
-                $avoid = $pattern['avoid_result_in'] ?? [];
-                [$newTokens, $lineNum,] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $avoid, $postReplaces);
+                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? [], $postReplaces);
 
                 if ($lineNum === null) {
                     continue;
                 }
 
                 $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $pattern['post_replace'] ?? []);
+                //$countOldTokens = count($tokens);
                 $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens, $pattern['post_replace']);
 
-                $i = self::continueFrom($to, $matchedValue);
+                $diff = count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
+                //$diff = count($tokens) - $countOldTokens;
                 $tokens = token_get_all(Stringify::fromTokens($tokens));
+                $min_count = self::minimumMatchLength($pattern['search']);
+
+                $i = $matchedValue['end'] + $diff + 1 - $min_count + 1;
+
                 goto start;
             }
         }
@@ -74,6 +79,7 @@ class PatternRefactorings
     private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)
     {
         $from = TokenCompare::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
+        //$to = PatternParser::applyWithPostReplacements($replace, $matchedValue['values'], $post_replace);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::askToRefactor($absFilePath)) {
@@ -84,10 +90,13 @@ class PatternRefactorings
         return $tokens;
     }
 
-    private static function continueFrom(string $to, $matchedValue)
+    private static function minimumMatchLength($patternTokens)
     {
-        $diff = count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
+        $count = 0;
+        foreach ($patternTokens as $token) {
+            ! TokenCompare::isOptionalPlaceholder($token) && $count++;
+        }
 
-        return $matchedValue['end'] + $diff;
+        return $count;
     }
 }
