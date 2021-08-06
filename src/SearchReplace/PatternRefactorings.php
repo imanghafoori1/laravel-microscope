@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -41,10 +41,9 @@ class PatternRefactorings
 
                 $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $pattern['post_replace'] ?? []);
                 //$countOldTokens = count($tokens);
-                $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens, $pattern['post_replace']);
+                $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens);
 
-                $diff = count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
-                //$diff = count($tokens) - $countOldTokens;
+                $diff = self::calculateDiff($to, $matchedValue);
                 $tokens = token_get_all(Stringify::fromTokens($tokens));
                 $min_count = self::minimumMatchLength($pattern['search']);
 
@@ -79,7 +78,6 @@ class PatternRefactorings
     private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)
     {
         $from = TokenCompare::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
-        //$to = PatternParser::applyWithPostReplacements($replace, $matchedValue['values'], $post_replace);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::askToRefactor($absFilePath)) {
@@ -98,5 +96,11 @@ class PatternRefactorings
         }
 
         return $count;
+    }
+
+    private static function calculateDiff(string $to, $matchedValue)
+    {
+        return count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
+        //$diff = count($tokens) - $countOldTokens;
     }
 }
