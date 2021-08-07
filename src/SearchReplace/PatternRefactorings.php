@@ -40,11 +40,11 @@ class PatternRefactorings
                 }
 
                 $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $pattern['post_replace'] ?? []);
-                //$countOldTokens = count($tokens);
+                $countOldTokens = count($tokens);
                 $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens);
 
-                $diff = self::calculateDiff($to, $matchedValue);
                 $tokens = token_get_all(Stringify::fromTokens($tokens));
+                $diff = count($tokens) - $countOldTokens;
                 $min_count = self::minimumMatchLength($pattern['search']);
 
                 $i = $matchedValue['end'] + $diff + 1 - $min_count + 1;
@@ -96,11 +96,5 @@ class PatternRefactorings
         }
 
         return $count;
-    }
-
-    private static function calculateDiff(string $to, $matchedValue)
-    {
-        return count(token_get_all('<?php '.$to)) - ($matchedValue['end'] - $matchedValue['start']) - 1;
-        //$diff = count($tokens) - $countOldTokens;
     }
 }
