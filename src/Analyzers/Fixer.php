@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -78,7 +79,7 @@ class Fixer
 
     private static function replaceSave($old, $new, array $tokens, $absPath)
     {
-        [$newVersion, $lines] = PatternParser::searchReplace([$old => $new], $tokens);
+        [$newVersion, $lines] = Searcher::searchReplace([$old => $new], $tokens);
 
         FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
@@ -92,7 +93,7 @@ class Fixer
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
-        [$newVersion, $lines] = PatternParser::searchReplace([$inlinedClassRef => $classBaseName], $tokens);
+        [$newVersion, $lines] = Searcher::searchReplace([$inlinedClassRef => $classBaseName], $tokens);
         FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return (bool) $lines;
