@@ -25,21 +25,27 @@ class PatternRefactorings
 
             $i = 0;
             start:
-            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $pattern['named_patterns'], $i);
+            $namedPatterns = $pattern['named_patterns'] ?? [];
+            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $i);
 
             if (! $matchedValues) {
                 continue;
             }
-
+            $postReplaces = $pattern['post_replace'] ?? [];
             foreach ($matchedValues as $matchedValue) {
-                $postReplaces = $pattern['post_replace'] ?? [];
-                [$newTokens, $lineNum] = PatternParser::applyMatch($pattern['replace'], $matchedValue, $tokens, $pattern['avoid_result_in'] ?? [], $postReplaces);
+                [$newTokens, $lineNum] = PatternParser::applyMatch(
+                    $pattern['replace'],
+                    $matchedValue, $tokens,
+                    $pattern['avoid_result_in'] ?? [],
+                    $postReplaces,
+                    $namedPatterns
+                );
 
                 if ($lineNum === null) {
                     continue;
                 }
 
-                $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $pattern['post_replace'] ?? []);
+                $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $postReplaces, $namedPatterns);
                 $countOldTokens = count($tokens);
                 $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens);
 
