@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
 class CheckRefactors extends Command
@@ -21,6 +22,8 @@ class CheckRefactors extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking for refactors...');
+
+        Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
 
         app()->singleton('current.command', function () {
             return $this;
