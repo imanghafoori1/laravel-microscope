@@ -26,7 +26,7 @@ class PatternRefactorings
             $i = 0;
             start:
             $namedPatterns = $pattern['named_patterns'] ?? [];
-            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $i);
+            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'],$i);
 
             if (! $matchedValues) {
                 continue;
