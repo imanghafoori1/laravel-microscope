@@ -6,9 +6,9 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\SearchReplace\TokenCompare;
 use Imanghafoori\TokenAnalyzer\Refactor;
-use Imanghafoori\SearchReplace\Stringify;
 
 class PatternRefactorings
 {
@@ -26,7 +26,7 @@ class PatternRefactorings
             $i = 0;
             start:
             $namedPatterns = $pattern['named_patterns'] ?? [];
-            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'],$i);
+            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i);
 
             if (! $matchedValues) {
                 continue;

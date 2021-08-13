@@ -11,7 +11,7 @@ class IsSubClassOf
         $className = $placeholderVal[1];
         $refs = ParseUseStatement::parseUseStatements($tokens, $className);
 
-        $fullPath = $refs[1][$className][0] ?? $className ;
+        $fullPath = $refs[1][$className][0] ?? $className;
 
         return is_subclass_of($fullPath, $parameter);
     }
