@@ -35,7 +35,9 @@ class PatternRefactorings
             foreach ($matchedValues as $matchedValue) {
                 [$newTokens, $lineNum] = PatternParser::applyMatch(
                     $pattern['replace'],
-                    $matchedValue, $tokens,
+                    $matchedValue,
+                    $tokens,
+                    $pattern['prevent_syntax_errors'] ?? false,
                     $pattern['avoid_result_in'] ?? [],
                     $postReplaces,
                     $namedPatterns
