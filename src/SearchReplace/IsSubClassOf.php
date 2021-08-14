@@ -6,7 +6,7 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class IsSubClassOf
 {
-    public static function check($placeholderVal, $parameter, $tokens): bool
+    public static function check($placeholderVal, $parameter, $tokens)
     {
         $className = $placeholderVal[1];
         $refs = ParseUseStatement::parseUseStatements($tokens, $className);
