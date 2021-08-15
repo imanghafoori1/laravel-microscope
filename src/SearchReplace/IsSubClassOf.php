@@ -8,11 +8,8 @@ class IsSubClassOf
 {
     public static function check($placeholderVal, $parameter, $tokens)
     {
-        $className = $placeholderVal[1];
-        $refs = ParseUseStatement::parseUseStatements($tokens, $className);
+        $fullClassPath = ParseUseStatement::getExpandedRef($tokens, $placeholderVal[1]);
 
-        $fullPath = $refs[1][$className][0] ?? $className;
-
-        return is_subclass_of($fullPath, $parameter);
+        return is_subclass_of($fullClassPath, $parameter);
     }
 }
