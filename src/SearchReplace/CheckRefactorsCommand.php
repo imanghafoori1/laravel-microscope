@@ -8,9 +8,9 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
-class CheckRefactors extends Command
+class CheckRefactorsCommand extends Command
 {
-    protected $signature = 'search_replace';
+    protected $signature = 'search_replace {--N|name=} {--t|tag=}';
 
     protected $description = 'Does refactoring.';
 
@@ -23,20 +23,23 @@ class CheckRefactors extends Command
         app()->singleton('current.command', function () {
             return $this;
         });
+
         $errorPrinter->printer = $this->output;
 
         try {
-            $refactors = require base_path('/search_replace.php');
+            $patterns = require base_path('/search_replace.php');
         } catch (\ErrorException $e) {
             file_put_contents(base_path('/search_replace.php'), $this->stub());
 
             return;
         }
 
-        $refactors = $this->normalizePatterns($refactors);
-        $patterns = PatternParser::parsePatterns($refactors);
+        $patterns = $this->filter($this->option('name'), $patterns, $this->option('tag'));
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$patterns, $refactors]);
+        $patterns = $this->normalizePatterns($patterns);
+        $parsedPatterns = PatternParser::parsePatterns($patterns);
+
+        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns]);
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
@@ -50,9 +53,32 @@ class CheckRefactors extends Command
     private function normalizePatterns($refactors)
     {
         foreach ($refactors as $i => $ref) {
-            is_string($ref) && $refactors[$i] = ['replace' => $ref];
-
             isset($ref['directory']) && $refactors[$i]['directory'] = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ref['directory']);
+        }
+
+        return $refactors;
+    }
+
+    private function filter($name, $refactors, $tag)
+    {
+        if ($name && ! isset($refactors[$name])) {
+            $this->getOutput()->writeln('No pattern found: '.$name);
+        } elseif ($name && isset($refactors[$name])) {
+            $refactors = [$name => $refactors[$name]];
+        }
+
+        if ($tag) {
+            $filteredPatterns = [];
+            foreach ($refactors as $name => $pattern) {
+                if (isset($pattern['tags'])) {
+                    $tags = $pattern['tags'];
+                    is_string($tags) && $tags = explode(',', $tags);
+                    if (in_array($tag, $tags)) {
+                        $filteredPatterns[$name] = $pattern;
+                    }
+                }
+            }
+            $refactors = $filteredPatterns;
         }
 
         return $refactors;
