@@ -82,6 +82,7 @@ class CheckRefactorsCommand extends Command
                     }
                 }
             }
+
             return $filteredPatterns;
         }
 

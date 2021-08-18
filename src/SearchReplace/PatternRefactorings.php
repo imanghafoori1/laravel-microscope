@@ -133,7 +133,6 @@ class PatternRefactorings
         $printer->print('Detected:
 <fg=yellow>'.Str::limit($from, 150).'</>', '', 0);
 
-
         $printer->print('<fg=red>Found at:</>', '', 0);
 
         $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
