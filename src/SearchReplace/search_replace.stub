@@ -1,0 +1,8 @@
+<?php
+
+return [
+    "pattern" => [
+        "replace" => "",
+        // "post_replace" => ""
+    ],
+];

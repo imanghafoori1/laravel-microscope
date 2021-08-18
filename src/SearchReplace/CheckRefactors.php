@@ -5,17 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
 class CheckRefactors extends Command
 {
-    use LogsErrors;
-
-    public static $checkedCallsNum = 0;
-
-    protected $signature = 'refactor';
+    protected $signature = 'search_replace';
 
     protected $description = 'Does refactoring.';
 
@@ -42,18 +37,14 @@ class CheckRefactors extends Command
         $patterns = PatternParser::parsePatterns($refactors);
 
         ForPsr4LoadedClasses::check([PatternRefactorings::class], [$patterns, $refactors]);
-        $this->getOutput()->writeln(' - Finished refactors.');
-
-        $this->finishCommand($errorPrinter);
+        $this->getOutput()->writeln(' - Finished search/replace');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
     private function stub()
     {
-        return '<?php
-return ["your_pattern" => "replacement"];
-';
+        return file_get_contents(__DIR__.'/search_replace.stub');
     }
 
     private function normalizePatterns($refactors)

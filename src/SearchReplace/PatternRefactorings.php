@@ -32,6 +32,13 @@ class PatternRefactorings
                 continue;
             }
             $postReplaces = $pattern['post_replace'] ?? [];
+            if (! isset($pattern['replace'])) {
+                foreach ($matchedValues as $matchedValue) {
+                    self::show($matchedValue, $tokens, $absFilePath);
+                }
+                continue;
+            }
+
             foreach ($matchedValues as $matchedValue) {
                 [$newTokens, $lineNum] = PatternParser::applyMatch(
                     $pattern['replace'],
@@ -104,5 +111,31 @@ class PatternRefactorings
         }
 
         return $count;
+    }
+
+    private static function show($matchedValue, $tokens, $absFilePath)
+    {
+        $start = $matchedValue['start'] + 1;
+        $end = $matchedValue['end'] + 1;
+
+        $from = '';
+        $lineNum = 0;
+        for ($i = $start - 1; $i < $end; $i++) {
+            ! $lineNum && $lineNum = ($tokens[$i][2] ?? 0);
+            $from .= $tokens[$i][1] ?? $tokens[$i][0];
+        }
+
+        /**
+         * @var $printer ErrorPrinter::class
+         */
+        $printer = app(ErrorPrinter::class);
+        // Print Replacement Links
+        $printer->print('Detected:
+<fg=yellow>'.Str::limit($from, 150).'</>', '', 0);
+
+
+        $printer->print('<fg=red>Found at:</>', '', 0);
+
+        $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
     }
 }
