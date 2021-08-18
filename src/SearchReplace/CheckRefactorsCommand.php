@@ -34,7 +34,13 @@ class CheckRefactorsCommand extends Command
             return;
         }
 
-        $patterns = $this->filter($this->option('name'), $patterns, $this->option('tag'));
+        $patterns = $this->filter($this->option('name'), $this->option('tag'), $patterns);
+
+        if (! $patterns) {
+            $this->getOutput()->writeln('No pattern found...');
+
+            return;
+        }
 
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
@@ -59,17 +65,15 @@ class CheckRefactorsCommand extends Command
         return $refactors;
     }
 
-    private function filter($name, $refactors, $tag)
+    private function filter($name, $tag, $patterns)
     {
-        if ($name && ! isset($refactors[$name])) {
-            $this->getOutput()->writeln('No pattern found: '.$name);
-        } elseif ($name && isset($refactors[$name])) {
-            $refactors = [$name => $refactors[$name]];
+        if ($name && isset($patterns[$name])) {
+            return [$name => $patterns[$name]];
         }
 
         if ($tag) {
             $filteredPatterns = [];
-            foreach ($refactors as $name => $pattern) {
+            foreach ($patterns as $name => $pattern) {
                 if (isset($pattern['tags'])) {
                     $tags = $pattern['tags'];
                     is_string($tags) && $tags = explode(',', $tags);
@@ -78,9 +82,9 @@ class CheckRefactorsCommand extends Command
                     }
                 }
             }
-            $refactors = $filteredPatterns;
+            return $filteredPatterns;
         }
 
-        return $refactors;
+        return $patterns;
     }
 }
