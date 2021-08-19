@@ -148,6 +148,59 @@ And it works like a normal `dd(...);` meaning that it will halt.
 
 Lets start with:
 ```php
+php artisan search_replace {--name=pattern_name} {--tag=some_tag}
+```
+This is a smart and very powerful search/replace functionality which can be a real time saver for you.
+
+- ###Defining pattern:
+- 
+if you run the command for the first time it will create a `search_replace.php` file in the project root.
+withing that file you can define your patterns and tag them.
+
+
+- ###Example:
+
+Lets define a pattern to replace the `optional()` global helper with the `?->` php 8  null safe operator
+
+```php
+return [
+    'optional' => [
+        'search' => 'optional("<in_between>")->',
+        'replace' => '"<1>"?->',
+        // 'tag' => 'php8,refactor',
+        // 'predicate' => function($matches, $tokens) {...},
+        // 'mutator' => function($matches) {...},
+        // 'post_replace' => [...],
+        // 'avoid_result_in' => [...],
+        // 'avoid_syntax_errors' => false,
+        // 'filters' => [...],
+    ]
+];
+```
+- here the key `optional` is the name of your pattern. (you can apply your pattern by ```php artisan search_replace --name=optional```
+- the search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parentesis.
+- in the `replace` block we substitute what we have captured by the first placeholder with "<1>". if we have more placeholders following the first one we could have had "<2>" and etc.
+- in the tag block we can mention some tags seperated by commas and run them by: ```php artisan search_replace --tag=php8```
+
+- ####Placeholders:
+- 
+Here is a copmerehensive list of placeholders you can use:
+
+- `"<var>"` : for variables
+- `"<str>"` : for hard coded strings
+- `"<class_ref>"` : for class references
+- `"<until>"` : to capture all the code until you reach a certain character.
+- `"<comment>"` : for commands
+- `"<statement>"` : for capture a whole php statement.
+- `"<name>"` : for method or function names.
+- `"<white_space>"`: for whitespaces
+- `"<in_between>"` : to capture code within a pair of  `{}` or `()` or `[]`
+
+
+----------------------------
+
+
+```php
 php artisan check:early_returns
 ```
 
