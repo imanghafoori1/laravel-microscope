@@ -44,7 +44,7 @@ class PatternRefactorings
                     $pattern['replace'],
                     $matchedValue,
                     $tokens,
-                    $pattern['prevent_syntax_errors'] ?? false,
+                    $pattern['avoid_syntax_errors'] ?? false,
                     $pattern['avoid_result_in'] ?? [],
                     $postReplaces,
                     $namedPatterns
