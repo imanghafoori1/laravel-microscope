@@ -152,15 +152,15 @@ php artisan search_replace {--name=pattern_name} {--tag=some_tag}
 ```
 This is a smart and very powerful search/replace functionality which can be a real time saver for you.
 
-- ###Defining pattern:
-- 
-if you run the command for the first time it will create a `search_replace.php` file in the project root.
-withing that file you can define your patterns and tag them.
+### Defining patterns:
+
+If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project root.
+Then, you can define your patterns and tag them, within that file.
 
 
-- ###Example:
+### Examples:
 
-Lets define a pattern to replace the `optional()` global helper with the `?->` php 8  null safe operator
+Lets define a pattern to replace the `optional()` global helper with the `?->` php 8 null safe operator:
 
 ```php
 return [
@@ -177,25 +177,156 @@ return [
     ]
 ];
 ```
-- here the key `optional` is the name of your pattern. (you can apply your pattern by ```php artisan search_replace --name=optional```
-- the search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parentesis.
-- in the `replace` block we substitute what we have captured by the first placeholder with "<1>". if we have more placeholders following the first one we could have had "<2>" and etc.
-- in the tag block we can mention some tags seperated by commas and run them by: ```php artisan search_replace --tag=php8```
+- Here the key `optional` is the "name" of your pattern. (you can apply your pattern by ```php artisan search_replace --name=optional```
+- The search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parentesis.
+- In the `replace` block we substitute what we have captured by the first placeholder by the `"<1>"`. If we have more placeholders, we could have had `"<2>"` and etc.
+- Tn the tag block we can mention some tags seperated by commas and run them by: ```php artisan search_replace --tag=php8```
 
-- ####Placeholders:
-- 
+#### Placeholders:
+
 Here is a copmerehensive list of placeholders you can use:
 
-- `"<var>"` : for variables
-- `"<str>"` : for hard coded strings
-- `"<class_ref>"` : for class references
+- `"<var>"` : for variables like: `$user`
+- `"<str>"` : for hard coded strings: `'hello'` or "hello"
+- `"<class_ref>"` : for class references:  `\App\User::where(...` , `User::where`
 - `"<until>"` : to capture all the code until you reach a certain character.
 - `"<comment>"` : for commands
 - `"<statement>"` : for capture a whole php statement.
-- `"<name>"` : for method or function names.
-- `"<white_space>"`: for whitespaces
-- `"<in_between>"` : to capture code within a pair of  `{}` or `()` or `[]`
+- `"<name>"` : for method or function names. `->where` or `::where`
+- `"<white_space>"`: for whitespace blocks
+- `"<in_between>"` : to capture code within a pair of  `{...}` or `(...)` or `[...]`
+- `"<any>"` : captures anything
 
+### Example:
+
+1 - Lets say you want to find "comments" which contain the word "todo:"
+```php
+ 'todo_comments' => [
+        'search' => '"<comment>"',
+        'predicate' => function($matches) {
+            $comment = $matches[0]; // first matched placehoder
+            $content = $comment[1];
+            
+            return Str::containts($content, 'todo:') ? true : false;
+        },
+]
+
+```
+
+**Note**: if you do not mention the `'replace'` key it only finds and reports them to use.
+
+2 - Ok, now lets say you want to remove the "todo:" from those comments:
+
+```php
+ 'remove_todo_comments' => [
+        'search' => '"<comment>"',
+        'replace' => '"<1>"'
+        'predicate' => function($matches) {
+            $comment = $matches[0]; // first matched placehoder
+            $content = $comment[1];
+            
+            return Str::containts($content, 'todo:') ? true : false;
+        },
+        'mutator' => function ($matches) {
+            // here you are free to manipulate the $matched values as much as you need to.
+            // before replacing them in the results.
+            $matches[0][1] = str_replace('todo:', '', $matches[0][1]);
+            
+            return $matches;
+        }
+]
+
+```
+
+3 - Lets say you want to put the optional comma for the last elements in the arrays if they are missing.
+```php
+    'enforce_optional_comma' => [
+        'search' => '"<white_space>?"]',
+        'replace' => ',"<1>"]',
+        'avoid_syntax_errors' => true,
+        'avoid_result_in' => [
+           ',,]',
+           '[,]',
+           '"<var>"[,]'
+       ],
+    ]
+```
+In this case our pattern is not very accurate and in some cases it may result in syntax errors.
+Because of that we turn on php syntax validator to check the end result, but that costs us a performance penalty!!!
+In order to exclude the usage of php, to validate the end results we have mentioned the `avoid_result_in` so that if they happen in the end result it skips.
+
+- **Note**: the `?` in the "<white_space>?" notes this is an `optional` placeholder.
+
+If you are curious to see a better pattern which does not need any syntax checking, try this:
+
+```
+'enforce_optional_comma' => [
+       'search' => '"<1:any>""<2:white_space>?"["<3:until_match>"]',
+       'replace' => '"<1>""<2>"["<3>",]',
+       'avoid_result_in' => [
+           ',,]',
+           '[,]'
+       ],
+       'predicate' => function ($matches) {
+           $type = $matches['values'][0][0];
+
+           return $type !== T_VARIABLE && $type !== ']';
+       },
+       'post_replace' => [
+           '"<1:white_space>",]' => ',"<1>"]'
+       ]
+],
+
+```
+This is more complex but much works faster. (since it does not need the php syntax validator)
+
+- Here `'post_replace'` is a pattern which applied only and only on the resulting code and NOT on the entire file.
+- 
+- You can optionally comment you placeholders (as above) with numbers so that you know which one corresponds to which when replaced.
+
+### Filters:
+
+Currently microscope offer only two built-in filters: `is_sub_class_of` and `in_array`
+
+Can you guess what this pattern is doing?!
+```php
+ 'mention_query' => [
+          'search' => '"<1:class_ref>"::"<2:name>"'
+          'replace' => '"<1>"::query()->"<2>"',
+          'filters' => [
+              1 => [
+                  'is_sub_class_of' => \Illuminate\Database\Eloquent\Model::class
+              ],
+              2 => [
+                  'in_array' => 'where,count,find,findOrFail,findOrNew'
+              ]
+          ]
+      ]
+```
+
+
+It converts these:
+```php
+User::where(...)->get();
+
+\App\Models\User::find(...);
+```
+
+into these:
+```
+User::query()->where(...)->get();
+
+\App\Models\User::query()->find(...);
+```
+
+- The filters here ensure that the captured class reference is a laravel Model and the mathod name is one of the names mentioned in the list.
+
+So it does not tamper with something like this:
+```
+User::all();            // The `all` method can not be preceeded with `query`
+
+UserRepo::where(...);   /// UserRepo is not a model
+```
 
 ----------------------------
 
