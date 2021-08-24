@@ -7,3 +7,4 @@ coverage
 phpunit
 test.bat
 test8.bat
+.phpunit.result.cache
