@@ -186,20 +186,25 @@ return [
 
 Here is a copmerehensive list of placeholders you can use:
 
-- `"<var>"` : for variables like: `$user`
-- `"<str>"` : for hard coded strings: `'hello'` or "hello"
-- `"<class_ref>"` : for class references:  `\App\User::where(...` , `User::where`
-- `"<full_class_ref>"` : only for full references:  `\App\User::`
-- `"<until>"` : to capture all the code until you reach a certain character.
-- `"<comment>"` : for commands
-- `"<statement>"` : to capture a whole php statement.
-- `"<name>"` : for method or function names. `->where` or `::where`
+- `"<var>"` or `"<variable>"`: for variables like: `$user`
+- `"<str>"` or `"<string>"`: for hard coded strings: `'hello'` or "hello"
+- `"<class_ref>"`: for class references:  `\App\User::where(...` , `User::where`
+- `"<full_class_ref>"`: only for full references:  `\App\User::`
+- `"<until>"`: to capture all the code until you reach a certain character.
+- `"<comment>"`: for commands (does not capture doc-blocks)
+- `"<doc_block>"`: for doc-blocks
+- `"<statement>"`: to capture a whole php statement.
+- `"<name>"`: for method or function names. `->where` or `::where`
 - `"<white_space>"`: for whitespace blocks
-- `"<bool>"`: for true or false
-- `"<number>"`: for int values
-- `"<global_func_call:func1,func2>"` to detect global function calls.
-- `"<in_between>"` : to capture code within a pair of  `{...}` or `(...)` or `[...]`
-- `"<any>"` : captures anything
+- `"<bool>"` or `'<boolean>'`: for true or false (acts case-insensetive)
+- `"<number>"`: for numeric values
+- `"<cast>"`: for type-casts like: `(array) $a;`
+- `"<int>"` or `"<integer>"`: for integer values
+- `"<visibility>"`: for public, protected, private
+- `"<float>"`: for floating point number
+- `"<global_func_call:func1,func2>"`: to detect global function calls.
+- `"<in_between>"`: to capture code within a pair of  `{...}` or `(...)` or `[...]`
+- `"<any>"`: captures any token.
 
 ### Example:
 
@@ -223,21 +228,21 @@ Here is a copmerehensive list of placeholders you can use:
 
 ```php
  'remove_todo_comments' => [
-        'search' => '"<comment>"',      //   <=== we capture any comment
-        'replace' => '"<1>"',
-        
-        'predicate' => function($matches) {
-            $comment = $matches[0]; // first matched placehoder
-            $content = $comment[1];
-            
-            return Str::containts($content, 'todo:') ? true : false;
-        },
+    'search' => '"<comment>"',      //   <=== we capture any comment
+    'replace' => '"<1>"',
 
-        'mutator' => function ($matches) {       //  <=== here we remove "todo:"
-            $matches[0][1] = str_replace('todo:', '', $matches[0][1]);
-            
-            return $matches;
-        }
+    'predicate' => function($matches) {
+        $comment = $matches[0]; // first matched placehoder
+        $content = $comment[1];
+
+        return Str::containts($content, 'todo:') ? true : false;
+    },
+
+    'mutator' => function ($matches) {       //  <=== here we remove "todo:"
+        $matches[0][1] = str_replace('todo:', '', $matches[0][1]);
+
+        return $matches;
+    }
 ]
 
 ```
