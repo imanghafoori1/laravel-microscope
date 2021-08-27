@@ -78,10 +78,12 @@ class Fixer
 
     private static function replaceSave($old, $new, array $tokens, $absPath)
     {
-        [$newVersion, $lines] = Searcher::searchReplace(['fix' => [
-            'search' => $old,
-            'replace' => $new,
-        ]], $tokens);
+        [$newVersion, $lines] = Searcher::searchReplace([
+            'fix' => [
+                'search' => $old,
+                'replace' => $new,
+            ],
+        ], $tokens);
 
         FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
@@ -95,7 +97,12 @@ class Fixer
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
-        [$newVersion, $lines] = Searcher::searchReplace([$inlinedClassRef => $classBaseName], $tokens);
+        [$newVersion, $lines] = Searcher::searchReplace([
+            'fix' => [
+                'search' => $inlinedClassRef,
+                'replace' => $classBaseName,
+            ],
+        ], $tokens);
         FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return (bool) $lines;
