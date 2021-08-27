@@ -70,10 +70,10 @@ class Fixer
         $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromPath($absPath);
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
-            return [self::replaceSave("use $import;'<php_eol>'", '', $tokens, $absPath), [' Deleted!']];
+            return [self::replaceSave("use $import;", '', $tokens, $absPath), [' Deleted!']];
         }
 
-        return [self::replaceSave("use $import;'<php_eol>'", 'use '.$correct[0].';'.PHP_EOL, $tokens, $absPath), $correct];
+        return [self::replaceSave("use $import;", 'use '.$correct[0].';'.PHP_EOL, $tokens, $absPath), $correct];
     }
 
     private static function replaceSave($old, $new, array $tokens, $absPath)
