@@ -1,6 +1,3 @@
-<h1 align="center">
-   Do you dare to move a class?
-</h1>
 <h2 align="center">
      Find Bugs Before They Bite
 </h2>
@@ -15,6 +12,11 @@ Give your eyes a rest, we will detect and fix them for you.
 <h4 align="center">
 Built with :heart: for lazy laravel developers ;)
 </h4>
+
+<h4 align="center">
+Why repeat the old errors, if there are so many new errors to commit. (Bertrand Russel)
+</h4>
+
 
 [![Required Laravel Version][ico-laravel]][link-packagist]
 [![Required PHP Version][ico-php]][link-packagist]
@@ -64,6 +66,12 @@ php artisan vendor:publish
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
 You can run:
+
+
+<p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan search_replace
+</h4></p>
+
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
 </h4></p>
@@ -194,7 +202,7 @@ Here is a copmerehensive list of placeholders you can use:
 - `"<comment>"`: for commands (does not capture doc-blocks)
 - `"<doc_block>"`: for doc-blocks
 - `"<statement>"`: to capture a whole php statement.
-- `"<name>"`: for method or function names. `->where` or `::where`
+- `"<name:nam1,nam2>"` or `"<name>"`: for method or function names. `->where` or `::where`
 - `"<white_space>"`: for whitespace blocks
 - `"<bool>"` or `'<boolean>'`: for true or false (acts case-insensetive)
 - `"<number>"`: for numeric values
@@ -205,6 +213,10 @@ Here is a copmerehensive list of placeholders you can use:
 - `"<global_func_call:func1,func2>"`: to detect global function calls.
 - `"<in_between>"`: to capture code within a pair of  `{...}` or `(...)` or `[...]`
 - `"<any>"`: captures any token.
+- **You can also define your own keywords if needed!**
+
+You just define a class for your new keyword and append the class path to the end of `Finder::$keywords[] = MyKeyword::class` property.
+Just like the default keywords.
 
 ### Example:
 
