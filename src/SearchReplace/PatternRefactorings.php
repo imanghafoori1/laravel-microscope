@@ -5,9 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
-use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\SearchReplace\Finder;
+use Imanghafoori\SearchReplace\Replacer;
 use Imanghafoori\SearchReplace\Stringify;
-use Imanghafoori\SearchReplace\TokenCompare;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
 class PatternRefactorings
@@ -26,7 +26,7 @@ class PatternRefactorings
             $i = 0;
             start:
             $namedPatterns = $pattern['named_patterns'] ?? [];
-            $matchedValues = TokenCompare::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i);
+            $matchedValues = Finder::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i);
 
             if (! $matchedValues) {
                 continue;
@@ -40,7 +40,7 @@ class PatternRefactorings
             }
 
             foreach ($matchedValues as $matchedValue) {
-                [$newTokens, $lineNum] = PatternParser::applyMatch(
+                [$newTokens, $lineNum] = Replacer::applyMatch(
                     $pattern['replace'],
                     $matchedValue,
                     $tokens,
@@ -54,7 +54,7 @@ class PatternRefactorings
                     continue;
                 }
 
-                $to = PatternParser::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $postReplaces, $namedPatterns);
+                $to = Replacer::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $postReplaces, $namedPatterns);
                 $countOldTokens = count($tokens);
                 $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens);
 
@@ -92,7 +92,7 @@ class PatternRefactorings
 
     private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)
     {
-        $from = TokenCompare::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
+        $from = Finder::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::askToRefactor($absFilePath)) {
@@ -107,7 +107,7 @@ class PatternRefactorings
     {
         $count = 0;
         foreach ($patternTokens as $token) {
-            ! TokenCompare::isOptionalPlaceholder($token) && $count++;
+            ! Finder::isOptional($token) && $count++;
         }
 
         return $count;
