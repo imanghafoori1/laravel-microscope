@@ -57,24 +57,12 @@ class ErrorPrinter
         $this->simplePendError($msg, $absPath, $lineNumber, 'routelessCtrl', 'No route is defined for controller action:');
     }
 
-    public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
-    {
-        if (LaravelPaths::isIgnored($absPath)) {
-            return;
-        }
-
-        ($this->errorsList[$key][] = (new PendingError($key))
-            ->header($header)
-            ->errorData($pre.$this->yellow($yellowText).$rest)
-            ->link($absPath, $lineNumber));
-    }
-
     public function wrongImport($absPath, $class, $lineNumber)
     {
         $this->doesNotExist("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
     }
 
-    public function compactError($path, $lineNumber, $absent, $key, $header)
+    private function addPendingError($path, $lineNumber, $key, $header, $errorData)
     {
         if (LaravelPaths::isIgnored($path)) {
             return;
@@ -82,8 +70,31 @@ class ErrorPrinter
 
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
-            ->errorData($this->yellow(\implode(', ', array_keys($absent))).' does not exist')
+            ->errorData($errorData)
             ->link($path, $lineNumber));
+    }
+
+    public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
+    {
+        $errorData = $pre.$this->yellow($yellowText).$rest;
+
+        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
+    }
+
+    public function compactError($path, $lineNumber, $absent, $key, $header)
+    {
+        $errorData = $this->yellow(\implode(', ', array_keys($absent))).' does not exist';
+
+        $this->addPendingError($path, $lineNumber, $key, $header, $errorData);
+    }
+
+    public function queryInBlade($absPath, $class, $lineNumber)
+    {
+        $key = 'queryInBlade';
+        $errorData = $this->yellow($class).'  <=== DB query in blade file';
+        $header = 'Query in blade file: ';
+
+        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
     public function routeDefinitionConflict($route1, $route2, $info)
@@ -128,19 +139,6 @@ class ErrorPrinter
         $this->doesNotExist($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 
-    public function queryInBlade($absPath, $class, $lineNumber)
-    {
-        if (LaravelPaths::isIgnored($absPath)) {
-            return;
-        }
-
-        $key = 'queryInBlade';
-        ($this->errorsList[$key][] = (new PendingError($key))
-            ->header('Query in blade file: ')
-            ->errorData($this->yellow($class).'  <=== DB query in blade file')
-            ->link($absPath, $lineNumber));
-    }
-
     public function wrongMethodError($absPath, $class, $lineNumber)
     {
         $this->doesNotExist($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
@@ -153,14 +151,11 @@ class ErrorPrinter
 
     public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
-        if (LaravelPaths::isIgnored($absPath)) {
-            return;
-        }
+        $key = 'badNamespace';
+        $header = 'Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;");
+        $errorData = '  namespace fixed to:  '.$this->yellow("namespace $correctNamespace;");
 
-        ($this->errorsList['badNamespace'][] = (new PendingError('badNamespace'))
-            ->header('Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;"))
-            ->errorData('  namespace fixed to:  '.$this->yellow("namespace $correctNamespace;"))
-            ->link($absPath, $lineNumber));
+        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
     public function print($msg, $path = '|  ', $len = null)
