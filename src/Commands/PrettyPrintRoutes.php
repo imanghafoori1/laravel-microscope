@@ -23,7 +23,7 @@ class PrettyPrintRoutes extends Command
 
                 $route = $this->deduceRoute($val);
                 /**
-                 * @var  \Illuminate\Routing\Route  $route
+                 * @var \Illuminate\Routing\Route $route
                  */
                 if ($route) {
                     ($call['function'] == 'microscope_write_route') && $this->writeIt($route, $call['file']);

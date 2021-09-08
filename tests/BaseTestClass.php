@@ -17,7 +17,7 @@ class BaseTestClass extends TestCase
     /**
      * get tokens of stubs classes.
      *
-     * @param string $path path of stub file
+     * @param  string  $path  path of stub file
      *
      * @return array
      */
