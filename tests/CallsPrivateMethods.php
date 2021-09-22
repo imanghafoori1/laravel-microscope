@@ -10,7 +10,6 @@ trait CallsPrivateMethods
      * @param  object  $object
      * @param  string  $method
      * @param  array  $parameters
-     *
      * @return mixed
      */
     protected function callPrivate($object, $method, $parameters = [])

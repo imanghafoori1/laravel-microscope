@@ -19,7 +19,6 @@ class CheckEvents extends Command
      * Execute the console command.
      *
      * @param  ErrorPrinter  $errorPrinter
-     *
      * @return mixed
      */
     public function handle(ErrorPrinter $errorPrinter)

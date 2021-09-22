@@ -18,7 +18,6 @@ class GenerateCode
      * @param  $composerPath
      * @param  $composerNamespace
      * @param  $command
-     *
      * @return void
      */
     public static function serviceProvider($paths, $composerPath, $composerNamespace, $command)

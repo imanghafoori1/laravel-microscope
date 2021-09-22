@@ -2,9 +2,7 @@
      Find Bugs Before They Bite
 </h2>
 
-<h3 align="center">
-Give your eyes a rest, we will detect and fix them for you.
-</h3>
+
 <p align="center">
     <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
 </p>
@@ -13,9 +11,12 @@ Give your eyes a rest, we will detect and fix them for you.
 Built with :heart: for lazy laravel developers ;)
 </h4>
 
-<h4 align="center">
+<h3 align="center">
 Why repeat the old errors, if there are so many new errors to commit. (Bertrand Russel)
-</h4>
+</h3>
+<h5 align="center">
+Give your eyes a rest, we will detect and fix them for you.
+</h5>
 
 
 [![Required Laravel Version][ico-laravel]][link-packagist]
@@ -65,31 +66,37 @@ php artisan vendor:publish
 
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
-You can run:
+#### Most Important commands:
 
+
+You can run:
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan search_replace
 </h4></p>
 
 <p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:early_returns 
 </h4></p>
-<p>
-<h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gates
- </h4></p>
-<p>
-<h4>
+
+<p><h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
+</h4></p>
+
+
+----------------------
+
+#### Less Important commands:
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:views
 </h4></p>
-<p>
-<h4>
+
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:routes 
  </h4></p>
 
-<p>
-<h4>
+<p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4 {-s|--nofix}
 </h4></p>
  
@@ -105,7 +112,7 @@ You can run:
 </h4></p>
 
 <p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:early_returns 
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:bad_practices 
 </h4></p>
 
 <p><h4>
@@ -120,9 +127,6 @@ You can run:
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:action_comments 
 </h4></p>
 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:bad_practices 
-</h4></p>
 
 <p><h4>
 <g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:extract_blades 
@@ -142,8 +146,14 @@ You can run:
 </h4></p>
 
 <p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
 </h4></p>
+<p>
+<h4>
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gates
+ </h4></p>
+
+
 
 Also You will have access to some global helper functions:
  - microscope_dd_listeners($event);

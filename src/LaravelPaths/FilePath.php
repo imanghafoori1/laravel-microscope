@@ -13,7 +13,6 @@ class FilePath
      * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
      *
      * @param  string  $path  directory path
-     *
      * @return string
      */
     public static function normalize($path)
@@ -38,7 +37,6 @@ class FilePath
      * get relative path. removes base path of laravel installation from an absolute path.
      *
      * @param  string  $absFilePath  Absolute directory path
-     *
      * @return string
      */
     public static function getRelativePath($absFilePath)
@@ -50,7 +48,6 @@ class FilePath
      * get all ".php" files in directory by giving a path.
      *
      * @param  string  $path  Directory path
-     *
      * @return \Symfony\Component\Finder\Finder
      */
     public static function getAllPhpFiles($path, $basePath = '')

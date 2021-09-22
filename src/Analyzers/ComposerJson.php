@@ -83,7 +83,6 @@ class ComposerJson
 
     /**
      * @param $composerPath
-     *
      * @return array
      */
     private static function readComposerFileData($composerPath)

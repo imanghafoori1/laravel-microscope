@@ -114,7 +114,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->depth(['>= 1', '< 3'])
      *
      * @param  string|int|string[]|int[]  $levels  The depth level expression or an array of depth levels
-     *
      * @return $this
      *
      * @see DepthRangeFilterIterator
@@ -141,7 +140,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->date(['>= 2005-10-15', '<= 2006-05-27']);
      *
      * @param  string|string[]  $dates  A date range string or an array of date ranges
-     *
      * @return $this
      *
      * @see strtotime
@@ -168,7 +166,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->name(['test.py', 'test.php'])
      *
      * @param  string|string[]  $patterns  A pattern (a regexp, a glob, or a string) or an array of patterns
-     *
      * @return $this
      *
      * @see FilenameFilterIterator
@@ -184,7 +181,6 @@ class Finder implements \IteratorAggregate, \Countable
      * Adds rules that files must not match.
      *
      * @param  string|string[]  $patterns  A pattern (a regexp, a glob, or a string) or an array of patterns
-     *
      * @return $this
      *
      * @see FilenameFilterIterator
@@ -206,7 +202,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->contains(['dolor', '/ipsum/i'])
      *
      * @param  string|string[]  $patterns  A pattern (string or regexp) or an array of patterns
-     *
      * @return $this
      *
      * @see FilecontentFilterIterator
@@ -228,7 +223,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->notContains(['lorem', '/dolor/i'])
      *
      * @param  string|string[]  $patterns  A pattern (string or regexp) or an array of patterns
-     *
      * @return $this
      *
      * @see FilecontentFilterIterator
@@ -252,7 +246,6 @@ class Finder implements \IteratorAggregate, \Countable
      * Use only / as dirname separator.
      *
      * @param  string|string[]  $patterns  A pattern (a regexp or a string) or an array of patterns
-     *
      * @return $this
      *
      * @see FilenameFilterIterator
@@ -276,7 +269,6 @@ class Finder implements \IteratorAggregate, \Countable
      * Use only / as dirname separator.
      *
      * @param  string|string[]  $patterns  A pattern (a regexp or a string) or an array of patterns
-     *
      * @return $this
      *
      * @see FilenameFilterIterator
@@ -297,7 +289,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->size(['> 10K', '< 20K'])
      *
      * @param  string|int|string[]|int[]  $sizes  A size range string or an integer or an array of size ranges
-     *
      * @return $this
      *
      * @see SizeRangeFilterIterator
@@ -320,7 +311,6 @@ class Finder implements \IteratorAggregate, \Countable
      *     $finder->in(__DIR__)->exclude('ruby');
      *
      * @param  string|array  $dirs  A directory path or an array of directories
-     *
      * @return $this
      *
      * @see ExcludeDirectoryFilterIterator
@@ -338,7 +328,6 @@ class Finder implements \IteratorAggregate, \Countable
      * This option is enabled by default.
      *
      * @param  bool  $ignoreDotFiles  Whether to exclude "hidden" files or not
-     *
      * @return $this
      *
      * @see ExcludeDirectoryFilterIterator
@@ -360,7 +349,6 @@ class Finder implements \IteratorAggregate, \Countable
      * This option is enabled by default.
      *
      * @param  bool  $ignoreVCS  Whether to exclude VCS files or not
-     *
      * @return $this
      *
      * @see ExcludeDirectoryFilterIterator
@@ -434,7 +422,6 @@ class Finder implements \IteratorAggregate, \Countable
      * This can be slow as all the matching files and directories must be retrieved for comparison.
      *
      * @param  bool  $useNaturalSort  Whether to use natural sort or not, disabled by default
-     *
      * @return $this
      *
      * @see SortableIterator
@@ -570,7 +557,6 @@ class Finder implements \IteratorAggregate, \Countable
      * By default, scanning unreadable directories content throws an AccessDeniedException.
      *
      * @param  bool  $ignore
-     *
      * @return $this
      */
     public function ignoreUnreadableDirs($ignore = true)
@@ -584,7 +570,6 @@ class Finder implements \IteratorAggregate, \Countable
      * Searches files and directories which match defined rules.
      *
      * @param  string|string[]  $dirs  A directory path or an array of directories
-     *
      * @return $this
      *
      * @throws DirectoryNotFoundException if one of the directories does not exist
@@ -658,7 +643,6 @@ class Finder implements \IteratorAggregate, \Countable
      * The set can be another Finder, an Iterator, an IteratorAggregate, or even a plain array.
      *
      * @param  iterable  $iterator
-     *
      * @return $this
      *
      * @throws \InvalidArgumentException when the given argument is not iterable

@@ -30,7 +30,6 @@ class PendingError
      * Sets the content of the error header.
      *
      * @param  string  $header
-     *
      * @return $this
      */
     public function header(string $header)
@@ -44,7 +43,6 @@ class PendingError
      * Sets the data to give out as error.
      *
      * @param $data
-     *
      * @return $this
      */
     public function errorData($data)
@@ -60,7 +58,6 @@ class PendingError
      *
      * @param $path
      * @param  int  $lineNumber
-     *
      * @return $this
      */
     public function link($path = null, $lineNumber = 4)

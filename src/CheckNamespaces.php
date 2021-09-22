@@ -22,7 +22,6 @@ class CheckNamespaces
      * @param  $composerPath
      * @param  $composerNamespace
      * @param  $command
-     *
      * @return void
      */
     public static function within($paths, $composerPath, $composerNamespace, $command)

@@ -18,7 +18,6 @@ class BaseTestClass extends TestCase
      * get tokens of stubs classes.
      *
      * @param  string  $path  path of stub file
-     *
      * @return array
      */
     protected function getTokens(string $path): array
