@@ -107,7 +107,7 @@ class PatternRefactorings
     {
         $count = 0;
         foreach ($patternTokens as $token) {
-            ! Finder::isOptional($token) && $count++;
+            ! Finder::isOptional($token[1] ?? $token[0]) && $count++;
         }
 
         return $count;
