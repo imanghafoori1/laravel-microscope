@@ -52,11 +52,12 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        (app()['env'] !== 'production') && config('microscope.log_unused_view_vars', true) && $this->spyView();
+        $this->shouldSpyViews() && $this->spyView();
 
         if (! $this->canRun()) {
             return;
         }
+
         $this->loadViewsFrom(__DIR__.'/../templates', 'microscope_package');
 
         Event::listen('microscope.start.command', function () {
@@ -213,5 +214,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Log::info('At "'.$action.'" has some unused variables passed to it: ');
         Log::info($uselessVars);
         Log::info('If you do not see these variables passed in a controller, look in view composers.');
+    }
+
+    private function shouldSpyViews()
+    {
+        return (app()['env'] !== 'production') && config('microscope.log_unused_view_vars', true);
     }
 }

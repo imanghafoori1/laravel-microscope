@@ -31,13 +31,13 @@ class NamespaceCorrector
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
     {
-        // removes the filename.php from the end of the string
         $classPath = \explode(DIRECTORY_SEPARATOR, $relativeClassPath);
-        // removes the filename
+        // Removes the filename
         array_pop($classPath);
-        // ensure back slashes.
+
         $classPath = \implode('\\', $classPath);
 
+        // Ensure back slashes in All Operating Systems.
         $composerPath = \str_replace('/', '\\', $composerPath);
 
         // replace composer base_path with composer namespace
