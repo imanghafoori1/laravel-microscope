@@ -68,6 +68,14 @@ class CheckNamespaces
                 continue;
             }
 
+            // Sometimes, the class is loaded by other means of auto-loading
+            // So that the expected namespace isn't needed and it is fine.
+            $isAbsent = CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class);
+
+            if (! $isAbsent) {
+                continue;
+            }
+
             self::changedNamespaces($class, $currentNamespace, $correctNamespace);
             ErrorPrinter::warnIncorrectNamespace($currentNamespace, $relativePath, $class);
 
