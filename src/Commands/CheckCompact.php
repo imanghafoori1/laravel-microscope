@@ -36,7 +36,7 @@ class CheckCompact extends Command
         $tokens = token_get_all(file_get_contents($absPath));
 
         foreach ($tokens as $i => $token) {
-            if ($tokens[$i][0] != T_FUNCTION) {
+            if ($token[0] !== T_FUNCTION) {
                 continue;
             }
 

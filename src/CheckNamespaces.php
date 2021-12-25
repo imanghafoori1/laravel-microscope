@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class CheckNamespaces
@@ -18,26 +17,21 @@ class CheckNamespaces
     /**
      * Get all of the listeners and their corresponding events.
      *
-     * @param  iterable  $paths
      * @param  $composerPath
      * @param  $composerNamespace
      * @param  $command
      * @return void
      */
-    public static function within($paths, $composerPath, $composerNamespace, $command)
+    public static function within($composerPath, $composerNamespace, $command)
     {
         $detailed = $command->option('detailed');
+        $paths = FilePath::getAllPhpFiles($composerPath);
 
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
             // exclude blade files
             if (Str::endsWith($absFilePath, ['.blade.php'])) {
-                continue;
-            }
-
-            // exclude migration directories
-            if (Str::startsWith($absFilePath, LaravelPaths::migrationDirs())) {
                 continue;
             }
 
@@ -67,10 +61,7 @@ class CheckNamespaces
             }
 
             // Sometimes, the class is loaded by other means of auto-loading
-            // So that the expected namespace isn't needed and it is fine.
-            $isAbsent = CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class);
-
-            if (! $isAbsent) {
+            if (! CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class)) {
                 continue;
             }
 
