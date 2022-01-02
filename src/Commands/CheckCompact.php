@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\Ifs;

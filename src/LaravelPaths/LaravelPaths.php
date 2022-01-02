@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Symfony\Component\Finder\Finder;
 
 class LaravelPaths

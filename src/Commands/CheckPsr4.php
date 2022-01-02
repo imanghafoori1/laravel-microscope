@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 

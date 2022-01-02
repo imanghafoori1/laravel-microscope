@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Stubs\ServiceProviderStub;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;

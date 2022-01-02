@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class ErrorPrinter

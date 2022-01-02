@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class ForPsr4LoadedClasses
 {

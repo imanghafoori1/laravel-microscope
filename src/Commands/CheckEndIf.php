@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 

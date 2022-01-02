@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
+namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;

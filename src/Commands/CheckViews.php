@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
