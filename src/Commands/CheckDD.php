@@ -51,7 +51,7 @@ class CheckDD extends Command
                 ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) ||
                 ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))
             ) {
-                ddFound::isMissing($absPath, $tokens[$index][2], $tokens[$index][1]);
+                ddFound::warn($absPath, $tokens[$index][2], $tokens[$index][1]);
             }
         }
     }

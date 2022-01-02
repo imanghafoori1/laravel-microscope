@@ -87,7 +87,7 @@ class CheckCompact extends Command
 
             unset($vars['$this']);
             $missingVars = array_diff_key($compactVars, $vars);
-            $missingVars && CompactCall::isMissing($absPath, $methodBody[$pp][2], $missingVars);
+            $missingVars && CompactCall::warn($absPath, $methodBody[$pp][2], $missingVars);
         }
     }
 

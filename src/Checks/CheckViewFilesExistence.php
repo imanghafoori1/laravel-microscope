@@ -42,7 +42,7 @@ class CheckViewFilesExistence
 
     private static function error($tokens, $absPath, $i)
     {
-        BladeFile::isMissing($absPath, $tokens[$i + 4][2], $tokens[$i + 4][1]);
+        BladeFile::warn($absPath, $tokens[$i + 4][2], $tokens[$i + 4][1]);
     }
 
     private static function isVariable($token, string $varName)

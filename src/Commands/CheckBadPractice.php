@@ -43,7 +43,9 @@ class CheckBadPractice extends Command
 
         foreach ($tokens as $i => $token) {
             if (($index = FunctionCall::isGlobalCall('env', $tokens, $i))) {
-                EnvFound::isMissing($absPath, $tokens[$index][2], $tokens[$index][1]);
+                if (basename($absPath) !== 'config.php') {
+                    EnvFound::isMissing($absPath, $tokens[$index][2], $tokens[$index][1]);
+                }
             }
         }
     }

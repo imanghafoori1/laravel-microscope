@@ -69,7 +69,7 @@ class CheckViews extends Command
             self::$checkedCallsNum++;
             $viewName = \trim($paramTokens[0][1], '\'\"');
 
-            $viewName && ! View::exists($viewName) && BladeFile::isMissing($absPath, $paramTokens[0][2], $viewName);
+            $viewName && ! View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
         } else {
             self::$skippedCallsNum++;
         }
