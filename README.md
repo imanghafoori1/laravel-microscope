@@ -12,7 +12,10 @@ Built with :heart: for lazy laravel developers ;)
 </h4>
 
 <h3 align="center">
-Why repeat the old errors, if there are so many new errors to commit. (Bertrand Russel)
+Why repeat the old errors, if there are so many new errors to commit.
+</h3>
+<h3 align="center">
+(Bertrand Russel)
 </h3>
 <h5 align="center">
 Give your eyes a rest, we will detect and fix them for you.
@@ -209,8 +212,8 @@ Here is a copmerehensive list of placeholders you can use:
 - `"<class_ref>"`: for class references:  `\App\User::where(...` , `User::where`
 - `"<full_class_ref>"`: only for full references:  `\App\User::`
 - `"<until>"`: to capture all the code until you reach a certain character.
-- `"<comment>"`: for commands (does not capture doc-blocks)
-- `"<doc_block>"`: for doc-blocks
+- `"<comment>"`: for comments (it does not capture doc-blocks beginning with: /** )
+- `"<doc_block>"`: for php doc-blocks
 - `"<statement>"`: to capture a whole php statement.
 - `"<name:nam1,nam2>"` or `"<name>"`: for method or function names. `->where` or `::where`
 - `"<white_space>"`: for whitespace blocks
@@ -244,7 +247,7 @@ Just like the default keywords.
 
 ```
 
-**Note**: If you do not mention the `'replace'` key it only searches and reports them to you.
+**Note:** If you do not mention the `'replace'` key it only searches and reports them to you.
 
 2 - Ok, now lets say you want to remove the "todo:" word from your comments:
 
