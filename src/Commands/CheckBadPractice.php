@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
+use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class CheckBadPractice extends Command
 {
@@ -43,8 +44,8 @@ class CheckBadPractice extends Command
 
         foreach ($tokens as $i => $token) {
             if (($index = FunctionCall::isGlobalCall('env', $tokens, $i))) {
-                if (basename($absPath) !== 'config.php') {
-                    EnvFound::isMissing($absPath, $tokens[$index][2], $tokens[$index][1]);
+                if (! $this->isLikelyConfigFile(basename($absPath), $tokens)) {
+                    EnvFound::warn($absPath, $tokens[$index][2], $tokens[$index][1]);
                 }
             }
         }
@@ -66,5 +67,20 @@ class CheckBadPractice extends Command
                 $this->checkForEnv($filePath->getRealPath());
             }
         }
+    }
+
+    private function isLikelyConfigFile($fileName, $tokens)
+    {
+        [$token,] = TokenManager::getNextToken($tokens, 0);
+
+        if ($token[0] === T_NAMESPACE) {
+            return false;
+        }
+
+        if ($token[0] === T_RETURN && strpos(strtolower($fileName), 'config') !== false) {
+            return true;
+        }
+
+        return $fileName === 'config.php';
     }
 }

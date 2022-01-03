@@ -35,7 +35,7 @@ class ComposerJson
     {
         $composers = [];
         foreach (self::readKey('repositories') as $repo) {
-            if (isset($repo['type']) && $repo['type'] == 'path') {
+            if (isset($repo['type']) && $repo['type'] === 'path') {
                 // here we exclude local packages outside of the root folder.
                 ! Str::contains($repo['url'], '../') && $composers[] = \trim(\trim($repo['url'], '.'), '/').DIRECTORY_SEPARATOR.'';
             }
