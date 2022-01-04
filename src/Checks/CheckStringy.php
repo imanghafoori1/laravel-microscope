@@ -31,7 +31,7 @@ class CheckStringy
                 continue;
             }
 
-            if (! \class_exists(str_replace('\\\\', '\\', $classPath))) {
+            if (! \class_exists(\str_replace('\\\\', '\\', $classPath))) {
                 if (self::refersToDir($classPath)) {
                     continue;
                 }

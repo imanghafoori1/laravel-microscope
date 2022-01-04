@@ -10,10 +10,10 @@ class CurlyBraces
 
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
     {
-        self::removeGenericDocBlocks($tokens, $classFilePath->getRealpath());
+        self::addPublicKeyword($tokens, $classFilePath->getRealpath());
     }
 
-    private static function removeGenericDocBlocks($tokens, $classFilePath)
+    private static function addPublicKeyword($tokens, $classFilePath)
     {
         $level = 0;
         $isInSideClass = false;
@@ -22,11 +22,11 @@ class CurlyBraces
         while ($i < $ct - 1) {
             $i++;
             $token = $tokens[$i];
-            \in_array($token[0], [T_CURLY_OPEN, '{']) && $level++;
-            ($token[0] == '}') && $level--;
-            if ($level == 0) {
+            \in_array($token[0], [T_CURLY_OPEN, '{'], true) && $level++;
+            ($token[0] === '}') && $level--;
+            if ($level === 0) {
                 if (\in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
-                    if ($tokens[$i - 1] != T_DOUBLE_COLON) {
+                    if ($tokens[$i - 1] !== T_DOUBLE_COLON) {
                         $isInSideClass = true;
                     }
                 }
@@ -41,12 +41,12 @@ class CurlyBraces
     {
         if ($token == '{' && ! \in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
             $sp = str_repeat('    ', $level);
-            if ($tokens[$i + 1][0] == T_WHITESPACE) {
-                if ($tokens[$i + 1][1] != PHP_EOL.$sp && $tokens[$i + 1][1] != "\n".$sp) {
+            if ($tokens[$i + 1][0] === T_WHITESPACE) {
+                if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
                     $tokens[$i + 1][1] = PHP_EOL.$sp;
                     Refactor::saveTokens($classFilePath, $tokens);
                 } else {
-                    ///
+                    //
                 }
             } else {
                 array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
@@ -57,12 +57,16 @@ class CurlyBraces
 
     private static function writePublic($level, $token, $isInClass, $i, $tokens, $absolutePath)
     {
-        if (($level != 1) || ($token[0] != T_FUNCTION) || ! $isInClass) {
+        if (($level !== 1) || ($token[0] !== T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];
         }
 
         $t = $i;
-        if (\in_array($tokens[$t - 2][0], [T_STATIC])) {
+        if (\in_array($tokens[$t - 2][0], [T_STATIC, T_FINAL])) {
+            $t = $t - 2;
+        }
+
+        if (\in_array($tokens[$t - 2][0], [T_STATIC, T_FINAL])) {
             $t = $t - 2;
         }
 

@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\GenerateCode;
 
-class CheckExpansions extends Command
+class CheckCodeGeneration extends Command
 {
     protected $signature = 'check:generate';
 
