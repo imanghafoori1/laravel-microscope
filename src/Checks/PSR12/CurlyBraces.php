@@ -62,11 +62,7 @@ class CurlyBraces
         }
 
         $t = $i;
-        if (\in_array($tokens[$t - 2][0], [T_STATIC, T_FINAL])) {
-            $t = $t - 2;
-        }
-
-        if (\in_array($tokens[$t - 2][0], [T_STATIC, T_FINAL])) {
+        if (\in_array($tokens[$t - 2][0], [T_STATIC])) {
             $t = $t - 2;
         }
 
