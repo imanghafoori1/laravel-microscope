@@ -22,9 +22,8 @@ class CheckNamespaces
      * @param  $command
      * @return void
      */
-    public static function within($composerPath, $composerNamespace, $command)
+    public static function within($composerPath, $composerNamespace, $detailed)
     {
-        $detailed = $command->option('detailed');
         $paths = FilePath::getAllPhpFiles($composerPath);
 
         foreach ($paths as $classFilePath) {
@@ -50,7 +49,7 @@ class CheckNamespaces
                 continue;
             }
 
-            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname(), $command]);
+            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
@@ -68,11 +67,7 @@ class CheckNamespaces
             self::changedNamespaces($class, $currentNamespace, $correctNamespace);
             ErrorPrinter::warnIncorrectNamespace($currentNamespace, $relativePath, $class);
 
-            if (! $command->option('nofix') && ErrorPrinter::ask($command, $correctNamespace)) {
-                self::doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace);
-                // maybe an event listener
-                app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
-            }
+            event('microscope.wrong_namespace', [$relativePath, $currentNamespace, $correctNamespace]);
         }
     }
 
@@ -90,7 +85,7 @@ class CheckNamespaces
         return Str::startsWith($buffer, '<?php');
     }
 
-    protected static function doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace)
+    public static function doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace)
     {
         event('laravel_microscope.namespace_fixing', get_defined_vars());
         NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);

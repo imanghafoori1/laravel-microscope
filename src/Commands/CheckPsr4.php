@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
@@ -28,8 +29,25 @@ class CheckPsr4 extends Command
 
         $errorPrinter->printer = $this->output;
 
+        $handler = function ($relativePath, $currentNamespace, $correctNamespace) {
+            if (! $this->option('nofix') && ErrorPrinter::ask($this, $correctNamespace)) {
+                CheckNamespaces::doNamespaceCorrection(base_path($relativePath), $currentNamespace, $correctNamespace);
+                // maybe an event listener
+                app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
+            }
+        };
+
+        Event::listen('microscope.wrong_namespace', $handler);
+
+        Event::listen('microscope.checking', function ($path) {
+            $this->line('Checking: '.$path);
+        });
+
         $autoload = ComposerJson::readAutoload();
-        $this->checkNamespaces($autoload);
+
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
+            CheckNamespaces::within($psr4Path, $psr4Namespace, $this->option('detailed'));
+        }
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
@@ -109,7 +127,7 @@ class CheckPsr4 extends Command
         return $variants;
     }
 
-    private function possibleOccurrence($olds): array
+    private function possibleOccurrence($olds)
     {
         $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ','];
 
@@ -160,13 +178,6 @@ class CheckPsr4 extends Command
 
         foreach ($this->collectNonPsr4Paths() as $_path) {
             $this->fixAndReport($_path, $olds, $news);
-        }
-    }
-
-    private function checkNamespaces(array $autoload)
-    {
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            CheckNamespaces::within($psr4Path, $psr4Namespace, $this);
         }
     }
 
