@@ -41,11 +41,13 @@ class CheckNamespaces
             [
                 $currentNamespace,
                 $class,
+                $type,
+                $parent,
             ] = GetClassProperties::fromFilePath($absFilePath, config('microscope.class_search_buffer', 2500));
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
-            if (! $class) {
+            if (! $class || $parent == 'Migration') {
                 continue;
             }
 
