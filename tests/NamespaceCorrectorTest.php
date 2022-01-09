@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Analyzers\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
