@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Symfony\Component\Finder\Finder;
 
 class LaravelPaths
@@ -94,4 +96,29 @@ class LaravelPaths
 
         return $hints;
     }
+
+    static function collectNonPsr4Paths()
+    {
+        $paths = [
+            RoutePaths::get(),
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
+            Paths::getAbsFilePaths(config_path()),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
+            LaravelPaths::bladeFilePaths(),
+        ];
+
+        return self::mergePaths($paths);
+    }
+
+    private static function mergePaths($paths)
+    {
+        $all = [];
+        foreach ($paths as $p) {
+            $all = array_merge($all, $p);
+        }
+
+        return $all;
+    }
+
 }

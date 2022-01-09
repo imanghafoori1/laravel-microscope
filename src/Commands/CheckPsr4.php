@@ -9,11 +9,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
+use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
 
 class CheckPsr4 extends Command
 {
@@ -43,6 +39,14 @@ class CheckPsr4 extends Command
             $this->line('Checking: '.$path);
         });
 
+        Event::listen('microscope.replacing_namespace', function ($_path, $lineIndex, $lineContent) {
+            app(ErrorPrinter::class)->printLink($_path, $lineIndex);
+            $this->info($lineContent);
+
+            return $this->confirm('Do you want to change the old namespace?', true);
+        });
+
+
         $autoload = ComposerJson::readAutoload();
 
         foreach ($autoload as $psr4Namespace => $psr4Path) {
@@ -55,7 +59,7 @@ class CheckPsr4 extends Command
             $olds = \array_keys(CheckNamespaces::$changedNamespaces);
             $news = \array_values(CheckNamespaces::$changedNamespaces);
 
-            $this->fixReferences($autoload, $olds, $news);
+            ClassRefCorrector::fixReferences($autoload, $olds, $news);
         }
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
@@ -77,44 +81,6 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function str_contains($haystack, $needles)
-    {
-        foreach ($needles as $needle) {
-            if (mb_strpos($haystack, $needle) !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function fixRefs($_path, $olds, $news)
-    {
-        [$olds, $occurrences] = $olds;
-        $lines = file($_path);
-        $changedLineNums = [];
-        foreach ($lines as $lineIndex => $lineContent) {
-            if ($this->str_contains(\str_replace(' ', '', $lineContent), $occurrences)) {
-                $count = 0;
-                $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
-                $count && $changedLineNums[] = ($lineIndex + 1);
-            } elseif ($this->str_contains($lineContent, $olds)) {
-                app(ErrorPrinter::class)->printLink($_path, $lineIndex + 1);
-                $this->info($lineContent);
-                if ($this->confirm('Do you want to change the old namespace?', true)) {
-                    $count = 0;
-                    $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
-                    $count && $changedLineNums[] = ($lineIndex + 1);
-                }
-            }
-        }
-
-        // saves the file into disk.
-        $changedLineNums && FileSystem::$fileSystem::file_put_contents($_path, \implode('', $lines));
-
-        return $changedLineNums;
-    }
-
     private function variants($namespaces)
     {
         $variants = [];
@@ -125,65 +91,6 @@ class CheckPsr4 extends Command
         }
 
         return $variants;
-    }
-
-    private function possibleOccurrence($olds)
-    {
-        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ','];
-
-        $occurrences = [];
-        foreach ($olds as $old) {
-            foreach ($keywords as $keyword) {
-                $occurrences[] = $old.$keyword;
-            }
-        }
-
-        return $occurrences;
-    }
-
-    private function collectNonPsr4Paths()
-    {
-        $paths = [
-            RoutePaths::get(),
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
-            Paths::getAbsFilePaths(config_path()),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
-            LaravelPaths::bladeFilePaths(),
-        ];
-
-        return $this->mergePaths($paths);
-    }
-
-    private function mergePaths($paths)
-    {
-        $all = [];
-        foreach ($paths as $p) {
-            $all = array_merge($all, $p);
-        }
-
-        return $all;
-    }
-
-    private function fixReferences($autoload, $olds, $news)
-    {
-        $olds = [$olds, $this->possibleOccurrence($olds)];
-        foreach ($autoload as $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
-                $_path = $classFilePath->getRealPath();
-                $this->fixAndReport($_path, $olds, $news);
-            }
-        }
-
-        foreach ($this->collectNonPsr4Paths() as $_path) {
-            $this->fixAndReport($_path, $olds, $news);
-        }
-    }
-
-    private function report($_path, $lineNumber)
-    {
-        app(ErrorPrinter::class)->simplePendError('', $_path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
     }
 
     private function printErrorsCount($errorPrinter, $time)
@@ -210,14 +117,5 @@ class CheckPsr4 extends Command
         $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
         $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
         $this->line('');
-    }
-
-    private function fixAndReport($_path, $olds, $news)
-    {
-        $lineNumbers = $this->fixRefs($_path, $olds, $news);
-
-        foreach ($lineNumbers as $line) {
-            $this->report($_path, $line);
-        }
     }
 }
