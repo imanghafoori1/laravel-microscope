@@ -26,7 +26,6 @@ class ClassRefCorrector
         return $occurrences;
     }
 
-
     public static function fixAllRefs()
     {
         if (CheckNamespaces::$changedNamespaces && ! config('microscope.no_fix')) {
@@ -37,7 +36,7 @@ class ClassRefCorrector
         }
     }
 
-    static function changeReferences($olds, $news)
+    public static function changeReferences($olds, $news)
     {
         $autoload = ComposerJson::readAutoload();
         $olds = [$olds, self::possibleOccurrence($olds)];

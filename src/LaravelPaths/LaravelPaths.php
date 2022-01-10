@@ -97,7 +97,7 @@ class LaravelPaths
         return $hints;
     }
 
-    static function collectNonPsr4Paths()
+    public static function collectNonPsr4Paths()
     {
         $paths = [
             RoutePaths::get(),
@@ -120,5 +120,4 @@ class LaravelPaths
 
         return $all;
     }
-
 }

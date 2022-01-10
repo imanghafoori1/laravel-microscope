@@ -23,7 +23,6 @@ class MakeDrinkCommand extends Command
         parent::__construct(MakeDrinkCommand::$defaultName);
     }
 
-
     protected function configure()
     {
         $this->addArgument(

@@ -18,7 +18,6 @@ class CheckNamespaces
      * Get all of the listeners and their corresponding events.
      *
      * @param  $detailed
-     *
      * @return void
      */
     public static function all($detailed)
