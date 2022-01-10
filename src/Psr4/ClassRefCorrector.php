@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Facades\Event;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
@@ -24,9 +26,22 @@ class ClassRefCorrector
         return $occurrences;
     }
 
-    static function fixReferences($autoload, $olds, $news)
+
+    public static function fixAllRefs()
     {
+        if (CheckNamespaces::$changedNamespaces && ! config('microscope.no_fix')) {
+            $olds = \array_keys(CheckNamespaces::$changedNamespaces);
+            $news = \array_values(CheckNamespaces::$changedNamespaces);
+
+            ClassRefCorrector::changeReferences($olds, $news);
+        }
+    }
+
+    static function changeReferences($olds, $news)
+    {
+        $autoload = ComposerJson::readAutoload();
         $olds = [$olds, self::possibleOccurrence($olds)];
+
         foreach ($autoload as $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $classFilePath) {

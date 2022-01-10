@@ -25,15 +25,15 @@ class CheckPsr4 extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $handler = function ($relativePath, $currentNamespace, $correctNamespace) {
-            if (! $this->option('nofix') && ErrorPrinter::ask($this, $correctNamespace)) {
-                CheckNamespaces::doNamespaceCorrection(base_path($relativePath), $currentNamespace, $correctNamespace);
-                // maybe an event listener
-                app(ErrorPrinter::class)->badNamespace($relativePath, $correctNamespace, $currentNamespace);
-            }
-        };
+        Event::listen('laravel_microscope.namespace_fixed', function ($relativePath, $from, $to) {
+            app(ErrorPrinter::class)->fixedNamespace($relativePath, $to, $from);
+        });
 
-        Event::listen('microscope.wrong_namespace', $handler);
+        Event::listen('laravel_microscope.namespace_fixing', function ($relativePath, $currentNamespace, $correctNamespace, $class) {
+            ErrorPrinter::warnIncorrectNamespace($currentNamespace, $relativePath, $class);
+
+            return ! $this->option('nofix') && ErrorPrinter::ask($this, $correctNamespace);
+        });
 
         Event::listen('microscope.checking', function ($path) {
             $this->line('Checking: '.$path);
@@ -46,21 +46,12 @@ class CheckPsr4 extends Command
             return $this->confirm('Do you want to change the old namespace?', true);
         });
 
-
-        $autoload = ComposerJson::readAutoload();
-
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            CheckNamespaces::within($psr4Path, $psr4Namespace, $this->option('detailed'));
-        }
+        CheckNamespaces::all($this->option('detailed'));
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        if (CheckNamespaces::$changedNamespaces && ! config('microscope.no_fix')) {
-            $olds = \array_keys(CheckNamespaces::$changedNamespaces);
-            $news = \array_values(CheckNamespaces::$changedNamespaces);
-
-            ClassRefCorrector::fixReferences($autoload, $olds, $news);
-        }
+        $autoload = ComposerJson::readAutoload();
+        ClassRefCorrector::fixAllRefs();
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->reportResult($autoload);
@@ -79,18 +70,6 @@ class CheckPsr4 extends Command
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'finished: "composer dump"');
         }
-    }
-
-    private function variants($namespaces)
-    {
-        $variants = [];
-        foreach ($namespaces as $namespace) {
-            $variants[] = '|'.$namespace.' ';
-            $variants[] = ' '.$namespace.' ';
-            $variants[] = ' \\'.$namespace.' ';
-        }
-
-        return $variants;
     }
 
     private function printErrorsCount($errorPrinter, $time)

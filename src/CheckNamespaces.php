@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
@@ -17,12 +17,19 @@ class CheckNamespaces
     /**
      * Get all of the listeners and their corresponding events.
      *
-     * @param  $composerPath
-     * @param  $composerNamespace
      * @param  $detailed
      *
      * @return void
      */
+    public static function all($detailed)
+    {
+        $autoload = ComposerJson::readAutoload();
+
+        foreach ($autoload as $psr4Namespace => $psr4Path) {
+            CheckNamespaces::within($psr4Path, $psr4Namespace, $detailed);
+        }
+    }
+
     public static function within($composerPath, $composerNamespace, $detailed)
     {
         $paths = FilePath::getAllPhpFiles($composerPath);
@@ -67,10 +74,7 @@ class CheckNamespaces
                 continue;
             }
 
-            self::changedNamespaces($class, $currentNamespace, $correctNamespace);
-            ErrorPrinter::warnIncorrectNamespace($currentNamespace, $relativePath, $class);
-
-            event('microscope.wrong_namespace', [$relativePath, $currentNamespace, $correctNamespace]);
+            self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
         }
     }
 
@@ -88,10 +92,16 @@ class CheckNamespaces
         return Str::startsWith($buffer, '<?php');
     }
 
-    public static function doNamespaceCorrection($absFilePath, $currentNamespace, $correctNamespace)
+    public static function changeNamespace($absPath, $from, $to, $class)
     {
-        event('laravel_microscope.namespace_fixing', get_defined_vars());
-        NamespaceCorrector::fix($absFilePath, $currentNamespace, $correctNamespace);
+        $fix = event('laravel_microscope.namespace_fixing', get_defined_vars(), true);
+
+        if ($fix !== false) {
+            self::changedNamespaces($class, $from, $to);
+            NamespaceCorrector::fix($absPath, $from, $to);
+        }
+        unset($fix);
+
         event('laravel_microscope.namespace_fixed', get_defined_vars());
     }
 

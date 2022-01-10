@@ -149,7 +149,7 @@ class ErrorPrinter
         return "<fg=yellow>$msg</>";
     }
 
-    public function badNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
+    public function fixedNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
     {
         $key = 'badNamespace';
         $header = 'Incorrect namespace: '.$this->yellow("namespace $incorrectNamespace;");
