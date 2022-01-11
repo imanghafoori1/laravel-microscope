@@ -15,7 +15,7 @@ class CheckNamespaces
     public static $changedNamespaces = [];
 
     /**
-     * Checks all the psr-4 loaded classes to have correct namespace
+     * Checks all the psr-4 loaded classes to have correct namespace.
      *
      * @param  $detailed
      * @return void
