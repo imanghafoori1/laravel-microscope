@@ -15,7 +15,7 @@ class CheckNamespaces
     public static $changedNamespaces = [];
 
     /**
-     * Get all of the listeners and their corresponding events.
+     * Checks all the psr-4 loaded classes to have correct namespace
      *
      * @param  $detailed
      * @return void
@@ -36,12 +36,8 @@ class CheckNamespaces
         foreach ($paths as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
-            // exclude blade files
+            // Exclude blade files
             if (Str::endsWith($absFilePath, ['.blade.php'])) {
-                continue;
-            }
-
-            if (! self::hasOpeningTag($absFilePath)) {
                 continue;
             }
 
@@ -54,7 +50,7 @@ class CheckNamespaces
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
-            if (! $class || $parent == 'Migration') {
+            if (! $class || $parent === 'Migration') {
                 continue;
             }
 
@@ -75,20 +71,6 @@ class CheckNamespaces
 
             self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
         }
-    }
-
-    public static function hasOpeningTag($file)
-    {
-        $fp = fopen($file, 'r');
-
-        if (feof($fp)) {
-            return false;
-        }
-
-        $buffer = fread($fp, 20);
-        fclose($fp);
-
-        return Str::startsWith($buffer, '<?php');
     }
 
     public static function changeNamespace($absPath, $from, $to, $class)

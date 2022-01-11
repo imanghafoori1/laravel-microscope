@@ -50,11 +50,10 @@ class CheckPsr4 extends Command
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        $autoload = ComposerJson::readAutoload();
         ClassRefCorrector::fixAllRefs();
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->reportResult($autoload);
+            $this->reportResult();
             $this->printErrorsCount($errorPrinter, $time);
         } else {
             $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
@@ -81,8 +80,9 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function reportResult($autoload)
+    private function reportResult()
     {
+        $autoload = ComposerJson::readAutoload();
         $this->getOutput()->writeln('');
         $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
         $this->getOutput()->writeln('==============================');
