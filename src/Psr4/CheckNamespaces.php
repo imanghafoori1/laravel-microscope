@@ -1,11 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class CheckNamespaces

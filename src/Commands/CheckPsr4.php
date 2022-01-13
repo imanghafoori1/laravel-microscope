@@ -7,8 +7,8 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
 
 class CheckPsr4 extends Command
@@ -50,7 +50,9 @@ class CheckPsr4 extends Command
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        ClassRefCorrector::fixAllRefs();
+        ClassRefCorrector::fixAllRefs(function ($path, $lineNumber) {
+            app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
+        });
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->reportResult();

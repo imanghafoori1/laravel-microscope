@@ -4,30 +4,17 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckNamespaces;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class ClassRefCorrector
 {
-    private static function possibleOccurrence($olds)
+    private static $onFix;
+
+    public static function fixAllRefs($onFix)
     {
-        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ','];
-
-        $occurrences = [];
-        foreach ($olds as $old) {
-            foreach ($keywords as $keyword) {
-                $occurrences[] = $old.$keyword;
-            }
-        }
-
-        return $occurrences;
-    }
-
-    public static function fixAllRefs()
-    {
+        self::$onFix = $onFix;
         if (CheckNamespaces::$changedNamespaces && ! config('microscope.no_fix')) {
             $olds = \array_keys(CheckNamespaces::$changedNamespaces);
             $news = \array_values(CheckNamespaces::$changedNamespaces);
@@ -54,18 +41,14 @@ class ClassRefCorrector
         }
     }
 
-    private static function fixAndReport($_path, $olds, $news)
+    private static function fixAndReport($path, $olds, $news)
     {
-        $lineNumbers = self::fixRefs($_path, $olds, $news);
+        $lineNumbers = self::fixRefs($path, $olds, $news);
 
         foreach ($lineNumbers as $line) {
-            self::report($_path, $line);
+            $c = self::$onFix;
+            $c($path, $line);
         }
-    }
-
-    private function report($_path, $lineNumber)
-    {
-        app(ErrorPrinter::class)->simplePendError('', $_path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
     }
 
     private static function fixRefs($_path, $olds, $news)
@@ -104,5 +87,19 @@ class ClassRefCorrector
         }
 
         return false;
+    }
+
+    private static function possibleOccurrence($olds)
+    {
+        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '{', '?', ','];
+
+        $occurrences = [];
+        foreach ($olds as $old) {
+            foreach ($keywords as $keyword) {
+                $occurrences[] = $old.$keyword;
+            }
+        }
+
+        return $occurrences;
     }
 }
