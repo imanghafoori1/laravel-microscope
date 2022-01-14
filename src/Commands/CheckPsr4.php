@@ -50,9 +50,11 @@ class CheckPsr4 extends Command
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        ClassRefCorrector::fixAllRefs(function ($path, $lineNumber) {
+        $onFix = function ($path, $lineNumber) {
             app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
-        });
+        };
+
+        ClassRefCorrector::fixAllRefs($onFix);
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->reportResult();

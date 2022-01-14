@@ -214,6 +214,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function shouldSpyViews()
     {
-        return (app()['env'] !== 'production') && config('microscope.log_unused_view_vars', true);
+        return (app()['env'] !== 'production') && config('microscope.log_unused_view_vars', false);
     }
 }
