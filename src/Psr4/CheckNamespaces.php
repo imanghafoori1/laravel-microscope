@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
@@ -57,18 +56,15 @@ class CheckNamespaces
             $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
 
             $relativePath = FilePath::getRelativePath($absFilePath);
-            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
-            self::$checkedNamespaces++;
 
-            if ($currentNamespace === $correctNamespace) {
+            $correctNamespaces = self::getCorrectNamespaces($relativePath);
+
+            self::$checkedNamespaces++;
+            if (in_array($currentNamespace, $correctNamespaces)) {
                 continue;
             }
 
-            // Sometimes, the class is loaded by other means of auto-loading
-            /* if (! CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class)) {
-                 continue;
-             }*/
-
+            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
             self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
         }
     }
@@ -99,5 +95,18 @@ class CheckNamespaces
         } else {
             self::$changedNamespaces[$_currentClass] = $_correctClass;
         }
+    }
+
+    private static function getCorrectNamespaces($relativePath)
+    {
+        $namespaces = ComposerJson::readAutoload();
+        $correctNamespaces = [];
+        foreach ($namespaces as $namespacePrefix => $path) {
+            if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
+                $correctNamespaces[] = NamespaceCorrector::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
+            }
+        }
+
+        return $correctNamespaces;
     }
 }

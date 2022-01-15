@@ -78,7 +78,7 @@ class ClassRefCorrector
         return $changedLineNums;
     }
 
-    private function str_contains($haystack, $needles)
+    private static function str_contains($haystack, $needles)
     {
         foreach ($needles as $needle) {
             if (mb_strpos($haystack, $needle) !== false) {
