@@ -65,9 +65,9 @@ class CheckNamespaces
             }
 
             // Sometimes, the class is loaded by other means of auto-loading
-           /* if (! CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class)) {
-                continue;
-            }*/
+            /* if (! CheckClassReferencesAreValid::isAbsent($currentNamespace.'\\'.$class)) {
+                 continue;
+             }*/
 
             self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
         }
