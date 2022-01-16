@@ -8,6 +8,27 @@ use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 class NamespaceCorrectorTest extends BaseTestClass
 {
     /** @test */
+    public function calculate_correct_namespace()
+    {
+        $ds = DIRECTORY_SEPARATOR;
+        $path = "app{$ds}Hello{$ds}T.php";
+        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/', 'App\\');
+        $this->assertEquals("App\Hello", $r);
+
+        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app', 'App\\');
+        $this->assertEquals("App\Hello", $r);
+
+        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
+        $this->assertEquals("Foo", $r);
+
+        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
+        $this->assertEquals("Foo", $r);
+
+        $r = NamespaceCorrector::calculateCorrectNamespace("app{$ds}Hello{$ds}Hello{$ds}T.php", 'app/Hello', 'Foo\\');
+        $this->assertEquals("Foo\Hello", $r);
+    }
+
+    /** @test */
     public function read_autoload()
     {
         ComposerJson::$composerPath = __DIR__.'/stubs/composer_json/2';
