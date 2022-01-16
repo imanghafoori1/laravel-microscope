@@ -19,10 +19,10 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals("App\Hello", $r);
 
         $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
-        $this->assertEquals("Foo", $r);
+        $this->assertEquals('Foo', $r);
 
         $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
-        $this->assertEquals("Foo", $r);
+        $this->assertEquals('Foo', $r);
 
         $r = NamespaceCorrector::calculateCorrectNamespace("app{$ds}Hello{$ds}Hello{$ds}T.php", 'app/Hello', 'Foo\\');
         $this->assertEquals("Foo\Hello", $r);
