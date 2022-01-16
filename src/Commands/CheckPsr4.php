@@ -25,8 +25,8 @@ class CheckPsr4 extends Command
 
         $errorPrinter->printer = $this->output;
 
-        Event::listen('laravel_microscope.namespace_fixed', function ($relativePath, $from, $to) {
-            app(ErrorPrinter::class)->fixedNamespace($relativePath, $to, $from);
+        Event::listen('microscope.checking', function ($path) {
+            $this->line('Checking: '.$path);
         });
 
         Event::listen('laravel_microscope.namespace_fixing', function ($relativePath, $currentNamespace, $correctNamespace, $class) {
@@ -35,8 +35,8 @@ class CheckPsr4 extends Command
             return ! $this->option('nofix') && ErrorPrinter::ask($this, $correctNamespace);
         });
 
-        Event::listen('microscope.checking', function ($path) {
-            $this->line('Checking: '.$path);
+        Event::listen('laravel_microscope.namespace_fixed', function ($relativePath, $from, $to) {
+            app(ErrorPrinter::class)->fixedNamespace($relativePath, $to, $from);
         });
 
         Event::listen('microscope.replacing_namespace', function ($_path, $lineIndex, $lineContent) {
@@ -46,14 +46,13 @@ class CheckPsr4 extends Command
             return $this->confirm('Do you want to change the old namespace?', true);
         });
 
-        CheckNamespaces::all($this->option('detailed'));
-
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $onFix = function ($path, $lineNumber) {
             app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
         };
 
+        CheckNamespaces::all($this->option('detailed'));
         ClassRefCorrector::fixAllRefs($onFix);
 
         if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
