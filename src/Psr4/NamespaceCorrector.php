@@ -44,7 +44,8 @@ class NamespaceCorrector
         } else {
             // inserts after declare
             $i = 2;
-            while ($tokens[$i++] !== ';') {}
+            while ($tokens[$i++] !== ';') {
+            }
             FileManipulator::insertAtLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2] + 1);
         }
     }
