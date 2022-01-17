@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -25,9 +26,29 @@ class NamespaceCorrector
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
         [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
-
         $oldLine = \ltrim($oldLine, '\\');
-        FileManipulator::replaceFirst($classFilePath, $oldLine, $newline);
+
+        $tokens = token_get_all(file_get_contents($classFilePath));
+        if ($oldLine !== '<?php') {
+            
+            // replacement
+            [$newVersion, $lines] = Searcher::searchReplace([
+                'fix' => [
+                    'search' => $oldLine.';',
+                    'replace' => $newline.';',
+                ],
+            ], $tokens);
+            file_put_contents($classFilePath, $newVersion);
+        } else {
+            // insertion
+            if ($tokens[2][0] !== T_DECLARE) {
+                FileManipulator::replaceFirst($classFilePath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
+            } else {
+                $i = 2;
+                while($tokens[$i++] !== ';') {}
+                FileManipulator::insertAtLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2]+1);
+            }
+        }
     }
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
@@ -57,7 +78,7 @@ class NamespaceCorrector
         }
 
         // In case there is no namespace specified in the file:
-        return ['<?php', '<?php'.PHP_EOL.PHP_EOL.'namespace '.$correctNamespace.';'.PHP_EOL];
+        return ['<?php', 'namespace '.$correctNamespace.';'.PHP_EOL];
     }
 
     public static function getRelativePathFromNamespace($namespace, $autoload = null)

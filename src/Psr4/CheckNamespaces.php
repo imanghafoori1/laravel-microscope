@@ -84,6 +84,10 @@ class CheckNamespaces
 
     private static function changedNamespaces($class, $currentNamespace, $correctNamespace)
     {
+        if (! $currentNamespace) {
+            return null;
+        }
+
         $_currentClass = $currentNamespace.'\\'.$class;
         $_correctClass = $correctNamespace.'\\'.$class;
         $relPath = NamespaceCorrector::getRelativePathFromNamespace($currentNamespace);
