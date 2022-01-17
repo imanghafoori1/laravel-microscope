@@ -30,24 +30,22 @@ class NamespaceCorrector
 
         $tokens = token_get_all(file_get_contents($classFilePath));
         if ($oldLine !== '<?php') {
-            
             // replacement
             [$newVersion, $lines] = Searcher::searchReplace([
                 'fix' => [
-                    'search' => $oldLine.';',
-                    'replace' => $newline.';',
+                    'search' => 'namespace '.$oldLine.';',
+                    'replace' => 'namespace '.$newline.';',
                 ],
             ], $tokens);
             file_put_contents($classFilePath, $newVersion);
-        } else {
+        } elseif ($tokens[2][0] !== T_DECLARE) {
             // insertion
-            if ($tokens[2][0] !== T_DECLARE) {
-                FileManipulator::replaceFirst($classFilePath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
-            } else {
-                $i = 2;
-                while($tokens[$i++] !== ';') {}
-                FileManipulator::insertAtLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2]+1);
-            }
+            FileManipulator::replaceFirst($classFilePath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
+        } else {
+            // inserts after declare
+            $i = 2;
+            while ($tokens[$i++] !== ';') {}
+            FileManipulator::insertAtLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2] + 1);
         }
     }
 
@@ -116,7 +114,7 @@ class NamespaceCorrector
         return [$namespaces, $paths];
     }
 
-    private static function flatten($paths, $namespaces): array
+    private static function flatten($paths, $namespaces)
     {
         $_namespaces = [];
         $_paths = [];
