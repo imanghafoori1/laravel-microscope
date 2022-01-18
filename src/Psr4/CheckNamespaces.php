@@ -13,6 +13,11 @@ class CheckNamespaces
 
     public static $changedNamespaces = [];
 
+    public static function reset()
+    {
+        self::$changedNamespaces = [];
+        self::$checkedNamespaces = 0;
+    }
     /**
      * Checks all the psr-4 loaded classes to have correct namespace.
      *

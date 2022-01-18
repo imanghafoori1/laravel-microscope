@@ -13,7 +13,7 @@ use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
 
 class CheckPsr4 extends Command
 {
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}';
 
     protected $description = 'Checks the validity of namespaces';
 
@@ -52,10 +52,11 @@ class CheckPsr4 extends Command
             app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
         };
 
+        start:
         CheckNamespaces::all($this->option('detailed'));
         ClassRefCorrector::fixAllRefs($onFix);
 
-        if (Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
+        if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->reportResult();
             $this->printErrorsCount($errorPrinter, $time);
         } else {
@@ -63,6 +64,15 @@ class CheckPsr4 extends Command
         }
 
         $this->composerDumpIfNeeded($errorPrinter);
+
+        if ($this->option('watch')) {
+            sleep(8);
+
+            CheckNamespaces::reset();
+            app(ErrorPrinter::class)->errorsList = ['total' => 0];
+
+            goto start;
+        }
     }
 
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
