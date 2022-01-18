@@ -18,6 +18,7 @@ class CheckNamespaces
         self::$changedNamespaces = [];
         self::$checkedNamespaces = 0;
     }
+
     /**
      * Checks all the psr-4 loaded classes to have correct namespace.
      *
@@ -34,7 +35,7 @@ class CheckNamespaces
             // to avoid duplicate scanning
             foreach ($scanned as $s) {
                 if (strlen($psr4Path) > strlen($s) && Str::startsWith($psr4Path, $s)) {
-                    continue(2);
+                    continue 2;
                 }
             }
 
