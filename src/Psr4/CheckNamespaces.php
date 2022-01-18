@@ -63,8 +63,8 @@ class CheckNamespaces
             if (in_array($currentNamespace, $correctNamespaces)) {
                 continue;
             }
+            $correctNamespace = self::findShortest($correctNamespaces);
 
-            $correctNamespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
             self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
         }
     }
@@ -112,5 +112,17 @@ class CheckNamespaces
         }
 
         return $correctNamespaces;
+    }
+
+    private static function findShortest($correctNamespaces)
+    {
+        // finds the shortest namespace
+        return array_reduce($correctNamespaces, function ($a, $b) {
+            if ($a === null) {
+                return $b;
+            }
+
+            return strlen($a) < strlen($b) ? $a : $b;
+        });
     }
 }
