@@ -23,12 +23,23 @@ class CheckNamespaces
     {
         $autoload = ComposerJson::readAutoload();
 
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            CheckNamespaces::within($psr4Path, $psr4Namespace, $detailed);
+        $scanned = [];
+        foreach ($autoload as $psr4Path) {
+
+            // to avoid duplicate scanning
+            foreach ($scanned as $s) {
+                if (strlen($psr4Path) > strlen($s) && Str::startsWith($psr4Path, $s)) {
+                    continue(2);
+                }
+            }
+
+            $scanned[] = $psr4Path;
+
+            CheckNamespaces::within($psr4Path, $detailed);
         }
     }
 
-    public static function within($composerPath, $composerNamespace, $detailed)
+    public static function within($composerPath, $detailed)
     {
         $paths = FilePath::getAllPhpFiles($composerPath);
 
