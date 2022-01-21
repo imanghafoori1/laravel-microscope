@@ -67,7 +67,7 @@ class ClassRefCorrector
                 if ($response !== false) {
                     $count = 0;
                     $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
-                    $count && $changedLineNums[] = ($lineIndex + 1);
+                    $count && $changedLineNums[] = $lineIndex + 1;
                 }
             }
         }
