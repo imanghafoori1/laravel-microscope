@@ -52,6 +52,7 @@ class FileManipulator
         $isReplaced = false;
 
         $lineNum = 0;
+//        dd($fs::feof($reading));
         while (! $fs::feof($reading)) {
             $lineNum++;
             $line = $fs::fgets($reading);

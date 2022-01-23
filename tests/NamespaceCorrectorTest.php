@@ -86,6 +86,20 @@ class NamespaceCorrectorTest extends BaseTestClass
     }
 
     /** @test */
+    public function fix_namespace_declare()
+    {
+        FileManipulator::$fileSystem = FakeFileSystem::class;
+        FileSystem::$fileSystem = FakeFileSystem::class;
+        $correctNamespace = 'App\Http\Controllers\Foo';
+        NamespaceCorrector::fix(__DIR__.'./stubs/declared_no_namespace.stub', '', $correctNamespace);
+
+        $result1 = strpos(FakeFileSystem::$newVersion, 'namespace App\Http\Controllers\Foo;');
+        $result2 = strpos(FakeFileSystem::$newVersion, 'declare');
+dd( FakeFileSystem::read_file(__DIR__.'./stubs/declared_no_namespace.stub'));
+        $this->assertTrue($result > 0);
+    }
+
+    /** @test */
     public function get_namespace_from_relative_path()
     {
         $result = NamespaceCorrector::getNamespacedClassFromPath('app/Hello.php');
