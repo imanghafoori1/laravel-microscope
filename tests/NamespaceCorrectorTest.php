@@ -2,7 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\FileSystem\FakeFileSystem;
+use Imanghafoori\LaravelMicroscope\FileSystem\FileManipulator;
+use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
 class NamespaceCorrectorTest extends BaseTestClass
@@ -66,6 +70,19 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals(true, NamespaceCorrector::haveSameNamespace($class1, $class2));
         $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, $class3));
         $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, 'Faalse'));
+    }
+
+    /** @test */
+    public function fix_namespace()
+    {
+        FileManipulator::$fileSystem = FakeFileSystem::class;
+        FileSystem::$fileSystem = FakeFileSystem::class;
+        $correctNamespace = 'App\Http\Controllers\Foo';
+        NamespaceCorrector::fix(__DIR__.'./stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
+
+        $result = strpos(FakeFileSystem::$newVersion, 'namespace App\Http\Controllers\Foo;');
+
+        $this->assertTrue($result > 0);
     }
 
     /** @test */
