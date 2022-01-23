@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileSystem\FakeFileSystem;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileManipulator;
@@ -95,7 +94,7 @@ class NamespaceCorrectorTest extends BaseTestClass
 
         $result1 = strpos(FakeFileSystem::$newVersion, 'namespace App\Http\Controllers\Foo;');
         $result2 = strpos(FakeFileSystem::$newVersion, 'declare');
-dd( FakeFileSystem::read_file(__DIR__.'./stubs/declared_no_namespace.stub'));
+        dd(FakeFileSystem::read_file(__DIR__.'./stubs/declared_no_namespace.stub'));
         $this->assertTrue($result > 0);
     }
 

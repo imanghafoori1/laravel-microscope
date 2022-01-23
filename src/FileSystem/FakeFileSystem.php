@@ -26,12 +26,14 @@ class FakeFileSystem
     public static function feof($stream)
     {
         $i = self::$pointers[$stream];
+
         return isset(self::$files[$stream][$i]);
 
         return (bool) current($stream);
-        if (!is_string($stream)) {
+        if (! is_string($stream)) {
             dd($stream);
         }
+
         return (bool) current(self::$files[$stream]);
     }
 
@@ -39,7 +41,7 @@ class FakeFileSystem
     {
         try {
             $lines = file($filename);
-        } catch (\ErrorException $e){
+        } catch (\ErrorException $e) {
             $lines = [];
         }
 
@@ -59,7 +61,9 @@ class FakeFileSystem
     }
 
     public static function fwrite($stream, $data)
-    { dd($stream);
+    {
+        dd($stream);
+
         return self::$files[$stream][] = $data;
     }
 
@@ -74,6 +78,7 @@ class FakeFileSystem
     {
         unset(self::$files[$filename]);
     }
+
     public static function fclose($filename)
     {
 //        unset(self::$files[$filename]);
