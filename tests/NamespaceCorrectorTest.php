@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileSystem\FakeFileSystem;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileManipulator;
