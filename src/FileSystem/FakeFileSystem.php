@@ -53,7 +53,7 @@ class FakeFileSystem
     {
         try {
             $lines = file($filename);
-        } catch (ErrorException $e){
+        } catch (ErrorException $e) {
             $lines = [];
         }
 
@@ -89,6 +89,7 @@ class FakeFileSystem
         unset(self::$files[$filename]);
         unset(self::$pointers[$filename]);
     }
+
     public static function fclose($filename)
     {
         //unset(self::$files[$filename]);
