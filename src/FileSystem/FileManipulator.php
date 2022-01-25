@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileSystem;
 
+use Imanghafoori\TokenAnalyzer\Str;
+
 class FileManipulator
 {
     public static $fileSystem = RealFileSystem::class;
@@ -52,7 +54,6 @@ class FileManipulator
         $isReplaced = false;
 
         $lineNum = 0;
-//        dd($fs::feof($reading));
         while (! $fs::feof($reading)) {
             $lineNum++;
             $line = $fs::fgets($reading);

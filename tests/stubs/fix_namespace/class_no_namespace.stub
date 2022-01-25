@@ -1,0 +1,9 @@
+<?php
+
+use Hello;
+use Mello;
+
+class Felan
+{
+    //
+}
