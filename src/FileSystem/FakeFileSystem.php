@@ -25,16 +25,17 @@ class FakeFileSystem
             return self::$putContent[$absPath];
         }
 
-        if (! in_array($line_endings, ["\r\n", "\n", "\r"], true)) {
-            return implode('', self::$files[$absPath]);
+        if (isset(self::$files[$absPath])) {
+            if (! in_array($line_endings, ["\r\n", "\n", "\r"], true)) {
+                return implode('', self::$files[$absPath]);
+            }
+
+            return self::changeLineEndings(self::$files[$absPath], $line_endings);
         }
 
-        $result = '';
-        foreach (self::$files[$absPath] as $line) {
-            $result .= str_replace(["\r\n", "\n"], $line_endings, $line);
+        if (file_exists($absPath)) {
+            return $line_endings ? self::changeLineEndings(file($absPath), $line_endings) : file_get_contents($absPath);
         }
-
-        return $result;
     }
 
     public static function file_put_contents($absPath, $newVersion)
@@ -94,5 +95,15 @@ class FakeFileSystem
     {
         //unset(self::$files[$filename]);
         //unset(self::$pointers[$filename]);
+    }
+
+    public static function changeLineEndings($fileAsArray, $line_endings)
+    {
+        $result = '';
+        foreach ($fileAsArray as $line) {
+            $result .= str_replace(["\r\n", "\n", "\r"], $line_endings, $line);
+        }
+
+        return $result;
     }
 }
