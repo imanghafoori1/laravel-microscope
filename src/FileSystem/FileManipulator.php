@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileSystem;
 
+use Imanghafoori\TokenAnalyzer\Str;
+
 class FileManipulator
 {
     public static $fileSystem = RealFileSystem::class;
