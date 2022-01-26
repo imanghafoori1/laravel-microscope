@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
+use Imanghafoori\LaravelMicroscope\FileSystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\SearchReplace\Searcher;

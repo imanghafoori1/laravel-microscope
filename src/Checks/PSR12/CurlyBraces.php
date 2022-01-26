@@ -23,7 +23,10 @@ class CurlyBraces
             $i++;
             $token = $tokens[$i];
             \in_array($token[0], [T_CURLY_OPEN, '{'], true) && $level++;
-            ($token[0] === '}') && $level--;
+            if ($token[0] === '}') {
+                $level--;
+                ($isInSideClass === true && $level === 0) && ($isInSideClass = false);
+            }
             if ($level === 0) {
                 if (\in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
                     if ($tokens[$i - 1] !== T_DOUBLE_COLON) {

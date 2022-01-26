@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
+use Imanghafoori\LaravelMicroscope\FileSystem;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
 use Imanghafoori\SearchReplace\Stringify;
