@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
+use Imanghafoori\FileSystem\FakeFileSystem;
 use Imanghafoori\FileSystem\FileManipulator;
 use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\FileSystem\FakeFileSystem;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
 class NamespaceCorrectorTest extends BaseTestClass
