@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Imanghafoori\LaravelMicroscope\FileSystem;
+use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\SearchReplace\Searcher;
-use Imanghafoori\TokenAnalyzer\FileManipulator;
+use Imanghafoori\FileSystem\FileManipulator;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class Fixer

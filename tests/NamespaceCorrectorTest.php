@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 use Imanghafoori\FileSystem\FileManipulator;
 use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\FileSystem\FakeFileSystem;
+use Imanghafoori\FileSystem\FakeFileSystem;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
 class NamespaceCorrectorTest extends BaseTestClass
@@ -107,7 +107,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileSystem::$fileSystem = FakeFileSystem::class;
 
         $from = '';
-        $to = 'App\Http\Controllers\Foo';
+        $to = 'App\Http\Roo';
         NamespaceCorrector::fix(__DIR__.'./stubs/fix_namespace/class_no_namespace.stub', $from, $to);
 
         $result = FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_no_namespace.stub', "\n");
