@@ -22,7 +22,10 @@ class FakeFileSystem
     public static function read_file($absPath, $line_endings = null)
     {
         if (isset(self::$putContent[$absPath])) {
-            return self::$putContent[$absPath];
+            $content = self::$putContent[$absPath];
+            $line_endings && $content = str_replace(["\r\n", "\n", "\r"], $line_endings, $content);
+
+            return $content;
         }
 
         if (isset(self::$files[$absPath])) {

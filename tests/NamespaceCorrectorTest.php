@@ -99,7 +99,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/declared_with_namespace.stub', "\n"));
     }
 
-    /** @tes-t */
+    /** @test */
     public function fix_namespace_class_with_no_namespace()
     {
         FakeFileSystem::reset();
@@ -115,7 +115,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_with_namespace.stub', "\n"));
     }
 
-    /** @te-st */
+    /** @test */
     public function fix_namespace_class_with_bad_namespace()
     {
         // arrange
