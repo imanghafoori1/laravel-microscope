@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Facades\Event;
+use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class ClassRefCorrector
