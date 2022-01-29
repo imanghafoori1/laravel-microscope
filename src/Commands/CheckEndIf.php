@@ -60,7 +60,7 @@ class CheckEndIf extends Command
         if ($fixed > 0) {
             $msg = 'Hooray!, '.$fixed.' files were transformed by the microscope.';
         } else {
-            $msg = 'Congratulations, your code base does not seems to need any fix.';
+            $msg = 'Congratulations, your code base does not seem to need any fix.';
         }
         $this->info(PHP_EOL.$msg);
         $this->info('     \(^_^)/    You Rock    \(^_^)/    ');
