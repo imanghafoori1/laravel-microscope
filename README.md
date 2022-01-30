@@ -161,9 +161,7 @@ You can run:
 Also You will have access to some global helper functions:
  - microscope_dd_listeners($event);
  
- In case you wonder what are the listeners and where are they?! 
- You can use this (0_o) `microscope_dd_listeners(MyEvent::class);`  This call, also can be in `boot` or `register` as well.
-And it works like a normal `dd(...);` meaning that it will halt.
+ In case you wonder what the listeners are and where they are, you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods. It works like a normal `dd(...);` meaning that program stops running at that point.
 
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
