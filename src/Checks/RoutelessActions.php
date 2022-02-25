@@ -5,10 +5,13 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Traits\CorrectNamespace;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 
 class RoutelessActions
 {
+    use CorrectNamespace;
+
     public static function getControllerActions($methods)
     {
         $orphanMethods = [];
@@ -35,16 +38,6 @@ class RoutelessActions
         return $orphanMethods;
     }
 
-    public static function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
-    {
-        $absFilePath = $classFilePath->getRealPath();
-        $className = $classFilePath->getFilename();
-        $relativePath = \str_replace(base_path(), '', $absFilePath);
-        $namespace = NamespaceCorrector::calculateCorrectNamespace($relativePath, $psr4Path, $psr4Namespace);
-
-        return $namespace.'\\'.$className;
-    }
-
     public static function isLaravelController($fullNamespace)
     {
         try {
@@ -53,13 +46,6 @@ class RoutelessActions
             // it means the file does not contain a class or interface.
             return false;
         }
-    }
-
-    public static function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
-    {
-        $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
-
-        return \trim($fullNamespace, '.php');
     }
 
     protected function findOrphanActions($tokens, $fullNamespace)
