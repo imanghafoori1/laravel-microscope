@@ -26,6 +26,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     private static $commandNames = [
+        Commands\CheckFacadeDocblocks::class,
         Commands\CheckEvents::class,
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
