@@ -27,7 +27,7 @@ class FacadeDocblocks
             }
 
             if (! is_string($accessor)) {
-                return ;
+                return;
             }
 
             if (class_exists($accessor) || interface_exists($accessor)) {
