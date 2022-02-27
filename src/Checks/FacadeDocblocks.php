@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
@@ -16,7 +17,7 @@ class FacadeDocblocks
     public static function check($tokens, $absFilePath, SplFileInfo $classFilePath, $psr4Path, $psr4Namespace)
     {
         $class = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
-
+        $printer = app(ErrorPrinter::class);
         if (class_exists($class) && is_subclass_of($class, Facade::class)) {
             $cb = (function ($class) {
                 return $class::getFacadeAccessor();
@@ -33,7 +34,13 @@ class FacadeDocblocks
             }
 
             if (! class_exists($accessor) && ! interface_exists($accessor)) {
-                $accessor = get_class($class::getFacadeRoot());
+                try {
+                    $accessor = get_class($class::getFacadeRoot());
+                } catch (\Exception $e) {
+                    $printer->wrongUsedClassError($absFilePath, $accessor, '');
+
+                    return;
+                }
             }
             self::AddDocBlocks($accessor, $class, $tokens, $classFilePath);
         }
