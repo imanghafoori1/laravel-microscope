@@ -32,7 +32,7 @@ class FacadeDocblocks
                 return;
             }
 
-            if (!class_exists($accessor) && !interface_exists($accessor)) {
+            if (! class_exists($accessor) && ! interface_exists($accessor)) {
                 $accessor = get_class($class::getFacadeRoot());
             }
             self::AddDocBlocks($accessor, $class, $tokens, $classFilePath);
