@@ -56,10 +56,12 @@ class FacadeDocblocks
         [$newVersion, $lines] = Searcher::searchReplace([
             'fix' => [
                 'search' => "'<doc_block>?''<white_space>?'class ".$className.' extends',
-                'replace' => "'<2>'".$docblocks."\n".'class '.$className.' extends',
+                'replace' => $docblocks."'<2>'".'class '.$className.' extends',
             ],
         ], $tokens);
 
-        FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
+        if (FileSystem::$fileSystem::file_get_contents($classFilePath) !== $newVersion) {
+            FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
+        }
     }
 }
