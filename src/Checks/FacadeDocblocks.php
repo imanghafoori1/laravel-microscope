@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\FileSystem\FileSystem;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -42,6 +43,7 @@ class FacadeDocblocks
                     return;
                 }
             }
+
             self::AddDocBlocks($accessor, $class, $tokens, $classFilePath);
         }
     }
@@ -55,12 +57,13 @@ class FacadeDocblocks
         // replacement
         [$newVersion, $lines] = Searcher::searchReplace([
             'fix' => [
-                'search' => "'<doc_block>?''<white_space>?'class ".$className.' extends',
-                'replace' => $docblocks."'<2>'".'class '.$className.' extends',
+                'search' => "'<white_space>?''<doc_block>?''<white_space>?'class ".$className.' extends',
+                'replace' => "'<1>'".$docblocks."\n".'class '.$className.' extends',
             ],
         ], $tokens);
 
         if (FileSystem::$fileSystem::file_get_contents($classFilePath) !== $newVersion) {
+            Event::dispatch('microscope.facade.docblocked', [$class, $classFilePath]);
             FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
         }
     }

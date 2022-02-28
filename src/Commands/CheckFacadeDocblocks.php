@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\Checks\FacadeDocblocks;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -23,12 +24,11 @@ class CheckFacadeDocblocks extends Command
 
         $errorPrinter->printer = $this->output;
 
-        ForPsr4LoadedClasses::check([
-            FacadeDocblocks::class,
-        ]);
+        Event::listen('microscope.facade.docblocked', function ($class) {
+            $this->line('- Fixed Docs for: "'.$class.'"');
+        });
 
-        $this->finishCommand($errorPrinter);
-        $this->getOutput()->writeln(' - ');
+        ForPsr4LoadedClasses::check([FacadeDocblocks::class]);
 
         $errorPrinter->printTime();
 
