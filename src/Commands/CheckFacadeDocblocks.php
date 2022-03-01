@@ -32,7 +32,6 @@ class CheckFacadeDocblocks extends Command
             app(ErrorPrinter::class)->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
         });
 
-
         ForPsr4LoadedClasses::check([FacadeDocblocks::class]);
 
         $errorPrinter->printTime();
