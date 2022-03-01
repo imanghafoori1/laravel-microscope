@@ -25,12 +25,18 @@ class CheckFacadeDocblocks extends Command
         $errorPrinter->printer = $this->output;
 
         Event::listen('microscope.facade.docblocked', function ($class) {
-            $this->line('- Fixed Docs for: "'.$class.'"');
+            $this->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
         });
+
+        Event::listen('microscope.facade.accessor_error', function ($accessor, $absFilePath) {
+            app(ErrorPrinter::class)->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
+        });
+
 
         ForPsr4LoadedClasses::check([FacadeDocblocks::class]);
 
         $errorPrinter->printTime();
+        $errorPrinter->logErrors();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
