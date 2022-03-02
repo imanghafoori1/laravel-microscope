@@ -37,14 +37,18 @@ class ComposerJson
         foreach (self::readKey('repositories') as $repo) {
             if (isset($repo['type']) && $repo['type'] === 'path') {
                 // here we exclude local packages outside of the root folder.
-                ! Str::contains($repo['url'], '../') && $composers[] = \trim(\trim($repo['url'], '.'), '/').DIRECTORY_SEPARATOR.'';
+                ! Str::contains($repo['url'], '../') && $dirPath = \trim(\trim($repo['url'], '.'), '/').DIRECTORY_SEPARATOR.'';
+                if (file_exists($dirPath.'composer.json')) {
+                    $composers[] = $dirPath;
+                }
             }
         }
-
         $result = [];
+
         foreach ($composers as $path) {
             // We avoid autoload-dev for repositories.
             $result = $result + self::readKey('autoload.psr-4', $path);
+
         }
 
         // add the root composer.json
@@ -92,7 +96,7 @@ class ComposerJson
         $fullPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
 
         // ensure it does not end with slash
-        $fullPath = self::$composerPath = rtrim($fullPath, DIRECTORY_SEPARATOR);
+        $fullPath = rtrim($fullPath, DIRECTORY_SEPARATOR);
 
         if (! isset(self::$result[$fullPath])) {
             self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath.'/composer.json'), true);
