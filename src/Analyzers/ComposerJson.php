@@ -48,7 +48,6 @@ class ComposerJson
         foreach ($composers as $path) {
             // We avoid autoload-dev for repositories.
             $result = $result + self::readKey('autoload.psr-4', $path);
-
         }
 
         // add the root composer.json
