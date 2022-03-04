@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
+use Exception;
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
 
 class FilePath
@@ -55,7 +55,7 @@ class FilePath
         $basePath === null && $path = base_path($path);
         try {
             return Finder::create()->files()->name('*.php')->in($basePath.$path);
-        } catch (DirectoryNotFoundException $e) {
+        } catch (Exception $e) {
             return [];
         }
     }

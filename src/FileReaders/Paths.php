@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
-use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
+use Exception;
 use Symfony\Component\Finder\Finder;
 
 class Paths
@@ -22,7 +22,7 @@ class Paths
             }
 
             return $paths;
-        } catch (DirectoryNotFoundException $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
