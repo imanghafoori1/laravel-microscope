@@ -11,7 +11,7 @@ class CheckClassReferences
 
     public static function check($tokens, $absPath)
     {
-        [$classes,] = ParseUseStatement::findClassReferences($tokens, $absPath);
+        [$classes,] = ParseUseStatement::findClassReferences($tokens);
 
         $printer = app(ErrorPrinter::class);
         foreach ($classes as $class) {

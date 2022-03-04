@@ -56,12 +56,7 @@ class CheckPsr4 extends Command
         CheckNamespaces::all($this->option('detailed'));
         ClassRefCorrector::fixAllRefs($onFix);
 
-        if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->reportResult();
-            $this->printErrorsCount($errorPrinter, $time);
-        } else {
-            $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
-        }
+        $this->printReport($errorPrinter, $time);
 
         $this->composerDumpIfNeeded($errorPrinter);
 
@@ -109,5 +104,15 @@ class CheckPsr4 extends Command
         $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
         $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
         $this->line('');
+    }
+
+    private function printReport($errorPrinter, $time)
+    {
+        if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
+            $this->reportResult();
+            $this->printErrorsCount($errorPrinter, $time);
+        } else {
+            $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
+        }
     }
 }
