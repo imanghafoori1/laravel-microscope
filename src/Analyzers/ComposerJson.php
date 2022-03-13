@@ -61,13 +61,14 @@ class ComposerJson
 
     private static function normalizePaths($value, $path)
     {
+        $path && $path = Str::finish($path, '/');
         foreach ($value as $namespace => $_path) {
             if (is_array($_path)) {
                 foreach ($_path as $i => $p) {
-                    $value[$namespace][$i] = $path.Str::finish($p, '/');
+                    $value[$namespace][$i] = str_replace('//', '/', $path.Str::finish($p, '/'));
                 }
             } else {
-                $value[$namespace] = $path.Str::finish($_path, '/');
+                $value[$namespace] = str_replace('//', '/', $path.Str::finish($_path, '/'));
             }
         }
 
