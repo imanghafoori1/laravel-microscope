@@ -36,10 +36,13 @@ class ComposerJson
         $composers = [];
         foreach (self::readKey('repositories') as $repo) {
             if (isset($repo['type']) && $repo['type'] === 'path') {
-                // here we exclude local packages outside of the root folder.
-                ! Str::contains($repo['url'], '../') && $dirPath = \trim(\trim($repo['url'], '.'), '/').DIRECTORY_SEPARATOR.'';
-                if (file_exists($dirPath.'composer.json')) {
-                    $composers[] = $dirPath;
+                // here we exclude local packages outside the root folder.
+                if (! Str::contains($repo['url'], '../')) {
+                    $dirPath = \trim(\trim($repo['url'], '.'), '/\\');
+                    // sometimes php can not detect relative paths, so we use the absolute path here.
+                    if (file_exists(base_path($dirPath.DIRECTORY_SEPARATOR.'composer.json'))) {
+                        $composers[] = $dirPath;
+                    }
                 }
             }
         }

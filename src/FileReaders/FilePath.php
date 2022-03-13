@@ -52,7 +52,7 @@ class FilePath
      */
     public static function getAllPhpFiles($path, $basePath = '')
     {
-        $basePath === null && $path = base_path($path);
+        $basePath === '' && $path = base_path($path);
         try {
             return Finder::create()->files()->name('*.php')->in($basePath.$path);
         } catch (Exception $e) {
