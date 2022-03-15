@@ -10,7 +10,7 @@ class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($checkers)
+    public static function check(array $checkers)
     {
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
@@ -31,7 +31,7 @@ class BladeFiles
         return $hints;
     }
 
-    public static function checkPaths($paths, $checkers)
+    public static function checkPaths(array $paths,array $checkers)
     {
         foreach ($paths as $path) {
             if (! is_dir($path)) {
