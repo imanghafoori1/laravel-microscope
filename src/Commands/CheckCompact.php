@@ -93,7 +93,14 @@ class CheckCompact extends Command
 
     private function collectSignatureVars($tokens, $i)
     {
-        [, $signatures,] = Ifs::readCondition($tokens, $i);
+        [, $signatures,$conditionCloseIndex] = Ifs::readCondition($tokens, $i);
+        [$nextToken, $startNextToken] = TokenManager::getNextToken($tokens, $conditionCloseIndex);
+
+        if ($nextToken[0] == T_USE) {
+            [, $useBodySignatures,] = Ifs::readCondition($tokens, $startNextToken);
+
+            $signatures = array_merge($useBodySignatures, $signatures);
+        }
 
         $vars = [];
         foreach ($signatures as $sig) {
