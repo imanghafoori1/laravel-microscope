@@ -33,22 +33,9 @@ class ComposerJson
 
     public static function readAutoload()
     {
-        $composers = [];
-        foreach (self::readKey('repositories') as $repo) {
-            if (isset($repo['type']) && $repo['type'] === 'path') {
-                // here we exclude local packages outside the root folder.
-                if (! Str::contains($repo['url'], '../')) {
-                    $dirPath = \trim(\trim($repo['url'], '.'), '/\\');
-                    // sometimes php can not detect relative paths, so we use the absolute path here.
-                    if (file_exists(base_path($dirPath.DIRECTORY_SEPARATOR.'composer.json'))) {
-                        $composers[] = $dirPath;
-                    }
-                }
-            }
-        }
         $result = [];
 
-        foreach ($composers as $path) {
+        foreach (self::collectLocalRepos() as $path) {
             // We avoid autoload-dev for repositories.
             $result = $result + self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
         }
@@ -106,5 +93,28 @@ class ComposerJson
         }
 
         return self::$result[$fullPath];
+    }
+
+    public static function collectLocalRepos()
+    {
+        $composers = [];
+
+        foreach (self::readKey('repositories') as $repo) {
+            if (! isset($repo['type']) || $repo['type'] !== 'path') {
+                continue;
+            }
+
+            // here we exclude local packages outside the root folder.
+            if (Str::contains($repo['url'], '../')) {
+                continue;
+            }
+            $dirPath = \trim(\trim($repo['url'], '.'), '/\\');
+            // sometimes php can not detect relative paths, so we use the absolute path here.
+            if (file_exists(base_path($dirPath.DIRECTORY_SEPARATOR.'composer.json'))) {
+                $composers[] = $dirPath;
+            }
+        }
+
+        return $composers;
     }
 }
