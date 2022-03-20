@@ -99,6 +99,7 @@ class ActionsComments
         $file = $callsite[0]['file'] ?? '';
         $line = $callsite[0]['line'] ?? '';
         $file = \trim(str_replace(base_path(), '', $file), '\\/');
+        $file = str_replace('\\', '/', $file);
 
         return [$file, $line];
     }

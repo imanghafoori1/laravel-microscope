@@ -28,8 +28,6 @@ class CheckActionComments extends Command
         ActionsComments::$controllers = self::findDefinedRouteActions();
         ForPsr4LoadedClasses::check([ActionsComments::class]);
 
-        //$this->finishCommand($errorPrinter);
-
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
@@ -37,9 +35,10 @@ class CheckActionComments extends Command
     {
         $results = [];
         foreach (app('router')->getRoutes()->getRoutes() as $route) {
-            if (is_string($route->action['uses'] ?? null)) {
-                $r = Str::parseCallback($route->action['uses']);
-                $results[$r[0]] = $r[1];
+            $uses = $route->action['uses'] ?? null;
+            if (is_string($uses) && Str::contains($uses, '@')) {
+                [$class, $method] = Str::parseCallback($uses);
+                $results[$class] = $method;
             }
         }
 
