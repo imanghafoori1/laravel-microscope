@@ -71,7 +71,14 @@ class RoutelessActions
         foreach ($methods as $method) {
             $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
 
-            if (! app('router')->getRoutes()->getByAction($classAtMethod)) {
+            // For __invoke, we will also check to see if the route is defined like this:
+            // Route::get('/', [Controller::class, '__invoke']);
+            // Route::get('/', Controller::class);
+            if (
+                ! app('router')->getRoutes()->getByAction($classAtMethod)
+                && $method['name'][1] === '__invoke'
+                && ! app('router')->getRoutes()->getByAction($classAtMethod.'@__invoke')
+            ) {
                 $line = $method['name'][2];
                 $routelessActions[] = [$line, $classAtMethod];
             }
