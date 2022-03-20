@@ -9,6 +9,8 @@ class ActionsComments
 {
     public static $command;
 
+    public static $controllers = [];
+
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
     {
         self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens);
@@ -16,23 +18,18 @@ class ActionsComments
 
     public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens)
     {
-//        $errorPrinter = resolve(ErrorPrinter::class);
         $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
-        if (RoutelessActions::isLaravelController($fullNamespace)) {
-            $actions = self::checkActions($tokens, $fullNamespace, $classFilePath);
-
-            /*foreach ($actions as $action) {
-                $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
-            }*/
+        if (isset(static::$controllers[trim($fullNamespace, '\\')])) {
+            self::checkActions($tokens, $fullNamespace, $classFilePath);
         }
     }
 
     protected static function checkActions($tokens, $fullNamespace, $path)
     {
-        $class = ClassMethods::read($tokens);
+        $methods = ClassMethods::read($tokens)['methods'];
 
-        $methods = RoutelessActions::getControllerActions($class['methods']);
+        $methods = RoutelessActions::getControllerActions($methods);
         $routelessActions = [];
         $shouldSave = false;
 
@@ -48,13 +45,13 @@ class ActionsComments
              */
             $methods = $route->methods();
             ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
-            $msg = self::getMsg($methods, $route);
+            $msg = rtrim(self::getMsg($methods, $route));
 
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
                 $shouldSave = true;
-                $tokens[$commentIndex][1] = "\n        ".$msg.$tokens[$commentIndex][1];
+                $tokens[$commentIndex][1] = "\n       ".$msg.$tokens[$commentIndex][1];
             } elseif ($msg !== $tokens[$commentIndex + 1][1]) {
                 // if the docblock is there, but needs update...
                 $shouldSave = true;
@@ -78,6 +75,11 @@ class ActionsComments
         $routeName = $route->getName() ?: '';
         $middlewares = self::gatherMiddlewares($route);
         [$file, $line] = self::getCallsiteInfo($methods[0], $route);
+        $url = $route->uri();
+
+        if (($url[0] ?? '') !== '/') {
+            $url = '/'.$url;
+        }
 
         $viewData = [
             'middlewares' => $middlewares,
@@ -85,7 +87,7 @@ class ActionsComments
             'file' => $file,
             'line' => $line,
             'methods' => $methods,
-            'url' => $route->uri(),
+            'url' => $url,
         ];
 
         return view(config('microscope.action_comment_template', 'microscope_package::action_comment'), $viewData)->render();
