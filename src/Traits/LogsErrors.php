@@ -26,6 +26,8 @@ trait LogsErrors
             $errorCount && $this->warn(PHP_EOL.$errorCount.' errors found for '.$commandType);
 
             $errorPrinter->logErrors();
+        } elseif (property_exists($this, 'customMsg')) {
+            $this->info(PHP_EOL.$this->customMsg);
         } else {
             $this->info(PHP_EOL.'All '.$commandType.' are correct!');
         }
