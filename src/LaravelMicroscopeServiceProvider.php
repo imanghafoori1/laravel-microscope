@@ -179,7 +179,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function canRun()
     {
-        return $this->app->runningInConsole() && config('microscope.is_enabled', true) && ! $this->app->runningUnitTests() && app()['env'] !== 'production';
+        return $this->app->runningInConsole() && config('microscope.is_enabled', true) && app()['env'] !== 'production';
     }
 
     public function getActionName()
