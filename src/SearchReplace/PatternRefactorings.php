@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
-use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;

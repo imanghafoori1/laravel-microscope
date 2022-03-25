@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Imanghafoori\FileSystem\FileManipulator;
-use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\Str;

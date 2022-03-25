@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
-use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;

@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Imanghafoori\FileSystem\FileManipulator;
-use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\Filesystem\FileManipulator;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\SearchReplace\Searcher;
@@ -52,7 +52,7 @@ class Fixer
         // insert a new import at the top
         $lineNum = array_values($uses)[0][1]; // first use statement
 
-        return [FileManipulator::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
+        return [FileManipulator::insertNewLine($absPath, "use $fullClassPath;", $lineNum), $correct];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
@@ -86,7 +86,7 @@ class Fixer
             ],
         ], $tokens);
 
-        FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
+        Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return $lines;
     }
@@ -104,7 +104,7 @@ class Fixer
                 'replace' => $classBaseName,
             ],
         ], $tokens);
-        FileSystem::$fileSystem::file_put_contents($absPath, $newVersion);
+        Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
 
         return (bool) $lines;
     }
