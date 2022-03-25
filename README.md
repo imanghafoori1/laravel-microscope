@@ -905,3 +905,9 @@ Albert einstein
 [link-downloads]: https://packagist.org/packages/imanghafoori/laravel-microscope/stats
 [link-author]: https://github.com/imanghafoori1
 [link-contributors]: ../../contributors
+
+
+## ❤️ Contributors
+
+This project exists thanks to all the people who contribute. [[Contributors](https://github.com/imanghafoori1/laravel-microscope/graphs/contributors)].
+<a href="https://github.com/imanghafoori1/laravel-microscope/graphs/contributors"><img src="https://opencollective.com/laravel-microscope/contributors.svg?width=890&button=false" /></a>
