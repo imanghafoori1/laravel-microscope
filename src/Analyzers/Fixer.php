@@ -52,7 +52,7 @@ class Fixer
         // insert a new import at the top
         $lineNum = array_values($uses)[0][1]; // first use statement
 
-        return [FileManipulator::insertNewLine($absPath, "use $fullClassPath;", $lineNum), $correct];
+        return [FileManipulator::insertAtLine($absPath, "use $fullClassPath;", $lineNum), $correct];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
