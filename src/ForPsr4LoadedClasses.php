@@ -45,7 +45,7 @@ class ForPsr4LoadedClasses
             ComposerJson::$composerPath => $psr4,
         ];
 
-        ComposerJson::$composerPath = base_path('vendor/laravel/framework');
+        ComposerJson::$composerPath = base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'.DIRECTORY_SEPARATOR.'framework');
         $psr4_ = ComposerJson::readAutoload();
         $composerFiles[ComposerJson::$composerPath] = $psr4_;
         ComposerJson::$composerPath = null;

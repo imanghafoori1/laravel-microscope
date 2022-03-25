@@ -19,7 +19,7 @@ class CheckClassReferencesAreValid
         } catch (\ErrorException $e) {
             // In case a file is moved or deleted,
             // composer will need a dump autoload.
-            if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
+            if (! Str::endsWith($e->getFile(), 'vendor'.DIRECTORY_SEPARATOR.'composer'.DIRECTORY_SEPARATOR.'ClassLoader.php')) {
                 throw $e;
             }
 
