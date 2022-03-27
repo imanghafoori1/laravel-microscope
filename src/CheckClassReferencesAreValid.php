@@ -19,7 +19,7 @@ class CheckClassReferencesAreValid
         } catch (\ErrorException $e) {
             // In case a file is moved or deleted,
             // composer will need a dump autoload.
-            if (! Str::endsWith($e->getFile(), 'vendor'.DIRECTORY_SEPARATOR.'composer'.DIRECTORY_SEPARATOR.'ClassLoader.php')) {
+            if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
                 throw $e;
             }
 
@@ -192,6 +192,12 @@ class CheckClassReferencesAreValid
         foreach ($classReferences as $classReference) {
             $class = $classReference['class'];
             $line = $classReference['line'];
+
+            if (! self::isAbsent($class) || \function_exists($class)) {
+                continue;
+            }
+
+            require_once $absFilePath;
 
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
