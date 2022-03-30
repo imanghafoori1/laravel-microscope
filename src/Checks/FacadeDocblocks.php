@@ -54,7 +54,7 @@ class FacadeDocblocks
         }
 
         if ($_methods === []) {
-            return ;
+            return;
         }
 
         $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($_methods).'/';
