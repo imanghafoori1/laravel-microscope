@@ -9,6 +9,8 @@ use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
 use Symfony\Component\Finder\SplFileInfo;
+use ReflectionClass;
+use ReflectionMethod;
 
 class FacadeDocblocks
 {
@@ -44,7 +46,14 @@ class FacadeDocblocks
 
     private static function addDocBlocks(string $accessor, $class, $tokens, SplFileInfo $classFilePath)
     {
-        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getMethodsDocblock($accessor).'/';
+        $publicMethods = (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        $m = [];
+        foreach ($publicMethods as $method) {
+            method_exists($class, $method->getName()) && $m[] = $method;
+        }
+
+        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($m).'/';
 
         $s = explode('\\', $class);
         $className = array_pop($s);
