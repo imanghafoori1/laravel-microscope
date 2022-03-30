@@ -8,9 +8,9 @@ use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
-use Symfony\Component\Finder\SplFileInfo;
 use ReflectionClass;
 use ReflectionMethod;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FacadeDocblocks
 {
