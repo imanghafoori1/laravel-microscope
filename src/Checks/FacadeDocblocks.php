@@ -44,23 +44,27 @@ class FacadeDocblocks
         self::addDocBlocks($accessor, $facade, $tokens, $classFilePath);
     }
 
-    private static function addDocBlocks(string $accessor, $class, $tokens, SplFileInfo $classFilePath)
+    private static function addDocBlocks(string $accessor, $facade, $tokens, SplFileInfo $classFilePath)
     {
         $publicMethods = (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        $m = [];
+        $_methods = [];
         foreach ($publicMethods as $method) {
-            method_exists($class, $method->getName()) && $m[] = $method;
+            ! method_exists($facade, $method->getName()) && $_methods[] = $method;
         }
 
-        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($m).'/';
+        if ($_methods === []) {
+            return ;
+        }
 
-        $s = explode('\\', $class);
+        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($_methods).'/';
+
+        $s = explode('\\', $facade);
         $className = array_pop($s);
         $newVersion = self::injectDocblocks($className, $docblocks, $tokens);
 
         if (FileSystem::$fileSystem::file_get_contents($classFilePath) !== $newVersion) {
-            Event::dispatch('microscope.facade.docblocked', [$class, $classFilePath]);
+            Event::dispatch('microscope.facade.docblocked', [$facade, $classFilePath]);
             FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
         }
     }
