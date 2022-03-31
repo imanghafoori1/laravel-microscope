@@ -64,6 +64,7 @@ class ForPsr4LoadedClasses
                         $relativePath = \str_replace($baseComposerPath, '', $classFilePath->getRealPath());
 
                         $composerPath = \str_replace('/', '\\', $psr4Path);
+                        $relativePath = \str_replace('/', '\\', $relativePath);
 
                         // replace composer base_path with composer namespace
                         /**
