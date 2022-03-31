@@ -53,7 +53,7 @@ class ForPsr4LoadedClasses
         foreach ($composerFiles as $baseComposerPath => $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
-                    $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath.'/');
+                    $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath);
 
                     foreach ($files as $classFilePath) {
                         $fileName = $classFilePath->getFilename();
@@ -61,7 +61,7 @@ class ForPsr4LoadedClasses
                             continue;
                         }
 
-                        $relativePath = \str_replace($baseComposerPath, '', $classFilePath->getRealPath());
+                        $relativePath = \str_replace($baseComposerPath ?: base_path(), '', $classFilePath->getRealPath());
 
                         $composerPath = \str_replace('/', '\\', $psr4Path);
                         $relativePath = \str_replace('/', '\\', $relativePath);
