@@ -47,7 +47,7 @@ class NamespaceCorrector
             $i = 2;
             while ($tokens[$i++] !== ';') {
             }
-            FileManipulator::insertAtLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2] + 1);
+            FileManipulator::insertNewLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2] + 1);
         }
     }
 
