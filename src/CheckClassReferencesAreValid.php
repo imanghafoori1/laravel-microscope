@@ -207,7 +207,7 @@ class CheckClassReferencesAreValid
             unset($class);
 
             if (! ComposerJson::isInUserSpace($wrongClassRef)) {
-                $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Class does not exist:');
+                $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
                 continue;
             }
 

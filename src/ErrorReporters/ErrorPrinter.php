@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Symfony\Component\Console\Terminal;
 
 class ErrorPrinter
 {
@@ -146,7 +147,7 @@ class ErrorPrinter
 
     public function yellow($msg)
     {
-        return "<fg=yellow>$msg</>";
+        return "<fg=gray>$msg</>";
     }
 
     public function fixedNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
@@ -158,14 +159,18 @@ class ErrorPrinter
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
-    public function print($msg, $path = '|  ', $len = null)
+    public function print($msg, $path = '|  ', $len = null, $msgLen = null)
     {
         $len === null && $len = PendingError::$maxLength + 1;
 
-        $msgLen = strlen($msg);
+        ! $msgLen && $msgLen = strlen($msg);
         if (strpos($msg, 'yellow')) {
             $msgLen = $msgLen - 14;
         }
+        if (strpos($msg, 'gray')) {
+            $msgLen = $msgLen - 12;
+        }
+
         $len = $len - $msgLen;
         if ($len < 0) {
             $len = 0;
@@ -184,17 +189,18 @@ class ErrorPrinter
         $number = ++$this->errorsList['total'];
         ($number < 10) && $number = " $number";
 
-        $number = '<fg=yellow>'.$number.' </>';
+        $number = '<fg=bright-cyan>'.$number.' </>';
         $path = "| $number";
 
-        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
+        PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
         $this->print('');
-        $this->print($msg, $path, PendingError::$maxLength - 1);
+        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg)); 
     }
 
     public function end()
     {
-        $this->printer->writeln('|'.str_repeat('*', 3 + PendingError::$maxLength).'|');
+        $this->printer->writeln('|'.'<fg=blue>'.str_repeat('*', 3 + PendingError::$maxLength).'</>'.'|');
     }
 
     public function printLink($path, $lineNumber = 4, $len = null)
