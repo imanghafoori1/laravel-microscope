@@ -73,7 +73,7 @@ class ClassRefCorrector
         }
 
         // saves the file into disk.
-        $changedLineNums && FileSystem::$fileSystem::file_put_contents($_path, \implode('', $lines));
+        $changedLineNums && Filesystem::$fileSystem::file_put_contents($_path, \implode('', $lines));
 
         return $changedLineNums;
     }

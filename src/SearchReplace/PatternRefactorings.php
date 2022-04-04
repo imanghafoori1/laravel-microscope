@@ -96,7 +96,7 @@ class PatternRefactorings
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::askToRefactor($absFilePath)) {
-            FileSystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
+            Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
             $tokens = $newTokens;
         }
 

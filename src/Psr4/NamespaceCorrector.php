@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-use Imanghafoori\FileSystem\FileManipulator;
+use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
@@ -38,7 +38,7 @@ class NamespaceCorrector
                     'replace' => 'namespace '.$newline.';',
                 ],
             ], $tokens);
-            FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
+            Filesystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
         } elseif ($tokens[2][0] !== T_DECLARE) {
             // insertion
             FileManipulator::replaceFirst($classFilePath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);

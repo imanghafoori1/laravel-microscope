@@ -63,9 +63,9 @@ class FacadeDocblocks
         $className = array_pop($s);
         $newVersion = self::injectDocblocks($className, $docblocks, $tokens);
 
-        if (FileSystem::$fileSystem::file_get_contents($classFilePath) !== $newVersion) {
+        if (Filesystem::$fileSystem::file_get_contents($classFilePath) !== $newVersion) {
             Event::dispatch('microscope.facade.docblocked', [$facade, $classFilePath]);
-            FileSystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
+            Filesystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
         }
     }
 
