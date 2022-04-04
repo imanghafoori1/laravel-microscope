@@ -195,7 +195,7 @@ class ErrorPrinter
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
         PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
         $this->print('');
-        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg)); 
+        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg));
     }
 
     public function end()
