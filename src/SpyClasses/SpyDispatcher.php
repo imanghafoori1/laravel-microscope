@@ -87,12 +87,17 @@ class SpyDispatcher extends Dispatcher
             return $this->error($this->noMethod($event, $listenerClass, $methodName));
         }
 
-        $typeHintClassPath = $this->getTypeHintedClass($listenerObj, $methodName);
+        $typeHintClassPath = $this->getTypeHintedClasses($listenerObj, $methodName);
 
         $eventName = $this->stringify($event);
 
         if (class_exists($eventName) && $typeHintClassPath) {
-            if ($eventName !== $typeHintClassPath && ! is_subclass_of($eventName, $typeHintClassPath)) {
+            if (! in_array($eventName, $typeHintClassPath)) {
+                foreach ($typeHintClassPath as $p) {
+                    if (is_subclass_of($eventName, $p)) {
+                        return null;
+                    }
+                }
                 return $this->error('The type hint on the listener: '.$listener.' does not match the event class path.');
             }
         }
@@ -119,12 +124,24 @@ class SpyDispatcher extends Dispatcher
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
     }
 
-    protected function getTypeHintedClass($listenerObj, $methodName)
+    protected function getTypeHintedClasses($listenerObj, $methodName)
     {
         try {
             $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
             $typeHint = $ref->getType();
+            if ($typeHint) {
+                if (method_exists($typeHint, 'getTypes')) {
+                    $types = $typeHint->getTypes();
+                    $names = [];
+                    foreach ($types as $t) {
+                        $names[] = $t->getName();
+                    }
+                } else {
+                    $names = [$typeHint->getName()];
+                }
 
+                return $names;
+            }
             return $typeHint ? $typeHint->getName() : null;
         } catch (\Exception $e) {
             return null;
