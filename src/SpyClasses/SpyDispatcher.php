@@ -98,6 +98,7 @@ class SpyDispatcher extends Dispatcher
                         return null;
                     }
                 }
+
                 return $this->error('The type hint on the listener: '.$listener.' does not match the event class path.');
             }
         }
@@ -142,6 +143,7 @@ class SpyDispatcher extends Dispatcher
 
                 return $names;
             }
+
             return $typeHint ? $typeHint->getName() : null;
         } catch (\Exception $e) {
             return null;
