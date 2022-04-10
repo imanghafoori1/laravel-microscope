@@ -144,7 +144,7 @@ class SpyDispatcher extends Dispatcher
                 return $names;
             }
 
-            return $typeHint ? $typeHint->getName() : null;
+            return null;
         } catch (\Exception $e) {
             return null;
         }
