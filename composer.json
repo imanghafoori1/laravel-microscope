@@ -25,8 +25,8 @@
         "laravel/framework": "5.*|6.*|7.*|8.*|9.*"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0",
-        "phpunit/phpunit": "^8.0"
+        "orchestra/testbench": "^7.0",
+        "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
         "files": [
