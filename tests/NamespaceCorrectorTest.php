@@ -77,9 +77,9 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileManipulator::$fileSystem = FakeFileSystem::class;
         FileSystem::$fileSystem = FakeFileSystem::class;
         $correctNamespace = 'App\Http\Controllers\Foo';
-        NamespaceCorrector::fix(__DIR__.'./stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
+        NamespaceCorrector::fix(__DIR__.'/stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
 
-        $result = strpos(FakeFileSystem::read_file(__DIR__.'./stubs/PostController.stub'), 'namespace App\Http\Controllers\Foo;');
+        $result = strpos(FakeFileSystem::read_file(__DIR__.'/stubs/PostController.stub'), 'namespace App\Http\Controllers\Foo;');
 
         $this->assertTrue($result > 0);
     }
@@ -92,11 +92,12 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileSystem::$fileSystem = FakeFileSystem::class;
         $from = '';
         $to = 'App\Http\Controllers\Foo';
-        NamespaceCorrector::fix(__DIR__.'./stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
 
-        $result = FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/declared_no_namespace.stub', "\n");
+        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
 
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/declared_with_namespace.stub', "\n"));
+        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', "\n");
+
+        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_with_namespace.stub', "\n"));
     }
 
     /** @test */
@@ -107,12 +108,12 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileSystem::$fileSystem = FakeFileSystem::class;
 
         $from = '';
-        $to = 'App\Http\Controllers\Foo';
-        NamespaceCorrector::fix(__DIR__.'./stubs/fix_namespace/class_no_namespace.stub', $from, $to);
+        $to = 'App\Http\Roo';
+        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', $from, $to);
 
-        $result = FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_no_namespace.stub', "\n");
+        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', "\n");
 
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_with_namespace.stub', "\n"));
+        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n"));
     }
 
     /** @test */
@@ -126,11 +127,11 @@ class NamespaceCorrectorTest extends BaseTestClass
         // act
         $from = 'App\Http\Controllers\Foo';
         $to = 'App\Http\Roo';
-        NamespaceCorrector::fix(__DIR__.'./stubs/fix_namespace/class_with_namespace.stub', $from, $to);
+        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', $from, $to);
 
         // assert
-        $result = FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_with_namespace.stub', "\n");
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'./stubs/fix_namespace/class_with_namespace_2.stub', "\n"));
+        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n");
+        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace_2.stub', "\n"));
     }
 
     /** @test */
