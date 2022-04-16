@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\FileSystem\FileSystem;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\Str;
 
