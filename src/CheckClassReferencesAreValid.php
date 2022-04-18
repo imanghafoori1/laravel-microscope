@@ -258,4 +258,11 @@ class CheckClassReferencesAreValid
             return [[], ''];
         }
     }
+
+    private static function requestIssue(string $path)
+    {
+        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
+        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
+        dump('Send us the contents of: '.$path);
+    }
 }
