@@ -12,8 +12,8 @@ class FunctionCallTest extends BaseTestClass
         $tokens = token_get_all(file_get_contents(__DIR__.'/stubs/function_test/some_function.sub'));
 
         $index = null;
-        foreach($tokens as $i => $token) {
-            if( $index = FunctionCall::isGlobalCall('dd', $tokens, $i)) {
+        foreach ($tokens as $i => $token) {
+            if ($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) {
                 break;
             }
         }
