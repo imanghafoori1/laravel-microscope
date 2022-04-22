@@ -1,0 +1,14 @@
+<?php
+
+namespace Imanghafoori\LaravelMicroscope\Tests\stubs;
+
+
+class SomeFunction{
+
+
+    public function _1(){
+        var_dump("hello");
+        dd("hello");
+    }
+
+}
