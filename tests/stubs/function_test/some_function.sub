@@ -11,4 +11,21 @@ class SomeFunction{
         dd("hello");
     }
 
+
+    public function _2(){
+        fn() => array_sum ( 
+            [6, 9] 
+        );
+
+        array_push([8 , 9 , array_sum([8 , 7], array_sum([9 , 8]))]);
+
+
+        foreach( range(1, 8) as $i ){
+            array_sum([9 , 8 , $i]);
+        }
+
+        echo " array_sum([9, 7]) ";
+        echo ' array_sum([9, 7]) ';
+    }
+
 }
