@@ -22,18 +22,18 @@ class FunctionCallTest extends BaseTestClass
         $this->assertEquals($index, 27);
     }
 
-       /** @test */
-       public function has_arraysum_test()
-       {
-           $tokens = token_get_all(file_get_contents(__DIR__.'/stubs/function_test/some_function.sub'));
-   
-           $countArraySum = 0;
-           foreach ($tokens as $i => $token) {
-               if (FunctionCall::isGlobalCall('array_sum', $tokens, $i)) {
-                    $countArraySum++;
-               }
-           }
-   
-           $this->assertEquals($countArraySum, 4);
-       }
+    /** @test */
+    public function has_arraysum_test()
+    {
+        $tokens = token_get_all(file_get_contents(__DIR__ . '/stubs/function_test/some_function.sub'));
+
+        $countArraySum = 0;
+        foreach ($tokens as $i => $token) {
+            if (FunctionCall::isGlobalCall('array_sum', $tokens, $i)) {
+                $countArraySum++;
+            }
+        }
+
+        $this->assertEquals($countArraySum, 4);
+    }
 }
