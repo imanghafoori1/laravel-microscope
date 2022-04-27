@@ -239,7 +239,7 @@ Just like the default keywords.
             $comment = $matches[0]; // first placehoder value
             $content = $comment[1]; // get its content
             
-            return Str::containts($content, 'todo:') ? true : false;
+            return Str::contains($content, 'todo:') ? true : false;
         },
 ]
 
@@ -258,7 +258,7 @@ Just like the default keywords.
         $comment = $matches[0]; // first matched placehoder
         $content = $comment[1];
 
-        return Str::containts($content, 'todo:') ? true : false;
+        return Str::contains($content, 'todo:') ? true : false;
     },
 
     'mutator' => function ($matches) {       //  <=== here we remove "todo:"
