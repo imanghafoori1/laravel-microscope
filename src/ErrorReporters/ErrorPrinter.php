@@ -147,7 +147,7 @@ class ErrorPrinter
 
     public function yellow($msg)
     {
-        return "<fg=gray>$msg</>";
+        return "<fg=blue>$msg</>";
     }
 
     public function fixedNamespace($absPath, $correctNamespace, $incorrectNamespace, $lineNumber = 4)
@@ -159,8 +159,9 @@ class ErrorPrinter
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
-    public function print($msg, $path = '|  ', $len = null, $msgLen = null)
+    public function print($msg, $path = '   ', $len = null, $msgLen = null)
     {
+        /*
         $len === null && $len = PendingError::$maxLength + 1;
 
         ! $msgLen && $msgLen = strlen($msg);
@@ -175,13 +176,9 @@ class ErrorPrinter
         if ($len < 0) {
             $len = 0;
         }
-        if ($len === 0) {
-            $trail = '';
-        } else {
-            $trail = str_repeat(' ', $len).'|';
-        }
-
-        $this->printer->writeln($path.$msg.$trail);
+        $trail = $len === 0 ? '' : str_repeat(' ', $len).'|';
+       */
+        $this->printer->writeln($path.$msg);
     }
 
     public function printHeader($msg)
@@ -190,17 +187,16 @@ class ErrorPrinter
         ($number < 10) && $number = " $number";
 
         $number = '<fg=bright-cyan>'.$number.' </>';
-        $path = "| $number";
+        $path = "  $number";
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
         PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
-        $this->print('');
         $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg));
     }
 
     public function end()
     {
-        $this->printer->writeln('|'.'<fg=blue>'.str_repeat('*', 3 + PendingError::$maxLength).'</>'.'|');
+        $this->printer->writeln(' '.'<fg=gray>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
     }
 
     public function printLink($path, $lineNumber = 4, $len = null)
