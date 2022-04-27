@@ -27,4 +27,18 @@ class SomeFunction{
         echo ' array_sum([9, 7]) ';
     }
 
+    public static function _3(){
+        Foo::_1();
+        Foo::_3();
+
+        self::_3();
+
+        var_dump("Foo::_3()");
+
+        var_dump("{Foo::_3()}" . "_" . Foo::_3());
+
+        Foo::_3(self::_3());
+
+    }
+
 }
