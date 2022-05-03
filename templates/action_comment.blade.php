@@ -15,5 +15,5 @@
 @if ($file)
         * @at({!! $file !!}:{!! $line !!})
 @endif
-        * @middlewares('{!! implode("', ", $middlewares) !!}')
+        * @middlewares('{!! implode("', '", $middlewares) !!}')
         */
