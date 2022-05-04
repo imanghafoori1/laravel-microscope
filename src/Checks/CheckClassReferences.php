@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
+use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckClassReferences
@@ -11,7 +13,11 @@ class CheckClassReferences
 
     public static function check($tokens, $absPath)
     {
-        [$classes,] = ParseUseStatement::findClassReferences($tokens);
+        $imports = ParseUseStatement::parseUseStatements($tokens);
+        $imports = $imports[0] ?: [$imports[1]];
+        [$classes, $namespace] = ClassReferenceFinder::process($tokens);
+        $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports);
+        [$classes,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
         $printer = app(ErrorPrinter::class);
         foreach ($classes as $class) {
@@ -19,6 +25,11 @@ class CheckClassReferences
             if (! self::exists($class['class'])) {
                 $printer->wrongUsedClassError($absPath, $class['class'], $class['line']);
             }
+        }
+
+        foreach ($unusedRefs as $class) {
+            self::$refCount++;
+            $printer->extraImport($absPath, $class[0], $class[1]);
         }
     }
 

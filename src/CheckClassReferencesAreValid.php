@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
+use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -184,9 +186,13 @@ class CheckClassReferencesAreValid
 
     private static function checkNotImportedClasses($tokens, $absFilePath)
     {
-        [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath);
+        [$classReferences, $hostNamespace, $unusedRefs] = self::findClassRefs($tokens, $absFilePath);
 
         $printer = app(ErrorPrinter::class);
+
+        foreach ($unusedRefs as $class) {
+            $printer->extraImport($absFilePath, $class[0], $class[1]);
+        }
 
         loopStart:
         foreach ($classReferences as $classReference) {
@@ -249,13 +255,19 @@ class CheckClassReferencesAreValid
     public static function findClassRefs($tokens, $absFilePath): array
     {
         try {
-            [$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens);
+            //[$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens);
 
-            return [$classReferences, $hostNamespace];
+            $imports = ParseUseStatement::parseUseStatements($tokens);
+            $imports = $imports[0] ?: [$imports[1]];
+            [$classes, $namespace] = ClassReferenceFinder::process($tokens);
+            $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports);
+            [$classReferences, $hostNamespace, ] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
+
+            return [$classReferences, $hostNamespace, $unusedRefs];
         } catch (\ErrorException $e) {
             self::requestIssue($absFilePath);
 
-            return [[], ''];
+            return [[], '', []];
         }
     }
 

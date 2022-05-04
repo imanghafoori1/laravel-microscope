@@ -140,6 +140,11 @@ class ErrorPrinter
         $this->doesNotExist($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 
+    public function extraImport($absPath, $class, $lineNumber)
+    {
+        $this->doesNotExist($class, $absPath, $lineNumber, 'extraImport', 'Import is not used:');
+    }
+
     public function wrongMethodError($absPath, $class, $lineNumber)
     {
         $this->doesNotExist($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
