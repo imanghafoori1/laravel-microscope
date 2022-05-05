@@ -191,7 +191,7 @@ class CheckClassReferencesAreValid
         $printer = app(ErrorPrinter::class);
 
         foreach ($unusedRefs as $class) {
-            $printer->extraImport($absFilePath, $class[0], $class[1]);
+            ! self::isAbsent($class[0]) && $printer->extraImport($absFilePath, $class[0], $class[1]);
         }
 
         loopStart:

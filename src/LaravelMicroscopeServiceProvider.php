@@ -87,7 +87,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         if (! $this->canRun()) {
             return;
         }
-        $this->spyEvents();
 
         $this->registerCompiler();
 
@@ -101,9 +100,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         }
 
         // We need to start spying before the boot process starts.
-        $command = $_SERVER['argv'][1] ?? null;
+        $command = $_SERVER['argv'][1] ?? '';
         // We spy the router in order to have a list of route files.
         $checkAll = Str::startsWith('check:all', $command);
+        ($checkAll || Str::startsWith('check:eve', $command)) && $this->spyEvents();
         ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
         Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
         // ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
