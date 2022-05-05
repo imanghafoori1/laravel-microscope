@@ -20,16 +20,21 @@ class CheckClassReferences
         [$classes,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
         $printer = app(ErrorPrinter::class);
+
+        $wrongImports = [];
         foreach ($classes as $class) {
             self::$refCount++;
             if (! self::exists($class['class'])) {
+                $wrongImports[] = $class['class'];
                 $printer->wrongUsedClassError($absPath, $class['class'], $class['line']);
             }
         }
 
         foreach ($unusedRefs as $class) {
             self::$refCount++;
-            $printer->extraImport($absPath, $class[0], $class[1]);
+            if (! in_array($class[0], $wrongImports)) {
+                $printer->extraImport($absPath, $class[0], $class[1]);
+            }
         }
     }
 

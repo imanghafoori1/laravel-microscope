@@ -65,9 +65,8 @@ class CheckClassReferencesAreValid
 
         $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
-        $isFixed = self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
-
-        $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
+        //$isFixed = self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
+        //$isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
         self::checkNotImportedClasses($tokens, $absFilePath);
     }
@@ -191,7 +190,16 @@ class CheckClassReferencesAreValid
         $printer = app(ErrorPrinter::class);
 
         foreach ($unusedRefs as $class) {
-            ! self::isAbsent($class[0]) && $printer->extraImport($absFilePath, $class[0], $class[1]);
+            if (! self::isAbsent($class[0])) {
+                $printer->extraImport($absFilePath, $class[0], $class[1]);
+            } else {
+                //$isCorrected = self::tryToFix($classImport, $absFilePath, $line, $as, $printer);
+                //if (! $isCorrected) {
+                $printer->wrongImport($absFilePath, $class[0], $class[1]);
+                //} else {
+                //    $fixed = true;
+                //}
+            }
         }
 
         loopStart:
@@ -261,7 +269,7 @@ class CheckClassReferencesAreValid
             $imports = $imports[0] ?: [$imports[1]];
             [$classes, $namespace] = ClassReferenceFinder::process($tokens);
             $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports);
-            [$classReferences, $hostNamespace, ] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
+            [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
             return [$classReferences, $hostNamespace, $unusedRefs];
         } catch (\ErrorException $e) {
