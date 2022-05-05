@@ -1,0 +1,9 @@
+            <!-- {{ Title }} Input -->
+            <div class='form-group'>
+                <label for='input-{{ Name }}' class='col-sm-2 control-label {{ labelStyle }}'> {{ __('{{ Title }}') }}</label>
+                <input type='file' id='input-{{ Name }}' wire:model='{{ Name }}' class="form-control-file {{ inputStyle }} @error('{{ Name }}') is-invalid @enderror">
+                @if(${{ Name }} and !$errors->has('{{ Name }}') and ${{ Name }}->isPreviewable())
+                    <a href="{{ ${{ Name }}->temporaryUrl() }}" target="_blank"><img width="200" height="200" class="img-fluid shadow" src="{{ ${{ Name }}->temporaryUrl() }}" alt=""></a>
+                @endif
+                @error('{{ Name }}') <div class='invalid-feedback'>{{ $message }}</div> @enderror
+            </div>

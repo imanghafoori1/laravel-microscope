@@ -1,0 +1,1 @@
+<td><a target="{{ target }}" href="{{ asset(${{ model }}->{{ key }}) }}"><img class="img-fluid {{ style }}" width="{{ width }}" height="{{ height }}" src="{{ asset(${{ model }}->{{ key }}) }}" alt="{{ alt }}"></a></td>

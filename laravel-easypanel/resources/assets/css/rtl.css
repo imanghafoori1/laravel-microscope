@@ -1,0 +1,90 @@
+*{
+    font-family: "Vazir";
+}
+
+.sidebar-nav .has-arrow::after{
+    left: 15px;
+    right: unset;
+}
+
+.sidebar-nav .base-level-line{
+    border-right: 1px solid rgba(0,0,0,.1);
+    margin-right: 40px;
+    border-left: 0;
+    margin-left: 0;
+}
+
+.sidebar-nav #sidebarnav .sidebar-item .sidebar-link{
+    margin-left: 17px;
+    margin-right: 0;
+}
+
+.sidebar-nav #sidebarnav .sidebar-item .first-level .sidebar-item.active .sidebar-link::before{
+    left: unset;
+    right: 0;
+}
+
+.sidebar-nav #sidebarnav .sidebar-item.selected>.sidebar-link{
+    border-radius: 60px 0 0 60px;
+}
+
+.container-fluid{
+    text-align: right;
+}
+
+.form-control.is-invalid, .was-validated .form-control:invalid{
+    background-position: center left calc(.375em + .1875rem);
+    padding-left: calc(1.5em + .75rem);
+}
+
+.dropdown-item{
+    text-align: right;
+}
+
+.card-title{
+    text-align: right;
+}
+
+.topbar .user-dd{
+    min-width: unset;
+}
+
+.sidebar-link .hide-menu{
+    margin-right: 0.5rem;
+}
+
+.notification{
+    left: 0;
+}
+
+.form-check-label{
+    margin-right: 1.3rem;
+}
+
+.custom-checkbox+p{
+    margin-right: 10px;
+}
+
+.breadcrumb-item+.breadcrumb-item{
+    padding: 0 !important;
+}
+
+.breadcrumb-item+.breadcrumb-item:before{
+    padding-left: .5rem !important;
+}
+
+@media (min-width: 768px) {
+    #main-wrapper[data-layout=vertical][data-sidebar-position=fixed][data-sidebartype=full] .topbar .top-navbar .navbar-collapse {
+        margin-right: 260px;
+        margin-left: 0;
+    }
+    #main-wrapper[data-layout=vertical][data-sidebartype=full] .page-wrapper{
+        margin-left: 0;
+        margin-right: 260px;
+    }
+}
+@media (max-width: 767.98px){
+    #main-wrapper.show-sidebar .left-sidebar {
+        right: 0;
+    }
+}

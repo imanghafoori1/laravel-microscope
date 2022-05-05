@@ -1,0 +1,1 @@
+<td class="{{ style }}">{{ ${{ model }}->{{ key }} }}</td>

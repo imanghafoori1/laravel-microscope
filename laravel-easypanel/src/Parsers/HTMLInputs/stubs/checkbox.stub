@@ -1,0 +1,8 @@
+            <!-- {{ Title }} Input -->
+            <div class='form-group'>
+                <div class='form-check mt-4 mb-3'>
+                    <input {{ Mode }}='{{ Name }}' id='input-{{ Name }}' class='form-check-input {{ inputStyle }}' type='checkbox' autocomplete='{{ autocomplete }}'>
+                    <label class='form-check-label {{ labelStyle }}' for='input-{{ Name }}'>{{ __('{{ Title }}') }}</label>
+                </div>
+                @error('{{ Name }}') <div class='invalid-feedback'>{{ $message }}</div> @enderror
+            </div>

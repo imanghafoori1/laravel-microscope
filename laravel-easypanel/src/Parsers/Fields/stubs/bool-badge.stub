@@ -1,0 +1,1 @@
+<td class=""><span class="badge badge-{{ ${{ model }}->{{ key }} ? '{{ trueColor }}' : '{{ falseColor }}' }} font-14 {{ style }}">{{ ${{ model }}->{{ key }} ? __('{{ trueValue }}') : __('{{ falseValue }}') }}</span></td>

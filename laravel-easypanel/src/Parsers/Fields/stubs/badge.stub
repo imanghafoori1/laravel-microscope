@@ -1,0 +1,1 @@
+<td class=""><span class="badge badge-{{ badgeType }} font-14 {{ style }}">{{ ${{ model }}->{{ key }} }}</span></td>

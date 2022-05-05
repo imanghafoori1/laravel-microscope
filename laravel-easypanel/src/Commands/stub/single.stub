@@ -1,0 +1,29 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ modelNamespace }};
+use Livewire\Component;
+
+class Single extends Component
+{
+
+    public ${{ model }};
+
+    public function mount({{ modelName }} ${{ modelName }}){
+        $this->{{ model }} = ${{ modelName }};
+    }
+
+    public function delete()
+    {
+        $this->{{ model }}->delete();
+        $this->dispatchBrowserEvent('show-message', ['type' => 'error', 'message' => __('DeletedMessage', ['name' => __('{{ modelName }}') ]) ]);
+        $this->emit('{{ model }}Deleted');
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.{{ model }}.single')
+            ->layout('admin::layouts.app');
+    }
+}

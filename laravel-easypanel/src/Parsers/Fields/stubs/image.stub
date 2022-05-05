@@ -1,0 +1,1 @@
+<td><img class="img-fluid {{ style }}" width="{{ width }}" height="{{ height }}" src="{{ asset(${{ model }}->{{ key }}) }}" alt="{{ alt }}"></td>

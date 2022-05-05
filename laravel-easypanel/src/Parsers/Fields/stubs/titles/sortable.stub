@@ -1,0 +1,1 @@
+<th scope="col" style='cursor: pointer' wire:click="sort('{{ key }}')"> <i class='fa @if($sortType == 'desc' and $sortColumn == '{{ key }}') fa-sort-amount-down ml-2 @elseif($sortType == 'asc' and $sortColumn == '{{ key }}') fa-sort-amount-up ml-2 @endif'></i> {{ __('{{ title }}') }} </th>
