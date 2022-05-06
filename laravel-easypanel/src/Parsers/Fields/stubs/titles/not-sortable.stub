@@ -1,1 +1,0 @@
-<th scope="col"> {{ __('{{ title }}') }} </th>
