@@ -16,7 +16,7 @@ class CheckClassReferences
         $imports = ParseUseStatement::parseUseStatements($tokens);
         $imports = $imports[0] ?: [$imports[1]];
         [$classes, $namespace] = ClassReferenceFinder::process($tokens);
-        $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports);
+        $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports, []);
         [$classes,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
         $printer = app(ErrorPrinter::class);

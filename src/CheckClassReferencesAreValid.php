@@ -268,10 +268,12 @@ class CheckClassReferencesAreValid
             $imports = ParseUseStatement::parseUseStatements($tokens);
             $imports = $imports[0] ?: [$imports[1]];
             [$classes, $namespace] = ClassReferenceFinder::process($tokens);
-            $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports);
+
+            $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens, $namespace, array_values($imports)[0] ?? []);
+            $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports, $docblockRefs);
             [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
-            return [$classReferences, $hostNamespace, $unusedRefs];
+            return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
         } catch (\ErrorException $e) {
             self::requestIssue($absFilePath);
 
