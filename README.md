@@ -861,24 +861,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 
 - https://github.com/imanghafoori1/laravel-anypass
 
-------------
-
-### Eloquent Relativity
-
-:gem: It allows you to decouple your eloquent models to reach a modular structure
-
-- https://github.com/imanghafoori1/eloquent-relativity
-
 --------------
-### Todo:
-- Detect Bad code
-- Facadize static method calls
-- Detect return keyword in eloquent relations
-- Detect wrong action() calls
-- Enhance blocky code detection
-- Detect `return abort();`
-- Detect un-registered service providers
-- Detect unused middlewares
 
 ```
 A man will never fail unless he stops trying.
