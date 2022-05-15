@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
+use Throwable;
 
 class RoutelessActions
 {
@@ -49,7 +50,7 @@ class RoutelessActions
     {
         try {
             return is_subclass_of($fullNamespace, Controller::class);
-        } catch (\Throwable $r) {
+        } catch (Throwable $r) {
             // it means the file does not contain a class or interface.
             return false;
         }

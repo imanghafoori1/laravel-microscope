@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -125,7 +126,7 @@ class CheckCompact extends Command
             [$methodBody,] = TokenManager::readBody($tokens, $methodBodyStartIndex);
 
             return $methodBody;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

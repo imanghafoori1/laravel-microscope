@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
+use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -28,7 +29,7 @@ class CheckRefactorsCommand extends Command
 
         try {
             $patterns = require base_path('/search_replace.php');
-        } catch (\ErrorException $e) {
+        } catch (ErrorException $e) {
             file_put_contents(base_path('/search_replace.php'), $this->stub());
 
             return;

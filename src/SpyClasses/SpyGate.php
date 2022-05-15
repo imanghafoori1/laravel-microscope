@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
+use Exception;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class SpyGate extends Gate
 
             try {
                 $policy = app()->make($class);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->pendError($this->getWrongCallbackMessage($callback, $ability));
             }
 

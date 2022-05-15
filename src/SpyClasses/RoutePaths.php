@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
+use Throwable;
 
 class RoutePaths
 {
@@ -29,7 +30,7 @@ class RoutePaths
 
             try {
                 $methodCalls = self::readLoadedRouteFiles($path);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $methodCalls = [];
             }
 

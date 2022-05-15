@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use ErrorException;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -18,7 +19,7 @@ class CheckClassReferencesAreValid
     {
         try {
             self::checkReferences($tokens, $absFilePath);
-        } catch (\ErrorException $e) {
+        } catch (ErrorException $e) {
             // In case a file is moved or deleted,
             // composer will need a dump autoload.
             if (! Str::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
@@ -274,7 +275,7 @@ class CheckClassReferencesAreValid
             [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
             return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
-        } catch (\ErrorException $e) {
+        } catch (ErrorException $e) {
             self::requestIssue($absFilePath);
 
             return [[], '', []];
