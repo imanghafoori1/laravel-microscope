@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -38,7 +39,7 @@ class CheckEarlyReturns extends Command
 
                 try {
                     [$fixes, $tokens] = $this->refactor($tokens);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
                     dump('Skipping : '.$path);
                     continue;

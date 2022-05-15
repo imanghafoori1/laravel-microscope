@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Error;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
@@ -42,7 +43,7 @@ class CheckClassReferences
     {
         try {
             return class_exists($class) || interface_exists($class) || function_exists($class);
-        } catch (\Error $e) {
+        } catch (Error $e) {
             app(ErrorPrinter::class)->simplePendError($e->getMessage(), $e->getFile(), $e->getLine(), 'error', 'File error');
 
             return true;

@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Symfony\Component\Finder\Finder;
+use Throwable;
 
 class LaravelPaths
 {
@@ -23,7 +24,7 @@ class LaravelPaths
     {
         try {
             return app()->make(Factory::class)->loadedPaths;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return [];
         }
     }

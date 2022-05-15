@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
+use Exception;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -79,7 +80,7 @@ class SpyDispatcher extends Dispatcher
 
         try {
             $listenerObj = app()->make($listenerClass);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->error($this->noClass($event, $listenerClass, $methodName));
         }
 
@@ -145,7 +146,7 @@ class SpyDispatcher extends Dispatcher
             }
 
             return null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\Filesystem\Filesystem;
@@ -34,7 +35,7 @@ class FacadeDocblocks
         if ((! $isClass && ! interface_exists($accessor)) || ($isClass && app()->bound($accessor))) {
             try {
                 $accessor = get_class($facade::getFacadeRoot());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Event::dispatch('microscope.facade.accessor_error', [$accessor, $absFilePath]);
 
                 return;

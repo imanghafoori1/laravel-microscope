@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -35,7 +36,7 @@ class CheckEndIf extends Command
 
                 try {
                     $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     self::requestIssue($path);
                     continue;
                 }

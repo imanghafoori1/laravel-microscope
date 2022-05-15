@@ -7,6 +7,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Throwable;
 
 class SpyRouter extends Router
 {
@@ -58,7 +59,7 @@ class SpyRouter extends Router
                 $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
                 $this->routeError($info, $err, 'Incorrect namespace.');
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
         }
     }
 
