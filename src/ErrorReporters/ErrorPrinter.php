@@ -18,6 +18,8 @@ class ErrorPrinter
 
     public $pended = [];
 
+    public $count = 0;
+
     public function view($absPath, $message, $lineNumber, $fileName)
     {
         $this->simplePendError($fileName.'.blade.php', $absPath, $lineNumber, 'view', \trim($message), ' does not exist');
@@ -68,7 +70,7 @@ class ErrorPrinter
         if (LaravelPaths::isIgnored($path)) {
             return;
         }
-
+        $this->count++;
         ($this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($errorData)

@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class ForPsr4LoadedClasses
@@ -19,16 +20,23 @@ class ForPsr4LoadedClasses
     {
         $psr4 = ComposerJson::readAutoload();
 
+        $printer = app(ErrorPrinter::class);
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $phpFilePath) {
                 self::$checkedFilesNum++;
                 $absFilePath = $phpFilePath->getRealPath();
 
-                $tokens = token_get_all(file_get_contents($absFilePath));
-
                 foreach ($checks as $check) {
+                    $relPath = FilePath::getRelativePath($absFilePath);
+                    if (cache()->has($check.$relPath.filemtime($absFilePath))) {
+                        continue;
+                    }
+                    $tokens = token_get_all(file_get_contents($absFilePath));
+                    $count1 = $printer->count;
                     $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params);
+                    $count2 = $printer->count;
+                    $count1 === $count2 && cache()->put($check.$relPath.filemtime($absFilePath), '-', now()->addDays(3));
                 }
             }
         }

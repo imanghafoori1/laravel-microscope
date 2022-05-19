@@ -57,6 +57,13 @@ class CheckNamespaces
                 continue;
             }
 
+            $relativePath = FilePath::getRelativePath($absFilePath);
+
+            self::$checkedNamespaces++;
+            if (cache()->has(self::getKey($relativePath, $absFilePath))) {
+                continue;
+            }
+
             [
                 $currentNamespace,
                 $class,
@@ -72,12 +79,10 @@ class CheckNamespaces
 
             $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
 
-            $relativePath = FilePath::getRelativePath($absFilePath);
-
             $correctNamespaces = self::getCorrectNamespaces($relativePath);
 
-            self::$checkedNamespaces++;
             if (in_array($currentNamespace, $correctNamespaces)) {
+                self::remember($relativePath, $absFilePath);
                 continue;
             }
             $correctNamespace = self::findShortest($correctNamespaces);
@@ -93,8 +98,8 @@ class CheckNamespaces
         if ($fix !== false) {
             self::changedNamespaces($class, $from, $to);
             NamespaceCorrector::fix($absPath, $from, $to);
+            self::remember(FilePath::getRelativePath($absPath), $absPath);
         }
-        unset($fix);
 
         event('laravel_microscope.namespace_fixed', get_defined_vars());
     }
@@ -141,5 +146,15 @@ class CheckNamespaces
 
             return strlen($a) < strlen($b) ? $a : $b;
         });
+    }
+
+    private static function getKey($relativePath, $absFilePath)
+    {
+        return 'check:psr4'.($relativePath.filemtime($absFilePath));
+    }
+
+    private static function remember($relativePath, $absFilePath)
+    {
+        cache()->put(self::getKey($relativePath, $absFilePath), '-', now()->addDays(3));
     }
 }
