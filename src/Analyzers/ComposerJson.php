@@ -46,6 +46,26 @@ class ComposerJson
         return self::removedIgnored($result + $root, config('microscope.ignored_namespaces', []));
     }
 
+    public static function readAutoloadInPath($path, $all = null)
+    {
+        $all = $all ?? self::readAutoload();
+
+        if (! $path) {
+            return $all;
+        }
+
+        $autoload = [];
+        foreach ($all as $namespace => $dir) {
+            foreach ($path as $item) {
+                if (\strpos($dir, $item.'/') === 0) {
+                    $autoload[$namespace] = $dir;
+                }
+            }
+        }
+
+        return $autoload;
+    }
+
     private static function normalizePaths($value, $path)
     {
         $path && $path = Str::finish($path, '/');

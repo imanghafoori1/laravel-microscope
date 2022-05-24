@@ -13,7 +13,8 @@ use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
 
 class CheckPsr4 extends Command
 {
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}
+                {--path=* : path(s) you want to check}';
 
     protected $description = 'Checks the validity of namespaces';
 
@@ -53,7 +54,7 @@ class CheckPsr4 extends Command
         };
 
         start:
-        CheckNamespaces::all($this->option('detailed'));
+        CheckNamespaces::all($this->option('detailed'), $this->option('path'));
         ClassRefCorrector::fixAllRefs($onFix);
 
         $this->printReport($errorPrinter, $time);
@@ -88,9 +89,12 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function reportResult()
+    private function reportResult($errorPrinter)
     {
-        $autoload = ComposerJson::readAutoload();
+        $autoload = ComposerJson::readAutoloadInPath($path = $this->option('path'));
+
+        $path && $this->checkPath($errorPrinter, $autoload, $path);
+
         $this->getOutput()->writeln('');
         $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
         $this->getOutput()->writeln('==============================');
@@ -109,10 +113,36 @@ class CheckPsr4 extends Command
     private function printReport($errorPrinter, $time)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->reportResult();
+            $this->reportResult($errorPrinter);
             $this->printErrorsCount($errorPrinter, $time);
         } else {
             $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
+        }
+    }
+
+    private function checkPath($errorPrinter, $autoload, $path): void
+    {
+        $notFounds = [];
+        $founds = [];
+        foreach ($path as $item) {
+            if (empty($autoload) && ! \in_array($item, $notFounds)) {
+                $notFounds[] = $item;
+                continue;
+            }
+
+            foreach ($autoload as $dir) {
+                if (\strpos($dir, $item.'/') === 0) {
+                    $founds[] = $item;
+                    continue;
+                }
+                $notFounds[] = $item;
+            }
+        }
+        $notFounds = \array_unique($notFounds);
+        foreach ($notFounds as $item) {
+            if (! \in_array($item, $founds)) {
+                $errorPrinter->printHeader('The '.$item.' path doesn\'t exists!');
+            }
         }
     }
 }

@@ -25,11 +25,12 @@ class CheckNamespaces
      * Checks all the psr-4 loaded classes to have correct namespace.
      *
      * @param  $detailed
+     * @param $path
      * @return void
      */
-    public static function all($detailed)
+    public static function all($detailed, $path)
     {
-        $autoload = ComposerJson::readAutoload();
+        $autoload = ComposerJson::readAutoloadInPath($path);
         self::$cacheData = cache()->get('microscope_psr4:');
         //self::$cacheData = [];
         $scanned = [];

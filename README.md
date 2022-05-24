@@ -100,7 +100,7 @@ You can run:
  </h4></p>
 
 <p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4 {-s|--nofix}
+<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4 {-s|--nofix} {--path=*}
 </h4></p>
  
 <p><h4>
