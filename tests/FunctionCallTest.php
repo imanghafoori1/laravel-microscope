@@ -51,4 +51,19 @@ class FunctionCallTest extends BaseTestClass
 
         $this->assertEquals($countArraySum, 5);
     }
+
+    /** @test */
+    public function is_static_call_test()
+    {
+        $tokens = token_get_all(file_get_contents(__DIR__.'/stubs/function_test/some_function.sub'));
+
+        $countArraySum = 0;
+        foreach ($tokens as $i => $token) {
+            if (FunctionCall::isStaticCall('_3', $tokens, $i, "Foo")) {
+                $countArraySum++;
+            }
+        }
+
+        $this->assertEquals($countArraySum, 3);
+    }
 }
