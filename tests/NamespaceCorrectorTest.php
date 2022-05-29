@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\FileSystem\FakeFileSystem;
-use Imanghafoori\FileSystem\FileManipulator;
-use Imanghafoori\FileSystem\FileSystem;
+use Imanghafoori\Filesystem\FakeFilesystem;
+use Imanghafoori\Filesystem\FileManipulator;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
