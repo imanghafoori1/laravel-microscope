@@ -26,6 +26,7 @@ class CheckActionComments extends Command
         ActionsComments::$command = $this;
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
+
         ForPsr4LoadedClasses::check([ActionsComments::class]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
@@ -38,7 +39,7 @@ class CheckActionComments extends Command
             $uses = $route->action['uses'] ?? null;
             if (is_string($uses) && Str::contains($uses, '@')) {
                 [$class, $method] = Str::parseCallback($uses);
-                $results[$class] = $method;
+                $results[trim($class, '\\')] = $method;
             }
         }
 
