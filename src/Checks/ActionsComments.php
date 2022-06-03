@@ -62,7 +62,7 @@ class ActionsComments
             $routelessActions[] = [$line, $classAtMethod];
         }
 
-        $question = 'Do you want to add route definition to: '.$fullNamespace;
+        $question = 'Add route definition into the: <fg=yellow>'.$fullNamespace.'</>';
         if ($shouldSave && (self::$command)->confirm($question, true)) {
             Refactor::saveTokens($path->getRealpath(), $tokens);
         }
