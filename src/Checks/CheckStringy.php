@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
+use Symfony\Component\Console\Terminal;
 
 class CheckStringy
 {
@@ -47,7 +48,7 @@ class CheckStringy
             }
 
             $classPath = $this->getClassyPath($classPath);
-            $command->info('Replacing: '.$token[1].'  with: '.$classPath);
+            $command->info('<fg=bright-green>✔ Replaced with: </><fg=bright-red>'.$classPath.'</>');
 
             $contextClass = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
 
@@ -56,7 +57,8 @@ class CheckStringy
             }
 
             FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
-            $command->info('====================================');
+            $width = (new Terminal)->getWidth() - 4;
+            $command->info(' <fg=gray>'.str_repeat('_', $width).'</>');
         }
     }
 
@@ -81,7 +83,7 @@ class CheckStringy
     private static function ask($command, $token, $absFilePath)
     {
         $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-        $text = 'Do you want to replace: '.$token[1].' with ::class version of it?';
+        $text = 'Replace: <fg=bright-blue>'.$token[1].'</> with <fg=blue>::class</> version of it?';
 
         return $command->getOutput()->confirm($text, true);
     }
