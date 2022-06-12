@@ -38,7 +38,7 @@ class ActionsComments
             $classAtMethod = RoutelessActions::classAtMethod($fullNamespace, $method['name'][1]);
             $actions = [];
             foreach ($allRoutes as $route) {
-                $action = $route->getAction("uses");
+                $action = $route->getAction('uses');
                 $classAtMethod === $action && $actions[] = $route;
             }
 
@@ -49,7 +49,7 @@ class ActionsComments
             /**
              * @var $route \Illuminate\Routing\Route
              */
-            $msg = "/**";
+            $msg = '/**';
             $separator = "\n         *";
 
             foreach ($actions as $i => $action) {
@@ -103,7 +103,6 @@ class ActionsComments
             'methods' => $methods,
             'url' => $url,
         ];
-
 
         if (view()->exists('vendor.microscope.actions_comment')) {
             $viewFile = 'vendor.microscope.actions_comment';
