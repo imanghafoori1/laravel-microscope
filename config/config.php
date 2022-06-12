@@ -42,7 +42,7 @@ return [
      * The doc blocks in your controllers are generated based on this template.
      * You can change this template to customize the check:action_comments results.
      */
-    'action_comment_template' => 'microscope_package::action_comment',
+    'action_comment_template' => 'microscope_package::actions_comment',
 
     /**
      * If a non-default route file is not being scanned,

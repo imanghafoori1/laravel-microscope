@@ -32,21 +32,32 @@ class ActionsComments
         $methods = RoutelessActions::getControllerActions($methods);
         $routelessActions = [];
         $shouldSave = false;
+        $allRoutes = app('router')->getRoutes()->getRoutes();
 
         foreach ($methods as $method) {
             $classAtMethod = RoutelessActions::classAtMethod($fullNamespace, $method['name'][1]);
+            $actions = [];
+            foreach ($allRoutes as $route) {
+                $action = $route->getAction("uses");
+                $classAtMethod === $action && $actions[] = $route;
+            }
 
-            if (! ($route = app('router')->getRoutes()->getByAction($classAtMethod))) {
+            if (! $actions) {
                 continue;
             }
 
             /**
              * @var $route \Illuminate\Routing\Route
              */
-            $methods = $route->methods();
-            ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
-            $msg = rtrim(self::getMsg($methods, $route));
+            $msg = "/**";
+            $separator = "\n         *";
 
+            foreach ($actions as $i => $action) {
+                $i === count($actions) - 1 && $separator = '';
+                $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
+            }
+
+            $msg .= "\n         */";
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
@@ -70,8 +81,11 @@ class ActionsComments
         return $routelessActions;
     }
 
-    protected static function getMsg($methods, $route)
+    protected static function getMsg($route)
     {
+        $methods = $route->methods();
+        ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
+
         $routeName = $route->getName() ?: '';
         $middlewares = self::gatherMiddlewares($route);
         [$file, $line] = self::getCallsiteInfo($methods[0], $route);
@@ -90,7 +104,14 @@ class ActionsComments
             'url' => $url,
         ];
 
-        return view(config('microscope.action_comment_template', 'microscope_package::action_comment'), $viewData)->render();
+
+        if (view()->exists('vendor.microscope.actions_comment')) {
+            $viewFile = 'vendor.microscope.actions_comment';
+        } else {
+            $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
+        }
+
+        return view($viewFile, $viewData)->render();
     }
 
     public static function getCallsiteInfo($methods, $route)
