@@ -49,7 +49,7 @@ class CheckEarlyReturns extends Command
                 $fixes !== 0 && $fixingFilesCount++;
 
                 if ($this->option('nofix') && $fixes !== 0) {
-                    $this->line("<fg=red>    - ".FilePath::getRelativePath($path)."</fg=red>");
+                    $this->line('<fg=red>    - '.FilePath::getRelativePath($path).'</fg=red>');
                     continue;
                 }
 
