@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Refactor;
+use Symfony\Component\Console\Terminal;
 
 class CheckEarlyReturns extends Command
 {
@@ -48,8 +49,7 @@ class CheckEarlyReturns extends Command
                 $fixes !== 0 && $fixingFilesCount++;
 
                 if ($this->option('nofix') && $fixes !== 0) {
-                    $filePath = FilePath::getRelativePath($path);
-                    $this->line("<fg=red>    - $filePath</fg=red>");
+                    $this->line("<fg=red>    - ".FilePath::getRelativePath($path)."</fg=red>");
                     continue;
                 }
 
@@ -96,15 +96,14 @@ class CheckEarlyReturns extends Command
         }
 
         isset($msg) && $this->info(PHP_EOL.$msg);
-        $this->info(PHP_EOL);
-        $this->line('========================================');
+        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
     }
 
     private function getConfirm($filePath)
     {
         $filePath = FilePath::getRelativePath($filePath);
 
-        return $this->output->confirm(' Do you want to flatten: '.$filePath, true);
+        return $this->output->confirm(' Do you want to flatten: <fg=yellow>'.$filePath.'</>', true);
     }
 
     private function startWarning()
