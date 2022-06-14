@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\TokenAnalyzer\Str;
 
 class ForPsr4LoadedClasses
 {
@@ -15,7 +15,7 @@ class ForPsr4LoadedClasses
 
     public static $checkedFilesNum = 0;
 
-    public static function check($checks, $params = [])
+    public static function check($checks, $params = [], $filter = null)
     {
         $psr4 = ComposerJson::readAutoload();
 
@@ -27,6 +27,9 @@ class ForPsr4LoadedClasses
 
                 $tokens = token_get_all(file_get_contents($absFilePath));
                 foreach ($checks as $check) {
+                    if (is_string($filter) && $filter && ! Str::contains(basename($absFilePath), $filter)) {
+                        continue;
+                    }
                     $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params);
                 }
             }
@@ -56,7 +59,7 @@ class ForPsr4LoadedClasses
 
                     foreach ($files as $classFilePath) {
                         $fileName = $classFilePath->getFilename();
-                        if (Str::endsWith($fileName, ['.blade.php'])) {
+                        if (substr($fileName, -strlen('.blade.php')) === '.blade.php') {
                             continue;
                         }
 
