@@ -13,7 +13,7 @@ class CheckActionComments extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:action_comments {--f|filter=}';
+    protected $signature = 'check:action_comments {--f|file=} {--d|folder=}';
 
     protected $description = 'Adds route definition to the controller actions';
 
@@ -27,7 +27,7 @@ class CheckActionComments extends Command
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
 
-        ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('filter'), '='));
+        ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }

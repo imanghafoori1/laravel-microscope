@@ -13,7 +13,7 @@ class CheckFacadeDocblocks extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:facades';
+    protected $signature = 'check:facades {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks facade doc-blocks';
 
@@ -32,7 +32,10 @@ class CheckFacadeDocblocks extends Command
             app(ErrorPrinter::class)->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
         });
 
-        ForPsr4LoadedClasses::check([FacadeDocblocks::class]);
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        ForPsr4LoadedClasses::check([FacadeDocblocks::class], [], $fileName, $folder);
 
         $errorPrinter->printTime();
         $errorPrinter->logErrors();

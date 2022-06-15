@@ -18,7 +18,7 @@ class CheckImports extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:imports {--d|detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:imports {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Checks the validity of use statements';
 
@@ -33,14 +33,17 @@ class CheckImports extends Command
 
         $this->checkFilePaths(RoutePaths::get());
 
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
         $this->checkFolders([
             app()->configPath(),
             LaravelPaths::seedersDir(),
             LaravelPaths::migrationDirs(),
             LaravelPaths::factoryDirs(),
-        ]);
+        ], $fileName, $folder);
 
-        ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class]);
+        ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], [], $fileName, $folder);
 
         // Checks the blade files for class references.
         BladeFiles::check([CheckClassReferences::class]);
@@ -66,10 +69,10 @@ class CheckImports extends Command
         }
     }
 
-    private function checkFolders($dirs)
+    private function checkFolders($dirs, $file, $folder)
     {
         foreach ($dirs as $dir) {
-            $this->checkFilePaths(Paths::getAbsFilePaths($dir));
+            $this->checkFilePaths(Paths::getAbsFilePaths($dir, $file, $folder));
         }
     }
 }

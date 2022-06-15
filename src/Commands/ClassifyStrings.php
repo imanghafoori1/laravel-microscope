@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class ClassifyStrings extends Command
 {
-    protected $signature = 'check:stringy_classes';
+    protected $signature = 'check:stringy_classes {--f|file=} {--d|folder=}';
 
     protected $description = 'Replaces string references with ::class version of them.';
 
@@ -20,7 +20,12 @@ class ClassifyStrings extends Command
             return $this;
         });
         $errorPrinter->printer = $this->output;
-        ForPsr4LoadedClasses::check([CheckStringy::class]);
+
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        ForPsr4LoadedClasses::check([CheckStringy::class], [], $fileName, $folder);
+
         $this->getOutput()->writeln(' <fg=gray>✔ - Finished looking for stringy classes.</>');
 
         return $errorPrinter->hasErrors() ? 1 : 0;

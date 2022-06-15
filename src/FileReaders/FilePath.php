@@ -66,4 +66,12 @@ class FilePath
             return [];
         }
     }
+
+    public static function getFolderFile($absFilePath): array
+    {
+        $segments = explode('/', str_replace('\\', '/', FilePath::getRelativePath($absFilePath)));
+        $fileName = array_pop($segments);
+
+        return [$fileName, implode('/', $segments)];
+    }
 }

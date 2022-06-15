@@ -16,7 +16,7 @@ class CheckDD extends Command
 {
     public static $checkedCallsNum = 0;
 
-    protected $signature = 'check:dd {--d|detailed : Show files being checked}';
+    protected $signature = 'check:dd {detailed : Show files being checked} {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks the debug functions';
 
@@ -25,10 +25,13 @@ class CheckDD extends Command
         event('microscope.start.command');
         $this->info('Checking dd...');
 
+        $file = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
         $this->checkPaths(RoutePaths::get());
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::seedersDir()));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $file, $folder));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $file, $folder));
+        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $file, $folder));
         $this->checkPsr4Classes();
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');
