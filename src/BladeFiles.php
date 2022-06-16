@@ -47,7 +47,7 @@ class BladeFiles
                  */
                 $absPath = $blade->getPathname();
 
-                if ((! $fileName && ! $folder) || FilePath::contains($absPath, $fileName, $folder)) {
+                if (FilePath::contains($absPath, $fileName, $folder)) {
                     $tokens = ViewsData::getBladeTokens($absPath);
                     foreach ($checkers as $checkerClass) {
                         call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);

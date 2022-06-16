@@ -77,6 +77,10 @@ class FilePath
 
     public static function contains($absFilePath, $excludeFile, $excludeFolder)
     {
+        if (! $excludeFile && ! $excludeFolder){
+            return true;
+        }
+
         [$fileName, $folderPath] = FilePath::getFolderFile($absFilePath);
 
         if ($excludeFile && mb_strpos($fileName, $excludeFile) !== false) {

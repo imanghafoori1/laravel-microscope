@@ -202,9 +202,9 @@ class CheckClassReferencesAreValid
                 //}
             }
         }
-
+       
         loopStart:
-        foreach ($classReferences as $classReference) {
+        foreach ($classReferences as $y => $classReference) {
             $class = $classReference['class'];
             $line = $classReference['line'];
 
@@ -220,7 +220,6 @@ class CheckClassReferencesAreValid
             // renames the variable
             $wrongClassRef = $class;
             unset($class);
-
             if (! ComposerJson::isInUserSpace($wrongClassRef)) {
                 $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
                 continue;
@@ -235,6 +234,7 @@ class CheckClassReferencesAreValid
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
                 [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath);
+                unset($classReferences[$y]);
                 goto loopStart;
             }
         }

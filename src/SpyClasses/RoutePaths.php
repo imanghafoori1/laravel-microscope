@@ -11,7 +11,7 @@ use Throwable;
 
 class RoutePaths
 {
-    public static function get($excludeFile = null, $excludeFolder = null)
+    public static function get($includeFile = '', $includeFolder = '')
     {
         $routePaths = [];
 
@@ -44,7 +44,7 @@ class RoutePaths
             is_file($routeFilePath) && $routePaths[] = $routeFilePath;
         }
 
-        return self::removeExtraPaths($routePaths, $excludeFile, $excludeFolder);
+        return self::removeExtraPaths($routePaths, $includeFile, $includeFolder);
     }
 
     private static function fullPath($calls, $providerClass, $path)
@@ -80,11 +80,11 @@ class RoutePaths
         return $methodCalls;
     }
 
-    protected static function removeExtraPaths($routePaths, $excludeFile, $excludeFolder)
+    protected static function removeExtraPaths($routePaths, $includeFile, $includeFolder)
     {
         $results = [];
         foreach ($routePaths as $absFilePath) {
-            if (! FilePath::contains($absFilePath, $excludeFile, $excludeFolder)) {
+            if (FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
                 $results[] = $absFilePath;
             }
         }
