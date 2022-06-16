@@ -15,7 +15,7 @@ class ForPsr4LoadedClasses
 
     public static $checkedFilesNum = 0;
 
-    public static function check($checks, $params = [], $file = null, $folder = null)
+    public static function check($checks, $params = [], $file = '', $folder = '')
     {
         $psr4 = ComposerJson::readAutoload();
 
@@ -25,17 +25,13 @@ class ForPsr4LoadedClasses
                 self::$checkedFilesNum++;
                 $absFilePath = $phpFilePath->getRealPath();
 
+                if ($file && $folder && ! FilePath::contains($absFilePath, $file, $folder)) {
+                    continue;
+                }
+
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                [$fileName, $folderPath] = FilePath::getFolderFile($absFilePath);
 
                 foreach ($checks as $check) {
-                    if ($file && mb_strpos($fileName, $file) === false) {
-                        continue;
-                    }
-                    if ($folder && ! Str::contains($folderPath, $folder)) {
-                        continue;
-                    }
-
                     $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params);
                 }
             }

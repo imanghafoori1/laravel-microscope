@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Symfony\Component\Finder\Finder;
 
@@ -10,7 +11,7 @@ class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($checkers)
+    public static function check($checkers, $fileName, $folder)
     {
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
@@ -19,7 +20,7 @@ class BladeFiles
         $hints['random_key_69471'] = View::getFinder()->getPaths();
 
         foreach ($hints as $paths) {
-            self::checkPaths($paths, $checkers);
+            self::checkPaths($paths, $checkers, $fileName, $folder);
         }
     }
 
@@ -31,7 +32,7 @@ class BladeFiles
         return $hints;
     }
 
-    public static function checkPaths($paths, $checkers)
+    public static function checkPaths($paths, $checkers, $fileName, $folder)
     {
         foreach ($paths as $path) {
             if (! is_dir($path)) {
@@ -44,9 +45,13 @@ class BladeFiles
                 /**
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
-                $tokens = ViewsData::getBladeTokens($blade->getPathname());
-                foreach ($checkers as $checkerClass) {
-                    call_user_func_array([$checkerClass, 'check'], [$tokens, $blade->getPathname()]);
+                $absPath = $blade->getPathname();
+
+                if ((! $fileName && ! $folder) || FilePath::contains($absPath, $fileName, $folder)) {
+                    $tokens = ViewsData::getBladeTokens($absPath);
+                    foreach ($checkers as $checkerClass) {
+                        call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);
+                    }
                 }
             }
         }

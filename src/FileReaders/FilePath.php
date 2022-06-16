@@ -74,4 +74,19 @@ class FilePath
 
         return [$fileName, implode('/', $segments)];
     }
+
+    public static function contains($absFilePath, $excludeFile, $excludeFolder)
+    {
+        [$fileName, $folderPath] = FilePath::getFolderFile($absFilePath);
+
+        if ($excludeFile && mb_strpos($fileName, $excludeFile) !== false) {
+            return true;
+        }
+
+        if ($excludeFolder && mb_strpos($folderPath, $excludeFolder) !== false) {
+            return true;
+        }
+
+        return false;
+    }
 }

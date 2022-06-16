@@ -31,10 +31,10 @@ class CheckImports extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $this->checkFilePaths(RoutePaths::get());
-
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
+
+        $this->checkFilePaths(RoutePaths::get($fileName, $folder));
 
         $this->checkFolders([
             app()->configPath(),
@@ -46,7 +46,7 @@ class CheckImports extends Command
         ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], [], $fileName, $folder);
 
         // Checks the blade files for class references.
-        BladeFiles::check([CheckClassReferences::class]);
+        BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
         $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' class references were checked within: '.ForPsr4LoadedClasses::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
