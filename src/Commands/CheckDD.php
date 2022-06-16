@@ -16,7 +16,7 @@ class CheckDD extends Command
 {
     public static $checkedCallsNum = 0;
 
-    protected $signature = 'check:dd {detailed : Show files being checked} {--f|file=} {--d|folder=}';
+    protected $signature = 'check:dd {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks the debug functions';
 
