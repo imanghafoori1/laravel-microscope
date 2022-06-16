@@ -202,7 +202,7 @@ class CheckClassReferencesAreValid
                 //}
             }
         }
-       
+
         loopStart:
         foreach ($classReferences as $y => $classReference) {
             $class = $classReference['class'];

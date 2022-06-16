@@ -77,7 +77,7 @@ class FilePath
 
     public static function contains($absFilePath, $excludeFile, $excludeFolder)
     {
-        if (! $excludeFile && ! $excludeFolder){
+        if (! $excludeFile && ! $excludeFolder) {
             return true;
         }
 
