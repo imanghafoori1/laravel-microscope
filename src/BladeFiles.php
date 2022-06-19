@@ -11,7 +11,7 @@ class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($checkers, $fileName, $folder)
+    public static function check($checkers, $fileName = '', $folder = '')
     {
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
