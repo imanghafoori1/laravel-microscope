@@ -4,14 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
+use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 
 class CheckViews extends Command
 {
@@ -19,7 +19,7 @@ class CheckViews extends Command
 
     public static $skippedCallsNum = 0;
 
-    protected $signature = 'check:views {--d|detailed : Show files being checked}';
+    protected $signature = 'check:views {--detailed : Show files being checked} {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks the validity of blade files';
 
@@ -27,9 +27,13 @@ class CheckViews extends Command
     {
         event('microscope.start.command');
         $this->info('Checking views...');
+
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
         $errorPrinter->printer = $this->output;
-        $this->checkRoutePaths();
-        $this->checkPsr4Classes();
+        $this->checkRoutePaths($fileName, $folder);
+        ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
         $this->getOutput()->writeln(' - '.self::$checkedCallsNum.' view references were checked to exist. ('.self::$skippedCallsNum.' skipped)');
@@ -51,7 +55,6 @@ class CheckViews extends Command
             foreach ($staticCalls as $class => $method) {
                 if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
                     $this->checkViewParams($absPath, $tokens, $i, $method[1]);
-                    continue;
                 }
             }
         }
@@ -61,7 +64,6 @@ class CheckViews extends Command
     {
         $params = FunctionCall::readParameters($tokens, $i);
 
-        $param1 = null;
         // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
@@ -75,26 +77,13 @@ class CheckViews extends Command
         }
     }
 
-    private function checkRoutePaths()
+    private function checkRoutePaths($fileName, $folder)
     {
-        foreach (RoutePaths::get() as $filePath) {
+        foreach (RoutePaths::get($fileName, $folder) as $filePath) {
             $this->checkForViewMake($filePath, [
                 'View' => ['make', 0],
                 'Route' => ['view', 1],
             ]);
-        }
-    }
-
-    private function checkPsr4Classes()
-    {
-        $psr4Mapping = ComposerJson::readAutoload();
-
-        foreach ($psr4Mapping as $_namespace => $dirPath) {
-            foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
-                $this->checkForViewMake($filePath->getRealPath(), [
-                    'View' => ['make', 0],
-                ]);
-            }
         }
     }
 
