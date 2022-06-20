@@ -73,4 +73,3 @@ class CheckImport
         return class_basename($class) !== $as;
     }
 }
-
