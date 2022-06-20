@@ -7,7 +7,6 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
@@ -72,43 +71,9 @@ class CheckClassReferencesAreValid
         self::checkNotImportedClasses($tokens, $absFilePath);
     }
 
-    private static function checkImportedClassesExist($imports, $absFilePath)
-    {
-        $printer = app(ErrorPrinter::class);
-        $fixed = false;
-
-        foreach ($imports as $as => $import) {
-            [$classImport, $line] = $import;
-
-            if (! self::isAbsent($classImport)) {
-                continue;
-            }
-
-            // for half imported namespaces
-            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($classImport)))) {
-                continue;
-            }
-
-            $isCorrected = self::tryToFix($classImport, $absFilePath, $line, $as, $printer);
-
-            if (! $isCorrected) {
-                $printer->wrongImport($absFilePath, $classImport, $line);
-            } else {
-                $fixed = true;
-            }
-        }
-
-        return $fixed;
-    }
-
     public static function isAbsent($class)
     {
         return ! \class_exists($class) && ! \interface_exists($class) && ! \trait_exists($class);
-    }
-
-    protected static function fullNamespace($currentNamespace, $class)
-    {
-        return $currentNamespace ? $currentNamespace.'\\'.$class : $class;
     }
 
     public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
@@ -159,15 +124,6 @@ class CheckClassReferencesAreValid
         }
 
         return $fix;
-    }
-
-    private static function checkImports($currentNamespace, $className, $absPath, $tokens)
-    {
-        $namespacedClassName = self::fullNamespace($currentNamespace, $className);
-
-        $imports = ParseUseStatement::parseUseStatements($tokens, $namespacedClassName)[1];
-
-        return self::checkImportedClassesExist($imports, $absPath);
     }
 
     private static function fixClassReference($absFilePath, $class, $line, $namespace)
@@ -240,27 +196,6 @@ class CheckClassReferencesAreValid
         }
     }
 
-    private static function isAliased($class, $as)
-    {
-        return class_basename($class) !== $as;
-    }
-
-    private static function tryToFix($classImport, $absFilePath, $line, $as, $printer)
-    {
-        $isInUserSpace = Str::startsWith($classImport, array_keys(ComposerJson::readAutoload()));
-        if (! $isInUserSpace) {
-            return false;
-        }
-
-        [$isCorrected, $corrects] = Analyzers\Fixer::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
-
-        if ($isCorrected) {
-            $printer->printFixation($absFilePath, $classImport, $line, $corrects);
-        }
-
-        return $isCorrected;
-    }
-
     public static function findClassRefs($tokens, $absFilePath): array
     {
         try {
@@ -270,7 +205,7 @@ class CheckClassReferencesAreValid
             $imports = $imports[0] ?: [$imports[1]];
             [$classes, $namespace] = ClassReferenceFinder::process($tokens);
 
-            $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens, $namespace, array_values($imports)[0] ?? []);
+            $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens);
             $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports, $docblockRefs);
             [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
