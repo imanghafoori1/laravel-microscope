@@ -19,26 +19,13 @@ class CheckView
             'Route' => ['view', 1],
         ];
 
-        foreach ($tokens as $i => $token) {
-            if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
-                self::checkViewParams($absPath, $tokens, $i, 0);
-                continue;
-            }
-
-            foreach ($staticCalls as $class => $method) {
-                if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
-                    self::checkViewParams($absPath, $tokens, $i, $method[1]);
-                    continue;
-                }
-            }
-        }
+        self::checkViewCalls($tokens, $absPath, $staticCalls);
     }
 
     private static function checkViewParams($absPath, &$tokens, $i, $index)
     {
         $params = FunctionCall::readParameters($tokens, $i);
 
-        $param1 = null;
         // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
@@ -50,5 +37,23 @@ class CheckView
         } else {
             self::$skippedCallsNum++;
         }
+    }
+
+    public static function checkViewCalls($tokens, $absPath, array $staticCalls)
+    {
+        foreach ($tokens as $i => $token) {
+            if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
+                self::checkViewParams($absPath, $tokens, $i, 0);
+                continue;
+            }
+
+            foreach ($staticCalls as $class => $method) {
+                if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
+                    self::checkViewParams($absPath, $tokens, $i, $method[1]);
+                }
+            }
+        }
+
+        return $tokens;
     }
 }

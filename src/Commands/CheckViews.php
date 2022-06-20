@@ -3,15 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckViews extends Command
 {
@@ -46,35 +43,7 @@ class CheckViews extends Command
     {
         $tokens = \token_get_all(\file_get_contents($absPath));
 
-        foreach ($tokens as $i => $token) {
-            if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
-                $this->checkViewParams($absPath, $tokens, $i, 0);
-                continue;
-            }
-
-            foreach ($staticCalls as $class => $method) {
-                if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
-                    $this->checkViewParams($absPath, $tokens, $i, $method[1]);
-                }
-            }
-        }
-    }
-
-    private function checkViewParams($absPath, &$tokens, $i, $index)
-    {
-        $params = FunctionCall::readParameters($tokens, $i);
-
-        // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
-        $paramTokens = $params[$index] ?? ['_', '_', '_'];
-
-        if (FunctionCall::isSolidString($paramTokens)) {
-            self::$checkedCallsNum++;
-            $viewName = \trim($paramTokens[0][1], '\'\"');
-
-            $viewName && ! View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
-        } else {
-            self::$skippedCallsNum++;
-        }
+        CheckView::checkViewCalls($tokens, $absPath, $staticCalls);
     }
 
     private function checkRoutePaths($fileName, $folder)
