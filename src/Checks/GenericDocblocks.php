@@ -33,7 +33,7 @@ class GenericDocblocks
                 '* Show the form for editing the specified resource.',
                 '* Update the specified resource in storage.',
                 '* Remove the specified resource from storage.',
-                '* Handle the incoming request.'
+                '* Handle the incoming request.',
             ]);
 
             if ($contain) {

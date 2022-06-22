@@ -3,12 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
+use Imanghafoori\LaravelMicroscope\Checks\GenericDocblocks;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use Imanghafoori\LaravelMicroscope\Checks\GenericDocblocks;
 
 class CheckGenericDocBlocks extends Command
 {
