@@ -108,6 +108,9 @@ class ActionsComments
             $viewFile = 'vendor.microscope.actions_comment';
         } else {
             $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
+            if (! view()->exists('vendor.microscope.actions_comment')) {
+                $viewFile = 'microscope_package::actions_comment';
+            }
         }
 
         return view($viewFile, $viewData)->render();
