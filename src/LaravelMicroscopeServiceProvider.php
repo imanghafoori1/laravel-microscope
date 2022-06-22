@@ -45,7 +45,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\PrettyPrintRoutes::class,
         Commands\CheckCodeGeneration::class,
         Commands\CheckDeadControllers::class,
-        Commands\CheckGenericActionComments::class,
+        Commands\CheckGenericDocBlocks::class,
         Commands\CheckPsr12::class,
         Commands\CheckEndIf::class,
         SearchReplace\CheckRefactorsCommand::class,
