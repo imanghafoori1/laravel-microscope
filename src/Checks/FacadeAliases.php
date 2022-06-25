@@ -7,7 +7,6 @@ use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
-use Imanghafoori\TokenAnalyzer\Refactor;
 
 class FacadeAliases
 {
