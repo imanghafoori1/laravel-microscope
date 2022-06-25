@@ -33,6 +33,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckViews::class,
         Commands\CheckPsr4::class,
         Commands\CheckImports::class,
+        Commands\CheckAliases::class,
         Commands\CheckAll::class,
         Commands\ClassifyStrings::class,
         Commands\CheckDD::class,
