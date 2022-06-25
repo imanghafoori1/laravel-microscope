@@ -20,7 +20,7 @@
         "imanghafoori/php-abstract-filesystem": "^0.1.1",
         "imanghafoori/php-search-replace": "1.*",
         "imanghafoori/php-token-analyzer": "^0.1.35",
-        "imanghafoori/smart-realtime-facades": "1.1.*",
+        "imanghafoori/smart-realtime-facades": "^1.1.4",
         "jetbrains/phpstorm-attributes" : "1.*",
         "laravel/framework": "5.*|6.*|7.*|8.*|9.*"
     },

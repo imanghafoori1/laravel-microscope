@@ -26,7 +26,8 @@ class FacadeAliases
                 }
                 $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
                 self::$command->getOutput()->writeln('at '.$relativePath.':'.$use[1]);
-                $result = self::$command->confirm('Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases[$use[0]].'</>');
+                $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases[$use[0]].'</>';
+                $result = self::$command->confirm($question, true);
                 if (! $result) {
                     continue;
                 }
