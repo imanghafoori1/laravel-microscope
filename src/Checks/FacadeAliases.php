@@ -63,7 +63,7 @@ class FacadeAliases
                 [
                     [
                         'search' => 'use '.$base.',',
-                        'replace' => 'use '.ltrim($aliases).';'.PHP_EOL. 'use ',
+                        'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                     [
                         'search' => ','.$base.';',
@@ -78,7 +78,7 @@ class FacadeAliases
                 [
                     [
                         'search' => ','.$base.',',
-                        'replace' => ', '.ltrim($aliases).';'.PHP_EOL. 'use ',
+                        'replace' => ', '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                 ], $tokens
             );
