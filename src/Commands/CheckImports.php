@@ -49,7 +49,7 @@ class CheckImports extends Command
         BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
-        $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' class references were checked within: '.ForPsr4LoadedClasses::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
+        $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' imports were checked within: '.ForPsr4LoadedClasses::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
 
         $errorPrinter->printTime();
 

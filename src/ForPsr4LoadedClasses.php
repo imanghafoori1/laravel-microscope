@@ -22,10 +22,10 @@ class ForPsr4LoadedClasses
         foreach ($psr4 as $psr4Namespace => $psr4Path) {
             $files = FilePath::getAllPhpFiles($psr4Path);
             foreach ($files as $phpFilePath) {
-                self::$checkedFilesNum++;
                 $absFilePath = $phpFilePath->getRealPath();
 
                 if (FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
+                    self::$checkedFilesNum++;
                     $tokens = token_get_all(file_get_contents($absFilePath));
 
                     foreach ($checks as $check) {

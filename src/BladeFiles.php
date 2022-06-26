@@ -41,13 +41,13 @@ class BladeFiles
             $files = (new Finder())->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {
-                self::$checkedFilesNum++;
                 /**
                  * @var \Symfony\Component\Finder\SplFileInfo $blade
                  */
                 $absPath = $blade->getPathname();
 
                 if (FilePath::contains($absPath, $fileName, $folder)) {
+                    self::$checkedFilesNum++;
                     $tokens = ViewsData::getBladeTokens($absPath);
                     foreach ($checkers as $checkerClass) {
                         call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);

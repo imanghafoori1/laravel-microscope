@@ -17,7 +17,6 @@ class FacadeAliases
         $aliases = AliasLoader::getInstance()->getAliases();
         $imports = ParseUseStatement::parseUseStatements($tokens);
         $imports = $imports[0] ?: [$imports[1]];
-        $i = 0;
 
         foreach ($imports as $import) {
             foreach ($import as $base => $use) {

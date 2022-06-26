@@ -6,6 +6,7 @@ use ErrorException;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
@@ -147,6 +148,7 @@ class CheckClassReferencesAreValid
         $printer = app(ErrorPrinter::class);
 
         foreach ($unusedRefs as $class) {
+            CheckClassReferences::$refCount++;
             if (! self::isAbsent($class[0])) {
                 $printer->extraImport($absFilePath, $class[0], $class[1]);
             } else {
@@ -161,6 +163,7 @@ class CheckClassReferencesAreValid
 
         loopStart:
         foreach ($classReferences as $y => $classReference) {
+            CheckClassReferences::$refCount++;
             $class = $classReference['class'];
             $line = $classReference['line'];
 
