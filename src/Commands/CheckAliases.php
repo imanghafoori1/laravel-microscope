@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckAliases extends Command
 {
@@ -31,28 +32,17 @@ class CheckAliases extends Command
         $folder = ltrim($this->option('folder'), '=');
         FacadeAliases::$command = $this;
 
-        ForPsr4LoadedClasses::check([FacadeAliases::class], [], $fileName, $folder);
+        $paramProvider = function ($tokens) {
+            $imports = ParseUseStatement::parseUseStatements($tokens);
+
+            return $imports[0] ?: [$imports[1]];
+        };
+        ForPsr4LoadedClasses::check([FacadeAliases::class], $paramProvider, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
 
         $errorPrinter->printTime();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
-    }
-
-    private function checkFilePaths($paths)
-    {
-        foreach ($paths as $path) {
-            $tokens = token_get_all(file_get_contents($path));
-            CheckClassReferences::check($tokens, $path);
-            CheckClassReferencesAreValid::checkAtSignStrings($tokens, $path, true);
-        }
-    }
-
-    private function checkFolders($dirs, $file, $folder)
-    {
-        foreach ($dirs as $dir) {
-            $this->checkFilePaths(Paths::getAbsFilePaths($dir, $file, $folder));
-        }
     }
 }
