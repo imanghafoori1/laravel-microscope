@@ -28,8 +28,13 @@ class ForPsr4LoadedClasses
                     self::$checkedFilesNum++;
                     $tokens = token_get_all(file_get_contents($absFilePath));
 
+                    $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
                     foreach ($checks as $check) {
-                        $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params);
+                        $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
+                        if ($newTokens) {
+                            $tokens = $newTokens;
+                            $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                        }
                     }
                 }
             }

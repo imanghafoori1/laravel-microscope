@@ -15,10 +15,10 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckClassReferencesAreValid
 {
-    public static function check($tokens, $absFilePath)
+    public static function check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params)
     {
         try {
-            self::checkReferences($tokens, $absFilePath);
+            return self::checkReferences($tokens, $absFilePath, $params);
         } catch (ErrorException $e) {
             // In case a file is moved or deleted,
             // composer will need a dump autoload.
@@ -39,7 +39,7 @@ class CheckClassReferencesAreValid
         $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
     }
 
-    private static function checkReferences($tokens, $absFilePath)
+    private static function checkReferences($tokens, $absFilePath, $imports)
     {
         // If file is empty or does not begin with <?php
         if (($tokens[0][0] ?? null) !== T_OPEN_TAG) {
@@ -60,16 +60,12 @@ class CheckClassReferencesAreValid
         }
 
         event('laravel_microscope.checking_file', [$absFilePath]);
-        // @todo better to do it an event listener.
 
         $isFixed = self::checkAtSignStrings($tokens, $absFilePath);
 
         $isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
 
-        //$isFixed = self::checkImports($currentNamespace, $class, $absFilePath, $tokens);
-        //$isFixed && $tokens = token_get_all(file_get_contents($absFilePath));
-
-        self::checkNotImportedClasses($tokens, $absFilePath);
+        return self::checkNotImportedClasses($tokens, $absFilePath, $imports);
     }
 
     public static function isAbsent($class)
@@ -141,9 +137,9 @@ class CheckClassReferencesAreValid
         return Analyzers\Fixer::fixReference($absFilePath, $class, $line);
     }
 
-    private static function checkNotImportedClasses($tokens, $absFilePath)
+    private static function checkNotImportedClasses($tokens, $absFilePath, $imports)
     {
-        [$classReferences, $hostNamespace, $unusedRefs] = self::findClassRefs($tokens, $absFilePath);
+        [$classReferences, $hostNamespace, $unusedRefs] = self::findClassRefs($tokens, $absFilePath, $imports);
 
         $printer = app(ErrorPrinter::class);
 
@@ -192,20 +188,19 @@ class CheckClassReferencesAreValid
 
             if ($isFixed) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath);
+                [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath, $imports);
                 unset($classReferences[$y]);
                 goto loopStart;
             }
         }
+
+        return $tokens;
     }
 
-    public static function findClassRefs($tokens, $absFilePath): array
+    public static function findClassRefs($tokens, $absFilePath, $imports)
     {
         try {
             //[$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens);
-
-            $imports = ParseUseStatement::parseUseStatements($tokens);
-            $imports = $imports[0] ?: [$imports[1]];
             [$classes, $namespace] = ClassReferenceFinder::process($tokens);
 
             $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens);

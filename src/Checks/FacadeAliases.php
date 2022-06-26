@@ -6,68 +6,84 @@ use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\SearchReplace\Searcher;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use Imanghafoori\TokenAnalyzer\Refactor;
 
 class FacadeAliases
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $imports)
     {
         $aliases = AliasLoader::getInstance()->getAliases();
-        $imports = ParseUseStatement::parseUseStatements($tokens);
-        $imports = $imports[0] ?: [$imports[1]];
+        $isReplaced = false;
 
         foreach ($imports as $import) {
             foreach ($import as $base => $use) {
                 if (! isset($aliases[$use[0]])) {
                     continue;
                 }
-                $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
-                self::$command->getOutput()->writeln('at '.$relativePath.':'.$use[1]);
-                $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases[$use[0]].'</>';
-                $result = self::$command->confirm($question, true);
-                if (! $result) {
+                if (! self::ask($absFilePath, $use, $base, $aliases[$use[0]])) {
                     continue;
                 }
+                $isReplaced = true;
+                $newVersion = self::searchReplace($base, $aliases[$use[0]], $tokens);
 
-                [$newVersion, $lines] = Searcher::searchReplace(
-                    [
-                        [
-                            'search' => 'use '.$base.';',
-                            'replace' => 'use '.ltrim($aliases[$use[0]]).';',
-                        ],
-                    ], $tokens
-                );
-                if (! $lines) {
-                    [$newVersion, $lines] = Searcher::searchReplace(
-                        [
-                            [
-                                'search' => 'use '.$base.',',
-                                'replace' => 'use '.ltrim($aliases[$use[0]]).',',
-                            ],
-                            [
-                                'search' => ','.$base.';',
-                                'replace' => ', '.ltrim($aliases[$use[0]]).';',
-                            ],
-                        ], $tokens
-                    );
-                }
+                Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newVersion));
 
-                if (! $lines) {
-                    [$newVersion, $lines] = Searcher::searchReplace(
-                        [
-                            [
-                                'search' => ','.$base.',',
-                                'replace' => ', '.ltrim($aliases[$use[0]]).',',
-                            ],
-                        ], $tokens
-                    );
-                }
-
-                Filesystem::$fileSystem::file_put_contents($absFilePath, $newVersion);
                 $tokens = token_get_all(Filesystem::$fileSystem::file_get_contents($absFilePath));
             }
         }
+
+        if ($isReplaced) {
+            return $tokens;
+        }
+    }
+
+    private static function ask($absFilePath, $use, $base, $aliases)
+    {
+        $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
+        self::$command->getOutput()->writeln('at '.$relativePath.':'.$use[1]);
+        $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases.'</>';
+
+        return self::$command->confirm($question, true);
+    }
+
+    private static function searchReplace($base, $aliases, $tokens)
+    {
+        [$newVersion, $lines] = Searcher::search(
+            [
+                [
+                    'search' => 'use '.$base.';',
+                    'replace' => 'use '.ltrim($aliases).';',
+                ],
+            ], $tokens
+        );
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
+                    [
+                        'search' => 'use '.$base.',',
+                        'replace' => 'use '.ltrim($aliases).';'.PHP_EOL. 'use ',
+                    ],
+                    [
+                        'search' => ','.$base.';',
+                        'replace' => ', '.ltrim($aliases).';',
+                    ],
+                ], $tokens
+            );
+        }
+
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
+                    [
+                        'search' => ','.$base.',',
+                        'replace' => ', '.ltrim($aliases).';'.PHP_EOL. 'use ',
+                    ],
+                ], $tokens
+            );
+        }
+
+        return $newVersion;
     }
 }

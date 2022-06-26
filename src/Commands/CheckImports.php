@@ -7,12 +7,14 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImports extends Command
 {
@@ -43,7 +45,13 @@ class CheckImports extends Command
             LaravelPaths::factoryDirs(),
         ], $fileName, $folder);
 
-        ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], [], $fileName, $folder);
+        $paramProvider = function ($tokens) {
+            $imports = ParseUseStatement::parseUseStatements($tokens);
+
+            return $imports[0] ?: [$imports[1]];
+        };
+        FacadeAliases::$command = $this;
+        ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class, FacadeAliases::class], $paramProvider, $fileName, $folder);
 
         // Checks the blade files for class references.
         BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
