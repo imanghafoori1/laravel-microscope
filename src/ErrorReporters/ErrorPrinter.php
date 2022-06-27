@@ -175,25 +175,8 @@ class ErrorPrinter
         $this->addPendingError($absPath, 1, $key, $header, $errorData);
     }
 
-    public function print($msg, $path = '   ', $len = null, $msgLen = null)
+    public function print($msg, $path = '   ')
     {
-        /*
-        $len === null && $len = PendingError::$maxLength + 1;
-
-        ! $msgLen && $msgLen = strlen($msg);
-        if (strpos($msg, 'yellow')) {
-            $msgLen = $msgLen - 14;
-        }
-        if (strpos($msg, 'gray')) {
-            $msgLen = $msgLen - 12;
-        }
-
-        $len = $len - $msgLen;
-        if ($len < 0) {
-            $len = 0;
-        }
-        $trail = $len === 0 ? '' : str_repeat(' ', $len).'|';
-       */
         $this->printer->writeln($path.$msg);
     }
 
