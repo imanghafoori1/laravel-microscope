@@ -66,11 +66,11 @@ class CheckNamespaces
 
             self::$checkedNamespaces++;
 
-          /* 
-            if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
-                continue;
-            }
-          */
+            /*
+              if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
+                  continue;
+              }
+            */
 
             [
                 $currentNamespace,
@@ -97,7 +97,7 @@ class CheckNamespaces
             } else {
                 //self::remember($namespace, $relativePath, $absFilePath);
             }
-            
+
             if (($class.'.php') !== basename($absFilePath)) {
                 event('laravel_microscope.psr4.wrong_file_name', [
                     'relativePath' => $relativePath,
