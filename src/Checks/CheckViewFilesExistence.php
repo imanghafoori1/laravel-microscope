@@ -42,7 +42,9 @@ class CheckViewFilesExistence
 
     private static function error($tokens, $absPath, $i)
     {
-        BladeFile::warn($absPath, $tokens[$i + 4][2], $tokens[$i + 4][1]);
+        $viewName = $tokens[$i + 4][1];
+        $viewName = str_replace('.', '/', trim($viewName, '\'\"'));
+        BladeFile::warn($absPath, $tokens[$i + 4][2], $viewName);
     }
 
     private static function isVariable($token, string $varName)

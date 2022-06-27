@@ -33,6 +33,7 @@ class CheckView
             self::$checkedCallsNum++;
             $viewName = \trim($paramTokens[0][1], '\'\"');
 
+            $viewName = str_replace('.', '/', $viewName);
             $viewName && ! View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
         } else {
             self::$skippedCallsNum++;
