@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
+use Symfony\Component\Console\Terminal;
 
 class CheckPsr4 extends Command
 {
@@ -39,6 +40,10 @@ class CheckPsr4 extends Command
             app(ErrorPrinter::class)->fixedNamespace($relativePath, $to, $from);
         });
 
+        Event::listen('laravel_microscope.psr4.wrong_file_name', function ($path, $class, $file) {
+            app(ErrorPrinter::class)->wrongFileName($path, $class, $file);
+        });
+
         Event::listen('microscope.replacing_namespace', function ($_path, $lineIndex, $lineContent) {
             app(ErrorPrinter::class)->printLink($_path, $lineIndex);
             $this->info($lineContent);
@@ -56,10 +61,10 @@ class CheckPsr4 extends Command
         CheckNamespaces::all($this->option('detailed'));
         ClassRefCorrector::fixAllRefs($onFix);
 
+        app(ErrorPrinter::class)->logErrors();
         $this->printReport($errorPrinter, $time);
 
         $this->composerDumpIfNeeded($errorPrinter);
-
         if ($this->option('watch')) {
             sleep(8);
 
@@ -82,7 +87,7 @@ class CheckPsr4 extends Command
     private function printErrorsCount($errorPrinter, $time)
     {
         if ($errorCount = $errorPrinter->errorsList['total']) {
-            $this->warn(PHP_EOL.$errorCount.' error(s) found in namespaces');
+            $this->warn(PHP_EOL.$errorCount.' error(s) found.');
         } else {
             $this->noErrorFound($time);
         }
@@ -92,8 +97,8 @@ class CheckPsr4 extends Command
     {
         $autoload = ComposerJson::readAutoload();
         $this->getOutput()->writeln('');
-        $this->getOutput()->writeln('<fg=green>Finished!</fg=green>');
-        $this->getOutput()->writeln('==============================');
+        $this->getOutput()->writeln('<fg=blue>Finished!</>');
+        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
         $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
         $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
     }

@@ -11,7 +11,7 @@ class CheckNamespaces
 {
     public static $checkedNamespaces = 0;
 
-    public static $cacheData = [];
+    //public static $cacheData = [];
 
     public static $changedNamespaces = [];
 
@@ -30,7 +30,7 @@ class CheckNamespaces
     public static function all($detailed)
     {
         $autoload = ComposerJson::readAutoload();
-        self::$cacheData = cache()->get('microscope_psr4:');
+        //self::$cacheData = cache()->get('microscope_psr4:');
         //self::$cacheData = [];
         $scanned = [];
         foreach ($autoload as $namespace => $psr4Path) {
@@ -47,7 +47,7 @@ class CheckNamespaces
             CheckNamespaces::within($namespace, $psr4Path, $detailed);
         }
 
-        cache()->put('microscope_psr4:', self::$cacheData, now()->addDays(3));
+        //cache()->put('microscope_psr4:', self::$cacheData, now()->addDays(3));
     }
 
     public static function within($namespace, $composerPath, $detailed)
@@ -66,9 +66,11 @@ class CheckNamespaces
 
             self::$checkedNamespaces++;
 
+          /* 
             if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
                 continue;
             }
+          */
 
             [
                 $currentNamespace,
@@ -87,13 +89,22 @@ class CheckNamespaces
 
             $correctNamespaces = self::getCorrectNamespaces($relativePath);
 
-            if (in_array($currentNamespace, $correctNamespaces)) {
-                self::remember($namespace, $relativePath, $absFilePath);
-                continue;
-            }
-            $correctNamespace = self::findShortest($correctNamespaces);
+            if (! in_array($currentNamespace, $correctNamespaces)) {
+                $correctNamespace = self::findShortest($correctNamespaces);
 
-            self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
+                self::changeNamespace($absFilePath, $currentNamespace, $correctNamespace, $class);
+                continue;
+            } else {
+                //self::remember($namespace, $relativePath, $absFilePath);
+            }
+            
+            if (($class.'.php') !== basename($absFilePath)) {
+                event('laravel_microscope.psr4.wrong_file_name', [
+                    'relativePath' => $relativePath,
+                    'class' => $class,
+                    'fileName' => basename($absFilePath),
+                ]);
+            }
         }
     }
 
