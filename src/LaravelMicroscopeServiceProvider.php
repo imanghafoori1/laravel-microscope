@@ -50,6 +50,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckPsr12::class,
         Commands\CheckEndIf::class,
         Commands\CheckQuery::class,
+        Commands\EnforceHelpers::class,
         SearchReplace\CheckRefactorsCommand::class,
     ];
 
