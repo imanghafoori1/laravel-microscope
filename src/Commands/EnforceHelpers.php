@@ -73,7 +73,7 @@ class EnforceHelpers extends Command
                     $matches[0][1] = strtolower($matches[0][1]);
 
                     return $matches;
-                }
+                },
             ],
         ];
     }
