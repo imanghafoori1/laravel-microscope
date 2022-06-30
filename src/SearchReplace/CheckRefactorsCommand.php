@@ -33,6 +33,7 @@ class CheckRefactorsCommand extends Command
             file_put_contents(base_path('/search_replace.php'), $this->stub());
 
             $this->getOutput()->writeln('The "search_replace.php" was created.');
+
             return;
         }
 

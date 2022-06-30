@@ -57,12 +57,12 @@ class CheckQuery extends Command
     private function getPatterns(): array
     {
         return [
-            "pattern_name" => [
-                "search" => "<class_ref>::<name>",
-                "replace" => "<1>::query()-><2>",
-                "filters" => [
+            'pattern_name' => [
+                'search' => '<class_ref>::<name>',
+                'replace' => '<1>::query()-><2>',
+                'filters' => [
                     1 => [
-                        'is_sub_class_of' => Model::class
+                        'is_sub_class_of' => Model::class,
                     ],
                     2 => [
                         'in_array' => [
@@ -77,9 +77,9 @@ class CheckQuery extends Command
                             'firstOrNew',
                             'select',
                             'create',
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
     }
