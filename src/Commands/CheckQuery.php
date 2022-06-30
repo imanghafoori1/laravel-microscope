@@ -65,22 +65,31 @@ class CheckQuery extends Command
                         'is_sub_class_of' => Model::class,
                     ],
                     2 => [
-                        'in_array' => [
-                            'where',
-                            'whereIn',
-                            'whereRaw',
-                            'count',
-                            'find',
-                            'findOr',
-                            'findOrNew',
-                            'first',
-                            'firstOrNew',
-                            'select',
-                            'create',
-                        ],
+                        'in_array' => $this->getMethods(),
                     ],
                 ],
             ],
+        ];
+    }
+
+    private function getMethods(): array
+    {
+        return [
+            'where',
+            'whereIn',
+            'whereNotIn',
+            'whereNull',
+            'whereNotNull',
+            'whereHas',
+            'whereRaw',
+            'count',
+            'find',
+            'findOr',
+            'findOrNew',
+            'first',
+            'firstOrNew',
+            'select',
+            'create',
         ];
     }
 }
