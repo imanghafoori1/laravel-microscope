@@ -49,6 +49,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckGenericDocBlocks::class,
         Commands\CheckPsr12::class,
         Commands\CheckEndIf::class,
+        Commands\CheckQuery::class,
         SearchReplace\CheckRefactorsCommand::class,
     ];
 
