@@ -66,7 +66,7 @@ class EnforceHelpers extends Command
                     1 => [
                         'full_namespace_pattern' => 'Illuminate\\Support\\*',
                         'is_sub_class_of' => Facade::class,
-                        'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect'],
+                        'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
                     ],
                 ],
                 'mutator' => function ($matches) {
