@@ -12,7 +12,7 @@ use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
-class CheckQuery extends Command
+class EnforceQuery extends Command
 {
     use LogsErrors;
 
@@ -90,6 +90,7 @@ class CheckQuery extends Command
             'firstOrNew',
             'select',
             'create',
+            'insert',
         ];
     }
 }
