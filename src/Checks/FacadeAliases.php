@@ -56,8 +56,9 @@ class FacadeAliases
                     'search' => 'use '.$base.';',
                     'replace' => 'use '.ltrim($aliases).';',
                 ],
-            ], $tokens
+            ], $tokens, 1
         );
+
         if (! $lines) {
             [$newVersion, $lines] = Searcher::search(
                 [
@@ -65,11 +66,18 @@ class FacadeAliases
                         'search' => 'use '.$base.',',
                         'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
+                ], $tokens, 1
+            );
+        }
+
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
                     [
                         'search' => ','.$base.';',
                         'replace' => ', '.ltrim($aliases).';',
                     ],
-                ], $tokens
+                ], $tokens, 1
             );
         }
 
@@ -80,7 +88,7 @@ class FacadeAliases
                         'search' => ','.$base.',',
                         'replace' => ', '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
-                ], $tokens
+                ], $tokens, 1
             );
         }
 
