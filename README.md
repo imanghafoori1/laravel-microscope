@@ -37,6 +37,53 @@ Give your eyes a rest, we will detect and fix them for you.
 <a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/7f10826df8cf3fb52525fd2494554c0e587b8bb7/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f64742f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Total Downloads" data-canonical-src="https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
 <a href="/imanghafoori1/laravel-microscope/blob/master/LICENSE.md"><img src="https://camo.githubusercontent.com/d885b3999bb863974fb67118174bb0402d089a89/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e7376673f7374796c653d726f756e642d737175617265" alt="Software License" data-canonical-src="https://img.shields.io/badge/license-MIT-blue.svg?style=round-square" style="max-width:100%;"></a></p>
 -->
+
+- Table Of Contents
+    - [Key Things To Know](#key-things-to-know)
+    - [Installation](#installation)
+    - [Usage](#usage)
+      - [Usefull Commands](#usefull-commands)
+      - [Less Use Commands](#less-use-commands)
+      - [Gloabl Helper Functions](#global-helper-functions)
+    - [What The Commands Do?](#what-the-commands-do)
+      
+      <details>
+      
+        <summary>show commands</summary>
+      
+        1. [`php artisan search_replace`](#search_replace)
+           - [Defining Patterns](#defining-patterns)
+           - [Placeholders](#placeholders)
+           - [Mutator](#mutator)
+           - [Filters](#filters)
+           - [Capturing Php "statements"](#capturing-php-statements)
+           - [Capturing Global Function Calls](#capturing-global)
+           - [Repeating Patterns](#repeating-patterns)
+
+        1. [`php artisan check:early_returns`](#early_returns)
+        1. [`php artisan check:psr4`](#psr4)
+        1. [`php artisan check:generate`](#generate)
+        1. [`php artisan check:imports`](#imports)
+        1. [`php artisan check:bad_practices`](#bad_practices)
+        1. [`php artisan check:routes`](#routes)
+        1. [`php artisan check:compact`](#compact)
+        1. [`php artisan check:blade_queries`](#blade_queries)
+        1. [`php artisan check:extract_blades`](#extract_blades)
+        1. [`php artisan check:action_comments`](#action_comments)
+        1. [`php artisan pp:route`](#route)
+        1. [`php artisan check:views`](#views)
+        1. [`php artisan check:events`](#events)
+        1. [`php artisan check:gates`](#gates)
+  
+     </details>
+  
+    - [Credits](#credits)
+    - [License](#license)
+    - [Contributing](#contributing)
+    - [More From The Author](#more-from-author)
+    - [Contributors](#contributors)
+
+<a name="key-things-to-know"></a>
 ## Key things to know:
 
 - It is created to be **smarter than phpstorm** and other IDEs in finding errors.
@@ -49,135 +96,90 @@ Give your eyes a rest, we will detect and fix them for you.
 ### :film_strip: Video tutorial [here](https://youtu.be/aEkiE30wNKk)
 
 ### :star: Your Stars Make Us Do More
-If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
+>If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
 
 <a href="https://github.com/imanghafoori1/microscope/stargazers">Stargazers</a> 
 
-
+<a name="installation"></a>
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
 
-You can install the package via composer:
+You can **install** the package via composer:
 
 ```bash
 composer require imanghafoori/laravel-microscope --dev
 ```
 
-You may also publish config file:
+You may also **publish** config file:
 ```
 php artisan vendor:publish
 ```
 
+<a name="usage"></a>
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
-#### Most Important commands:
+### Usefull Commands:
 
 
-You can run:
+>You can run :point_down:
 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan search_replace
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:early_returns 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:all 
-</h4></p>
+|#|Artisan Command|
+|---|---|
+|1|`php artisan search_replace`|
+|2|`php artisan check:early_returns`|
+|3|`php artisan check:all`|
 
 
-----------------------
+<a name="less-use-commands"></a>
+### Less Use Commands
 
-#### Less Important commands:
+|#|Artisan Command|
+|---|---|
+|1|`php artisan check:views`|
+|2|`php artisan check:routes`|
+|3|`php artisan check:psr4 {-s|--nofix} `|
+|4|`php artisan check:imports {-s|--nofix}`|
+|5|`php artisan check:stringy_classes`|
+|6|`php artisan check:dd`|
+|7|`php artisan check:bad_practices`|
+|8|`php artisan check:compact`|
+|9|`php artisan check:blade_queries`|
+|10|`php artisan check:action_comments`|
+|11|`php artisan check:extract_blades`|
+|12|`php artisan pp:route`|
+|13|`php artisan check:generate`|
+|14|`php artisan check:endif`|
+|15|`php artisan check:events`|
+|16|`php artisan check:gates`|
 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:views
-</h4></p>
+<a name="global-helper-functions"></a>
+## Global Helper Functions
+>Also You will have access to some global helper functions
 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:routes 
- </h4></p>
+```php 
+microscope_dd_listeners($event);
+ ```
+ In case you wonder what the listeners are and where they are, 
+ you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods.
+ It works like a normal `dd(...);` meaning that program stops running at that point.
 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:psr4 {-s|--nofix}
-</h4></p>
- 
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:imports {-s|--nofix}</h4>
-</p>  
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:stringy_classes </h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:dd 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:bad_practices 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:compact 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:blade_queries 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:action_comments 
-</h4></p>
-
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:extract_blades 
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan pp:route
-</h4></p>
-
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:generate
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:endif
-</h4></p>
-
-<p><h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:events
-</h4></p>
-<p>
-<h4>
-<g-emoji class="g-emoji" alias="small_blue_diamond" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f539.png">🔹</g-emoji> php artisan check:gates
- </h4></p>
-
-
-
-Also You will have access to some global helper functions:
- - microscope_dd_listeners($event);
- 
- In case you wonder what the listeners are and where they are, you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods. It works like a normal `dd(...);` meaning that program stops running at that point.
-
+<a name="what-the-commands-do"></a>
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
 
 Lets start with:
-```php
-php artisan search_replace {--name=pattern_name} {--tag=some_tag}
-```
+
+<a name="search_replace"></a>
+### `php artisan search_replace {--name=pattern_name} {--tag=some_tag}`
+
 This is a smart and very powerful search/replace functionality which can be a real "time saver" for you.
 
-### Defining patterns:
+<a name="defining-patterns" ></a>
+#### :one:		Defining patterns:
 
-If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project's root.
+>If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project's root.
 Then, you can define your patterns, within that file.
 
 
-### Examples:
+**Examples:**
 
 Lets define a pattern to replace the `optional()` global helper with the `?->` php 8 null safe operator:
 
@@ -198,40 +200,46 @@ return [
 ```
 - Here the key `optional_to_nullsafe` is the "unique name" of your pattern. (You can target your pattern by running ```php artisan search_replace --name=optional_to_nullsafe```)
 - The search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parentesis.
-- In the `replace` block we substitute what we have captured by the first placeholder by the `"<1>"`. If we have more placeholders, we could have had `"<2>"` and etc.
-- In the tag block we can mention some tags as an array of strings or a string seperated by commas and target them by --tag flag: ```php artisan search_replace --tag=php8```
+- In the `replace` block we substitute what we have captured by the first placeholder by the `"<1>"`. 
+  If we have more placeholders, we could have had `"<2>"` and etc.
+- In the tag block we can mention some tags as an array of strings or a string seperated by commas 
+  and target them by `--tag` flag: ```php artisan search_replace --tag=php8```
 
-#### Placeholders:
+<a name="placeholders" ></a>
+:two: **Placeholders:**
 
 Here is a copmerehensive list of placeholders you can use:
 
-- `"<var>"` or `"<variable>"`: for variables like: `$user`
-- `"<str>"` or `"<string>"`: for hard coded strings: `'hello'` or "hello"
-- `"<class_ref>"`: for class references:  `\App\User::where(...` , `User::where`
-- `"<full_class_ref>"`: only for full references:  `\App\User::`
-- `"<until>"`: to capture all the code until you reach a certain character.
-- `"<comment>"`: for comments (it does not capture doc-blocks beginning with: /** )
-- `"<doc_block>"`: for php doc-blocks
-- `"<statement>"`: to capture a whole php statement.
-- `"<name:nam1,nam2>"` or `"<name>"`: for method or function names. `->where` or `::where`
-- `"<white_space>"`: for whitespace blocks
-- `"<bool>"` or `'<boolean>'`: for true or false (acts case-insensetive)
-- `"<number>"`: for numeric values
-- `"<cast>"`: for type-casts like: `(array) $a;`
-- `"<int>"` or `"<integer>"`: for integer values
-- `"<visibility>"`: for public, protected, private
-- `"<float>"`: for floating point number
-- `"<global_func_call:func1,func2>"`: to detect global function calls.
-- `"<in_between>"`: to capture code within a pair of  `{...}` or `(...)` or `[...]`
-- `"<any>"`: captures any token.
-- **You can also define your own keywords if needed!**
+|#|Placeholders|Description|
+|---|---|---|
+|1|`"<var>"` or `"<variable>"`|for variables like: `$user`|
+|2|`"<str>"` or `"<string>"`|for hard coded strings: `'hello'` or "hello"|
+|3|`"<class_ref>"`|for class references:  `\App\User::where(...` , `User::where`|
+|4|`"<full_class_ref>"`|only for full references:  `\App\User::`|
+|5|`"<until>"`|to capture all the code until you reach a certain character.|
+|6|`"<comment>"`|for comments (it does not capture doc-blocks beginning with: /** )|
+|7|`"<doc_block>"`|for php doc-blocks|
+|8|`"<statement>"`|to capture a whole php statement.|
+|9|`"<name:nam1,nam2>"` or `"<name>"`|for method or function names. `->where` or `::where`|
+|10|`"<white_space>"`|for whitespace blocks|
+|11|`"<bool>"` or `'<boolean>'`|for true or false (acts case-insensetive)|
+|12|`"<number>"`|for numeric values|
+|13|`"<cast>"`|for type-casts like: `(array) $a;`|
+|14|`"<int>"` or `"<integer>"`|for integer values|
+|15|`"<visibility>"`|for public, protected, private|
+|16|`"<float>"`|for floating point number|
+|17|`"<global_func_call:func1,func2>"`|to detect global function calls|
+|18|`"<in_between>"`|to capture code within a pair of  `{...}` or `(...)` or `[...]`|
+|19|`"<any>"`|captures any token.|
 
-You just define a class for your new keyword and append the class path to the end of `Finder::$keywords[] = MyKeyword::class` property.
+>You can also define your own keywords if needed!
+> 
+>You just define a class for your new keyword and append the class path to the end of `Finder::$keywords[] = MyKeyword::class` property.
 Just like the default keywords.
 
-### Example:
+**Example:**
 
-1 - Lets say you want to find only the "comments" which contain the word "todo:" in them.
+:one:  Lets say you want to find only the "comments" which contain the word "todo:" in them.
 ```php
  'todo_comments' => [
         'search' => '<comment>',
@@ -245,9 +253,9 @@ Just like the default keywords.
 
 ```
 
-**Note:** If you do not mention the `'replace'` key it only searches and reports them to you.
+_Note_ If you do not mention the `'replace'` key it only searches and reports them to you.
 
-2 - Ok, now lets say you want to remove the "todo:" word from your comments:
+:two: Ok, now lets say you want to remove the "todo:" word from your comments:
 
 ```php
  'remove_todo_comments' => [
@@ -272,13 +280,13 @@ Just like the default keywords.
 Converts: ``` // todo: refactor code```
 Into: ``` // refactor code```
 
-
-#### Mutator:
+<a name="mutator" ></a>
+:three: **Mutator:**
 In mutators you are free to manipulate the `$matched` values as much as you need to before replacing them in the results.
 You can also mention a static method instead of a function, like this: `[MyClass::class, 'myStaticMethod']`
 
 
-3 - Lets say you want to put the optional comma for the last elements in the arrays if they are missing.
+:three: Lets say you want to put the optional comma for the last elements in the arrays if they are missing.
 ```php
     'enforce_optional_comma' => [
         'search' => '<white_space>?]',
@@ -324,7 +332,8 @@ This is more complex but works much faster. (since it does not need the php synt
 
 - You can optionally comment your placeholders (as above `<1:any>`) with numbers, so that you know which one corresponds to which when replaced.
 
-### Filters:
+<a name="filters" ></a>
+:four: **Filters:**
 
 Currently the microscope offers only two built-in filters: `is_sub_class_of` and `in_array`
 
@@ -370,7 +379,8 @@ UserRepo::where(...);   /// UserRepo is not a model
 
 - This is something which you can never do by regex.
 
-#### Capturing php "statements":
+<a name="capturing-php-statements" ></a>
+:five: **Capturing php "statements":**
 
 Lets say we want to opt-into php 7.4 arrow functions:
 
@@ -408,7 +418,7 @@ $closure = function ($a) {
 };
 ```
 
-#### Difference between `<statement>` and `<until>;`
+:six: **Difference between `<statement>` and `<until>;`**
 
 They seem to be very similar but there is an important case which you can not use `<until>;` in order to cover it properly!
 
@@ -435,7 +445,8 @@ For `$c = $a + $b;` they act the same way, but for the second one `"<until>";` w
 
 But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semi-colon at the end of closure definition and whole close would be captured.
 
-### Capturing global function calls:
+<a name="capturing-global" ></a>
+:seven: **Capturing global function calls:**
 
 Lets say you want to eliminate all the `dd(...)` or `dump(...)` before pushing to production.
 ```php
@@ -469,8 +480,8 @@ dd(1);
 dump(1);
     
 ```
-
-### Repeating patterns:
+<a name="repeating-patterns" ></a>
+:eight: **Repeating patterns:**
 
 Lets say we want to refactor:
 ```php
@@ -506,14 +517,14 @@ Ok, how the pattern would look like then?!
 
 Nice yeah??!
 
-#### Possibilities are endless and the sky is the limit...
-
-----------------------------
+>Possibilities are endless and the sky is the limit...
 
 
-```php
-php artisan check:early_returns
-```
+
+
+<a name="early_returns"></a>
+### `php artisan check:early_returns`
+
 
 This will scan all your Psr-4 loaded classes and flattens your functions and loops by applying the early return rule.
 For example:
@@ -609,78 +620,70 @@ if ($var1 > 1)
 
 **Although this type of refactoring is totally safe and is guaranteed to do the same thing as before, but be careful to commit everything before trying this feature, in case of a weird bug or something.**
 
-----------------------
 
-```php
-php artisan check:psr4
-```
+<a name="psr4"></a>
+### `php artisan check:psr4`
+
 - It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
 - It also checks for references to the old namespace with the system and replaces them with the new one.
 
-----------------------
 
-```php
-php artisan check:generate
-```
+<a name="generate"></a>
+
+### `php artisan check:generate`
+
 You make an empty file, we fill it, based on naming conventions.
 
 If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
 1 - It will be filled with a boilerplate and correct Psr-4 namespace.
 2 - It will be appended to the `providers` array in the `config/app.php`
 
-----------------------
 
-```php
-php artisan check:imports
-```
+<a name="imports"></a>
+
+### `php artisan check:imports`
+
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
 - It auto-corrects some of the references, it no ambiguity is around the class name.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
-----------------------
 
-```php
-php artisan check:bad_practices
-```
+<a name="bad_practices"></a>
+
+### `php artisan check:bad_practices`
+
 
  - It detects bad practices like `env()` calls outside of the config files.
 
-----------------------
+<a name="routes"></a>
 
+### `php artisan check:routes`
 
-```php
-php artisan check:routes
-```
 
 - It checks that your routes refer to valid controller classes and methods.
 - It checks all the controller methods to have valid type-hints.
 - It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
 - It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
 
-----------------------
+<a name="compact"></a>
 
-```php
-php artisan check:compact
-```
+### `php artisan check:compact`
+
 
 - In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
 
-----------------------
+<a name="blade_queries"></a>
 
-```php
-php artisan check:blade_queries
-```
+### `php artisan check:blade_queries`
 
 - Blade files should not contain DB queries. we should move them back into controllers and pass variables.
 This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
 
-----------------------
+<a name="extract_blades"></a>
+### `php artisan check:extract_blades`
 
-```php
-php artisan check:extract_blades
-```
 
 - If you want to extract a blade partial out and make it included like: `@include('myPartials.someFile')`
 
@@ -718,29 +721,23 @@ and put the corresponding content in them.
 - It is also compatible with namespaced views in modular laravel applications.
 So this syntax will work: `'MyMod::myPartials.body'`
 
-----------------------
+<a name="action_comments"></a>
+### `php artisan check:action_comments`
 
-```php
-php artisan check:action_comments
-```
 
 - This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
 
-----------------------
+<a name="route"></a>
+### `php artisan pp:route`
 
-```php
-php artisan pp:route
-```
 
 - First you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
 - You can also pass the Controller@method syntax to the function.
 - You can call it multiple times in order to pretty-print multiple routes.
 
-----------------------
+<a name="views"></a>
+### `php artisan check:views`
 
-```php
-php artisan check:views
-```
 
 - It scans your code and find the `view()` and `View::make()` and reports if they refer to the wrong files.
 - It scans your blade files for `@include()` and `@extends()` and reports if they refer to the wrong files.
@@ -756,11 +753,9 @@ local.INFO: array ('$var1' , '$var2');
 Remember some variables are passed into your view from a `view composer` and not the controller.
 Those variables are also taken into consideration when detecting unused variables.
 
-----------------------
+<a name="events"></a>
+### `php artisan check:events`
 
-```php
-php artisan check:events
-```
 
 For example consider:
 
@@ -790,11 +785,10 @@ This is a valid but wrong type-hint, and will be reported to you. Very cool, isn
 
 3- By Subscriber class... or any other way. The error would be found. :)
 
-----------------------
 
-```php
-php artisan check:gates
-```
+<a name="gates"></a>
+### `php artisan check:gates`
+
 
 It checks the validity of all the gates you have defined, making sure that they refer to a valid class and method.
 
@@ -811,30 +805,32 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 3 - It checks the  `someMethod` to exist.
 
-----------------------
 
 and more features will be added soon. ;)
 
+<a name="credits"></a>
 ## Credits
 
 - [Iman](https://github.com/imanghafoori1)
 - [All Contributors](../../contributors)
 
+<a name="license"></a>
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
---------------------
+
+<a name="contributing"></a>
 
 ### :raising_hand: Contributing
 If you find an issue or have a better way to do something, feel free to open an issue, or a pull request.
 If you use laravel-microscope in your open source project, create a pull request to provide its URL as a sample application in the README.md file.
 
-
+<a name="security"></a>
 ### :exclamation: Security
 If you discover any security-related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
 
-
+<a name="more-from-author"></a>
 ## More from the author:
 
 ### Laravel HeyMan
@@ -853,7 +849,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 
 - https://github.com/imanghafoori1/laravel-terminator
 
-------------
+
 
 ### Laravel AnyPass
 
@@ -861,7 +857,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 
 - https://github.com/imanghafoori1/laravel-anypass
 
---------------
+
 
 ```
 A man will never fail unless he stops trying.
@@ -888,6 +884,7 @@ Albert einstein
 [link-contributors]: ../../contributors
 
 
+<a name="contributors"></a>
 ## ❤️ Contributors
 
 This project exists thanks to all the people who contribute. [[Contributors](https://github.com/imanghafoori1/laravel-microscope/graphs/contributors)].
