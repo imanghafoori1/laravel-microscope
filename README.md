@@ -42,23 +42,23 @@ Give your eyes a rest, we will detect and fix them for you.
     - [Key Things To Know](#key-things-to-know)
     - [Installation](#installation)
     - [Usage](#usage)
-      - [Usefull Commands](#usefull-commands)
-      - [Less Use Commands](#less-use-commands)
-      - [Gloabl Helper Functions](#global-helper-functions)
+        - [Usefull Commands](#usefull-commands)
+        - [Less Use Commands](#less-use-commands)
+        - [Gloabl Helper Functions](#global-helper-functions)
     - [What The Commands Do?](#what-the-commands-do)
-      
+
       <details>
-      
+
         <summary>show commands</summary>
-      
+
         1. [`php artisan search_replace`](#search_replace)
-           - [Defining Patterns](#defining-patterns)
-           - [Placeholders](#placeholders)
-           - [Mutator](#mutator)
-           - [Filters](#filters)
-           - [Capturing Php "statements"](#capturing-php-statements)
-           - [Capturing Global Function Calls](#capturing-global)
-           - [Repeating Patterns](#repeating-patterns)
+            - [Defining Patterns](#defining-patterns)
+            - [Placeholders](#placeholders)
+            - [Mutator](#mutator)
+            - [Filters](#filters)
+            - [Capturing Php "statements"](#capturing-php-statements)
+            - [Capturing Global Function Calls](#capturing-global)
+            - [Repeating Patterns](#repeating-patterns)
 
         1. [`php artisan check:early_returns`](#early_returns)
         1. [`php artisan check:psr4`](#psr4)
@@ -74,9 +74,9 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:views`](#views)
         1. [`php artisan check:events`](#events)
         1. [`php artisan check:gates`](#gates)
-  
+
      </details>
-  
+
     - [Credits](#credits)
     - [License](#license)
     - [Contributing](#contributing)
@@ -98,10 +98,10 @@ Give your eyes a rest, we will detect and fix them for you.
 ### :star: Your Stars Make Us Do More
 >If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
 
-<a href="https://github.com/imanghafoori1/microscope/stargazers">Stargazers</a> 
+<a href="https://github.com/imanghafoori1/microscope/stargazers">Stargazers</a>
 
 <a name="installation"></a>
-## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation 
+## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation
 
 You can **install** the package via composer:
 
@@ -158,9 +158,9 @@ php artisan vendor:publish
 ```php 
 microscope_dd_listeners($event);
  ```
- In case you wonder what the listeners are and where they are, 
- you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods.
- It works like a normal `dd(...);` meaning that program stops running at that point.
+In case you wonder what the listeners are and where they are,
+you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods.
+It works like a normal `dd(...);` meaning that the program stops running at that point.
 
 <a name="what-the-commands-do"></a>
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What the Commands do?
@@ -170,7 +170,7 @@ Lets start with:
 <a name="search_replace"></a>
 ### `php artisan search_replace {--name=pattern_name} {--tag=some_tag}`
 
-This is a smart and very powerful search/replace functionality which can be a real "time saver" for you.
+This is a smart and very powerful search/replace functionality that can be a real "time saver" for you.
 
 <a name="defining-patterns" ></a>
 #### :one:		Defining patterns:
@@ -199,42 +199,42 @@ return [
 ];
 ```
 - Here the key `optional_to_nullsafe` is the "unique name" of your pattern. (You can target your pattern by running ```php artisan search_replace --name=optional_to_nullsafe```)
-- The search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parentesis.
-- In the `replace` block we substitute what we have captured by the first placeholder by the `"<1>"`. 
+- The search pattern has `"<in_between>"` placeholder which captures everything in between the pair of parenthesis.
+- In the `replace` block we substitute what we have captured by the first placeholder with the `"<1>"`.
   If we have more placeholders, we could have had `"<2>"` and etc.
-- In the tag block we can mention some tags as an array of strings or a string seperated by commas 
+- In the tag block we can mention some tags as an array of strings or a string separated by commas
   and target them by `--tag` flag: ```php artisan search_replace --tag=php8```
 
 <a name="placeholders" ></a>
 :two: **Placeholders:**
 
-Here is a copmerehensive list of placeholders you can use:
+Here is a comprehensive list of placeholders you can use:
 
 |#|Placeholders|Description|
 |---|---|---|
-|1|`"<var>"` or `"<variable>"`|for variables like: `$user`|
-|2|`"<str>"` or `"<string>"`|for hard coded strings: `'hello'` or "hello"|
-|3|`"<class_ref>"`|for class references:  `\App\User::where(...` , `User::where`|
-|4|`"<full_class_ref>"`|only for full references:  `\App\User::`|
-|5|`"<until>"`|to capture all the code until you reach a certain character.|
-|6|`"<comment>"`|for comments (it does not capture doc-blocks beginning with: /** )|
-|7|`"<doc_block>"`|for php doc-blocks|
-|8|`"<statement>"`|to capture a whole php statement.|
-|9|`"<name:nam1,nam2>"` or `"<name>"`|for method or function names. `->where` or `::where`|
-|10|`"<white_space>"`|for whitespace blocks|
-|11|`"<bool>"` or `'<boolean>'`|for true or false (acts case-insensetive)|
-|12|`"<number>"`|for numeric values|
-|13|`"<cast>"`|for type-casts like: `(array) $a;`|
-|14|`"<int>"` or `"<integer>"`|for integer values|
-|15|`"<visibility>"`|for public, protected, private|
-|16|`"<float>"`|for floating point number|
+|1|`<var>` or `<variable>`|for variables like: `$user`|
+|2|`<str>` or `<string>`|for hard coded strings: `'hello'` or "hello"|
+|3|`<class_ref>`|for class references:  `\App\User::where(...` , `User::where`|
+|4|`<full_class_ref>`|only for full references:  `\App\User::`|
+|5|`<until>`|to capture all the code until you reach a certain character.|
+|6|`<comment>`|for comments (it does not capture doc-blocks beginning with: /** )|
+|7|`<doc_block>`|for php doc-blocks|
+|8|`<statement>`|to capture a whole php statement.|
+|9|`<name:nam1,nam2>` or `<name>`|for method or function names. `->where` or `::where`|
+|10|`<white_space>`|for whitespace blocks|
+|11|`<bool>` or `<boolean>`|for true or false (acts case-insensetive)|
+|12|`<number>`|for numeric values|
+|13|`<cast>`|for type-casts like: `(array) $a;`|
+|14|`<int>` or `"<integer>"`|for integer values|
+|15|`<visibility>`|for public, protected, private|
+|16|`<float>`|for floating point number|
 |17|`"<global_func_call:func1,func2>"`|to detect global function calls|
-|18|`"<in_between>"`|to capture code within a pair of  `{...}` or `(...)` or `[...]`|
-|19|`"<any>"`|captures any token.|
+|18|`<in_between>`|to capture code within a pair of  `{...}` or `(...)` or `[...]`|
+|19|`<any>`|captures any token.|
 
 >You can also define your own keywords if needed!
-> 
->You just define a class for your new keyword and append the class path to the end of `Finder::$keywords[] = MyKeyword::class` property.
+>
+>You just define a class for your new keyword and append the class path to the end of the `Finder::$keywords[] = MyKeyword::class` property.
 Just like the default keywords.
 
 **Example:**
@@ -372,7 +372,7 @@ User::query()->where(...)->get();
 
 So it does not tamper with something like this:
 ```php
-User::all();            // The `all` method can not be preceeded with `query`
+User::all();            // The `all` method can not be preceded with `query`
 
 UserRepo::where(...);   /// UserRepo is not a model
 ```
@@ -467,7 +467,7 @@ new      dd('I am a classs');  // here "dd" is the name of a class.
 ```
 
 But will detect and remove real global `dd()` calls with whatever parameters they have recieved.
-    
+
 ```
 dd(                // <=== will be detected, even the pattern above is written all in one line.
    auth('admin')
@@ -655,7 +655,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 ### `php artisan check:bad_practices`
 
 
- - It detects bad practices like `env()` calls outside of the config files.
+- It detects bad practices like `env()` calls outside of the config files.
 
 <a name="routes"></a>
 
@@ -713,7 +713,7 @@ After you execute `php artisan check:extract_blades` it will become:
 </html>
 ```
 Also, it will create:
-- `resources/views/myPartials/head.blade.php` 
+- `resources/views/myPartials/head.blade.php`
 - `resources/views/myPartials/body.blade.php`
 
 and put the corresponding content in them.
@@ -763,11 +763,11 @@ For example consider:
 Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
 ```
 
-1 - It checks the  `\App\Listeners\MyListener` classpath to be valid.
+1 - It checks the `\App\Listeners\MyListener` classpath to be valid.
 
-2 - It checks the  `myMethod` to exist on the `MyListener` class
+2 - It checks the `myMethod` method to exist on the `MyListener` class
 
-3 - It checks the  `myMethod` to have the right type-hint (if any) in its signature, for example:
+3 - It checks the `myMethod` method to have the right type-hint (if any) in its signature, for example:
 ```php
 public function myMethod(OtherEvent $e) // <---- notice type-hint here
 {
@@ -799,11 +799,11 @@ Gate::policy(User::class, 'UserPolicy@someMethod');
 Gate::define('someAbility', 'UserGate@someMethod');
 ```
 
-1 - It checks the  `User` classpath to be valid.
+1 - It checks the `User` classpath to be valid.
 
-2 - It checks the  `UserPolicy` classpath to be valid.
+2 - It checks the `UserPolicy` classpath to be valid.
 
-3 - It checks the  `someMethod` to exist.
+3 - It checks the `someMethod` method to exist.
 
 
 and more features will be added soon. ;)
