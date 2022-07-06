@@ -136,8 +136,8 @@ php artisan vendor:publish
 |---|---|
 |1|`php artisan check:views`|
 |2|`php artisan check:routes`|
-|3|`php artisan check:psr4 {-s|--nofix} `|
-|4|`php artisan check:imports {-s|--nofix}`|
+|3|`php artisan check:psr4 {-s\|--nofix} `|
+|4|`php artisan check:imports {-s\|--nofix}`|
 |5|`php artisan check:stringy_classes`|
 |6|`php artisan check:dd`|
 |7|`php artisan check:bad_practices`|
