@@ -85,12 +85,19 @@ class EnforceQuery extends Command
             'count',
             'find',
             'findOr',
+            'firstOr',
+            'firstOrCreate',
+            'findOrFail',
+            'firstOrFail',
+            'paginate',
             'findOrNew',
             'first',
+            'pluck',
             'firstOrNew',
             'select',
             'create',
             'insert',
+            'findMany',
         ];
     }
 }
