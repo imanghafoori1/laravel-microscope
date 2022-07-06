@@ -52,6 +52,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\EnforceQuery::class,
         Commands\EnforceHelpers::class,
         SearchReplace\CheckRefactorsCommand::class,
+        Commands\CheckDynamicWhereMethod::class,
     ];
 
     public function boot()
