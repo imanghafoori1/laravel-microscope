@@ -150,6 +150,7 @@ php artisan vendor:publish
 |14|`php artisan check:endif`|
 |15|`php artisan check:events`|
 |16|`php artisan check:gates`|
+|17|`php artisan check:dynamic_where`|
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions
@@ -804,6 +805,12 @@ Gate::define('someAbility', 'UserGate@someMethod');
 2 - It checks the `UserPolicy` classpath to be valid.
 
 3 - It checks the `someMethod` method to exist.
+
+<a name="dynamic_where"></a>
+### `php artisan check:dynamic_where`
+
+
+- It looks for dynamic where methods like `whereFamilyName('...')` that are not IDE-friendly; such a method can be replaced by `where('family_name', '...')`.
 
 
 and more features will be added soon. ;)
