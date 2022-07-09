@@ -807,10 +807,11 @@ Gate::define('someAbility', 'UserGate@someMethod');
 3 - It checks the `someMethod` method to exist.
 
 <a name="dynamic_where"></a>
+
 ### `php artisan check:dynamic_where`
 
 
-- It looks for dynamic where methods like `whereFamilyName('...')` that are not IDE-friendly; such a method can be replaced by `where('family_name', '...')`.
+- It looks for "dynamic where" methods like `whereFamilyName('...')` with `where('family_name', '...')`.
 
 
 and more features will be added soon. ;)
