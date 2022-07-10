@@ -56,6 +56,7 @@ class CheckDynamicWhereMethod extends Command
         'whereJsonDoesntContain',
         'whereJsonLength',
         'whereFullText',
+        'whereNot',
     ];
 
     public function handle(ErrorPrinter $errorPrinter)
