@@ -813,6 +813,15 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 - It looks for "dynamic where" methods like `whereFamilyName('...')` with `where('family_name', '...')`.
 
+<a name="enforce:query"></a>
+
+### `php artisan enforce:query`
+
+
+- It call the static `query` method on your eloquent query chains so that IDEs can understand eloquent.
+
+- For example, converts: `User::where(...` to `User::query()->where(...`
+
 
 and more features will be added soon. ;)
 
