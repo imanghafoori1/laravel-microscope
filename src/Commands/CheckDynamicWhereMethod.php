@@ -57,6 +57,10 @@ class CheckDynamicWhereMethod extends Command
         'whereJsonLength',
         'whereFullText',
         'whereNot',
+        'whereInstanceOf',
+        'whereStrict',
+        'whereInStrict',
+        'whereNotInStrict',
     ];
 
     public function handle(ErrorPrinter $errorPrinter)
