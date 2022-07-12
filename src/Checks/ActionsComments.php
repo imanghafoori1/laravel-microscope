@@ -62,7 +62,7 @@ class ActionsComments
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
                 $shouldSave = true;
-                $tokens[$commentIndex][1] = "\n       ".$msg.$tokens[$commentIndex][1];
+                $tokens[$commentIndex][1] = "\n        ".$msg.$tokens[$commentIndex][1];
             } elseif ($msg !== $tokens[$commentIndex + 1][1]) {
                 // if the docblock is there, but needs update...
                 $shouldSave = true;
