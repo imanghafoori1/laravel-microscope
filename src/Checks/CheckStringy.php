@@ -48,7 +48,7 @@ class CheckStringy
             }
 
             $classPath = $this->getClassyPath($classPath);
-            $command->info('<fg=bright-green>✔ Replaced with: </><fg=bright-red>'.$classPath.'</>');
+            $command->info('<fg=green>✔ Replaced with: </><fg=red>'.$classPath.'</>');
 
             $contextClass = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
 
@@ -83,7 +83,7 @@ class CheckStringy
     private static function ask($command, $token, $absFilePath)
     {
         $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
-        $text = 'Replace: <fg=bright-blue>'.$token[1].'</> with <fg=blue>::class</> version of it?';
+        $text = 'Replace: <fg=blue>'.$token[1].'</> with <fg=blue>::class</> version of it?';
 
         return $command->getOutput()->confirm($text, true);
     }

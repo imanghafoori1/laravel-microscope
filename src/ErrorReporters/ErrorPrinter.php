@@ -185,12 +185,12 @@ class ErrorPrinter
         $number = ++$this->errorsList['total'];
         ($number < 10) && $number = " $number";
 
-        $number = '<fg=bright-cyan>'.$number.' </>';
+        $number = '<fg=cyan>'.$number.' </>';
         $path = "  $number";
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
         PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
-        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg));
+        $this->print('<fg=red>'.$msg.'</>', $path);
     }
 
     public function end()
