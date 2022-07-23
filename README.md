@@ -111,7 +111,7 @@ composer require imanghafoori/laravel-microscope --dev
 
 You may also **publish** config file:
 ```
-php artisan vendor:publish
+php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider"
 ```
 
 <a name="usage"></a>
