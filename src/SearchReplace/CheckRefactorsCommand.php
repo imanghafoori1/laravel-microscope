@@ -48,7 +48,12 @@ class CheckRefactorsCommand extends Command
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns]);
+        try {
+            ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns]);
+        } catch (ErrorException $e) {
+            $this->error(' - No pattern found');
+        }
+
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
