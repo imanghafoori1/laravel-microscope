@@ -96,7 +96,7 @@ class CheckEarlyReturns extends Command
         }
 
         isset($msg) && $this->info(PHP_EOL.$msg);
-        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        $this->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
     }
 
     private function getConfirm($filePath)

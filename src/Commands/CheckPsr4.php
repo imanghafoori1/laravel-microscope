@@ -98,7 +98,7 @@ class CheckPsr4 extends Command
         $autoload = ComposerJson::readAutoload();
         $this->getOutput()->writeln('');
         $this->getOutput()->writeln('<fg=blue>Finished!</>');
-        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        $this->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
         $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
         $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
     }

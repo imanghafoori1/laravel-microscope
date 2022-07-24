@@ -26,7 +26,7 @@ class ClassifyStrings extends Command
 
         ForPsr4LoadedClasses::check([CheckStringy::class], [], $fileName, $folder);
 
-        $this->getOutput()->writeln(' <fg=gray>✔ - Finished looking for stringy classes.</>');
+        $this->getOutput()->writeln(' <fg='.config('microscope.colors.line_separator').'>✔ - Finished looking for stringy classes.</>');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }

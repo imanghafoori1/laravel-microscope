@@ -58,7 +58,7 @@ class CheckStringy
 
             FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
             $width = (new Terminal)->getWidth() - 4;
-            $command->info(' <fg=gray>'.str_repeat('_', $width).'</>');
+            $command->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', $width).'</>');
         }
     }
 

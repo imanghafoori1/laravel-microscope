@@ -92,6 +92,15 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
+        [$major] = explode('.', app()->version());
+
+        if ((int) $major >= 8) {
+            $color = 'gray';
+        } else {
+            $color = 'blue';
+        }
+        config()->set('microscope.colors.line_separator', $color);
+
         $this->registerCompiler();
 
         $this->loadConfig();

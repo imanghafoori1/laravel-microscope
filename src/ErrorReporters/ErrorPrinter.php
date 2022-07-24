@@ -195,7 +195,7 @@ class ErrorPrinter
 
     public function end()
     {
-        $this->printer->writeln(' '.'<fg=gray>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
+        $this->printer->writeln(' '.'<fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
     }
 
     public function printLink($path, $lineNumber = 4, $len = null)
@@ -295,6 +295,6 @@ class ErrorPrinter
             return true;
         }
 
-        return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
+        return $command->getOutput()->confirm(' Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 }
