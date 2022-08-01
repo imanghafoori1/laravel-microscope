@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
-use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;

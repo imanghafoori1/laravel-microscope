@@ -99,8 +99,16 @@ class CheckPsr4 extends Command
         $this->getOutput()->writeln('<fg=blue>Finished!</>');
         $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
         $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        foreach (ComposerJson::readAutoload() as $psr4) {
-            $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($psr4)).'');
+        $len = 0;
+        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
+            $output = '';
+            $this->getOutput()->writeln(' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>');
+            foreach ($psr4 as $namespace => $path) {
+                $max = max($len, strlen($namespace));
+                $len = strlen($namespace);
+                $output .= '   - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
+            }
+            $this->getOutput()->writeln($output);
         }
     }
 
