@@ -67,11 +67,11 @@ class CheckNamespaces
             self::$checkedNamespaces++;
 
             isset($checkedNamespacesStats[$namespace]) ? ($checkedNamespacesStats[$namespace]++) : ($checkedNamespacesStats[$namespace] = 1);
-                /*
-                  if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
-                      continue;
-                  }
-                */
+            /*
+              if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
+                  continue;
+              }
+            */
 
             [
                 $currentNamespace,
