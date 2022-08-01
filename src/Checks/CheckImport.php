@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -54,7 +55,7 @@ class CheckImport
 
     private static function tryToFix($classImport, $absFilePath, $line, $as, $printer)
     {
-        $isInUserSpace = Str::startsWith($classImport, array_keys(ComposerJson::readAutoload()));
+        $isInUserSpace = CheckClassReferencesAreValid::isInUserSpace($classImport);
         if (! $isInUserSpace) {
             return false;
         }

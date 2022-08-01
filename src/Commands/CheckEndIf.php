@@ -22,32 +22,32 @@ class CheckEndIf extends Command
             return null;
         }
 
-        $psr4 = ComposerJson::readAutoload();
-
         $fixedFilesCount = 0;
-        foreach ($psr4 as $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $file) {
-                $path = $file->getRealPath();
-                $tokens = token_get_all(file_get_contents($path));
-                if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
-                    continue;
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            foreach ($psr4 as $psr4Path) {
+                $files = FilePath::getAllPhpFiles($psr4Path);
+                foreach ($files as $file) {
+                    $path = $file->getRealPath();
+                    $tokens = token_get_all(file_get_contents($path));
+                    if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
+                        continue;
+                    }
+
+                    try {
+                        $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
+                    } catch (Exception $e) {
+                        self::requestIssue($path);
+                        continue;
+                    }
+
+                    if (! SyntaxNormalizer::$hasChange || ! $this->getConfirm($path)) {
+                        continue;
+                    }
+
+                    Refactor::saveTokens($path, $tokens, $this->option('test'));
+
+                    $fixedFilesCount++;
                 }
-
-                try {
-                    $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
-                } catch (Exception $e) {
-                    self::requestIssue($path);
-                    continue;
-                }
-
-                if (! SyntaxNormalizer::$hasChange || ! $this->getConfirm($path)) {
-                    continue;
-                }
-
-                Refactor::saveTokens($path, $tokens, $this->option('test'));
-
-                $fixedFilesCount++;
             }
         }
 

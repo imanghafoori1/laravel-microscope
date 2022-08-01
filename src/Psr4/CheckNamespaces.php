@@ -11,6 +11,8 @@ class CheckNamespaces
 {
     public static $checkedNamespaces = 0;
 
+    public static $checkedNamespacesStats = [];
+
     //public static $cacheData = [];
 
     public static $changedNamespaces = [];
@@ -29,22 +31,20 @@ class CheckNamespaces
      */
     public static function all($detailed)
     {
-        $autoload = ComposerJson::readAutoload();
-        //self::$cacheData = cache()->get('microscope_psr4:');
-        //self::$cacheData = [];
         $scanned = [];
-        foreach ($autoload as $namespace => $psr4Path) {
-
-            // to avoid duplicate scanning
-            foreach ($scanned as $s) {
-                if (strlen($psr4Path) > strlen($s) && Str::startsWith($psr4Path, $s)) {
-                    continue 2;
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $namespace => $psr4Path) {
+                // to avoid duplicate scanning
+                foreach ($scanned as $s) {
+                    if (strlen($psr4Path) > strlen($s) && Str::startsWith($psr4Path, $s)) {
+                        continue 2;
+                    }
                 }
+
+                $scanned[] = $psr4Path;
+
+                CheckNamespaces::within($namespace, $psr4Path, $detailed);
             }
-
-            $scanned[] = $psr4Path;
-
-            CheckNamespaces::within($namespace, $psr4Path, $detailed);
         }
 
         //cache()->put('microscope_psr4:', self::$cacheData, now()->addDays(3));
@@ -66,11 +66,12 @@ class CheckNamespaces
 
             self::$checkedNamespaces++;
 
-            /*
-              if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
-                  continue;
-              }
-            */
+            isset($checkedNamespacesStats[$namespace]) ? ($checkedNamespacesStats[$namespace]++) : ($checkedNamespacesStats[$namespace] = 1);
+                /*
+                  if ((self::$cacheData[self::getKey($relativePath, $namespace)] ?? 0) === filemtime($absFilePath)) {
+                      continue;
+                  }
+                */
 
             [
                 $currentNamespace,
@@ -128,24 +129,20 @@ class CheckNamespaces
 
         $_currentClass = $currentNamespace.'\\'.$class;
         $_correctClass = $correctNamespace.'\\'.$class;
-        $relPath = NamespaceCorrector::getRelativePathFromNamespace($currentNamespace);
-        if (is_dir(base_path($relPath.DIRECTORY_SEPARATOR.$class))) {
-            self::$changedNamespaces[$_currentClass.';'] = $_correctClass.';';
-            self::$changedNamespaces[$_currentClass.'('] = $_correctClass.'(';
-            self::$changedNamespaces[$_currentClass.'::'] = $_correctClass.'::';
-            self::$changedNamespaces[$_currentClass.' as'] = $_correctClass.' as';
-        } else {
-            self::$changedNamespaces[$_currentClass] = $_correctClass;
-        }
+        self::$changedNamespaces[$_currentClass.';'] = $_correctClass.';';
+        self::$changedNamespaces[$_currentClass.'('] = $_correctClass.'(';
+        self::$changedNamespaces[$_currentClass.'::'] = $_correctClass.'::';
+        self::$changedNamespaces[$_currentClass.' as'] = $_correctClass.' as';
     }
 
     private static function getCorrectNamespaces($relativePath)
     {
-        $namespaces = ComposerJson::readAutoload();
         $correctNamespaces = [];
-        foreach ($namespaces as $namespacePrefix => $path) {
-            if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
-                $correctNamespaces[] = NamespaceCorrector::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $namespacePrefix => $path) {
+                if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
+                    $correctNamespaces[] = NamespaceCorrector::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
+                }
             }
         }
 

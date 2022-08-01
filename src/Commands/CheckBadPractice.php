@@ -60,11 +60,11 @@ class CheckBadPractice extends Command
 
     private function checkPsr4Classes()
     {
-        $psr4 = ComposerJson::readAutoload();
-
-        foreach ($psr4 as $_namespace => $dirPath) {
-            foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
-                $this->checkForEnv($filePath->getRealPath());
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            foreach ($psr4 as $_namespace => $dirPath) {
+                foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
+                    $this->checkForEnv($filePath->getRealPath());
+                }
             }
         }
     }

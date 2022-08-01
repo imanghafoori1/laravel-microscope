@@ -26,40 +26,40 @@ class CheckEarlyReturns extends Command
             return;
         }
 
-        $psr4 = ComposerJson::readAutoload();
-
         $fixingFilesCount = $totalNumberOfFixes = $fixedFilesCount = 0;
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $file) {
-                $path = $file->getRealPath();
-                $tokens = token_get_all(file_get_contents($path));
-                if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
-                    continue;
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $psr4Namespace => $psr4Path) {
+                $files = FilePath::getAllPhpFiles($psr4Path);
+                foreach ($files as $file) {
+                    $path = $file->getRealPath();
+                    $tokens = token_get_all(file_get_contents($path));
+                    if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
+                        continue;
+                    }
+
+                    try {
+                        [$fixes, $tokens] = $this->refactor($tokens);
+                    } catch (Exception $e) {
+                        dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
+                        dump('Skipping : '.$path);
+                        continue;
+                    }
+
+                    $fixes !== 0 && $fixingFilesCount++;
+
+                    if ($this->option('nofix') && $fixes !== 0) {
+                        $this->line('<fg=red>    - '.FilePath::getRelativePath($path).'</fg=red>');
+                        continue;
+                    }
+
+                    if ($fixes == 0 || ! $this->getConfirm($path)) {
+                        continue;
+                    }
+
+                    $this->fix($path, $tokens, $fixes);
+                    $fixedFilesCount++;
+                    $totalNumberOfFixes += $fixes;
                 }
-
-                try {
-                    [$fixes, $tokens] = $this->refactor($tokens);
-                } catch (Exception $e) {
-                    dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
-                    dump('Skipping : '.$path);
-                    continue;
-                }
-
-                $fixes !== 0 && $fixingFilesCount++;
-
-                if ($this->option('nofix') && $fixes !== 0) {
-                    $this->line('<fg=red>    - '.FilePath::getRelativePath($path).'</fg=red>');
-                    continue;
-                }
-
-                if ($fixes == 0 || ! $this->getConfirm($path)) {
-                    continue;
-                }
-
-                $this->fix($path, $tokens, $fixes);
-                $fixedFilesCount++;
-                $totalNumberOfFixes += $fixes;
             }
         }
 

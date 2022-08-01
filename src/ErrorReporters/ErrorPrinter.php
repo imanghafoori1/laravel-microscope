@@ -185,17 +185,17 @@ class ErrorPrinter
         $number = ++$this->errorsList['total'];
         ($number < 10) && $number = " $number";
 
-        $number = '<fg=cyan>'.$number.' </>';
+        $number = '<fg=bright-cyan>'.$number.' </>';
         $path = "  $number";
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
         PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
-        $this->print('<fg=red>'.$msg.'</>', $path);
+        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg));
     }
 
     public function end()
     {
-        $this->printer->writeln(' '.'<fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
+        $this->printer->writeln(' '.'<fg=gray>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
     }
 
     public function printLink($path, $lineNumber = 4, $len = null)
@@ -295,6 +295,6 @@ class ErrorPrinter
             return true;
         }
 
-        return $command->getOutput()->confirm(' Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
+        return $command->getOutput()->confirm('Do you want to change it to: '.$correctNamespace, true);
     }
 }

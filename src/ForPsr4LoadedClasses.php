@@ -17,23 +17,23 @@ class ForPsr4LoadedClasses
 
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
-        $psr4 = ComposerJson::readAutoload();
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            foreach ($psr4 as $psr4Namespace => $psr4Path) {
+                $files = FilePath::getAllPhpFiles($psr4Path);
+                foreach ($files as $phpFilePath) {
+                    $absFilePath = $phpFilePath->getRealPath();
 
-        foreach ($psr4 as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $phpFilePath) {
-                $absFilePath = $phpFilePath->getRealPath();
+                    if (FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
+                        self::$checkedFilesNum++;
+                        $tokens = token_get_all(file_get_contents($absFilePath));
 
-                if (FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
-                    self::$checkedFilesNum++;
-                    $tokens = token_get_all(file_get_contents($absFilePath));
-
-                    $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
-                    foreach ($checks as $check) {
-                        $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
-                        if ($newTokens) {
-                            $tokens = $newTokens;
-                            $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                        $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                        foreach ($checks as $check) {
+                            $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
+                            if ($newTokens) {
+                                $tokens = $newTokens;
+                                $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                            }
                         }
                     }
                 }

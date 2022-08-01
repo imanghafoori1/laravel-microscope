@@ -15,10 +15,6 @@ class PatternRefactorings
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
         foreach ($patterns[0] as $pattern) {
-            if (empty($pattern['search'])) {
-                continue;
-            }
-
             if (isset($pattern['file']) && ! Str::endsWith($absFilePath, $pattern['file'])) {
                 continue;
             }

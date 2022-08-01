@@ -103,7 +103,8 @@ class CheckClassReferencesAreValid
             $class = str_replace('\\\\', '\\', $class);
 
             if (! \class_exists($class)) {
-                $isInUserSpace = Str::startsWith($class, \array_keys(ComposerJson::readAutoload()));
+                $isInUserSpace = self::isInUserSpace($class);
+
                 $result = [false];
                 if ($isInUserSpace) {
                     $result = Analyzers\Fixer::fixReference($absFilePath, $class, $token[2]);
@@ -175,7 +176,7 @@ class CheckClassReferencesAreValid
             // renames the variable
             $wrongClassRef = $class;
             unset($class);
-            if (! ComposerJson::isInUserSpace($wrongClassRef)) {
+            if (! self::isInUserSpace($wrongClassRef)) {
                 $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
                 continue;
             }
@@ -220,5 +221,18 @@ class CheckClassReferencesAreValid
         dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
         dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
         dump('Send us the contents of: '.$path);
+    }
+
+    public static function isInUserSpace($class): bool
+    {
+        $isInUserSpace = false;
+        $class = ltrim($class, '\\');
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            if (Str::startsWith($class, \array_keys($autoload))) {
+                $isInUserSpace = true;
+            }
+        }
+
+        return $isInUserSpace;
     }
 }

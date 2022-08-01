@@ -26,24 +26,19 @@ class ComposerJson
         return $value;
     }
 
-    public static function isInUserSpace($class)
-    {
-        return Str::startsWith(ltrim($class, '\\'), \array_keys(ComposerJson::readAutoload()));
-    }
-
     public static function readAutoload()
     {
         $result = [];
 
         foreach (self::collectLocalRepos() as $path) {
             // We avoid autoload-dev for repositories.
-            $result = $result + self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
+            $result[$path] = self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
         }
 
         // add the root composer.json
-        $root = self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
+        $result['/'] = self::readKey('autoload.psr-4') + self::readKey('autoload-dev.psr-4');
 
-        return self::removedIgnored($result + $root, config('microscope.ignored_namespaces', []));
+        return self::removedIgnored($result, config('microscope.ignored_namespaces', []));
     }
 
     private static function normalizePaths($value, $path)
@@ -66,9 +61,11 @@ class ComposerJson
     {
         $result = [];
 
-        foreach ($mapping as $namespace => $path) {
-            if (! in_array($namespace, $ignored)) {
-                $result[$namespace] = $path;
+        foreach ($mapping as $i => $map) {
+            foreach ($map as $namespace => $path) {
+                if (! in_array($namespace, $ignored)) {
+                    $result[$i][$namespace] = $path;
+                }
             }
         }
 

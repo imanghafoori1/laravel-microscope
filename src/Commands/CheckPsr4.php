@@ -95,12 +95,13 @@ class CheckPsr4 extends Command
 
     private function reportResult()
     {
-        $autoload = ComposerJson::readAutoload();
         $this->getOutput()->writeln('');
         $this->getOutput()->writeln('<fg=blue>Finished!</>');
-        $this->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
         $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($autoload)).'');
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            $this->getOutput()->writeln(' - '.implode("\n - ", array_keys($psr4)).'');
+        }
     }
 
     private function noErrorFound($time)

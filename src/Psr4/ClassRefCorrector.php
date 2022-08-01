@@ -25,14 +25,14 @@ class ClassRefCorrector
 
     public static function changeReferences($olds, $news)
     {
-        $autoload = ComposerJson::readAutoload();
         $olds = [$olds, self::possibleOccurrence($olds)];
-
-        foreach ($autoload as $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            foreach ($files as $classFilePath) {
-                $_path = $classFilePath->getRealPath();
-                self::fixAndReport($_path, $olds, $news);
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $psr4Path) {
+                $files = FilePath::getAllPhpFiles($psr4Path);
+                foreach ($files as $classFilePath) {
+                    $_path = $classFilePath->getRealPath();
+                    self::fixAndReport($_path, $olds, $news);
+                }
             }
         }
 

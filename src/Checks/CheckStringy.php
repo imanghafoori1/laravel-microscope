@@ -18,47 +18,48 @@ class CheckStringy
 
     public function checkStringy($tokens, $absFilePath)
     {
-        $psr4 = ComposerJson::readAutoload();
-        $namespaces = array_keys($psr4);
         $errorPrinter = resolve(ErrorPrinter::class);
-        foreach ($tokens as $token) {
-            if ($token[0] !== T_CONSTANT_ENCAPSED_STRING) {
-                continue;
-            }
-
-            $classPath = \trim($token[1], '\'\"');
-
-            if (! $this->isPossiblyClassyString($namespaces, $classPath)) {
-                continue;
-            }
-
-            if (! \class_exists(\str_replace('\\\\', '\\', $classPath))) {
-                if (self::refersToDir($classPath)) {
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            $namespaces = array_keys($psr4);
+            foreach ($tokens as $token) {
+                if ($token[0] !== T_CONSTANT_ENCAPSED_STRING) {
                     continue;
                 }
-                $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
-                continue;
+
+                $classPath = \trim($token[1], '\'\"');
+
+                if (! $this->isPossiblyClassyString($namespaces, $classPath)) {
+                    continue;
+                }
+
+                if (! \class_exists(\str_replace('\\\\', '\\', $classPath))) {
+                    if (self::refersToDir($classPath)) {
+                        continue;
+                    }
+                    $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    continue;
+                }
+
+                $errorPrinter->printLink($absFilePath, $token[2]);
+                $command = app('current.command');
+
+                if (! self::ask($command, $token, $absFilePath)) {
+                    continue;
+                }
+
+                $classPath = $this->getClassyPath($classPath);
+                $command->info('<fg=green>✔ Replaced with: </><fg=red>'.$classPath.'</>');
+
+                $contextClass = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
+
+                if (NamespaceCorrector::haveSameNamespace($contextClass, $classPath)) {
+                    $classPath = trim(class_basename($classPath), '\\');
+                }
+
+                FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
+                $width = (new Terminal)->getWidth() - 4;
+                $command->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', $width).'</>');
             }
-
-            $errorPrinter->printLink($absFilePath, $token[2]);
-            $command = app('current.command');
-
-            if (! self::ask($command, $token, $absFilePath)) {
-                continue;
-            }
-
-            $classPath = $this->getClassyPath($classPath);
-            $command->info('<fg=green>✔ Replaced with: </><fg=red>'.$classPath.'</>');
-
-            $contextClass = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
-
-            if (NamespaceCorrector::haveSameNamespace($contextClass, $classPath)) {
-                $classPath = trim(class_basename($classPath), '\\');
-            }
-
-            FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
-            $width = (new Terminal)->getWidth() - 4;
-            $command->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', $width).'</>');
         }
     }
 

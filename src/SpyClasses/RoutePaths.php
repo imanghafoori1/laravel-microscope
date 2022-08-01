@@ -21,8 +21,10 @@ class RoutePaths
 
         foreach (config('app.providers') as $providerClass) {
             // we exclude the core or package service providers here.
-            if (! Str::contains($providerClass, array_keys(ComposerJson::readAutoload()))) {
-                continue;
+            foreach (ComposerJson::readAutoload() as $autoload) {
+                if (! Str::contains($providerClass, array_keys($autoload))) {
+                    continue 2;
+                }
             }
 
             // get tokens by class name

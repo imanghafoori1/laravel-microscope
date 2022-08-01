@@ -37,8 +37,10 @@ class NamespaceCorrectorTest extends BaseTestClass
         ComposerJson::$composerPath = __DIR__.'/stubs/composer_json/2';
 
         $expected = [
-            'App\\' => 'app/',
-            'App2\\' => 'app2/',
+            '/' => [
+                'App\\' => 'app/',
+                'App2\\' => 'app2/',
+            ],
         ];
 
         $this->assertEquals($expected, ComposerJson::readAutoload());

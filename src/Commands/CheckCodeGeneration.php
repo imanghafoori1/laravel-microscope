@@ -19,11 +19,11 @@ class CheckCodeGeneration extends Command
         $this->info('Scanning for Empty Provider Files');
         $errorPrinter->printer = $this->output;
 
-        $autoload = ComposerJson::readAutoload();
-
-        foreach ($autoload as $psr4Namespace => $psr4Path) {
-            $files = FilePath::getAllPhpFiles($psr4Path);
-            GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);
+        foreach (ComposerJson::readAutoload() as $psr4) {
+            foreach ($psr4 as $psr4Namespace => $psr4Path) {
+                $files = FilePath::getAllPhpFiles($psr4Path);
+                GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);
+            }
         }
     }
 }
