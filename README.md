@@ -21,7 +21,7 @@ Why repeat the old errors, if there are so many new errors to commit.
 Give your eyes a rest, we will detect and fix them for you.
 </h5>
 
-
+![Packagist Stars](https://img.shields.io/packagist/stars/imanghafoori/laravel-microscope)
 [![Required Laravel Version][ico-laravel]][link-packagist]
 [![Required PHP Version][ico-php]][link-packagist]
 [![Latest Version on Packagist][ico-version]][link-packagist]
