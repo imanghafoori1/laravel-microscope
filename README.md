@@ -42,7 +42,7 @@ Give your eyes a rest, we will detect and fix them for you.
     - [Key Things To Know](#key-things-to-know)
     - [Installation](#installation)
     - [Usage](#usage)
-        - [Usefull Commands](#usefull-commands)
+        - [Useful Commands](#useful-commands)
         - [Less Use Commands](#less-use-commands)
         - [Gloabl Helper Functions](#global-helper-functions)
     - [What The Commands Do?](#what-the-commands-do)
@@ -117,7 +117,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 <a name="usage"></a>
 ## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
 
-### Usefull Commands:
+### Useful Commands:
 
 
 >You can run :point_down:
