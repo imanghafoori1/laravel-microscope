@@ -102,16 +102,21 @@ class NamespaceCorrector
         return trim(\str_replace('/', '\\', \str_replace($_paths, $_namespaces, $relPath)), '\\');
     }
 
-    private static function getSortedAutoload($autoload): array
+    private static function getSortedAutoload($autoloads): array
     {
-        ($autoload === null) && $autoload = ComposerJson::readAutoload();
+        ($autoloads === null) && $autoloads = ComposerJson::readAutoload();
 
-        uasort($autoload, function ($path, $path2) {
-            return strlen($path2) <=> strlen($path);
-        });
+        $namespaces = [];
+        $paths = [];
 
-        $namespaces = array_keys($autoload);
-        $paths = array_values($autoload);
+        foreach ($autoloads as $autoload) {
+            uasort($autoload, function ($path, $path2) {
+                return strlen($path2) <=> strlen($path);
+            });
+
+            $namespaces = array_merge($namespaces, array_keys($autoload));
+            $paths = array_merge($paths, array_values($autoload));
+        }
 
         return [$namespaces, $paths];
     }
