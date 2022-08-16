@@ -169,7 +169,7 @@ It works like a normal `dd(...);` meaning that the program stops running at that
 Lets start with:
 
 <a name="search_replace"></a>
-### `php artisan search_replace {--name=pattern_name} {--tag=some_tag}`
+### `php artisan search_replace {--name=pattern_name} {--tag=some_tag} {--file=partial_file_name} {--folder=partial_folder_name}`
 
 This is a smart and very powerful search/replace functionality that can be a real "time saver" for you.
 

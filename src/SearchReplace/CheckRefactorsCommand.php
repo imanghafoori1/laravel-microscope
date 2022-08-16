@@ -11,7 +11,7 @@ use Imanghafoori\SearchReplace\PatternParser;
 
 class CheckRefactorsCommand extends Command
 {
-    protected $signature = 'search_replace {--N|name=} {--t|tag=}';
+    protected $signature = 'search_replace {--N|name=} {--t|tag=} {--f|file=} {--d|folder=}';
 
     protected $description = 'Does refactoring.';
 
@@ -48,7 +48,10 @@ class CheckRefactorsCommand extends Command
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns]);
+        $file = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $file, $folder);
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
