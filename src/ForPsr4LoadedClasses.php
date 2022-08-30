@@ -18,12 +18,13 @@ class ForPsr4LoadedClasses
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
         foreach (ComposerJson::readAutoload() as $psr4) {
-            foreach ($psr4 as $psr4Namespace => $psr4Path) {
-                $files = FilePath::getAllPhpFiles($psr4Path);
-                foreach ($files as $phpFilePath) {
-                    $absFilePath = $phpFilePath->getRealPath();
-
-                    if (FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
+            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+                foreach ((array) $psr4Paths as $psr4Path) {
+                    foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {
+                        $absFilePath = $phpFilePath->getRealPath();
+                        if (! FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
+                            continue;
+                        }
                         self::$checkedFilesNum++;
                         $tokens = token_get_all(file_get_contents($absFilePath));
 
@@ -61,9 +62,7 @@ class ForPsr4LoadedClasses
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $_psr4Path) {
                     foreach ((array) $_psr4Path as $psr4Path) {
-                        $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath);
-
-                        foreach ($files as $classFilePath) {
+                        foreach (FilePath::getAllPhpFiles($psr4Path, $baseComposerPath) as $classFilePath) {
                             $fileName = $classFilePath->getFilename();
                             if (substr($fileName, -strlen('.blade.php')) === '.blade.php') {
                                 continue;
