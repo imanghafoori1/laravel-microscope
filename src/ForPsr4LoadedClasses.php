@@ -59,34 +59,36 @@ class ForPsr4LoadedClasses
 
         foreach ($composerFiles as $baseComposerPath => $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                foreach ((array) $psr4Paths as $psr4Path) {
-                    $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath);
+                foreach ((array) $psr4Paths as $_psr4Path) {
+                    foreach ((array) $_psr4Path as $psr4Path) {
+                        $files = FilePath::getAllPhpFiles($psr4Path, $baseComposerPath);
 
-                    foreach ($files as $classFilePath) {
-                        $fileName = $classFilePath->getFilename();
-                        if (substr($fileName, -strlen('.blade.php')) === '.blade.php') {
-                            continue;
+                        foreach ($files as $classFilePath) {
+                            $fileName = $classFilePath->getFilename();
+                            if (substr($fileName, -strlen('.blade.php')) === '.blade.php') {
+                                continue;
+                            }
+
+                            $relativePath = \str_replace($baseComposerPath ?: base_path(), '', $classFilePath->getRealPath());
+
+                            $composerPath = \str_replace('/', '\\', $psr4Path);
+                            $relativePath = \str_replace('/', '\\', $relativePath);
+
+                            /**
+                             * // replace composer base_path with composer namespace
+                             *  "psr-4": {
+                             *      "App\\": "app/"
+                             *  }
+                             */
+                            // calculate namespace
+                            $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $relativePath);
+                            $t = \str_replace('.php', '', [$ns, $fileName]);
+                            $t = \str_replace('/', '\\', $t); // for linux environments.
+
+                            $classBaseName = $t[1];
+                            $fullClassPath = $t[0];
+                            self::$allNamespaces[$classBaseName][] = \trim($fullClassPath, '\\');
                         }
-
-                        $relativePath = \str_replace($baseComposerPath ?: base_path(), '', $classFilePath->getRealPath());
-
-                        $composerPath = \str_replace('/', '\\', $psr4Path);
-                        $relativePath = \str_replace('/', '\\', $relativePath);
-
-                        // replace composer base_path with composer namespace
-                        /**
-                         *  "psr-4": {
-                         *      "App\\": "app/"
-                         *  }.
-                         */
-                        // calculate namespace
-                        $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($psr4Namespace, '\\/'), $relativePath);
-                        $t = \str_replace('.php', '', [$ns, $fileName]);
-                        $t = \str_replace('/', '\\', $t); // for linux environments.
-
-                        $classBaseName = $t[1];
-                        $fullClassPath = $t[0];
-                        self::$allNamespaces[$classBaseName][] = \trim($fullClassPath, '\\');
                     }
                 }
             }
