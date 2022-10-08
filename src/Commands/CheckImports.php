@@ -20,7 +20,7 @@ class CheckImports extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:imports {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:imports {--w|wrong} {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Checks the validity of use statements';
 
@@ -57,7 +57,16 @@ class CheckImports extends Command
         BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
-        $this->getOutput()->writeln(' - '.CheckClassReferences::$refCount.' imports were checked within: '.ForPsr4LoadedClasses::$checkedFilesNum.' classes and '.BladeFiles::$checkedFilesNum.' blade files');
+        $this->getOutput()->writeln(
+            'Overall, <fg=blue>'.CheckClassReferences::$refCount.
+            ' import'.(CheckClassReferences::$refCount == 1 ? '' : 's').
+            '</> were checked within <fg=blue>'.ForPsr4LoadedClasses::$checkedFilesNum.' class</>'.
+            (ForPsr4LoadedClasses::$checkedFilesNum === 1 ? '' : 'es').
+            ' and <fg=blue>'.BladeFiles::$checkedFilesNum.' blade file'.
+            (BladeFiles::$checkedFilesNum === 1 ? '' : 's').'</>.'
+        );
+        $this->getOutput()->writeln(' - <fg=yellow>'.CheckClassReferences::$unusedImportsCount.' unused</> import'.(CheckClassReferences::$unusedImportsCount == 1 ? '' : 's').' found.');
+        $this->getOutput()->writeln(' - <fg=red>'.CheckClassReferences::$wrongImportsCount. ' wrong</> import'.(CheckClassReferences::$wrongImportsCount == 1 ? '' : 's').' found.');
 
         $errorPrinter->printTime();
 

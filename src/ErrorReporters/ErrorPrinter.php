@@ -27,7 +27,7 @@ class ErrorPrinter
 
     public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
-        $header = $wrongClass.'  <===  Did not exist';
+        $header = $wrongClass.'  <=== Did not exist';
         $msg = 'Fixed to:   '.substr($correct[0], 0, 55);
 
         $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
@@ -185,12 +185,12 @@ class ErrorPrinter
         $number = ++$this->errorsList['total'];
         ($number < 10) && $number = " $number";
 
-        $number = '<fg=bright-cyan>'.$number.' </>';
+        $number = '<fg=cyan>'.$number.' </>';
         $path = "  $number";
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
         PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
-        $this->print('<fg=red>'.$msg.'</>', $path, PendingError::$maxLength - 1, strlen($msg));
+        $this->print('<fg=red>'.$msg.'</>', $path);
     }
 
     public function end()
@@ -204,7 +204,7 @@ class ErrorPrinter
 
         if ($path) {
             $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
-            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '', $len);
+            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '');
         }
     }
 

@@ -147,8 +147,10 @@ class CheckClassReferencesAreValid
         foreach ($unusedRefs as $class) {
             CheckClassReferences::$refCount++;
             if (! self::isAbsent($class[0])) {
+                CheckClassReferences::$unusedImportsCount++;
                 $printer->extraImport($absFilePath, $class[0], $class[1]);
             } else {
+                CheckClassReferences::$wrongImportsCount++;
                 //$isCorrected = self::tryToFix($classImport, $absFilePath, $line, $as, $printer);
                 //if (! $isCorrected) {
                 $printer->wrongImport($absFilePath, $class[0], $class[1]);
