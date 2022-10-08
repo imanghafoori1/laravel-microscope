@@ -66,7 +66,7 @@ class CheckImports extends Command
             (BladeFiles::$checkedFilesNum === 1 ? '' : 's').'</>.'
         );
         $this->getOutput()->writeln(' - <fg=yellow>'.CheckClassReferences::$unusedImportsCount.' unused</> import'.(CheckClassReferences::$unusedImportsCount == 1 ? '' : 's').' found.');
-        $this->getOutput()->writeln(' - <fg=red>'.CheckClassReferences::$wrongImportsCount. ' wrong</> import'.(CheckClassReferences::$wrongImportsCount == 1 ? '' : 's').' found.');
+        $this->getOutput()->writeln(' - <fg=red>'.CheckClassReferences::$wrongImportsCount.' wrong</> import'.(CheckClassReferences::$wrongImportsCount == 1 ? '' : 's').' found.');
 
         $errorPrinter->printTime();
 

@@ -38,7 +38,8 @@ class CheckClassReferences
         }
     }
 
-    private static function printImportNotUsed($unusedRefs, $wrongImports, ErrorPrinter $printer, $absPath) {
+    private static function printImportNotUsed($unusedRefs, $wrongImports, ErrorPrinter $printer, $absPath)
+    {
         foreach ($unusedRefs as $class) {
             if (! in_array($class[0], $wrongImports)) {
                 self::$unusedImportsCount++;
@@ -65,7 +66,7 @@ class CheckClassReferences
     private static function printResults($expandedClasses, $absPath, array $unusedRefs)
     {
         /**
-         * @var  $printer  ErrorPrinter
+         * @var $printer  ErrorPrinter
          */
         $printer = app(ErrorPrinter::class);
 
