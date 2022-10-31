@@ -38,7 +38,7 @@ class BladeFiles
             if (! is_dir($path)) {
                 continue;
             }
-            $files = (new Finder())->name('*.blade.php')->files()->in($path);
+            $files = (new Finder)->name('*.blade.php')->files()->in($path);
 
             foreach ($files as $blade) {
                 /**
@@ -46,12 +46,13 @@ class BladeFiles
                  */
                 $absPath = $blade->getPathname();
 
-                if (FilePath::contains($absPath, $fileName, $folder)) {
-                    self::$checkedFilesNum++;
-                    $tokens = ViewsData::getBladeTokens($absPath);
-                    foreach ($checkers as $checkerClass) {
-                        call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);
-                    }
+                if (! FilePath::contains($absPath, $fileName, $folder)) {
+                    continue;
+                }
+                self::$checkedFilesNum++;
+                $tokens = ViewsData::getBladeTokens($absPath);
+                foreach ($checkers as $checkerClass) {
+                    call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);
                 }
             }
         }
