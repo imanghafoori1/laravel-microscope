@@ -104,14 +104,7 @@ class ActionsComments
             'url' => $url,
         ];
 
-        if (view()->exists('vendor.microscope.actions_comment')) {
-            $viewFile = 'vendor.microscope.actions_comment';
-        } else {
-            $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
-            if (! view()->exists('vendor.microscope.actions_comment')) {
-                $viewFile = 'microscope_package::actions_comment';
-            }
-        }
+        $viewFile = self::getViewActionsComment();
 
         return view($viewFile, $viewData)->render();
     }
@@ -138,5 +131,14 @@ class ActionsComments
         }
 
         return $middlewares;
+    }
+
+    private static function getViewActionsComment()
+    {
+        if (view()->exists('vendor.microscope.actions_comment')) {
+            return 'vendor.microscope.actions_comment';
+        }
+
+        return config('microscope.action_comment_template', 'microscope_package::actions_comment');
     }
 }

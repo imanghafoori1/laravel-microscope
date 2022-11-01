@@ -45,12 +45,12 @@ class ComposerJson
     {
         $path && $path = Str::finish($path, '/');
         foreach ($value as $namespace => $_path) {
-            if (is_array($_path)) {
-                foreach ($_path as $i => $p) {
-                    $value[$namespace][$i] = str_replace('//', '/', $path.Str::finish($p, '/'));
-                }
-            } else {
+            if (! is_array($_path)) {
                 $value[$namespace] = str_replace('//', '/', $path.Str::finish($_path, '/'));
+                continue;
+            }
+            foreach ($_path as $i => $p) {
+                $value[$namespace][$i] = str_replace('//', '/', $path.Str::finish($p, '/'));
             }
         }
 
