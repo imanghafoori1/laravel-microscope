@@ -212,7 +212,11 @@ class CheckClassReferencesAreValid
             [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
             return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
-        } catch (ErrorException | RuntimeException $e) {
+        } catch (ErrorException $e) {
+            self::requestIssue($absFilePath);
+
+            return [[], '', []];
+        } catch (RuntimeException $e) {
             self::requestIssue($absFilePath);
 
             return [[], '', []];
