@@ -12,6 +12,7 @@ use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use RuntimeException;
 
 class CheckClassReferencesAreValid
 {
@@ -212,6 +213,10 @@ class CheckClassReferencesAreValid
 
             return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
         } catch (ErrorException $e) {
+            self::requestIssue($absFilePath);
+
+            return [[], '', []];
+        } catch (RuntimeException $e) {
             self::requestIssue($absFilePath);
 
             return [[], '', []];
