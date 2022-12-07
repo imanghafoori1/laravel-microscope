@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
-use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;

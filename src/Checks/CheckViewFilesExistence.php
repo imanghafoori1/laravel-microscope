@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 
 class CheckViewFilesExistence
