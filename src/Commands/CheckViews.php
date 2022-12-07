@@ -12,10 +12,6 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckViews extends Command
 {
-    public static $checkedCallsNum = 0;
-
-    public static $skippedCallsNum = 0;
-
     protected $signature = 'check:views {--detailed : Show files being checked} {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks the validity of blade files';
@@ -33,7 +29,7 @@ class CheckViews extends Command
         ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
-        $this->getOutput()->writeln(' - '.self::$checkedCallsNum.' view references were checked to exist. ('.self::$skippedCallsNum.' skipped)');
+        $this->getOutput()->writeln(' - '.CheckView::$checkedCallsNum.' view references were checked to exist. ('.CheckView::$skippedCallsNum.' skipped)');
         event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;

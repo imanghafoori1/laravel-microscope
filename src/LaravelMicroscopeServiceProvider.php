@@ -13,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\Commands\CheckViews;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -212,7 +213,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function resetCountersOnFinish()
     {
         Event::listen('microscope.finished.checks', function () {
-            CheckViews::$checkedCallsNum = 0;
+            CheckView::$checkedCallsNum = 0;
+            CheckView::$skippedCallsNum = 0;
             CheckClassReferences::$refCount = 0;
             ForPsr4LoadedClasses::$checkedFilesNum = 0;
         });
