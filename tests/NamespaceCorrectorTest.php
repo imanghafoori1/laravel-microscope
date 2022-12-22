@@ -6,6 +6,7 @@ use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 
 class NamespaceCorrectorTest extends BaseTestClass
@@ -71,6 +72,26 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals(true, NamespaceCorrector::haveSameNamespace($class1, $class2));
         $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, $class3));
         $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, 'Faalse'));
+    }
+
+    /** @test */
+    public function derive()
+    {
+        $psr4Path = "branding_manager/app/";
+        $namespace = "Branding\\";
+        $fileName = "DNS.php";
+        $relativePath = "\branding_manager\app\Cert\DNS.php"; // windows path
+
+        $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
+
+        $this->assertEquals("DNS", $result[0]);
+        $this->assertEquals("Branding\Cert\DNS", $result[1]);
+
+        $relativePath = "/branding_manager/app/Cert/DNS.php"; // unix paths
+        $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
+
+        $this->assertEquals("DNS", $result[0]);
+        $this->assertEquals("Branding\Cert\DNS", $result[1]);
     }
 
     /** @test */

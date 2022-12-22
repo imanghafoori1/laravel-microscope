@@ -74,7 +74,7 @@ class ForPsr4LoadedClasses
     {
         foreach (FilePath::getAllPhpFiles($psr4Path, $baseComposerPath) as $classFilePath) {
             $fileName = $classFilePath->getFilename();
-            if (substr($fileName, -strlen('.blade.php')) === '.blade.php') {
+            if (\substr_count($fileName, '.') > 1) {
                 continue;
             }
 
