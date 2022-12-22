@@ -41,8 +41,13 @@ class Fixer
 
         // if there is some use statements at the top but the class is not imported.
         if (count($uses) === 0 || isset($uses[$classBaseName])) {
-            isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
-            $fullClassPath[0] !== '\\' && ($fullClassPath = '\\'.$fullClassPath);
+            if (count($uses) === 0 && $fullClassPath[0] !== '\\') {
+                $fullClassPath = '\\'.$fullClassPath;
+            }
+
+            if (isset($uses[$classBaseName]) && $uses[$classBaseName][0] === $fullClassPath) {
+                $fullClassPath = $classBaseName;
+            }
 
             return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
         }
