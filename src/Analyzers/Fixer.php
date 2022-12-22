@@ -40,8 +40,9 @@ class Fixer
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
 
         // if there is some use statements at the top but the class is not imported.
-        if (! count($uses) || isset($uses[$classBaseName])) {
+        if (count($uses) === 0 || isset($uses[$classBaseName])) {
             isset($uses[$classBaseName]) && ($fullClassPath = $classBaseName);
+            $fullClassPath[0] !== '\\' && ($fullClassPath = '\\'.$fullClassPath);
 
             return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
         }
@@ -91,17 +92,17 @@ class Fixer
         return $lines;
     }
 
-    private static function doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum)
+    private static function doReplacement($absPath, $wrongRef, $correctRef, $lineNum)
     {
         if (version_compare(PHP_VERSION, '8.0.0') === 1) {
-            return FileManipulator::replaceFirst($absPath, $inlinedClassRef, $classBaseName, $lineNum);
+            return FileManipulator::replaceFirst($absPath, $wrongRef, $correctRef, $lineNum);
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
         [$newVersion, $lines] = Searcher::searchReplace([
             'fix' => [
-                'search' => $inlinedClassRef,
-                'replace' => $classBaseName,
+                'search' => $wrongRef,
+                'replace' => $correctRef,
             ],
         ], $tokens);
         Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);

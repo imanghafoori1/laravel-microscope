@@ -176,7 +176,7 @@ class CheckClassReferencesAreValid
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             }
-            // renames the variable
+            // Renames the variable
             $wrongClassRef = $class;
             unset($class);
             if (! self::isInUserSpace($wrongClassRef)) {
@@ -184,14 +184,19 @@ class CheckClassReferencesAreValid
                 continue;
             }
 
-            [$isFixed, $corrections] = self::fixClassReference($absFilePath, $wrongClassRef, $line, $hostNamespace);
+            $beforeFix = file_get_contents($absFilePath);
+            [, $corrections] = self::fixClassReference($absFilePath, $wrongClassRef, $line, $hostNamespace);
+            // To make sure that the file is really changed,
+            // and we do not end up in an infinite loop.
+            $afterFix = file_get_contents($absFilePath);
+            $isFixed = $beforeFix !== $afterFix;
 
             // print
             $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
             $printer->$method($absFilePath, $wrongClassRef, $line, $corrections);
 
             if ($isFixed) {
-                $tokens = token_get_all(file_get_contents($absFilePath));
+                $tokens = token_get_all($afterFix);
                 [$classReferences, $hostNamespace] = self::findClassRefs($tokens, $absFilePath, $imports);
                 unset($classReferences[$y]);
                 goto loopStart;
