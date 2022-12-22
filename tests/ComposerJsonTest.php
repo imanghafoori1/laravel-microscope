@@ -12,14 +12,14 @@ class ComposerJsonTest extends BaseTestClass
         ComposerJson::$composerPath = __DIR__.'/stubs/composer_json';
 
         $expected = [
-            "a2" => [
-                "G2\\" => "a2/ref/",
-                "App2\\" => "a2/app2/",
-                'Imanghafoori\LaravelMicroscope\Tests\\' => 'a2/tests/'
+            'a2' => [
+                'G2\\' => 'a2/ref/',
+                'App2\\' => 'a2/app2/',
+                'Imanghafoori\LaravelMicroscope\Tests\\' => 'a2/tests/',
             ],
             '/' => [
                 'App\\' => 'app/',
-                'Imanghafoori\LaravelMicroscope\Tests\\' => 'tests/'
+                'Imanghafoori\LaravelMicroscope\Tests\\' => 'tests/',
             ],
         ];
 

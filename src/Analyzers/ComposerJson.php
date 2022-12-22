@@ -106,7 +106,6 @@ class ComposerJson
 
     /**
      * @param  string  $absPath
-     *
      * @return array
      */
     private static function readComposerFileData($absPath)
