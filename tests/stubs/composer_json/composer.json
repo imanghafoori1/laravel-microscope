@@ -19,6 +19,11 @@
             "App\\": "app/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Imanghafoori\\LaravelMicroscope\\Tests\\": "tests"
+        }
+    },
     "repositories": [
         {
             "type": "path",

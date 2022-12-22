@@ -18,9 +18,9 @@ class ComposerJson
     {
         $result = [];
 
-        foreach (self::collectLocalRepos() as $path) {
+        foreach (self::collectLocalRepos() as $relativePath) {
             // We avoid autoload-dev for repositories.
-            $result[$path] = self::readKey('autoload.psr-4', $path) + self::readKey('autoload-dev.psr-4', $path);
+            $result[$relativePath] = self::readKey('autoload.psr-4', $relativePath) + self::readKey('autoload-dev.psr-4', $relativePath);
         }
 
         // add the root composer.json
@@ -88,11 +88,12 @@ class ComposerJson
     private static function readKey($key, $composerPath = '')
     {
         if (self::$composerPath) {
-            $path = self::$composerPath.DIRECTORY_SEPARATOR.$composerPath;
+            $absPath = self::$composerPath.DIRECTORY_SEPARATOR.$composerPath;
         } else {
-            $path = app()->basePath($composerPath);
+            $absPath = app()->basePath($composerPath);
         }
-        $composer = self::readComposerFileData($path);
+
+        $composer = self::readComposerFileData($absPath);
 
         $value = (array) data_get($composer, $key, []);
 
@@ -104,20 +105,21 @@ class ComposerJson
     }
 
     /**
-     * @param $composerPath
+     * @param  string  $absPath
+     *
      * @return array
      */
-    private static function readComposerFileData($fullPath)
+    private static function readComposerFileData($absPath)
     {
-        $fullPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
+        $absPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $absPath);
 
         // ensure it does not end with slash
-        $fullPath = rtrim($fullPath, DIRECTORY_SEPARATOR);
+        $absPath = rtrim($absPath, DIRECTORY_SEPARATOR);
 
-        if (! isset(self::$result[$fullPath])) {
-            self::$result[$fullPath] = \json_decode(\file_get_contents($fullPath.'/composer.json'), true);
+        if (! isset(self::$result[$absPath])) {
+            self::$result[$absPath] = \json_decode(\file_get_contents($absPath.DIRECTORY_SEPARATOR.'composer.json'), true);
         }
 
-        return self::$result[$fullPath];
+        return self::$result[$absPath];
     }
 }

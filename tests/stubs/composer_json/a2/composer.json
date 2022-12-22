@@ -20,6 +20,11 @@
             "App2\\": "app2"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Imanghafoori\\LaravelMicroscope\\Tests\\": "tests"
+        }
+    },
     "extra": {
         "laravel": {
             "dont-discover": [

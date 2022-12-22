@@ -14,10 +14,12 @@ class ComposerJsonTest extends BaseTestClass
         $expected = [
             "a2" => [
                 "G2\\" => "a2/ref/",
-                "App2\\" => "a2/app2/"
+                "App2\\" => "a2/app2/",
+                'Imanghafoori\LaravelMicroscope\Tests\\' => 'a2/tests/'
             ],
             '/' => [
                 'App\\' => 'app/',
+                'Imanghafoori\LaravelMicroscope\Tests\\' => 'tests/'
             ],
         ];
 
