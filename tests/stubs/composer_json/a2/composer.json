@@ -16,7 +16,7 @@
             "tests/TestCase.php"
         ],
         "psr-4": {
-            "App\\": "app",
+            "G2\\": "ref",
             "App2\\": "app2"
         }
     },

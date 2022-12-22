@@ -33,22 +33,6 @@ class NamespaceCorrectorTest extends BaseTestClass
     }
 
     /** @test */
-    public function read_autoload()
-    {
-        ComposerJson::$composerPath = __DIR__.'/stubs/composer_json/2';
-
-        $expected = [
-            '/' => [
-                'App\\' => 'app/',
-                'App2\\' => 'app2/',
-            ],
-        ];
-
-        $this->assertEquals($expected, ComposerJson::readAutoload());
-        ComposerJson::$composerPath = null;
-    }
-
-    /** @test */
     public function can_extract_namespace()
     {
         $ns = 'Imanghafoori\LaravelMicroscope\Analyzers';

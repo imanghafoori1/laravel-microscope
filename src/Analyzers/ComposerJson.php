@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Imanghafoori\TokenAnalyzer\Str;
+use JetBrains\PhpStorm\Pure;
 
 class ComposerJson
 {
@@ -12,19 +13,6 @@ class ComposerJson
      * Used for testing purposes.
      */
     public static $composerPath = null;
-
-    private static function readKey($key, $composerPath = '')
-    {
-        $composer = self::readComposerFileData(app()->basePath($composerPath));
-
-        $value = (array) data_get($composer, $key, []);
-
-        if (\in_array($key, ['autoload.psr-4', 'autoload-dev.psr-4'])) {
-            $value = self::normalizePaths($value, $composerPath);
-        }
-
-        return $value;
-    }
 
     public static function readAutoload()
     {
@@ -41,6 +29,31 @@ class ComposerJson
         return self::removedIgnored($result, config('microscope.ignored_namespaces', []));
     }
 
+    public static function collectLocalRepos()
+    {
+        $composers = [];
+
+        foreach (self::readKey('repositories') as $repo) {
+            if (! isset($repo['type']) || $repo['type'] !== 'path') {
+                continue;
+            }
+
+            // here we exclude local packages outside the root folder.
+            if (Str::startsWith($repo['url'], ['../', './../', '/../'])) {
+                continue;
+            }
+            $dirPath = \trim(\trim($repo['url'], '.'), '/\\');
+            $path = (self::$composerPath ?: base_path()).DIRECTORY_SEPARATOR.$dirPath.DIRECTORY_SEPARATOR.'composer.json';
+            // sometimes php can not detect relative paths, so we use the absolute path here.
+            if (file_exists($path)) {
+                $composers[] = $dirPath;
+            }
+        }
+
+        return $composers;
+    }
+
+    #[Pure]
     private static function normalizePaths($value, $path)
     {
         $path && $path = Str::finish($path, '/');
@@ -72,14 +85,30 @@ class ComposerJson
         return $result;
     }
 
+    private static function readKey($key, $composerPath = '')
+    {
+        if (self::$composerPath) {
+            $path = self::$composerPath.DIRECTORY_SEPARATOR.$composerPath;
+        } else {
+            $path = app()->basePath($composerPath);
+        }
+        $composer = self::readComposerFileData($path);
+
+        $value = (array) data_get($composer, $key, []);
+
+        if (\in_array($key, ['autoload.psr-4', 'autoload-dev.psr-4'])) {
+            $value = self::normalizePaths($value, $composerPath);
+        }
+
+        return $value;
+    }
+
     /**
      * @param $composerPath
      * @return array
      */
-    private static function readComposerFileData($composerPath)
+    private static function readComposerFileData($fullPath)
     {
-        $fullPath = self::$composerPath ?: $composerPath;
-
         $fullPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $fullPath);
 
         // ensure it does not end with slash
@@ -90,28 +119,5 @@ class ComposerJson
         }
 
         return self::$result[$fullPath];
-    }
-
-    public static function collectLocalRepos()
-    {
-        $composers = [];
-
-        foreach (self::readKey('repositories') as $repo) {
-            if (! isset($repo['type']) || $repo['type'] !== 'path') {
-                continue;
-            }
-
-            // here we exclude local packages outside the root folder.
-            if (Str::contains($repo['url'], '../')) {
-                continue;
-            }
-            $dirPath = \trim(\trim($repo['url'], '.'), '/\\');
-            // sometimes php can not detect relative paths, so we use the absolute path here.
-            if (file_exists(base_path($dirPath.DIRECTORY_SEPARATOR.'composer.json'))) {
-                $composers[] = $dirPath;
-            }
-        }
-
-        return $composers;
     }
 }

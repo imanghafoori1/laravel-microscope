@@ -19,6 +19,12 @@
             "App\\": "app/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url" : "./a2"
+        }
+    ],
     "extra": {
         "laravel": {
             "dont-discover": [
