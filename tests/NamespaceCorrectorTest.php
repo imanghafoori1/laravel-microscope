@@ -77,20 +77,20 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function derive()
     {
-        $psr4Path = "branding_manager/app/";
-        $namespace = "Branding\\";
-        $fileName = "DNS.php";
+        $psr4Path = 'branding_manager/app/';
+        $namespace = 'Branding\\';
+        $fileName = 'DNS.php';
         $relativePath = "\branding_manager\app\Cert\DNS.php"; // windows path
 
         $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
 
-        $this->assertEquals("DNS", $result[0]);
+        $this->assertEquals('DNS', $result[0]);
         $this->assertEquals("Branding\Cert\DNS", $result[1]);
 
-        $relativePath = "/branding_manager/app/Cert/DNS.php"; // unix paths
+        $relativePath = '/branding_manager/app/Cert/DNS.php'; // unix paths
         $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
 
-        $this->assertEquals("DNS", $result[0]);
+        $this->assertEquals('DNS', $result[0]);
         $this->assertEquals("Branding\Cert\DNS", $result[1]);
     }
 
