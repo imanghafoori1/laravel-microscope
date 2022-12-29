@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -48,16 +48,7 @@ class ForPsr4LoadedClasses
             return self::$allNamespaces;
         }
 
-        $psr4 = ComposerJson::readAutoload();
-        $composerFiles = [
-            ComposerJson::$composerPath => $psr4,
-        ];
-
-        ComposerJson::$composerPath = base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'.DIRECTORY_SEPARATOR.'framework');
-        $composerFiles[ComposerJson::$composerPath] = ComposerJson::readAutoload();
-        ComposerJson::$composerPath = null;
-
-        foreach ($composerFiles as $baseComposerPath => $psr4) {
+        foreach (self::getCandidateSearchPaths() as $baseComposerPath => $psr4) {
             foreach ($psr4 as $folder => $psr4Mappings) {
                 foreach ((array) $psr4Mappings as $namespace => $_psr4Paths) {
                     foreach ((array) $_psr4Paths as $psr4Path) {
@@ -105,5 +96,17 @@ class ForPsr4LoadedClasses
         $fullClassPath = $t[0];
 
         return [$classBaseName, \trim($fullClassPath, '\\')];
+    }
+
+    private static function getCandidateSearchPaths()
+    {
+        $sp = DIRECTORY_SEPARATOR;
+        $path1 = base_path();
+        $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
+
+        return [
+            $path1 => ComposerJson::make($path1)->readAutoload(),
+            $path2 => ComposerJson::make($path2)->readAutoload(),
+        ];
     }
 }
