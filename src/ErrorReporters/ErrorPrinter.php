@@ -201,7 +201,7 @@ class ErrorPrinter
         try {
             $line('gray');
         } catch (\Exception $e) {
-            $line('blue');
+            $line('blue'); // for older versions of laravel
         }
     }
 
