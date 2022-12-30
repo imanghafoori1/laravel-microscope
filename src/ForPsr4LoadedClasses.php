@@ -9,15 +9,18 @@ use Imanghafoori\TokenAnalyzer\Str;
 class ForPsr4LoadedClasses
 {
     /**
-     * @var array
+     * @var array<string, array>
      */
     public static $allNamespaces = [];
 
+    /**
+     * @var int
+     */
     public static $checkedFilesNum = 0;
 
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (Analyzers\ComposerJson::readAutoload() as $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
                     foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {

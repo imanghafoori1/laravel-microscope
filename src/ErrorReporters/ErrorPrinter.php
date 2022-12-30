@@ -188,20 +188,21 @@ class ErrorPrinter
         $number = '<fg=cyan>'.$number.' </>';
         $path = "  $number";
 
-        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
-        PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
+        $width = (new Terminal)->getWidth() - 6;
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);
+        PendingError::$maxLength = min(PendingError::$maxLength, $width);
         $this->print('<fg=red>'.$msg.'</>', $path);
     }
 
     public function end()
     {
         $line = function ($color) {
-            $this->printer->writeln(' <fg='.$color.'>'.str_repeat('_', 3 + PendingError::$maxLength.'</> '));
+            $this->printer->writeln(' <fg='.$color.'>'.str_repeat('_', 3 + PendingError::$maxLength).'</> ');
         };
         try {
             $line('gray');
         } catch (\Exception $e) {
-            $line('blue');
+            $line('blue'); // for older versions of laravel
         }
     }
 
