@@ -97,7 +97,15 @@ class CheckPsr4 extends Command
     {
         $this->getOutput()->writeln('');
         $this->getOutput()->writeln('<fg=blue>Finished!</>');
-        $this->info(' <fg=gray>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        $separator = function ($color) {
+            $this->info(' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        };
+
+        try {
+            $separator('gray');
+        } catch (\Exception $e) {
+            $separator('blue');
+        }
         $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
         $len = 0;
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
