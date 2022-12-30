@@ -195,7 +195,14 @@ class ErrorPrinter
 
     public function end()
     {
-        $this->printer->writeln(' '.'<fg=gray>'.str_repeat('_', 3 + PendingError::$maxLength).'</>'.' ');
+        $line = function ($color) {
+            $this->printer->writeln(' <fg='.$color.'>'.str_repeat('_', 3 + PendingError::$maxLength.'</> '));
+        };
+        try {
+            $line('gray');
+        } catch (\Exception $e) {
+            $line('blue');
+        }
     }
 
     public function printLink($path, $lineNumber = 4, $len = null)
