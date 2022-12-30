@@ -188,8 +188,9 @@ class ErrorPrinter
         $number = '<fg=cyan>'.$number.' </>';
         $path = "  $number";
 
-        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), (new Terminal)->getWidth() - 6);
-        PendingError::$maxLength = min(PendingError::$maxLength, (new Terminal)->getWidth() - 6);
+        $width = (new Terminal)->getWidth() - 6;
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);
+        PendingError::$maxLength = min(PendingError::$maxLength, $width);
         $this->print('<fg=red>'.$msg.'</>', $path);
     }
 
