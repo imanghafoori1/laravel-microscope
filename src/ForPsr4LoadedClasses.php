@@ -20,7 +20,8 @@ class ForPsr4LoadedClasses
 
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
-        foreach (Analyzers\ComposerJson::readAutoload() as $psr4) {
+        $stats = [];
+        foreach (Analyzers\ComposerJson::readAutoload() as $composerPath => $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
                     foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {
@@ -28,6 +29,7 @@ class ForPsr4LoadedClasses
                         if (! FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
                             continue;
                         }
+                        $stats[$composerPath][$psr4Namespace][$psr4Path] = 1 + ($stats[$composerPath][$psr4Namespace][$psr4Path] ?? 0);
                         self::$checkedFilesNum++;
                         $tokens = token_get_all(file_get_contents($absFilePath));
 
@@ -43,6 +45,8 @@ class ForPsr4LoadedClasses
                 }
             }
         }
+
+        return $stats;
     }
 
     public static function classList()
