@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImport
