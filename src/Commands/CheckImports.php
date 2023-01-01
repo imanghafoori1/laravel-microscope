@@ -98,6 +98,5 @@ class CheckImports extends Command
 
     public function writeOverall($includeFile, $includeFolder, int $countRouteFiles)
     {
-
     }
 }
