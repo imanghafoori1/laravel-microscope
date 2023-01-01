@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -58,7 +60,7 @@ class CheckImport
             return false;
         }
 
-        [$isCorrected, $corrects] = Analyzers\Fixer::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
+        [$isCorrected, $corrects] = Fixer::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
 
         if ($isCorrected) {
             $printer->printFixation($absFilePath, $classImport, $line, $corrects);
