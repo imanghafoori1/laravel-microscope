@@ -56,10 +56,10 @@ class CheckImports extends Command
         $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class, FacadeAliases::class], $paramProvider, $fileName, $folder);
 
         // Checks the blade files for class references.
-        BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
+        $bladeStats = BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
-        CheckImportReporter::report($this, $fileName, $folder, count($routeFiles), $psr4Stats, $foldersStats);
+        CheckImportReporter::report($this, $psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
 
         $errorPrinter->printTime();
 
@@ -94,9 +94,5 @@ class CheckImports extends Command
         }
 
         return $fileCounts;
-    }
-
-    public function writeOverall($includeFile, $includeFolder, int $countRouteFiles)
-    {
     }
 }
