@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckImportReporter
@@ -13,19 +14,7 @@ class CheckImportReporter
     {
         $command->getOutput()->writeln('<options=bold;fg=yellow>'.CheckClassReferences::$refCount.' import'.(CheckClassReferences::$refCount == 1 ? '' : 's').' were checked under:</>');
 
-        $len = 0;
-        foreach ($psr4Stats as $composerPath => $psr4) {
-            $output = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>'.PHP_EOL;
-            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                foreach ($psr4Paths as $path => $countClasses) {
-                    $max = max($len, strlen($psr4Namespace));
-                    $len = strlen($psr4Namespace);
-                    $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $max - strlen($psr4Namespace)).' </>';
-                    $output .= " <fg=blue>$countClasses </>class".($countClasses == 1 ? '' : 'es').' found (<fg=green>./'.$path."</>)\n";
-                }
-            }
-            $command->getOutput()->writeln($output);
-        }
+        self::printPsr4($psr4Stats, $command);
 
         self::printFileCounts($command, $foldersStats, $bladeStats, $countRouteFiles);
 
@@ -41,7 +30,7 @@ class CheckImportReporter
         $numBladeStats = count($bladeStats);
         $i = 0;
         foreach ($bladeStats as $path => $count) {
-            $path = str_replace(base_path(), '.', $path);
+            $path = FilePath::normalize(str_replace(base_path(), '.', $path));
             $output .= '<fg=green>'.$path.'</>';
             if (++$i !== $numBladeStats) {
                 $output .= ', ';
@@ -61,7 +50,7 @@ class CheckImportReporter
             $i = 0;
             foreach ($paths as $path) {
                 $isEnd = end($paths) == $path;
-                $path = str_replace(base_path(), '.', $path);
+                $path = FilePath::normalize(str_replace(base_path(), '.', $path));
                 $output .= '<fg=green>'.$path.'</>';
                 if (++$i !== $numPaths) {
                     $output .= ', ';
@@ -84,5 +73,22 @@ class CheckImportReporter
         $output .= ' - <fg=red>'.CheckClassReferences::$wrongImportsCount.' wrong</> import'.(CheckClassReferences::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.CheckClassReferences::$wrongClassRefCount.' wrong</> class'.(CheckClassReferences::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
         $command->getOutput()->writeln($output);
+    }
+
+    private static function printPsr4(array $psr4Stats, CheckImports $command): void
+    {
+        $len = 0;
+        foreach ($psr4Stats as $composerPath => $psr4) {
+            $output = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>'.PHP_EOL;
+            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+                foreach ($psr4Paths as $path => $countClasses) {
+                    $max = max($len, strlen($psr4Namespace));
+                    $len = strlen($psr4Namespace);
+                    $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $max - $len).' </>';
+                    $output .= " <fg=blue>$countClasses </>class".($countClasses == 1 ? '' : 'es').' found (<fg=green>./'.$path."</>)\n";
+                }
+            }
+            $command->getOutput()->writeln($output);
+        }
     }
 }
