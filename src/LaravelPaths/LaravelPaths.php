@@ -16,6 +16,9 @@ class LaravelPaths
     public static function seedersDir()
     {
         $dir = app()->databasePath('seeds');
+        if (! is_dir($dir)){
+            $dir = app()->databasePath('seeders');
+        }
 
         return is_dir($dir) ? $dir : null;
     }
