@@ -176,6 +176,7 @@ class CheckClassReferencesAreValid
             if (! self::isAbsent($class) || \function_exists($class)) {
                 continue;
             }
+            CheckClassReferences::$wrongClassRefCount++;
             // Renames the variable
             $wrongClassRef = $class;
             unset($class);

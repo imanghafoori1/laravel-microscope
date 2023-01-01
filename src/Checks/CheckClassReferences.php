@@ -16,6 +16,8 @@ class CheckClassReferences
 
     public static $wrongImportsCount = 0;
 
+    public static $wrongClassRefCount = 0;
+
     public static function check($tokens, $absPath)
     {
         $imports = ParseUseStatement::parseUseStatements($tokens);
