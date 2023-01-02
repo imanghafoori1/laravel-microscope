@@ -42,6 +42,9 @@ class BladeFiles
             if (! is_dir($path)) {
                 continue;
             }
+            if (strpos($path, base_path('vendor')) !== false) {
+                continue;
+            }
             $files = (new Finder)->name('*.blade.php')->files()->in($path);
             $count = 0;
 
