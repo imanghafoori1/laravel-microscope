@@ -101,7 +101,6 @@ class CheckImportReporter
             $numPaths = count($paths);
             $i = 0;
             foreach ($paths as $path) {
-                //$isEnd = end($paths) == $path;
                 $path = FilePath::normalize(str_replace(base_path(), '.', $path));
                 $output .= '<fg=green>'.$path.'</>';
                 if (++$i !== $numPaths) {
