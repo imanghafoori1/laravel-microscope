@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use ImanGhafoori\ComposerJson\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -35,7 +36,17 @@ class ForPsr4LoadedClasses
 
                         $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
                         foreach ($checks as $check) {
-                            $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
+                            try {
+                                $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
+                            } catch (\Throwable $e) {
+                                $msg = $e->getMessage();
+                                if (Str::startsWith($msg, ['Interface \'', 'Class \'', 'Trait \'']) && Str::endsWith($msg, ' not found')) {
+                                    app(ErrorPrinter::class)->simplePendError(
+                                        $e->getMessage(), $e->getFile(), $e->getLine(), 'error', get_class($e), ''
+                                    );
+                                }
+                            }
+
                             if ($newTokens) {
                                 $tokens = $newTokens;
                                 $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
