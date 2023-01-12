@@ -38,18 +38,17 @@ class ForPsr4LoadedClasses
                         foreach ($checks as $check) {
                             try {
                                 $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
+                                if ($newTokens) {
+                                    $tokens = $newTokens;
+                                    $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                                }
                             } catch (\Throwable $e) {
                                 $msg = $e->getMessage();
                                 if (Str::startsWith($msg, ['Interface \'', 'Class \'', 'Trait \'']) && Str::endsWith($msg, ' not found')) {
                                     app(ErrorPrinter::class)->simplePendError(
-                                        $e->getMessage(), $e->getFile(), $e->getLine(), 'error', get_class($e), ''
+                                        $msg, $e->getFile(), $e->getLine(), 'error', get_class($e), ''
                                     );
                                 }
-                            }
-
-                            if ($newTokens) {
-                                $tokens = $newTokens;
-                                $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
                             }
                         }
                     }
