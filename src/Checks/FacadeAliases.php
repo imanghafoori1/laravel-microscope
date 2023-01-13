@@ -65,7 +65,7 @@ class FacadeAliases
                     [
                         'search' => 'use \\'.$base.';',
                         'replace' => 'use '.ltrim($aliases).';',
-                    ]
+                    ],
                 ], $tokens, 1
             );
         }
