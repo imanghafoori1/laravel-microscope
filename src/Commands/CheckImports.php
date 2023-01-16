@@ -53,7 +53,10 @@ class CheckImports extends Command
             return $imports[0] ?: [$imports[1]];
         };
         FacadeAliases::$command = $this;
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class, FacadeAliases::class], $paramProvider, $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check([
+            CheckClassReferencesAreValid::class,
+            FacadeAliases::class,
+        ], $paramProvider, $fileName, $folder);
 
         // Checks the blade files for class references.
         $bladeStats = BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
