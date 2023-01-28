@@ -192,6 +192,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function canRun()
     {
+        if (windows_os()) {
+            return true;
+        }
+
         return $this->app->runningInConsole() && config('microscope.is_enabled', true) && app()['env'] !== 'production';
     }
 

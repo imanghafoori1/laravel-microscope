@@ -6,11 +6,10 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
-use Symfony\Component\Console\Terminal;
 
 class CheckPsr4 extends Command
 {
@@ -30,21 +29,13 @@ class CheckPsr4 extends Command
             $this->line('Checking: '.$path);
         });
 
-        Event::listen('laravel_microscope.namespace_fixing', function ($relativePath, $currentNamespace, $correctNamespace, $class) {
-            ErrorPrinter::warnIncorrectNamespace($currentNamespace, $relativePath, $class);
-
-            return ! $this->option('nofix') && ErrorPrinter::ask($this, $correctNamespace);
+        $this->on('namespace_fixing', function ($relativePath, $currentNamespace, $correctNamespace, $class) {
+            return CheckPsr4Printer::warnIncorrectNamespace($relativePath, $currentNamespace, $correctNamespace, $class, $this);
         });
 
-        Event::listen('laravel_microscope.namespace_fixed', function ($relativePath, $from, $to) {
-            app(ErrorPrinter::class)->fixedNamespace($relativePath, $to, $from);
-        });
+        $this->on('namespace_fixed', [ErrorPrinter::class, 'fixedNamespace']);
 
-        Event::listen('laravel_microscope.psr4.wrong_file_name', function ($path, $class, $file) {
-            app(ErrorPrinter::class)->wrongFileName($path, $class, $file);
-        });
-
-        Event::listen('microscope.replacing_namespace', function ($_path, $lineIndex, $lineContent) {
+        $this->on('replacing_namespace', function ($_path, $lineIndex, $lineContent) {
             app(ErrorPrinter::class)->printLink($_path, $lineIndex);
             $this->info($lineContent);
 
@@ -58,7 +49,12 @@ class CheckPsr4 extends Command
         };
 
         start:
-        CheckNamespaces::all($this->option('detailed'));
+        $classes = CheckNamespaces::all($this->option('detailed'));
+
+        $errors = $this->findPsr4Errors($classes);
+
+        $this->handleErrors($errors);
+
         ClassRefCorrector::fixAllRefs($onFix);
 
         app(ErrorPrinter::class)->logErrors();
@@ -75,6 +71,11 @@ class CheckPsr4 extends Command
         }
     }
 
+    private function on($event, $callback)
+    {
+        Event::listen('laravel_microscope.'.$event, $callback);
+    }
+
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
         if ($c = $errorPrinter->getCount('badNamespace')) {
@@ -84,57 +85,47 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function printErrorsCount($errorPrinter, $time)
-    {
-        if ($errorCount = $errorPrinter->errorsList['total']) {
-            $this->warn(PHP_EOL.$errorCount.' error(s) found.');
-        } else {
-            $this->noErrorFound($time);
-        }
-    }
-
-    private function reportResult()
-    {
-        $this->getOutput()->writeln('');
-        $this->getOutput()->writeln('<fg=blue>Finished!</>');
-        $separator = function ($color) {
-            $this->info(' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
-        };
-
-        try {
-            $separator('gray');
-        } catch (\Exception $e) {
-            $separator('blue');
-        }
-        $this->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
-        $len = 0;
-        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
-            $output = '';
-            $this->getOutput()->writeln(' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>');
-            foreach ($psr4 as $namespace => $path) {
-                $max = max($len, strlen($namespace));
-                $len = strlen($namespace);
-                $output .= '   - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
-            }
-            $this->getOutput()->writeln($output);
-        }
-    }
-
-    private function noErrorFound($time)
-    {
-        $time = microtime(true) - $time;
-        $this->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
-        $this->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
-        $this->line('');
-    }
-
     private function printReport($errorPrinter, $time)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->reportResult();
-            $this->printErrorsCount($errorPrinter, $time);
+            CheckPsr4Printer::reportResult($this);
+            CheckPsr4Printer::printErrorsCount($errorPrinter, $time);
         } else {
             $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
+        }
+    }
+
+    private function findPsr4Errors($classes)
+    {
+        $errors = [];
+        foreach ($classes as $class) {
+            $error = CheckNamespaces::checkNamespace($class['currentNamespace'], $class['absFilePath'], $class['class']);
+
+            if ($error) {
+                $errors[] = $error;
+            }
+        }
+
+        return $errors;
+    }
+
+    private function handleErrors(array $errors)
+    {
+        foreach ($errors as $wrong) {
+            if ($wrong['type'] === 'namespace') {
+                CheckNamespaces::changeNamespace(
+                    $wrong['absPath'],
+                    $wrong['from'],
+                    $wrong['to'],
+                    $wrong['class']
+                );
+            } elseif ($wrong['type'] === 'filename') {
+                app(ErrorPrinter::class)->wrongFileName(
+                    $wrong['relativePath'],
+                    $wrong['class'],
+                    $wrong['fileName']
+                );
+            }
         }
     }
 }

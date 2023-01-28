@@ -62,7 +62,7 @@ class ClassRefCorrector
                 $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
                 $count && $changedLineNums[] = ($lineIndex + 1);
             } elseif (self::str_contains($lineContent, $olds)) {
-                $response = Event::dispatch('microscope.replacing_namespace', [$_path, $lineIndex + 1, $lineContent], true);
+                $response = Event::dispatch('laravel_microscope.replacing_namespace', [$_path, $lineIndex + 1, $lineContent], true);
 
                 if ($response !== false) {
                     $count = 0;
