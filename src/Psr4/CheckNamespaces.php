@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
@@ -27,11 +26,11 @@ class CheckNamespaces
      * @param  $detailed
      * @return array
      */
-    public static function all($detailed)
+    public static function findAllClass($autoloads, $detailed)
     {
         $scanned = [];
         $classes = [];
-        foreach (ComposerJson::readAutoload() as $autoload) {
+        foreach ($autoloads as $autoload) {
             foreach ($autoload as $namespace => $psr4Path) {
                 // to avoid duplicate scanning
                 foreach ($scanned as $s) {
@@ -62,14 +61,6 @@ class CheckNamespaces
                 continue;
             }
 
-            self::$checkedNamespaces++;
-
-            if (isset(self::$checkedNamespacesStats[$namespace])) {
-                self::$checkedNamespacesStats[$namespace]++;
-            } else {
-                self::$checkedNamespacesStats[$namespace] = 1;
-            }
-
             [
                 $currentNamespace,
                 $class,
@@ -81,6 +72,14 @@ class CheckNamespaces
             // For example a route file or a config file.
             if (! $class || $parent === 'Migration') {
                 continue;
+            }
+
+            self::$checkedNamespaces++;
+
+            if (isset(self::$checkedNamespacesStats[$namespace])) {
+                self::$checkedNamespacesStats[$namespace]++;
+            } else {
+                self::$checkedNamespacesStats[$namespace] = 1;
             }
 
             $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
@@ -121,10 +120,10 @@ class CheckNamespaces
         self::$changedNamespaces[$_currentClass.' as'] = $_correctClass.' as';
     }
 
-    private static function getCorrectNamespaces($relativePath)
+    private static function getCorrectNamespaces($autoloads, $relativePath)
     {
         $correctNamespaces = [];
-        foreach (ComposerJson::readAutoload() as $autoload) {
+        foreach ($autoloads as $autoload) {
             foreach ($autoload as $namespacePrefix => $path) {
                 if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
                     $correctNamespaces[] = NamespaceCorrector::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
@@ -147,10 +146,10 @@ class CheckNamespaces
         });
     }
 
-    public static function checkNamespace($currentNamespace, $absFilePath, $class)
+    public static function checkNamespace($autoloads, $currentNamespace, $absFilePath, $class)
     {
         $relativePath = FilePath::getRelativePath($absFilePath);
-        $correctNamespaces = self::getCorrectNamespaces($relativePath);
+        $correctNamespaces = self::getCorrectNamespaces($autoloads, $relativePath);
 
         if (! in_array($currentNamespace, $correctNamespaces)) {
             $correctNamespace = self::findShortest($correctNamespaces);

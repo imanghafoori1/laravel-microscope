@@ -6,7 +6,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Symfony\Component\Console\Terminal;
 
-
 class CheckPsr4Printer extends ErrorPrinter
 {
     public static function warnIncorrectNamespace($relativePath, $currentNamespace, $correctNamespace, $class, $command)
@@ -81,5 +80,4 @@ class CheckPsr4Printer extends ErrorPrinter
             CheckPsr4Printer::noErrorFound($time, $command);
         }
     }
-
 }

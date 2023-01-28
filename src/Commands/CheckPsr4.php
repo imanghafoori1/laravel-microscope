@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
@@ -48,10 +49,14 @@ class CheckPsr4 extends Command
             app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
         };
 
+        $autoloads = ComposerJson::readAutoload();
         start:
-        $classes = CheckNamespaces::all($this->option('detailed'));
+        $classes = CheckNamespaces::findAllClass(
+            $autoloads,
+            $this->option('detailed')
+        );
 
-        $errors = $this->findPsr4Errors($classes);
+        $errors = $this->findPsr4Errors($autoloads, $classes);
 
         $this->handleErrors($errors);
 
@@ -95,11 +100,11 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function findPsr4Errors($classes)
+    private function findPsr4Errors($autoloads, $classes)
     {
         $errors = [];
         foreach ($classes as $class) {
-            $error = CheckNamespaces::checkNamespace($class['currentNamespace'], $class['absFilePath'], $class['class']);
+            $error = CheckNamespaces::checkNamespace($autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
 
             if ($error) {
                 $errors[] = $error;
