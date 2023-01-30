@@ -32,9 +32,9 @@ class CheckPsr4 extends Command
 
         $this->on('replacing_namespace', function ($path, $lineIndex, $lineContent) {
             $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
-            $this->info($lineContent);
+            $this->warn($lineContent);
 
-            return $this->confirm('Do you want to change the old namespace?', true);
+            return $this->confirm('Do you want to update the old namespace?', true);
         });
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);

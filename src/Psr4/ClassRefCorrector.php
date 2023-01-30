@@ -64,7 +64,6 @@ class ClassRefCorrector
                     $lines[$lineIndex] = \str_replace($olds, $news, $lineContent, $count);
                     $count && $changedLineNums[] = $lineIndex + 1;
                 }
-            } elseif (self::str_contains($lineContent, $olds)) {
             }
         }
 
@@ -87,7 +86,7 @@ class ClassRefCorrector
 
     private static function possibleOccurrence($olds)
     {
-        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", ' $', ' ?', ','];
+        $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '?', ',', '&'];
 
         $occurrences = [];
         foreach ($olds as $old) {
