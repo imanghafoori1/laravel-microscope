@@ -206,14 +206,18 @@ class ErrorPrinter
         }
     }
 
-    public function printLink($path, $lineNumber = 4, $len = null)
+    public function printLink($path, $lineNumber = 4)
     {
-        $len === null && ($len = PendingError::$maxLength + 30);
-
         if ($path) {
-            $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $path), '\\/'));
-            $this->print('at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>', '');
+            $this->print(self::getLink(\str_replace(base_path(), '', $path), $lineNumber), '');
         }
+    }
+
+    public static function getLink($path, $lineNumber = 4)
+    {
+        $relativePath = FilePath::normalize(trim($path, '\\/'));
+
+        return 'at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>';
     }
 
     /**

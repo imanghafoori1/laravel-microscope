@@ -30,24 +30,14 @@ class CheckPsr4 extends Command
             $this->line('Checking: '.$path);
         });
 
-        $this->on('namespace_fixing', function ($relativePath, $currentNamespace, $correctNamespace, $class) {
-            return CheckPsr4Printer::warnIncorrectNamespace($relativePath, $currentNamespace, $correctNamespace, $class, $this);
-        });
-
-        $this->on('namespace_fixed', [ErrorPrinter::class, 'fixedNamespace']);
-
-        $this->on('replacing_namespace', function ($_path, $lineIndex, $lineContent) {
-            app(ErrorPrinter::class)->printLink($_path, $lineIndex);
+        $this->on('replacing_namespace', function ($path, $lineIndex, $lineContent) {
+            $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
             $this->info($lineContent);
 
             return $this->confirm('Do you want to change the old namespace?', true);
         });
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
-
-        $onFix = function ($path, $lineNumber) {
-            app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
-        };
 
         $autoloads = ComposerJson::readAutoload();
         start:
@@ -56,11 +46,12 @@ class CheckPsr4 extends Command
             $this->option('detailed')
         );
 
-        $errors = $this->findPsr4Errors($autoloads, $classes);
+        $errors = CheckNamespaces::findPsr4Errors($autoloads, $classes);
 
-        $this->handleErrors($errors);
-
-        ClassRefCorrector::fixAllRefs($onFix);
+        $onFix = function ($path, $lineNumber) {
+            app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
+        };
+        $this->handleErrors($errors, $onFix);
 
         app(ErrorPrinter::class)->logErrors();
         $this->printReport($errorPrinter, $time);
@@ -100,30 +91,23 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function findPsr4Errors($autoloads, $classes)
-    {
-        $errors = [];
-        foreach ($classes as $class) {
-            $error = CheckNamespaces::checkNamespace($autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
-
-            if ($error) {
-                $errors[] = $error;
-            }
-        }
-
-        return $errors;
-    }
-
-    private function handleErrors(array $errors)
+    private function handleErrors(array $errors, $onFix)
     {
         foreach ($errors as $wrong) {
             if ($wrong['type'] === 'namespace') {
-                CheckNamespaces::changeNamespace(
-                    $wrong['absPath'],
-                    $wrong['from'],
-                    $wrong['to'],
-                    $wrong['class']
-                );
+                $absPath = $wrong['absPath'];
+                $from = $wrong['from'];
+                $to = $wrong['to'];
+                $class = $wrong['class'];
+                $relPath = str_replace(base_path(), '', $absPath);
+
+                $answer = CheckPsr4Printer::warnIncorrectNamespace($relPath, $from, $to, $class, $this);
+
+                $answer && CheckNamespaces::changeNamespace($absPath, $from, $to, $class);
+
+                ClassRefCorrector::fixAllRefs($onFix);
+                CheckNamespaces::$changedNamespaces = [];
+                app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
             } elseif ($wrong['type'] === 'filename') {
                 app(ErrorPrinter::class)->wrongFileName(
                     $wrong['relativePath'],

@@ -14,6 +14,8 @@ class CheckNamespaces
 
     public static $changedNamespaces = [];
 
+    public static $buffer = 2500;
+
     public static function reset()
     {
         self::$changedNamespaces = [];
@@ -41,7 +43,7 @@ class CheckNamespaces
 
                 $scanned[] = $psr4Path;
 
-                $classes = array_merge($classes, CheckNamespaces::getClassesWithin($namespace, $psr4Path, $detailed));
+                $classes = array_merge($classes, self::getClassesWithin($namespace, $psr4Path, $detailed));
             }
         }
 
@@ -66,7 +68,7 @@ class CheckNamespaces
                 $class,
                 $type,
                 $parent,
-            ] = GetClassProperties::fromFilePath($absFilePath, config('microscope.class_search_buffer', 2500));
+            ] = GetClassProperties::fromFilePath($absFilePath, self::$buffer);
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
@@ -96,14 +98,8 @@ class CheckNamespaces
 
     public static function changeNamespace($absPath, $from, $to, $class)
     {
-        $fix = event('laravel_microscope.namespace_fixing', get_defined_vars(), true);
-
-        if ($fix !== false) {
-            self::changedNamespaces($class, $from, $to);
-            NamespaceCorrector::fix($absPath, $from, $to);
-        }
-
-        event('laravel_microscope.namespace_fixed', get_defined_vars());
+        self::changedNamespaces($class, $from, $to);
+        NamespaceCorrector::fix($absPath, $from, $to);
     }
 
     private static function changedNamespaces($class, $currentNamespace, $correctNamespace)
@@ -114,10 +110,7 @@ class CheckNamespaces
 
         $_currentClass = $currentNamespace.'\\'.$class;
         $_correctClass = $correctNamespace.'\\'.$class;
-        self::$changedNamespaces[$_currentClass.';'] = $_correctClass.';';
-        self::$changedNamespaces[$_currentClass.'('] = $_correctClass.'(';
-        self::$changedNamespaces[$_currentClass.'::'] = $_correctClass.'::';
-        self::$changedNamespaces[$_currentClass.' as'] = $_correctClass.' as';
+        self::$changedNamespaces[$_currentClass] = $_correctClass;
     }
 
     private static function getCorrectNamespaces($autoloads, $relativePath)
@@ -169,5 +162,19 @@ class CheckNamespaces
                 'type' => 'filename',
             ];
         }
+    }
+
+    public static function findPsr4Errors($autoloads, $classes)
+    {
+        $errors = [];
+        foreach ($classes as $class) {
+            $error = self::checkNamespace($autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
+
+            if ($error) {
+                $errors[] = $error;
+            }
+        }
+
+        return $errors;
     }
 }
