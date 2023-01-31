@@ -30,13 +30,6 @@ class CheckPsr4 extends Command
             $this->line('Checking: '.$path);
         });
 
-        $this->on('replacing_namespace', function ($path, $lineIndex, $lineContent) {
-            $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
-            $this->warn($lineContent);
-
-            return $this->confirm('Do you want to update the old namespace?', true);
-        });
-
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $autoloads = ComposerJson::readAutoload();
@@ -48,10 +41,17 @@ class CheckPsr4 extends Command
 
         $errors = CheckNamespaces::findPsr4Errors($autoloads, $classes);
 
-        $onFix = function ($path, $lineNumber) {
+        $beforeFix = function ($path, $lineIndex, $lineContent) {
+            $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
+            $this->warn($lineContent);
+
+            return $this->confirm('Do you want to update the old namespace?', true);
+        };
+
+        $afterFix = function ($path, $lineNumber) {
             app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
         };
-        $this->handleErrors($errors, $onFix);
+        $this->handleErrors($errors, $beforeFix, $afterFix);
 
         app(ErrorPrinter::class)->logErrors();
         $this->printReport($errorPrinter, $time);
@@ -91,7 +91,7 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function handleErrors(array $errors, $onFix)
+    private function handleErrors($errors, $beforeFix, $afterFix)
     {
         foreach ($errors as $wrong) {
             if ($wrong['type'] === 'namespace') {
@@ -103,10 +103,11 @@ class CheckPsr4 extends Command
 
                 $answer = CheckPsr4Printer::warnIncorrectNamespace($relPath, $from, $to, $class, $this);
 
-                $answer && CheckNamespaces::changeNamespace($absPath, $from, $to, $class);
+                if ($answer) {
+                    $changes = CheckNamespaces::changeNamespace($absPath, $from, $to, $class);
 
-                ClassRefCorrector::fixAllRefs($onFix);
-                CheckNamespaces::$changedNamespaces = [];
+                    ClassRefCorrector::fixAllRefs($changes, $beforeFix, $afterFix);
+                }
                 app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
             } elseif ($wrong['type'] === 'filename') {
                 app(ErrorPrinter::class)->wrongFileName(

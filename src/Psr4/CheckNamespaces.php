@@ -98,8 +98,9 @@ class CheckNamespaces
 
     public static function changeNamespace($absPath, $from, $to, $class)
     {
-        self::changedNamespaces($class, $from, $to);
         NamespaceCorrector::fix($absPath, $from, $to);
+
+        return self::changedNamespaces($class, $from, $to);
     }
 
     private static function changedNamespaces($class, $currentNamespace, $correctNamespace)
@@ -108,9 +109,11 @@ class CheckNamespaces
             return null;
         }
 
-        $_currentClass = $currentNamespace.'\\'.$class;
-        $_correctClass = $correctNamespace.'\\'.$class;
-        self::$changedNamespaces[$_currentClass] = $_correctClass;
+        $currentClass = $currentNamespace.'\\'.$class;
+        $correctClass = $correctNamespace.'\\'.$class;
+        self::$changedNamespaces[$currentClass] = $correctClass;
+
+        return [$currentClass => $correctClass];
     }
 
     private static function getCorrectNamespaces($autoloads, $relativePath)
