@@ -209,7 +209,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $this->print(self::getLink(\str_replace(base_path(), '', $path), $lineNumber), '');
+            $this->print(self::getLink(str_replace(base_path(), '', $path), $lineNumber), '');
         }
     }
 

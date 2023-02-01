@@ -40,16 +40,18 @@ class CheckPsr4 extends Command
             $this->option('detailed')
         );
 
-        $errors = CheckNamespaces::findPsr4Errors($autoloads, $classes);
-
         $this->handleErrors(
-            $errors,
+            CheckNamespaces::findPsr4Errors($autoloads, $classes),
             $this->beforeReferenceFix(),
             $this->afterReferenceFix()
         );
 
         app(ErrorPrinter::class)->logErrors();
-        $this->printReport($errorPrinter, $time);
+        $this->printReport(
+            $errorPrinter,
+            $time,
+            ComposerJson::readAutoload()
+        );
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
@@ -62,11 +64,6 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function on($event, $callback)
-    {
-        Event::listen('laravel_microscope.'.$event, $callback);
-    }
-
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
         if ($c = $errorPrinter->getCount('badNamespace')) {
@@ -76,11 +73,11 @@ class CheckPsr4 extends Command
         }
     }
 
-    private function printReport($errorPrinter, $time)
+    private function printReport($errorPrinter, $time, $autoload)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            CheckPsr4Printer::reportResult($this);
-            CheckPsr4Printer::printErrorsCount($errorPrinter, $time);
+            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload));
+            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter, $time));
         } else {
             $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
         }
@@ -135,5 +132,12 @@ class CheckPsr4 extends Command
 
             return $this->confirm($msg, true);
         };
+    }
+
+    private function printMessages($messages)
+    {
+        foreach ($messages as [$message, $level]) {
+            $this->$level($message);
+        }
     }
 }

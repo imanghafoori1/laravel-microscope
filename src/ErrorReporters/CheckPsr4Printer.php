@@ -37,47 +37,53 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($command)
+    public static function reportResult($autoload)
     {
-        $command->getOutput()->writeln('');
-        $command->getOutput()->writeln('<fg=blue>Finished!</>');
-        $separator = function ($color) use ($command) {
-            $command->info(' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
+        $messages = [];
+        $messages[] = '';
+        $messages[] = '<fg=blue>Finished!</>';
+        $separator = function ($color) {
+            return ' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>';
         };
 
         try {
-            $separator('gray');
+            $messages[] = $separator('gray');
         } catch (\Exception $e) {
-            $separator('blue');
+            $messages[] = $separator('blue');
         }
-        $command->getOutput()->writeln('<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>');
+        $messages[] = '<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>';
         $len = 0;
-        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
+        foreach ($autoload as $composerPath => $psr4) {
             $output = '';
-            $command->getOutput()->writeln(' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>');
+            $messages[] = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>';
             foreach ($psr4 as $namespace => $path) {
                 $max = max($len, strlen($namespace));
                 $len = strlen($namespace);
                 $output .= '   - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
             }
-            $command->getOutput()->writeln($output);
+            $messages[] = $output;
         }
+
+        return $messages;
     }
 
-    public static function noErrorFound($time, $command)
+    public static function noErrorFound($time)
     {
-        $time = microtime(true) - $time;
-        $command->line(PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>');
-        $command->line('<fg=red;options=bold>'.round($time, 5).'(s)</>');
-        $command->line('');
+        $time = round(microtime(true) - $time, 5);
+        $output = [];
+        $output[] = [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'];
+        $output[] = ['<fg=red;options=bold>'.$time.'(s)</>', 'line'];
+        $output[] = ['', 'line'];
+
+        return $output;
     }
 
-    public static function printErrorsCount($errorPrinter, $time, $command)
+    public static function getErrorsCount($errorPrinter, $time)
     {
         if ($errorCount = $errorPrinter->errorsList['total']) {
-            $command->warn(PHP_EOL.$errorCount.' error(s) found.');
+            return [[PHP_EOL.$errorCount.' error(s) found.', 'warn']];
         } else {
-            CheckPsr4Printer::noErrorFound($time, $command);
+            return CheckPsr4Printer::noErrorFound($time);
         }
     }
 }
