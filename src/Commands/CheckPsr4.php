@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -41,17 +42,11 @@ class CheckPsr4 extends Command
 
         $errors = CheckNamespaces::findPsr4Errors($autoloads, $classes);
 
-        $beforeFix = function ($path, $lineIndex, $lineContent) {
-            $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
-            $this->warn($lineContent);
-
-            return $this->confirm('Do you want to update the old namespace?', true);
-        };
-
-        $afterFix = function ($path, $lineNumber) {
-            app(ErrorPrinter::class)->simplePendError('', $path, $lineNumber, 'ns_replacement', 'Namespace replacement:');
-        };
-        $this->handleErrors($errors, $beforeFix, $afterFix);
+        $this->handleErrors(
+            $errors,
+            $this->beforeReferenceFix(),
+            $this->afterReferenceFix()
+        );
 
         app(ErrorPrinter::class)->logErrors();
         $this->printReport($errorPrinter, $time);
@@ -117,5 +112,28 @@ class CheckPsr4 extends Command
                 );
             }
         }
+    }
+
+    private function afterReferenceFix()
+    {
+        return function ($path, $changedLineNums, $content) {
+            Filesystem::$fileSystem::file_put_contents($path, $content);
+
+            $p = app(ErrorPrinter::class);
+            foreach ($changedLineNums as $line) {
+                $p->simplePendError('', $path, $line, 'ns_replacement', 'Namespace replacement:');
+            }
+        };
+    }
+
+    private function beforeReferenceFix()
+    {
+        return function ($path, $lineIndex, $lineContent) {
+            $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
+            $this->warn($lineContent);
+            $msg = 'Do you want to update reference to the old namespace?';
+
+            return $this->confirm($msg, true);
+        };
     }
 }

@@ -21,23 +21,23 @@ class ClassRefCorrector
         foreach (ComposerJson::readAutoload() as $autoload) {
             foreach ($autoload as $psr4Path) {
                 foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    self::fixAndReport($file->getRealPath(), $changes);
+                    self::fix($file->getRealPath(), $changes);
                 }
             }
         }
 
         foreach (LaravelPaths::collectNonPsr4Paths() as $path) {
-            self::fixAndReport($path, $changes);
+            self::fix($path, $changes);
         }
     }
 
-    private static function fixAndReport($path, $changes)
+    private static function fix($path, $changes)
     {
-        $lineNumbers = self::fixRefs($path, $changes);
+        [$changedLineNums, $content] = self::fixRefs($path, $changes);
 
-        foreach ($lineNumbers as $line) {
-            $onFix = self::$afterFix;
-            $onFix($path, $line);
+        if ($changedLineNums) {
+            $afterFix = self::$afterFix;
+            $afterFix($path, $changedLineNums, $content);
         }
     }
 
@@ -58,10 +58,7 @@ class ClassRefCorrector
             }
         }
 
-        // saves the file into disk.
-        $changedLineNums && Filesystem::$fileSystem::file_put_contents($path, \implode('', $lines));
-
-        return $changedLineNums;
+        return [$changedLineNums, implode('', $lines)];
     }
 
     private static function possibleOccurrence($olds)
@@ -80,6 +77,20 @@ class ClassRefCorrector
 
     private static function hasReference($lineContent, array $olds)
     {
-        return false !== mb_strpos(str_replace(' ', '', $lineContent), self::possibleOccurrence($olds));
+        return self::str_contains(
+            str_replace(' ', '', $lineContent),
+            self::possibleOccurrence($olds)
+        );
+    }
+
+    private static function str_contains($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (mb_strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

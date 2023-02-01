@@ -23,13 +23,13 @@ class NamespaceCorrector
         return self::getNamespaceFromFullClass($class1) === self::getNamespaceFromFullClass($class2);
     }
 
-    public static function fix($classFilePath, $incorrectNamespace, $correctNamespace)
+    public static function fix($absPath, $incorrectNamespace, $correctNamespace)
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
         [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
         $oldLine = \ltrim($oldLine, '\\');
 
-        $tokens = token_get_all(file_get_contents($classFilePath));
+        $tokens = token_get_all(file_get_contents($absPath));
         if ($oldLine !== '<?php') {
             // replacement
             [$newVersion, $lines] = Searcher::searchReplace([
@@ -38,16 +38,16 @@ class NamespaceCorrector
                     'replace' => 'namespace '.$newline.';',
                 ],
             ], $tokens);
-            Filesystem::$fileSystem::file_put_contents($classFilePath, $newVersion);
+            Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
         } elseif ($tokens[2][0] !== T_DECLARE) {
             // insertion
-            FileManipulator::replaceFirst($classFilePath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
+            FileManipulator::replaceFirst($absPath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
         } else {
             // inserts after declare
             $i = 2;
             while ($tokens[$i++] !== ';') {
             }
-            FileManipulator::insertNewLine($classFilePath, PHP_EOL.$newline, $tokens[$i][2] + 1);
+            FileManipulator::insertNewLine($absPath, PHP_EOL.$newline, $tokens[$i][2] + 1);
         }
     }
 
