@@ -10,14 +10,22 @@ use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
+use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class CheckPsr4 extends Command
 {
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}';
 
     protected $description = 'Checks the validity of namespaces';
+
+    public static $checkedNamespaces = 0;
+
+    public static $checkedNamespacesStats = [];
+
+    public static $buffer = 2500;
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -35,13 +43,17 @@ class CheckPsr4 extends Command
 
         $autoloads = ComposerJson::readAutoload();
         start:
-        $classes = CheckNamespaces::findAllClass(
-            $autoloads,
-            $this->option('detailed')
-        );
+        $classes = [];
+        foreach (CheckNamespaces::findAllClass($autoloads) as $namespace => $psr4Path) {
+            $classes = array_merge($classes, $this->getClassesWithin(
+                $namespace,
+                $psr4Path,
+                $this->option('detailed'))
+            );
+        }
 
         $this->handleErrors(
-            CheckNamespaces::findPsr4Errors($autoloads, $classes),
+            CheckNamespaces::findPsr4Errors(base_path(), $autoloads, $classes),
             $this->beforeReferenceFix(),
             $this->afterReferenceFix()
         );
@@ -140,4 +152,55 @@ class CheckPsr4 extends Command
             $this->$level($message);
         }
     }
+
+    protected function getClassesWithin($namespace, $composerPath, $detailed)
+    {
+        $results = [];
+        foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
+            $absFilePath = $classFilePath->getRealPath();
+
+            // Exclude blade files
+            if (substr_count($absFilePath, '.') === 2) {
+                continue;
+            }
+
+            [
+                $currentNamespace,
+                $class,
+                $type,
+                $parent,
+            ] = GetClassProperties::fromFilePath($absFilePath, self::$buffer);
+
+            // Skip if there is no class/trait/interface definition found.
+            // For example a route file or a config file.
+            if (! $class || $parent === 'Migration') {
+                continue;
+            }
+
+            self::$checkedNamespaces++;
+
+            if (isset(self::$checkedNamespacesStats[$namespace])) {
+                self::$checkedNamespacesStats[$namespace]++;
+            } else {
+                self::$checkedNamespacesStats[$namespace] = 1;
+            }
+
+            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
+
+            $results[] = [
+                'currentNamespace' => $currentNamespace,
+                'absFilePath' => $absFilePath,
+                'class' => $class,
+            ];
+        }
+
+        return $results;
+    }
+
+    public static function reset()
+    {
+        CheckNamespaces::$changedNamespaces = [];
+        self::$checkedNamespaces = 0;
+    }
+
 }

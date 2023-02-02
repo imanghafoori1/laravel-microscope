@@ -2,33 +2,17 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\TokenAnalyzer\GetClassProperties;
-
 class CheckNamespaces
 {
-    public static $checkedNamespaces = 0;
-
-    public static $checkedNamespacesStats = [];
-
     public static $changedNamespaces = [];
-
-    public static $buffer = 2500;
-
-    public static function reset()
-    {
-        self::$changedNamespaces = [];
-        self::$checkedNamespaces = 0;
-    }
 
     /**
      * Checks all the psr-4 loaded classes to have correct namespace.
      *
-     * @param  $detailed
+     * @param  $autoloads
      * @return array
      */
-    public static function findAllClass($autoloads, $detailed)
+    public static function findAllClass($autoloads)
     {
         $scanned = [];
         $classes = [];
@@ -36,64 +20,18 @@ class CheckNamespaces
             foreach ($autoload as $namespace => $psr4Path) {
                 // to avoid duplicate scanning
                 foreach ($scanned as $s) {
-                    if (strlen($psr4Path) > strlen($s) && Str::startsWith($psr4Path, $s)) {
+                    if (strlen($psr4Path) > strlen($s) && self::startsWith($psr4Path, $s)) {
                         continue 2;
                     }
                 }
 
                 $scanned[] = $psr4Path;
 
-                $classes = array_merge($classes, self::getClassesWithin($namespace, $psr4Path, $detailed));
+                $classes[$namespace] = $psr4Path;
             }
         }
 
         return $classes;
-    }
-
-    public static function getClassesWithin($namespace, $composerPath, $detailed)
-    {
-        $paths = FilePath::getAllPhpFiles($composerPath);
-
-        $results = [];
-        foreach ($paths as $classFilePath) {
-            $absFilePath = $classFilePath->getRealPath();
-
-            // Exclude blade files
-            if (substr_count($absFilePath, '.') === 2) {
-                continue;
-            }
-
-            [
-                $currentNamespace,
-                $class,
-                $type,
-                $parent,
-            ] = GetClassProperties::fromFilePath($absFilePath, self::$buffer);
-
-            // Skip if there is no class/trait/interface definition found.
-            // For example a route file or a config file.
-            if (! $class || $parent === 'Migration') {
-                continue;
-            }
-
-            self::$checkedNamespaces++;
-
-            if (isset(self::$checkedNamespacesStats[$namespace])) {
-                self::$checkedNamespacesStats[$namespace]++;
-            } else {
-                self::$checkedNamespacesStats[$namespace] = 1;
-            }
-
-            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
-
-            $results[] = [
-                'currentNamespace' => $currentNamespace,
-                'absFilePath' => $absFilePath,
-                'class' => $class,
-            ];
-        }
-
-        return $results;
     }
 
     public static function changeNamespace($absPath, $from, $to, $class)
@@ -142,9 +80,9 @@ class CheckNamespaces
         });
     }
 
-    public static function checkNamespace($autoloads, $currentNamespace, $absFilePath, $class)
+    public static function checkNamespace($basepath, $autoloads, $currentNamespace, $absFilePath, $class)
     {
-        $relativePath = FilePath::getRelativePath($absFilePath);
+        $relativePath = \trim(str_replace($basepath, '', $absFilePath), '/\\');
         $correctNamespaces = self::getCorrectNamespaces($autoloads, $relativePath);
 
         if (! in_array($currentNamespace, $correctNamespaces)) {
@@ -167,11 +105,11 @@ class CheckNamespaces
         }
     }
 
-    public static function findPsr4Errors($autoloads, $classes)
+    public static function findPsr4Errors($basepath, $autoloads, $classes)
     {
         $errors = [];
         foreach ($classes as $class) {
-            $error = self::checkNamespace($autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
+            $error = self::checkNamespace($basepath, $autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
 
             if ($error) {
                 $errors[] = $error;
@@ -179,5 +117,16 @@ class CheckNamespaces
         }
 
         return $errors;
+    }
+
+    public static function startsWith($haystack, $needles)
+    {
+        foreach ((array) $needles as $needle) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
