@@ -2,12 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-use Imanghafoori\Filesystem\FileManipulator;
-use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\SearchReplace\Searcher;
-use Imanghafoori\TokenAnalyzer\Str;
-
 class NamespaceCorrector
 {
     public static function getNamespaceFromFullClass($class)
@@ -21,34 +15,6 @@ class NamespaceCorrector
     public static function haveSameNamespace($class1, $class2)
     {
         return self::getNamespaceFromFullClass($class1) === self::getNamespaceFromFullClass($class2);
-    }
-
-    public static function fix($absPath, $incorrectNamespace, $correctNamespace)
-    {
-        // decides to add namespace (in case there is no namespace) or edit the existing one.
-        [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
-        $oldLine = \ltrim($oldLine, '\\');
-
-        $tokens = token_get_all(file_get_contents($absPath));
-        if ($oldLine !== '<?php') {
-            // replacement
-            [$newVersion, $lines] = Searcher::searchReplace([
-                'fix' => [
-                    'search' => 'namespace '.$oldLine.';',
-                    'replace' => 'namespace '.$newline.';',
-                ],
-            ], $tokens);
-            Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
-        } elseif ($tokens[2][0] !== T_DECLARE) {
-            // insertion
-            FileManipulator::replaceFirst($absPath, $oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
-        } else {
-            // inserts after declare
-            $i = 2;
-            while ($tokens[$i++] !== ';') {
-            }
-            FileManipulator::insertNewLine($absPath, PHP_EOL.$newline, $tokens[$i][2] + 1);
-        }
     }
 
     public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
@@ -68,17 +34,7 @@ class NamespaceCorrector
          *      "App\\": "app/"
          *  }.
          */
-        return Str::replaceFirst(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $classPath);
-    }
-
-    private static function getNewLine($incorrectNamespace, $correctNamespace)
-    {
-        if ($incorrectNamespace) {
-            return [$incorrectNamespace, $correctNamespace];
-        }
-
-        // In case there is no namespace specified in the file:
-        return ['<?php', 'namespace '.$correctNamespace.';'.PHP_EOL];
+        return self::replaceFirst(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $classPath);
     }
 
     public static function getRelativePathFromNamespace($namespace, $autoload = null)
@@ -102,10 +58,8 @@ class NamespaceCorrector
         return trim(\str_replace('/', '\\', \str_replace($_paths, $_namespaces, $relPath)), '\\');
     }
 
-    private static function getSortedAutoload($autoloads): array
+    private static function getSortedAutoload($autoloads)
     {
-        ($autoloads === null) && $autoloads = ComposerJson::readAutoload();
-
         $namespaces = [];
         $paths = [];
 
@@ -135,5 +89,20 @@ class NamespaceCorrector
         }
 
         return [$_namespaces, $_paths];
+    }
+
+    public static function replaceFirst($search, $replace, $subject)
+    {
+        if ($search == '') {
+            return $subject;
+        }
+
+        $position = strpos($subject, $search);
+
+        if ($position !== false) {
+            return substr_replace($subject, $replace, $position, strlen($search));
+        }
+
+        return $subject;
     }
 }

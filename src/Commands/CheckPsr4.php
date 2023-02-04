@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
@@ -62,7 +63,7 @@ class CheckPsr4 extends Command
         $this->printReport(
             $errorPrinter,
             $time,
-            ComposerJson::readAutoload()
+            $autoloads
         );
 
         $this->composerDumpIfNeeded($errorPrinter);
@@ -88,10 +89,10 @@ class CheckPsr4 extends Command
     private function printReport($errorPrinter, $time, $autoload)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload));
+            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespaces));
             $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter, $time));
         } else {
-            $this->getOutput()->writeln(' - '.CheckNamespaces::$checkedNamespaces.' namespaces were checked.');
+            $this->getOutput()->writeln(' - '.self::$checkedNamespaces.' namespaces were checked.');
         }
     }
 
@@ -110,7 +111,7 @@ class CheckPsr4 extends Command
                 if ($answer) {
                     $changes = CheckNamespaces::changeNamespace($absPath, $from, $to, $class);
 
-                    ClassRefCorrector::fixAllRefs($changes, $beforeFix, $afterFix);
+                    ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
                 }
                 app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
             } elseif ($wrong['type'] === 'filename') {
@@ -121,6 +122,21 @@ class CheckPsr4 extends Command
                 );
             }
         }
+    }
+
+    private static function getAllPaths()
+    {
+        $paths = [];
+
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $psr4Path) {
+                foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
+                    $paths[] = $file->getRealPath();
+                }
+            }
+        }
+
+        return array_merge($paths, LaravelPaths::collectNonPsr4Paths());
     }
 
     private function afterReferenceFix()
@@ -199,7 +215,6 @@ class CheckPsr4 extends Command
 
     public static function reset()
     {
-        CheckNamespaces::$changedNamespaces = [];
         self::$checkedNamespaces = 0;
     }
 

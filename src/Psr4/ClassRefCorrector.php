@@ -2,30 +2,17 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-
 class ClassRefCorrector
 {
     private static $afterFix;
 
     private static $beforeFix;
 
-    public static function fixAllRefs($changes, $beforeFix, $afterFix)
+    public static function fixAllRefs($changes, $paths, $beforeFix, $afterFix)
     {
         self::$afterFix = $afterFix;
         self::$beforeFix = $beforeFix;
-
-        foreach (ComposerJson::readAutoload() as $autoload) {
-            foreach ($autoload as $psr4Path) {
-                foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    self::fix($file->getRealPath(), $changes);
-                }
-            }
-        }
-
-        foreach (LaravelPaths::collectNonPsr4Paths() as $path) {
+        foreach ($paths as $path) {
             self::fix($path, $changes);
         }
     }

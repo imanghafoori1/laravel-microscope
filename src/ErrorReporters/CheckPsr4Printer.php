@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Symfony\Component\Console\Terminal;
 
 class CheckPsr4Printer extends ErrorPrinter
@@ -37,7 +35,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($autoload)
+    public static function reportResult($autoload, $checkedNamespaces)
     {
         $messages = [];
         $messages[] = '';
@@ -51,7 +49,7 @@ class CheckPsr4Printer extends ErrorPrinter
         } catch (\Exception $e) {
             $messages[] = $separator('blue');
         }
-        $messages[] = '<options=bold;fg=yellow>'.CheckNamespaces::$checkedNamespaces.' classes were checked under:</>';
+        $messages[] = '<options=bold;fg=yellow>'.$checkedNamespaces.' classes were checked under:</>';
         $len = 0;
         foreach ($autoload as $composerPath => $psr4) {
             $output = '';

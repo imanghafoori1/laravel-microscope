@@ -4,8 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 class CheckNamespaces
 {
-    public static $changedNamespaces = [];
-
     /**
      * Checks all the psr-4 loaded classes to have correct namespace.
      *
@@ -15,7 +13,7 @@ class CheckNamespaces
     public static function findAllClass($autoloads)
     {
         $scanned = [];
-        $classes = [];
+        $map = [];
         foreach ($autoloads as $autoload) {
             foreach ($autoload as $namespace => $psr4Path) {
                 // to avoid duplicate scanning
@@ -27,16 +25,16 @@ class CheckNamespaces
 
                 $scanned[] = $psr4Path;
 
-                $classes[$namespace] = $psr4Path;
+                $map[$namespace] = $psr4Path;
             }
         }
 
-        return $classes;
+        return $map;
     }
 
     public static function changeNamespace($absPath, $from, $to, $class)
     {
-        NamespaceCorrector::fix($absPath, $from, $to);
+        NamespaceFixer::fix($absPath, $from, $to);
 
         return self::changedNamespaces($class, $from, $to);
     }
@@ -49,7 +47,6 @@ class CheckNamespaces
 
         $currentClass = $currentNamespace.'\\'.$class;
         $correctClass = $correctNamespace.'\\'.$class;
-        self::$changedNamespaces[$currentClass] = $correctClass;
 
         return [$currentClass => $correctClass];
     }
