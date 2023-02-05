@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use ImanGhafoori\ComposerJson\ComposerJson as Compo;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -43,17 +44,16 @@ class CheckPsr4 extends Command
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        $autoloads = ComposerJson::readAutoload(true);
-        $autoloads2 = ComposerJson::readAutoload();
+        $autoloads = ComposerJson::readAutoload();
         start:
         $classes = [];
-        foreach ($autoloads as $cpath => $autoload) {
+        foreach (Compo::purgeAutoloadShortcuts($autoloads) as $cpath => $autoload) {
             foreach ($autoload as $namespace => $psr4Path) {
                 $classes = array_merge($classes, $this->getClassesWithin($namespace, $psr4Path, $this->option('detailed')));
             }
 
             $this->handleErrors(
-                CheckNamespaces::findPsr4Errors(base_path(), $autoloads2[$cpath], $classes),
+                CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$cpath], $classes),
                 $this->beforeReferenceFix(),
                 $this->afterReferenceFix()
             );
@@ -62,7 +62,7 @@ class CheckPsr4 extends Command
             $this->printReport(
                 $errorPrinter,
                 $time,
-                $autoloads2[$cpath]
+                $autoloads[$cpath]
             );
         }
 
