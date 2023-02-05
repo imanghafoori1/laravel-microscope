@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-class NamespaceCorrector
+class NamespaceCalculator
 {
     public static function getNamespaceFromFullClass($class)
     {
@@ -34,7 +34,11 @@ class NamespaceCorrector
          *      "App\\": "app/"
          *  }.
          */
-        return self::replaceFirst(\trim($composerPath, '\\'), \trim($rootNamespace, '\\/'), $classPath);
+        return self::replaceFirst(
+            \trim($composerPath, '\\'),
+            \trim($rootNamespace, '\\/'),
+            $classPath
+        );
     }
 
     public static function getRelativePathFromNamespace($namespace, $autoload = null)
@@ -91,7 +95,7 @@ class NamespaceCorrector
         return [$_namespaces, $_paths];
     }
 
-    public static function replaceFirst($search, $replace, $subject)
+    private static function replaceFirst($search, $replace, $subject)
     {
         if ($search == '') {
             return $subject;

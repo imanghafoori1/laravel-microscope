@@ -6,7 +6,7 @@ use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
@@ -15,19 +15,19 @@ class NamespaceCorrectorTest extends BaseTestClass
     {
         $ds = DIRECTORY_SEPARATOR;
         $path = "app{$ds}Hello{$ds}T.php";
-        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/', 'App\\');
+        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/', 'App\\');
         $this->assertEquals("App\Hello", $r);
 
-        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app', 'App\\');
+        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app', 'App\\');
         $this->assertEquals("App\Hello", $r);
 
-        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
+        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
         $this->assertEquals('Foo', $r);
 
-        $r = NamespaceCorrector::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
+        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
         $this->assertEquals('Foo', $r);
 
-        $r = NamespaceCorrector::calculateCorrectNamespace("app{$ds}Hello{$ds}Hello{$ds}T.php", 'app/Hello', 'Foo\\');
+        $r = NamespaceCalculator::calculateCorrectNamespace("app{$ds}Hello{$ds}Hello{$ds}T.php", 'app/Hello', 'Foo\\');
         $this->assertEquals("Foo\Hello", $r);
     }
 
@@ -37,9 +37,9 @@ class NamespaceCorrectorTest extends BaseTestClass
         $ns = 'Imanghafoori\LaravelMicroscope\Analyzers';
         $class = "$ns\NamespaceCorrector";
 
-        $this->assertEquals($ns, NamespaceCorrector::getNamespaceFromFullClass($class));
-        $this->assertEquals('', NamespaceCorrector::getNamespaceFromFullClass('A'));
-        $this->assertEquals('B', NamespaceCorrector::getNamespaceFromFullClass('B\A'));
+        $this->assertEquals($ns, NamespaceCalculator::getNamespaceFromFullClass($class));
+        $this->assertEquals('', NamespaceCalculator::getNamespaceFromFullClass('A'));
+        $this->assertEquals('B', NamespaceCalculator::getNamespaceFromFullClass('B\A'));
     }
 
     /** @test */
@@ -50,11 +50,11 @@ class NamespaceCorrectorTest extends BaseTestClass
         $class2 = "$ns\Ghafoori";
         $class3 = "$ns\Hello\Ghafoori";
 
-        $this->assertEquals(true, NamespaceCorrector::haveSameNamespace('A', 'A'));
-        $this->assertEquals(true, NamespaceCorrector::haveSameNamespace('A', 'B'));
-        $this->assertEquals(true, NamespaceCorrector::haveSameNamespace($class1, $class2));
-        $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, $class3));
-        $this->assertEquals(false, NamespaceCorrector::haveSameNamespace($class1, 'Faalse'));
+        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace('A', 'A'));
+        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace('A', 'B'));
+        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace($class1, $class2));
+        $this->assertEquals(false, NamespaceCalculator::haveSameNamespace($class1, $class3));
+        $this->assertEquals(false, NamespaceCalculator::haveSameNamespace($class1, 'Faalse'));
     }
 
     /** @test */
@@ -83,7 +83,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileManipulator::$fileSystem = FakeFileSystem::class;
         FileSystem::$fileSystem = FakeFileSystem::class;
         $correctNamespace = 'App\Http\Controllers\Foo';
-        NamespaceCorrector::fix(__DIR__.'/stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
+        NamespaceCalculator::fix(__DIR__.'/stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
 
         $result = strpos(FakeFileSystem::read_file(__DIR__.'/stubs/PostController.stub'), 'namespace App\Http\Controllers\Foo;');
 
@@ -98,7 +98,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileSystem::$fileSystem = FakeFileSystem::class;
         $from = '';
         $to = 'App\Http\Controllers\Foo';
-        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
+        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
 
         $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', "\n");
 
@@ -114,7 +114,7 @@ class NamespaceCorrectorTest extends BaseTestClass
 
         $from = '';
         $to = 'App\Http\Roo';
-        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', $from, $to);
+        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', $from, $to);
 
         $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', "\n");
 
@@ -132,7 +132,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         // act
         $from = 'App\Http\Controllers\Foo';
         $to = 'App\Http\Roo';
-        NamespaceCorrector::fix(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', $from, $to);
+        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', $from, $to);
 
         // assert
         $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n");
@@ -142,10 +142,10 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function get_namespace_from_relative_path()
     {
-        $result = NamespaceCorrector::getNamespacedClassFromPath('app/Hello.php');
+        $result = NamespaceCalculator::getNamespacedClassFromPath('app/Hello.php');
         $this->assertEquals('App\\Hello', $result);
 
-        $result = NamespaceCorrector::getNamespacedClassFromPath('app/appollo.php');
+        $result = NamespaceCalculator::getNamespacedClassFromPath('app/appollo.php');
         $this->assertEquals('App\\appollo', $result);
 
         $autoload = [
@@ -155,13 +155,13 @@ class NamespaceCorrectorTest extends BaseTestClass
             'Database\\Seeders\\'=> 'database/seeders/',
         ];
 
-        $result = NamespaceCorrector::getNamespacedClassFromPath('app/s/Hello.php', $autoload);
+        $result = NamespaceCalculator::getNamespacedClassFromPath('app/s/Hello.php', $autoload);
         $this->assertEquals('App\\lication\\Hello', $result);
 
-        $result = NamespaceCorrector::getNamespacedClassFromPath('app/appollo.php', $autoload);
+        $result = NamespaceCalculator::getNamespacedClassFromPath('app/appollo.php', $autoload);
         $this->assertEquals('App\\appollo', $result);
 
-        $result = NamespaceCorrector::getNamespacedClassFromPath('app/d/appollo.php', $autoload);
+        $result = NamespaceCalculator::getNamespacedClassFromPath('app/d/appollo.php', $autoload);
         $this->assertEquals('Test\\appollo', $result);
     }
 }

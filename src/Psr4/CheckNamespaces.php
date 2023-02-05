@@ -32,32 +32,13 @@ class CheckNamespaces
         return $map;
     }
 
-    public static function changeNamespace($absPath, $from, $to, $class)
-    {
-        NamespaceFixer::fix($absPath, $from, $to);
-
-        return self::changedNamespaces($class, $from, $to);
-    }
-
-    private static function changedNamespaces($class, $currentNamespace, $correctNamespace)
-    {
-        if (! $currentNamespace) {
-            return null;
-        }
-
-        $currentClass = $currentNamespace.'\\'.$class;
-        $correctClass = $correctNamespace.'\\'.$class;
-
-        return [$currentClass => $correctClass];
-    }
-
     private static function getCorrectNamespaces($autoloads, $relativePath)
     {
         $correctNamespaces = [];
         foreach ($autoloads as $autoload) {
             foreach ($autoload as $namespacePrefix => $path) {
                 if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
-                    $correctNamespaces[] = NamespaceCorrector::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
+                    $correctNamespaces[] = NamespaceCalculator::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
                 }
             }
         }

@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
 use ReflectionClass;
@@ -19,7 +19,7 @@ class FacadeDocblocks
 
     public static function check($tokens, $absFilePath, SplFileInfo $classFilePath, $psr4Path, $psr4Namespace)
     {
-        $facade = NamespaceCorrector::getNamespacedClassFromPath($absFilePath);
+        $facade = NamespaceCalculator::getNamespacedClassFromPath($absFilePath);
 
         if (! self::isFacade($facade)) {
             return null;

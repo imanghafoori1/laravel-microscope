@@ -14,6 +14,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
 use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceFixer;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class CheckPsr4 extends Command
@@ -109,11 +110,14 @@ class CheckPsr4 extends Command
                 $answer = CheckPsr4Printer::warnIncorrectNamespace($relPath, $from, $to, $class, $this);
 
                 if ($answer) {
-                    $changes = CheckNamespaces::changeNamespace($absPath, $from, $to, $class);
+                    NamespaceFixer::fix($absPath, $from, $to);
 
-                    ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
+                    if ($from) {
+                        $changes = [$from.'\\'.$class => $to.'\\'.$class];
+                        ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
+                    }
+                   app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
                 }
-                app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
             } elseif ($wrong['type'] === 'filename') {
                 app(ErrorPrinter::class)->wrongFileName(
                     $wrong['relativePath'],

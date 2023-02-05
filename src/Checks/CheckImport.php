@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImport
@@ -37,7 +37,7 @@ class CheckImport
             }
 
             // for half imported namespaces
-            if (\is_dir(base_path(NamespaceCorrector::getRelativePathFromNamespace($classImport)))) {
+            if (\is_dir(base_path(NamespaceCalculator::getRelativePathFromNamespace($classImport)))) {
                 continue;
             }
 

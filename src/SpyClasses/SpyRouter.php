@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Throwable;
 
 class SpyRouter extends Router
@@ -48,7 +48,7 @@ class SpyRouter extends Router
                 $i++;
             }
             $ns = $newAttr['namespace'] ?? null;
-            $dir = NamespaceCorrector::getRelativePathFromNamespace($ns);
+            $dir = NamespaceCalculator::getRelativePathFromNamespace($ns);
 
             if (isset($attributes['middlewares'])) {
                 $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";

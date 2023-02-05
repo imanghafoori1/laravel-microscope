@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCorrector;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -31,9 +31,9 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $contextClassNamespace = NamespaceCorrector::getNamespacedClassFromPath($absPath);
+        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath);
 
-        if (NamespaceCorrector::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
+        if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
             return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
         }
 
@@ -74,9 +74,9 @@ class Fixer
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
-        $hostNamespacedClass = NamespaceCorrector::getNamespacedClassFromPath($absPath);
+        $hostNamespacedClass = NamespaceCalculator::getNamespacedClassFromPath($absPath);
         // We just remove the wrong import if it is not needed.
-        if (! $isAliased && NamespaceCorrector::haveSameNamespace($hostNamespacedClass, $correct[0])) {
+        if (! $isAliased && NamespaceCalculator::haveSameNamespace($hostNamespacedClass, $correct[0])) {
             return [self::replaceSave("use $import;", '', $tokens, $absPath), [' Deleted!']];
         }
 
