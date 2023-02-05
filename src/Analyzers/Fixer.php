@@ -31,7 +31,7 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath);
+        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath, dd(ComposerJson::readAutoload()));
 
         if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
             return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];

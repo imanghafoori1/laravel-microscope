@@ -4,32 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 class CheckNamespaces
 {
-    private static function getCorrectNamespaces($autoloads, $relativePath)
-    {
-        $correctNamespaces = [];
-        foreach ($autoloads as $autoload) {
-            foreach ($autoload as $namespacePrefix => $path) {
-                if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
-                    $correctNamespaces[] = NamespaceCalculator::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
-                }
-            }
-        }
-
-        return $correctNamespaces;
-    }
-
-    private static function findShortest($correctNamespaces)
-    {
-        // finds the shortest namespace
-        return array_reduce($correctNamespaces, function ($a, $b) {
-            if ($a === null) {
-                return $b;
-            }
-
-            return strlen($a) < strlen($b) ? $a : $b;
-        });
-    }
-
     public static function checkNamespace($basepath, $autoloads, $currentNamespace, $absFilePath, $class)
     {
         $relativePath = \trim(str_replace($basepath, '', $absFilePath), '/\\');
@@ -67,5 +41,29 @@ class CheckNamespaces
         }
 
         return $errors;
+    }
+
+    private static function getCorrectNamespaces($autoloads, $relativePath)
+    {
+        $correctNamespaces = [];
+        foreach ($autoloads as $namespacePrefix => $path) {
+            if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
+                $correctNamespaces[] = NamespaceCalculator::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
+            }
+        }
+
+        return $correctNamespaces;
+    }
+
+    private static function findShortest($correctNamespaces)
+    {
+        // finds the shortest namespace
+        return array_reduce($correctNamespaces, function ($a, $b) {
+            if ($a === null) {
+                return $b;
+            }
+
+            return strlen($a) < strlen($b) ? $a : $b;
+        });
     }
 }

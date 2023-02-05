@@ -18,17 +18,17 @@ class RoutePaths
         foreach (app('router')->routePaths as $path) {
             $routePaths[] = FilePath::normalize($path);
         }
-
+        $autoloads = ComposerJson::readAutoload();
         foreach (config('app.providers') as $providerClass) {
             // we exclude the core or package service providers here.
-            foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoloads as $autoload) {
                 if (! Str::contains($providerClass, array_keys($autoload))) {
                     continue 2;
                 }
             }
 
             // get tokens by class name
-            $path = NamespaceCalculator::getRelativePathFromNamespace($providerClass);
+            $path = NamespaceCalculator::getRelativePathFromNamespace($providerClass, $autoloads);
 
             try {
                 $methodCalls = self::readLoadedRouteFiles($path);

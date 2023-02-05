@@ -91,6 +91,6 @@ class CheckStringy
 
     private static function refersToDir(string $classPath)
     {
-        return is_dir(base_path(NamespaceCalculator::getRelativePathFromNamespace($classPath)));
+        return is_dir(base_path(NamespaceCalculator::getRelativePathFromNamespace($classPath, ComposerJson::readAutoload())));
     }
 }

@@ -44,34 +44,33 @@ class CheckPsr4 extends Command
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $autoloads = ComposerJson::readAutoload(true);
+        $autoloads2 = ComposerJson::readAutoload();
         start:
         $classes = [];
-        foreach ($autoloads as $namespace => $psr4Path) {
-            $classes = array_merge($classes, $this->getClassesWithin(
-                $namespace,
-                $psr4Path,
-                $this->option('detailed'))
+        foreach ($autoloads as $cpath => $autoload) {
+            foreach ($autoload as $namespace => $psr4Path) {
+                $classes = array_merge($classes, $this->getClassesWithin($namespace, $psr4Path, $this->option('detailed')));
+            }
+
+            $this->handleErrors(
+                CheckNamespaces::findPsr4Errors(base_path(), $autoloads2[$cpath], $classes),
+                $this->beforeReferenceFix(),
+                $this->afterReferenceFix()
+            );
+
+            app(ErrorPrinter::class)->logErrors();
+            $this->printReport(
+                $errorPrinter,
+                $time,
+                $autoloads2[$cpath]
             );
         }
-
-        $this->handleErrors(
-            CheckNamespaces::findPsr4Errors(base_path(), $autoloads, $classes),
-            $this->beforeReferenceFix(),
-            $this->afterReferenceFix()
-        );
-
-        app(ErrorPrinter::class)->logErrors();
-        $this->printReport(
-            $errorPrinter,
-            $time,
-            $autoloads
-        );
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
             sleep(8);
 
-            CheckNamespaces::reset();
+            self::reset();
             app(ErrorPrinter::class)->errorsList = ['total' => 0];
 
             goto start;

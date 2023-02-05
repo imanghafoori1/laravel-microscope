@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 use Closure;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Throwable;
@@ -48,7 +49,7 @@ class SpyRouter extends Router
                 $i++;
             }
             $ns = $newAttr['namespace'] ?? null;
-            $dir = NamespaceCalculator::getRelativePathFromNamespace($ns);
+            $dir = NamespaceCalculator::getRelativePathFromNamespace($ns, ComposerJson::readAutoload());
 
             if (isset($attributes['middlewares'])) {
                 $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
