@@ -43,10 +43,10 @@ class CheckPsr4 extends Command
 
         $this->option('nofix') && config(['microscope.no_fix' => true]);
 
-        $autoloads = ComposerJson::readAutoload();
+        $autoloads = ComposerJson::readAutoload(true);
         start:
         $classes = [];
-        foreach (CheckNamespaces::findAllClass($autoloads) as $namespace => $psr4Path) {
+        foreach ($autoloads as $namespace => $psr4Path) {
             $classes = array_merge($classes, $this->getClassesWithin(
                 $namespace,
                 $psr4Path,

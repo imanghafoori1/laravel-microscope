@@ -6,9 +6,9 @@ use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 
 class ComposerJson
 {
-    public static function readAutoload()
+    public static function readAutoload($purgeAutoload = false)
     {
-        $psr4Autoloads = Composer::make(base_path())->readAutoload();
+        $psr4Autoloads = Composer::make(base_path())->readAutoload($purgeAutoload);
 
         return self::removedIgnored($psr4Autoloads, config('microscope.ignored_namespaces', []));
     }
