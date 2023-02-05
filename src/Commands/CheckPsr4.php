@@ -116,7 +116,7 @@ class CheckPsr4 extends Command
                         $changes = [$from.'\\'.$class => $to.'\\'.$class];
                         ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
                     }
-                   app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
+                    app(ErrorPrinter::class)->fixedNamespace($absPath, $from, $to, 4);
                 }
             } elseif ($wrong['type'] === 'filename') {
                 app(ErrorPrinter::class)->wrongFileName(
@@ -221,5 +221,4 @@ class CheckPsr4 extends Command
     {
         self::$checkedNamespaces = 0;
     }
-
 }
