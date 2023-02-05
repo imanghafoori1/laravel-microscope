@@ -62,7 +62,7 @@ class CheckPsr4 extends Command
             $this->printReport(
                 $errorPrinter,
                 $time,
-                $autoloads[$cpath]
+                $autoloads
             );
         }
 
@@ -89,7 +89,7 @@ class CheckPsr4 extends Command
     private function printReport($errorPrinter, $time, $autoload)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespaces));
+            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespaces, self::$checkedNamespacesStats));
             $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter, $time));
         } else {
             $this->getOutput()->writeln(' - '.self::$checkedNamespaces.' namespaces were checked.');

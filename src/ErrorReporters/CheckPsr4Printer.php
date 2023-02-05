@@ -35,7 +35,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($autoload, $checkedNamespaces)
+    public static function reportResult($autoload, $checkedNamespaces, $stats)
     {
         $messages = [];
         $messages[] = '';
@@ -53,11 +53,12 @@ class CheckPsr4Printer extends ErrorPrinter
         $len = 0;
         foreach ($autoload as $composerPath => $psr4) {
             $output = '';
-            $messages[] = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json'.'</>';
+            $messages[] = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json </>';
             foreach ($psr4 as $namespace => $path) {
+                $count = $stats[$namespace] ?? 0;
                 $max = max($len, strlen($namespace));
                 $len = strlen($namespace);
-                $output .= '   - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
+                $output .= '  '.str_pad($count, 4).' - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
             }
             $messages[] = $output;
         }
