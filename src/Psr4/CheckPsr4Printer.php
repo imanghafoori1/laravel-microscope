@@ -1,12 +1,14 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
+namespace Imanghafoori\LaravelMicroscope\Psr4;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Symfony\Component\Console\Terminal;
 
 class CheckPsr4Printer extends ErrorPrinter
 {
-    public static function warnIncorrectNamespace($relativePath, $currentNamespace, $correctNamespace, $class, $command)
+    public static function warnIncorrectNamespace($relativePath, $currentNamespace, $class)
     {
         /**
          * @var $p ErrorPrinter
@@ -15,11 +17,15 @@ class CheckPsr4Printer extends ErrorPrinter
         $msg = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
         $p->end();
-        $currentNamespace && $p->printHeader('Incorrect namespace: '.$p->color("namespace $currentNamespace;"));
-        ! $currentNamespace && $p->printHeader('Namespace Not Found: '.$class);
-        $p->printLink($relativePath, 3);
 
-        return CheckPsr4Printer::ask($command, $correctNamespace);
+        if ($currentNamespace) {
+            $header = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
+        } else {
+            $header = 'Namespace Not Found: '.$class;
+        }
+
+        $p->printHeader($header);
+        $p->printLink($relativePath, 3);
     }
 
     public static function ask($command, $correctNamespace)

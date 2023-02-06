@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\ComposerJson as Compo;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -38,8 +37,6 @@ class CheckPsr4ArtisanCommand extends Command
         Event::listen('microscope.checking', function ($path) {
             $this->line('Checking: '.$path);
         });
-
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $autoloads = ComposerJson::readAutoload();
         start:
@@ -101,11 +98,10 @@ class CheckPsr4ArtisanCommand extends Command
                 $from = $wrong['from'];
                 $to = $wrong['to'];
                 $class = $wrong['class'];
-                $relPath = str_replace(base_path(), '', $absPath);
+                $relativePath = str_replace(base_path(), '', $absPath);
 
-                $answer = CheckPsr4Printer::warnIncorrectNamespace($relPath, $from, $to, $class, $this);
-
-                if ($answer) {
+                CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
+                if (CheckPsr4Printer::ask($this, $to)) {
                     NamespaceFixer::fix($absPath, $from, $to);
 
                     if ($from) {
