@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
@@ -13,12 +13,9 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\Psr4\CheckNamespaces;
-use Imanghafoori\LaravelMicroscope\Psr4\ClassRefCorrector;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceFixer;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
-class CheckPsr4 extends Command
+class CheckPsr4ArtisanCommand extends Command
 {
     protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}';
 
@@ -28,7 +25,7 @@ class CheckPsr4 extends Command
 
     public static $checkedNamespacesStats = [];
 
-    public static $buffer = 2500;
+    public static $buffer = 500;
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -183,12 +180,16 @@ class CheckPsr4 extends Command
                 continue;
             }
 
-            [
-                $currentNamespace,
-                $class,
-                $type,
-                $parent,
-            ] = GetClassProperties::fromFilePath($absFilePath, self::$buffer);
+            $buffer = self::$buffer;
+            do {
+                [
+                    $currentNamespace,
+                    $class,
+                    $type,
+                    $parent,
+                ] = GetClassProperties::fromFilePath($absFilePath, $buffer);
+                $buffer = $buffer + 1000;
+            } while ($currentNamespace && ! $class && $buffer < 5500);
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
