@@ -91,4 +91,17 @@ class CheckPsr4Printer extends ErrorPrinter
             return CheckPsr4Printer::noErrorFound($time);
         }
     }
+
+    public static function fixedNamespace($absPath, $wrong, $correct, $lineNumber = 4)
+    {
+        /**
+         * @var $p ErrorPrinter
+         */
+        $p = app(ErrorPrinter::class);
+        $key = 'badNamespace';
+        $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
+        $errorData = '  namespace fixed to:  '.$p->color("namespace $correct;");
+
+        $p->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
+    }
 }

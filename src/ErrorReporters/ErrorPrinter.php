@@ -65,7 +65,7 @@ class ErrorPrinter
         $this->doesNotExist("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
     }
 
-    private function addPendingError($path, $lineNumber, $key, $header, $errorData)
+    public function addPendingError($path, $lineNumber, $key, $header, $errorData)
     {
         if (LaravelPaths::isIgnored($path)) {
             return;
@@ -155,15 +155,6 @@ class ErrorPrinter
     public function color($msg)
     {
         return "<fg=blue>$msg</>";
-    }
-
-    public function fixedNamespace($absPath, $incorrectNamespace, $correctNamespace, $lineNumber = 4)
-    {
-        $key = 'badNamespace';
-        $header = 'Incorrect namespace: '.$this->color("namespace $incorrectNamespace;");
-        $errorData = '  namespace fixed to:  '.$this->color("namespace $correctNamespace;");
-
-        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
     public function wrongFileName($absPath, $class, $file)
