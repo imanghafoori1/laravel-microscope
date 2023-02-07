@@ -157,15 +157,6 @@ class ErrorPrinter
         return "<fg=blue>$msg</>";
     }
 
-    public function wrongFileName($absPath, $class, $file)
-    {
-        $key = 'badFileName';
-        $header = 'The file name and the class name are different.';
-        $errorData = 'Class name: <fg=blue>"'.$class.'"</> - File name: <fg=blue>"'.$file.'"</>';
-
-        $this->addPendingError($absPath, 1, $key, $header, $errorData);
-    }
-
     public function print($msg, $path = '   ')
     {
         $this->printer->writeln($path.$msg);

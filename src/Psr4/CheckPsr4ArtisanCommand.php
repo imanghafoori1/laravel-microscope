@@ -20,11 +20,9 @@ class CheckPsr4ArtisanCommand extends Command
 
     protected $description = 'Checks the validity of namespaces';
 
-    public static $checkedNamespaces = 0;
-
     public static $checkedNamespacesStats = [];
 
-    public static $buffer = 500;
+    public static $buffer = 600;
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -34,31 +32,31 @@ class CheckPsr4ArtisanCommand extends Command
 
         $errorPrinter->printer = $this->output;
 
-        Event::listen('microscope.checking', function ($path) {
+        $onCheck = $this->option('detailed') ? function ($path) {
             $this->line('Checking: '.$path);
-        });
+        } : null;
 
         $autoloads = ComposerJson::readAutoload();
         start:
         $classes = [];
         foreach (Compo::purgeAutoloadShortcuts($autoloads) as $cpath => $autoload) {
             foreach ($autoload as $namespace => $psr4Path) {
-                $classes = array_merge($classes, $this->getClassesWithin($namespace, $psr4Path, $this->option('detailed')));
+                $classes = array_merge($classes, $this->getClassesWithin($namespace, $psr4Path, $onCheck));
             }
-
-            $this->handleErrors(
-                CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$cpath], $classes),
-                $this->beforeReferenceFix(),
-                $this->afterReferenceFix()
-            );
-
-            app(ErrorPrinter::class)->logErrors();
-            $this->printReport(
-                $errorPrinter,
-                $time,
-                $autoloads
-            );
         }
+
+        $errors = CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$cpath], $classes);
+        $time = round(microtime(true) - $time, 5);
+
+        $this->handleErrors(
+            $errors,
+            $this->beforeReferenceFix(),
+            $this->afterReferenceFix()
+        );
+
+        app(ErrorPrinter::class)->logErrors();
+
+        $this->printReport($errorPrinter, $time, $autoloads);
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
@@ -83,10 +81,10 @@ class CheckPsr4ArtisanCommand extends Command
     private function printReport($errorPrinter, $time, $autoload)
     {
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespaces, self::$checkedNamespacesStats));
+            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespacesStats, $time));
             $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter, $time));
         } else {
-            $this->getOutput()->writeln(' - '.self::$checkedNamespaces.' namespaces were checked.');
+            $this->getOutput()->writeln(' - '.array_sum(self::$checkedNamespacesStats).' namespaces were checked.');
         }
     }
 
@@ -111,13 +109,18 @@ class CheckPsr4ArtisanCommand extends Command
                     CheckPsr4Printer::fixedNamespace($absPath, $from, $to);
                 }
             } elseif ($wrong['type'] === 'filename') {
-                app(ErrorPrinter::class)->wrongFileName(
-                    $wrong['relativePath'],
-                    $wrong['class'],
-                    $wrong['fileName']
-                );
+                $this->wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
             }
         }
+    }
+
+    public function wrongFileName($absPath, $class, $file)
+    {
+        $key = 'badFileName';
+        $header = 'The file name and the class name are different.';
+        $errorData = 'Class name: <fg=blue>"'.$class.'"</>'.PHP_EOL.'   File name:  <fg=blue>"'.$file.'"</>';
+
+        app(ErrorPrinter::class)->addPendingError($absPath, 1, $key, $header, $errorData);
     }
 
     private static function getAllPaths()
@@ -165,7 +168,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    protected function getClassesWithin($namespace, $composerPath, $detailed)
+    protected function getClassesWithin($namespace, $composerPath, $onCheck)
     {
         $results = [];
         foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
@@ -193,15 +196,13 @@ class CheckPsr4ArtisanCommand extends Command
                 continue;
             }
 
-            self::$checkedNamespaces++;
-
             if (isset(self::$checkedNamespacesStats[$namespace])) {
                 self::$checkedNamespacesStats[$namespace]++;
             } else {
                 self::$checkedNamespacesStats[$namespace] = 1;
             }
 
-            $detailed && event('microscope.checking', [$classFilePath->getRelativePathname()]);
+            $onCheck && $onCheck($classFilePath->getRelativePathname());
 
             $results[] = [
                 'currentNamespace' => $currentNamespace,
@@ -215,6 +216,6 @@ class CheckPsr4ArtisanCommand extends Command
 
     public static function reset()
     {
-        self::$checkedNamespaces = 0;
+        self::$checkedNamespacesStats = 0;
     }
 }

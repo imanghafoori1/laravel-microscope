@@ -1,14 +1,12 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Psr4;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Symfony\Component\Console\Terminal;
 
 class CheckPsr4Printer extends ErrorPrinter
 {
-    public static function warnIncorrectNamespace($relativePath, $currentNamespace, $class)
+    public static function warnIncorrectNamespace($relativePath, $currentNamespace, $correctNamespace, $class, $command)
     {
         /**
          * @var $p ErrorPrinter
@@ -17,15 +15,11 @@ class CheckPsr4Printer extends ErrorPrinter
         $msg = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
         $p->end();
-
-        if ($currentNamespace) {
-            $header = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
-        } else {
-            $header = 'Namespace Not Found: '.$class;
-        }
-
-        $p->printHeader($header);
+        $currentNamespace && $p->printHeader('Incorrect namespace: '.$p->color("namespace $currentNamespace;"));
+        ! $currentNamespace && $p->printHeader('Namespace Not Found: '.$class);
         $p->printLink($relativePath, 3);
+
+        return CheckPsr4Printer::ask($command, $correctNamespace);
     }
 
     public static function ask($command, $correctNamespace)
@@ -41,9 +35,11 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($autoload, $stats, $time)
+    public static function reportResult($autoload, $checkedNamespaces, $stats)
     {
         $messages = [];
+        $messages[] = '';
+        $messages[] = '<fg=blue>Finished!</>';
         $separator = function ($color) {
             return ' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>';
         };
@@ -53,7 +49,7 @@ class CheckPsr4Printer extends ErrorPrinter
         } catch (\Exception $e) {
             $messages[] = $separator('blue');
         }
-        $messages[] = '<options=bold;fg=yellow>'.array_sum($stats).' classes were checked under:</>';
+        $messages[] = '<options=bold;fg=yellow>'.$checkedNamespaces.' classes were checked under:</>';
         $len = 0;
         foreach ($autoload as $composerPath => $psr4) {
             $output = '';
@@ -66,13 +62,13 @@ class CheckPsr4Printer extends ErrorPrinter
             }
             $messages[] = $output;
         }
-        $messages[] = 'Finished In: <fg=blue>'.$time.'(s)</>';
 
         return $messages;
     }
 
     public static function noErrorFound($time)
     {
+        $time = round(microtime(true) - $time, 5);
         $output = [];
         $output[] = [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'];
         $output[] = ['<fg=red;options=bold>'.$time.'(s)</>', 'line'];
@@ -88,18 +84,5 @@ class CheckPsr4Printer extends ErrorPrinter
         } else {
             return CheckPsr4Printer::noErrorFound($time);
         }
-    }
-
-    public static function fixedNamespace($absPath, $wrong, $correct, $lineNumber = 4)
-    {
-        /**
-         * @var $p ErrorPrinter
-         */
-        $p = app(ErrorPrinter::class);
-        $key = 'badNamespace';
-        $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
-        $errorData = '  namespace fixed to:  '.$p->color("namespace $correct;");
-
-        $p->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 }
