@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\ComposerJson as Compo;
 use Imanghafoori\Filesystem\Filesystem;
@@ -34,7 +33,8 @@ class CheckPsr4ArtisanCommand extends Command
 
         $onCheck = $this->option('detailed') ? function ($path) {
             $this->line('Checking: '.$path);
-        } : null;
+        }
+        : null;
 
         $autoloads = ComposerJson::readAutoload();
         start:
