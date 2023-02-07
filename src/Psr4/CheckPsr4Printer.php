@@ -81,16 +81,16 @@ class CheckPsr4Printer extends ErrorPrinter
         return $output;
     }
 
-    public static function getErrorsCount($errorPrinter, $time)
+    public static function getErrorsCount($errorCount, $time)
     {
-        if ($errorCount = $errorPrinter->errorsList['total']) {
+        if ($errorCount) {
             return [[PHP_EOL.$errorCount.' error(s) found.', 'warn']];
         } else {
             return CheckPsr4Printer::noErrorFound($time);
         }
     }
 
-    public static function fixedNamespace($absPath, $wrong, $correct, $lineNumber = 4)
+    public static function fixedNamespace($path, $wrong, $correct, $lineNumber = 4)
     {
         /**
          * @var $p ErrorPrinter
@@ -100,6 +100,19 @@ class CheckPsr4Printer extends ErrorPrinter
         $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
         $errorData = '  namespace fixed to:  '.$p->color("namespace $correct;");
 
-        $p->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
+        $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
+    }
+
+    public static function wrongFileName($path, $class, $file)
+    {
+        /**
+         * @var $p ErrorPrinter
+         */
+        $p = app(ErrorPrinter::class);
+        $key = 'badFileName';
+        $header = 'The file name and the class name are different.';
+        $errorData = 'Class name: <fg=blue>'.$class.'</>'.PHP_EOL.'   File name:  <fg=blue>'.$file.'</>';
+
+        $p->addPendingError($path, 1, $key, $header, $errorData);
     }
 }

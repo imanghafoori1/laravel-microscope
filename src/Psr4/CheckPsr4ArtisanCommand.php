@@ -15,7 +15,7 @@ use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class CheckPsr4ArtisanCommand extends Command
 {
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch}';
+    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch} {--folder=}';
 
     protected $description = 'Checks the validity of namespaces';
 
@@ -37,33 +37,22 @@ class CheckPsr4ArtisanCommand extends Command
         : null;
 
         $autoloads = ComposerJson::readAutoload();
+        $folder = ltrim($this->option('folder'), '=');
         start:
-        $classes = [];
-        foreach (Compo::purgeAutoloadShortcuts($autoloads) as $cpath => $autoload) {
-            foreach ($autoload as $namespace => $psr4Path) {
-                $classes = array_merge($classes, $this->getClassesWithin($namespace, $psr4Path, $onCheck));
-            }
-        }
+        $classLists = $this->getClasslists($autoloads, $onCheck, $folder);
+        $errorsLists = $this->getErrorsLists($classLists, $autoloads);
 
-        $errors = CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$cpath], $classes);
         $time = round(microtime(true) - $time, 5);
 
-        $this->handleErrors(
-            $errors,
-            $this->beforeReferenceFix(),
-            $this->afterReferenceFix()
-        );
-
-        app(ErrorPrinter::class)->logErrors();
-
+        $this->fixErrors($errorsLists);
         $this->printReport($errorPrinter, $time, $autoloads);
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
             sleep(8);
 
-            self::reset();
-            app(ErrorPrinter::class)->errorsList = ['total' => 0];
+            self::$checkedNamespacesStats = 0;
+            $errorPrinter->errorsList = ['total' => 0];
 
             goto start;
         }
@@ -74,53 +63,44 @@ class CheckPsr4ArtisanCommand extends Command
         if ($c = $errorPrinter->getCount('badNamespace')) {
             $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
-            $this->info("\n".'finished: "composer dump"');
+            $this->info("\n".'Finished: "composer dump"');
         }
     }
 
-    private function printReport($errorPrinter, $time, $autoload)
+    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload)
     {
+        $errorPrinter->logErrors();
+
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, self::$checkedNamespacesStats, $time));
-            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter, $time));
+            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->errorsList['total'], $time));
         } else {
             $this->getOutput()->writeln(' - '.array_sum(self::$checkedNamespacesStats).' namespaces were checked.');
         }
     }
 
-    private function handleErrors($errors, $beforeFix, $afterFix)
+    private function fixError($wrong, $beforeFix, $afterFix)
     {
-        foreach ($errors as $wrong) {
-            if ($wrong['type'] === 'namespace') {
-                $absPath = $wrong['absPath'];
-                $from = $wrong['from'];
-                $to = $wrong['to'];
-                $class = $wrong['class'];
-                $relativePath = str_replace(base_path(), '', $absPath);
+        if ($wrong['type'] === 'namespace') {
+            $absPath = $wrong['absPath'];
+            $from = $wrong['from'];
+            $to = $wrong['to'];
+            $class = $wrong['class'];
+            $relativePath = str_replace(base_path(), '', $absPath);
 
-                CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
-                if (CheckPsr4Printer::ask($this, $to)) {
-                    NamespaceFixer::fix($absPath, $from, $to);
+            CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
+            if (CheckPsr4Printer::ask($this, $to)) {
+                NamespaceFixer::fix($absPath, $from, $to);
 
-                    if ($from) {
-                        $changes = [$from.'\\'.$class => $to.'\\'.$class];
-                        ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
-                    }
-                    CheckPsr4Printer::fixedNamespace($absPath, $from, $to);
+                if ($from) {
+                    $changes = [$from.'\\'.$class => $to.'\\'.$class];
+                    ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
                 }
-            } elseif ($wrong['type'] === 'filename') {
-                $this->wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
+                CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
             }
+        } elseif ($wrong['type'] === 'filename') {
+            CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
         }
-    }
-
-    public function wrongFileName($absPath, $class, $file)
-    {
-        $key = 'badFileName';
-        $header = 'The file name and the class name are different.';
-        $errorData = 'Class name: <fg=blue>"'.$class.'"</>'.PHP_EOL.'   File name:  <fg=blue>"'.$file.'"</>';
-
-        app(ErrorPrinter::class)->addPendingError($absPath, 1, $key, $header, $errorData);
     }
 
     private static function getAllPaths()
@@ -168,10 +148,13 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    protected function getClassesWithin($namespace, $composerPath, $onCheck)
+    protected function getClassesWithin($namespace, $composerPath, $onCheck, $folder)
     {
         $results = [];
         foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
+            if ($folder && ! strpos($classFilePath, $folder)) {
+                continue;
+            }
             $absFilePath = $classFilePath->getRealPath();
 
             // Exclude blade files
@@ -179,16 +162,7 @@ class CheckPsr4ArtisanCommand extends Command
                 continue;
             }
 
-            $buffer = self::$buffer;
-            do {
-                [
-                    $currentNamespace,
-                    $class,
-                    $type,
-                    $parent,
-                ] = GetClassProperties::fromFilePath($absFilePath, $buffer);
-                $buffer = $buffer + 1000;
-            } while ($currentNamespace && ! $class && $buffer < 5500);
+            [$currentNamespace, $class, $parent] = $this->readClass($absFilePath);
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
@@ -196,11 +170,7 @@ class CheckPsr4ArtisanCommand extends Command
                 continue;
             }
 
-            if (isset(self::$checkedNamespacesStats[$namespace])) {
-                self::$checkedNamespacesStats[$namespace]++;
-            } else {
-                self::$checkedNamespacesStats[$namespace] = 1;
-            }
+            $this->incrementStats($namespace);
 
             $onCheck && $onCheck($classFilePath->getRelativePathname());
 
@@ -214,8 +184,63 @@ class CheckPsr4ArtisanCommand extends Command
         return $results;
     }
 
-    public static function reset()
+    private function getClasslists(array $autoloads, ?\Closure $onCheck, $folder)
     {
-        self::$checkedNamespacesStats = 0;
+        $classLists = [];
+        foreach (Compo::purgeAutoloadShortcuts($autoloads) as $path => $autoload) {
+            $classLists[$path] = [];
+            foreach ($autoload as $namespace => $psr4Path) {
+                $classLists[$path] = array_merge($classLists[$path], $this->getClassesWithin($namespace, $psr4Path, $onCheck, $folder));
+            }
+        }
+
+        return $classLists;
+    }
+
+    private function getErrorsLists(array $classLists, array $autoloads): array
+    {
+        $errorsLists = [];
+        foreach ($classLists as $path => $classList) {
+            $errorsLists[$path] = CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$path], $classList);
+        }
+
+        return $errorsLists;
+    }
+
+    private function fixErrors(array $errorsLists)
+    {
+        $before = $this->beforeReferenceFix();
+        $after = $this->afterReferenceFix();
+
+        foreach ($errorsLists as $errors) {
+            foreach ($errors as $wrong) {
+                $this->fixError($wrong, $before, $after);
+            }
+        }
+    }
+
+    private function readClass($absFilePath): array
+    {
+        $buffer = self::$buffer;
+        do {
+            [
+                $currentNamespace,
+                $class,
+                $type,
+                $parent,
+            ] = GetClassProperties::fromFilePath($absFilePath, $buffer);
+            $buffer = $buffer + 1000;
+        } while ($currentNamespace && ! $class && $buffer < 6000);
+
+        return [$currentNamespace, $class, $parent];
+    }
+
+    private function incrementStats($namespace): void
+    {
+        if (isset(self::$checkedNamespacesStats[$namespace])) {
+            self::$checkedNamespacesStats[$namespace]++;
+        } else {
+            self::$checkedNamespacesStats[$namespace] = 1;
+        }
     }
 }

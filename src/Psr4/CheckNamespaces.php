@@ -29,11 +29,11 @@ class CheckNamespaces
         }
     }
 
-    public static function findPsr4Errors($basepath, $autoloads, $classes)
+    public static function findPsr4Errors($basePath, $autoloads, $classes)
     {
         $errors = [];
         foreach ($classes as $class) {
-            $error = self::checkNamespace($basepath, $autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
+            $error = self::checkNamespace($basePath, $autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
 
             if ($error) {
                 $errors[] = $error;
