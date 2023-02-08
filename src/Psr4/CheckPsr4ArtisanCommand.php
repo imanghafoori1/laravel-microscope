@@ -21,7 +21,7 @@ class CheckPsr4ArtisanCommand extends Command
 
     public static $checkedNamespacesStats = [];
 
-    public static $buffer = 600;
+    public static $buffer = 1000;
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -148,19 +148,20 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    protected function getClassesWithin($namespace, $composerPath, $onCheck, $folder)
+    protected function getClassesWithin($composerPath, $onCheck, $folder)
     {
         $results = [];
         foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
             if ($folder && ! strpos($classFilePath, $folder)) {
                 continue;
             }
-            $absFilePath = $classFilePath->getRealPath();
 
             // Exclude blade files
-            if (substr_count($absFilePath, '.') === 2) {
+            if (substr_count($classFilePath->getFilename(), '.') === 2) {
                 continue;
             }
+
+            $absFilePath = $classFilePath->getRealPath();
 
             [$currentNamespace, $class, $parent] = $this->readClass($absFilePath);
 
@@ -169,8 +170,6 @@ class CheckPsr4ArtisanCommand extends Command
             if (! $class || $parent === 'Migration') {
                 continue;
             }
-
-            $this->incrementStats($namespace);
 
             $onCheck && $onCheck($classFilePath->getRelativePathname());
 
@@ -190,7 +189,9 @@ class CheckPsr4ArtisanCommand extends Command
         foreach (Compo::purgeAutoloadShortcuts($autoloads) as $path => $autoload) {
             $classLists[$path] = [];
             foreach ($autoload as $namespace => $psr4Path) {
-                $classLists[$path] = array_merge($classLists[$path], $this->getClassesWithin($namespace, $psr4Path, $onCheck, $folder));
+                $classes = $this->getClassesWithin($psr4Path, $onCheck, $folder);
+                self::$checkedNamespacesStats[$namespace] = count($classes);
+                $classLists[$path] = array_merge($classLists[$path], $classes);
             }
         }
 
@@ -233,14 +234,5 @@ class CheckPsr4ArtisanCommand extends Command
         } while ($currentNamespace && ! $class && $buffer < 6000);
 
         return [$currentNamespace, $class, $parent];
-    }
-
-    private function incrementStats($namespace): void
-    {
-        if (isset(self::$checkedNamespacesStats[$namespace])) {
-            self::$checkedNamespacesStats[$namespace]++;
-        } else {
-            self::$checkedNamespacesStats[$namespace] = 1;
-        }
     }
 }
