@@ -3,11 +3,11 @@
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Exception;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
-
 class FilePath
 {
+    public static $basePath = '';
+
     /**
      * Normalize file path to standard formal
      * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
@@ -41,7 +41,7 @@ class FilePath
      */
     public static function getRelativePath($absFilePath)
     {
-        return \trim(Str::replaceFirst(base_path(), '', $absFilePath), '/\\');
+        return \trim(str_replace(self::$basePath, '', $absFilePath), '/\\');
     }
 
     /**
@@ -53,12 +53,13 @@ class FilePath
     public static function getAllPhpFiles($path, $basePath = '')
     {
         if ($basePath === '') {
-            $path = base_path($path);
-        } else {
-            $basePath = rtrim($basePath, '/\\');
-            $path = ltrim($path, '/\\');
-            $path = $basePath.DIRECTORY_SEPARATOR.$path;
+            $basePath = self::$basePath;
         }
+
+        $basePath = rtrim($basePath, '/\\');
+        $path = ltrim($path, '/\\');
+        $path = $basePath.DIRECTORY_SEPARATOR.$path;
+
 
         try {
             return Finder::create()->files()->name('*.php')->in($path);

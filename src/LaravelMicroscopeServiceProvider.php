@@ -16,6 +16,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
@@ -91,6 +92,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         if (! $this->canRun()) {
             return;
         }
+
+        FilePath::$basePath = base_path();
 
         [$major] = explode('.', app()->version());
 
