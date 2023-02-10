@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Exception;
 use Symfony\Component\Finder\Finder;
+
 class FilePath
 {
     public static $basePath = '';

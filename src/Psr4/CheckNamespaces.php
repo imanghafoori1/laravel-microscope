@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 class CheckNamespaces
 {
-    public static function getErrorsLists($basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
+    public static function getErrorsLists(string $basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
     {
         $errorsLists = [];
         foreach ($classLists as $path => $classList) {

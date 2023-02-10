@@ -86,6 +86,7 @@ class CheckPsr4ArtisanCommand extends Command
             $relativePath = str_replace(base_path(), '', $absPath);
 
             CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
+
             if (CheckPsr4Printer::ask($this, $to)) {
                 NamespaceFixer::fix($absPath, $from, $to);
 
@@ -143,16 +144,6 @@ class CheckPsr4ArtisanCommand extends Command
         foreach ($messages as [$message, $level]) {
             $this->$level($message);
         }
-    }
-
-    private function getErrorsLists($basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
-    {
-        $errorsLists = [];
-        foreach ($classLists as $path => $classList) {
-            $errorsLists[$path] = CheckNamespaces::findPsr4Errors($basePath, $autoloads[$path], $classList, $onCheck);
-        }
-
-        return $errorsLists;
     }
 
     private function fixErrors(array $errorsLists)
