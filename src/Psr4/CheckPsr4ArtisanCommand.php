@@ -25,16 +25,19 @@ class CheckPsr4ArtisanCommand extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $onCheck = $this->option('detailed') ? function ($path) {
-            $this->line('Checking: '.$path);
-        }
-        : null;
+        $onCheck = $this->option('detailed') ? function ($class) {
+            $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
+            $this->line($msg);
+        } : null;
 
         $autoloads = ComposerJson::readAutoload();
         $folder = ltrim($this->option('folder'), '=');
+        $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
+            return $parent !== 'Migration';
+        };
         start:
-        $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $onCheck, $folder);
-        $errorsLists = $this->getErrorsLists($classLists, $autoloads);
+        $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $folder, $filter);
+        $errorsLists = CheckNamespaces::getErrorsLists(base_path(), $autoloads, $classLists, $onCheck);
 
         $time = round(microtime(true) - $time, 5);
 
@@ -142,11 +145,11 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function getErrorsLists(array $classLists, array $autoloads): array
+    private function getErrorsLists($basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
     {
         $errorsLists = [];
         foreach ($classLists as $path => $classList) {
-            $errorsLists[$path] = CheckNamespaces::findPsr4Errors(base_path(), $autoloads[$path], $classList);
+            $errorsLists[$path] = CheckNamespaces::findPsr4Errors($basePath, $autoloads[$path], $classList, $onCheck);
         }
 
         return $errorsLists;

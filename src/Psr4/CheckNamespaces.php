@@ -4,6 +4,16 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 
 class CheckNamespaces
 {
+    public static function getErrorsLists($basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
+    {
+        $errorsLists = [];
+        foreach ($classLists as $path => $classList) {
+            $errorsLists[$path] = self::findPsr4Errors($basePath, $autoloads[$path], $classList, $onCheck);
+        }
+
+        return $errorsLists;
+    }
+
     public static function checkNamespace($basepath, $autoloads, $currentNamespace, $absFilePath, $class)
     {
         $relativePath = \trim(str_replace($basepath, '', $absFilePath), '/\\');
@@ -29,10 +39,11 @@ class CheckNamespaces
         }
     }
 
-    public static function findPsr4Errors($basePath, $autoloads, $classes)
+    public static function findPsr4Errors($basePath, $autoloads, $classes, ?\Closure $onCheck)
     {
         $errors = [];
         foreach ($classes as $class) {
+            $onCheck && $onCheck($class);
             $error = self::checkNamespace($basePath, $autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
 
             if ($error) {
@@ -43,7 +54,7 @@ class CheckNamespaces
         return $errors;
     }
 
-    private static function getCorrectNamespaces($autoloads, $relativePath)
+    public static function getCorrectNamespaces($autoloads, $relativePath)
     {
         $correctNamespaces = [];
         foreach ($autoloads as $namespacePrefix => $path) {
