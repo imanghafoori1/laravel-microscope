@@ -13,7 +13,13 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckPsr4ArtisanCommand extends Command
 {
-    protected $signature = 'check:psr4 {--d|detailed : Show files being checked} {--f|force} {--s|nofix} {--w|watch} {--folder=}';
+    protected $signature = 'check:psr4
+        {--d|detailed : Show files being checked}
+        {--f|force}
+        {--s|nofix}
+        {--r|no-ref-fix}
+        {--w|watch}
+        {--folder=}';
 
     protected $description = 'Checks the validity of namespaces';
 
@@ -92,7 +98,7 @@ class CheckPsr4ArtisanCommand extends Command
 
                 if ($from) {
                     $changes = [$from.'\\'.$class => $to.'\\'.$class];
-                    ClassRefCorrector::fixAllRefs($changes, self::getAllPaths(), $beforeFix, $afterFix);
+                    ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
                 }
                 CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
             }
@@ -101,7 +107,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private static function getAllPaths()
+    private static function getPathForReferenceFix()
     {
         $paths = [];
 
@@ -130,6 +136,12 @@ class CheckPsr4ArtisanCommand extends Command
 
     private function beforeReferenceFix()
     {
+        if ($this->option('no-ref-fix')) {
+            return function () {
+                return false;
+            };
+        }
+
         return function ($path, $lineIndex, $lineContent) {
             $this->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
             $this->warn($lineContent);
