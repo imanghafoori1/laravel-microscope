@@ -14,10 +14,11 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 class CheckPsr4ArtisanCommand extends Command
 {
     protected $signature = 'check:psr4
-        {--d|detailed : Show files being checked}
-        {--f|force}
-        {--s|nofix}
-        {--r|no-ref-fix}
+        {--d|detailed : Show classes being checked}
+        {--f|force : Fixes namespaces without asking.}
+        {--s|nofix : Skips fixing namespaces and only reports them.}
+        {--o|force-ref-fix : Fix references without asking.}
+        {--r|no-ref-fix : Skips searching for references to fix them.}
         {--w|watch}
         {--folder=}';
 
@@ -91,16 +92,16 @@ class CheckPsr4ArtisanCommand extends Command
             $class = $wrong['class'];
             $relativePath = str_replace(base_path(), '', $absPath);
 
-            CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
-
             if (CheckPsr4Printer::ask($this, $to)) {
                 NamespaceFixer::fix($absPath, $from, $to);
 
-                if ($from) {
+                if ($from && ! $this->option('no-ref-fix')) {
                     $changes = [$from.'\\'.$class => $to.'\\'.$class];
                     ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
                 }
                 CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
+            } else {
+                CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
             }
         } elseif ($wrong['type'] === 'filename') {
             CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
@@ -136,9 +137,9 @@ class CheckPsr4ArtisanCommand extends Command
 
     private function beforeReferenceFix()
     {
-        if ($this->option('no-ref-fix')) {
+        if ($this->option('force-ref-fix')) {
             return function () {
-                return false;
+                return true;
             };
         }
 
