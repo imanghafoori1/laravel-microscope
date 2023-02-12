@@ -61,7 +61,6 @@ class FilePath
         $path = ltrim($path, '/\\');
         $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
-
         try {
             return Finder::create()->files()->name('*.php')->in($path);
         } catch (Exception $e) {

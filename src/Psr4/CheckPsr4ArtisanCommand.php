@@ -35,7 +35,8 @@ class CheckPsr4ArtisanCommand extends Command
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
             $this->line($msg);
-        } : null;
+        }
+        : null;
 
         $autoloads = ComposerJson::readAutoload();
         $folder = ltrim($this->option('folder'), '=');
