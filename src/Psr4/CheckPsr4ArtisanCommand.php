@@ -48,7 +48,7 @@ class CheckPsr4ArtisanCommand extends Command
 
         $time = round(microtime(true) - $time, 5);
 
-        $this->fixErrors($errorsLists);
+        $this->handleErrors($errorsLists);
         $this->printReport($errorPrinter, $time, $autoloads);
 
         $this->composerDumpIfNeeded($errorPrinter);
@@ -83,7 +83,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function fixError($wrong, $beforeFix, $afterFix)
+    private function handleError($wrong, $beforeFix, $afterFix)
     {
         if ($wrong['type'] === 'namespace') {
             $absPath = $wrong['absPath'];
@@ -91,6 +91,8 @@ class CheckPsr4ArtisanCommand extends Command
             $to = $wrong['to'];
             $class = $wrong['class'];
             $relativePath = str_replace(base_path(), '', $absPath);
+
+            CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
 
             if (CheckPsr4Printer::ask($this, $to)) {
                 NamespaceFixer::fix($absPath, $from, $to);
@@ -100,8 +102,6 @@ class CheckPsr4ArtisanCommand extends Command
                     ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
                 }
                 CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
-            } else {
-                CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
             }
         } elseif ($wrong['type'] === 'filename') {
             CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
@@ -159,14 +159,14 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function fixErrors(array $errorsLists)
+    private function handleErrors(array $errorsLists)
     {
         $before = $this->beforeReferenceFix();
         $after = $this->afterReferenceFix();
 
         foreach ($errorsLists as $errors) {
             foreach ($errors as $wrong) {
-                $this->fixError($wrong, $before, $after);
+                $this->handleError($wrong, $before, $after);
             }
         }
     }
