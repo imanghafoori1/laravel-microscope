@@ -4,12 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -38,7 +40,19 @@ class CheckImports extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $this->checkFilePaths($routeFiles = RoutePaths::get($fileName, $folder));
+        $routeFiles = FilePath::removeExtraPaths(
+            RoutePaths::get(),
+            $fileName,
+            $folder
+        );
+
+        $this->checkFilePaths($routeFiles);
+
+        $this->checkFilePaths(FilePath::removeExtraPaths(
+            ComposerJson::readAutoloadFiles(),
+            $fileName,
+            $folder
+        ));
 
         $foldersStats = $this->checkFolders([
             'config' => app()->configPath(),

@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
@@ -25,7 +26,7 @@ class CheckViews extends Command
         $folder = ltrim($this->option('folder'), '=');
 
         $errorPrinter->printer = $this->output;
-        $this->checkRoutePaths($fileName, $folder);
+        $this->checkRoutePaths();
         ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
@@ -42,9 +43,9 @@ class CheckViews extends Command
         CheckView::checkViewCalls($tokens, $absPath, $staticCalls);
     }
 
-    private function checkRoutePaths($fileName, $folder)
+    private function checkRoutePaths()
     {
-        foreach (RoutePaths::get($fileName, $folder) as $filePath) {
+        foreach (FilePath::removeExtraPaths(RoutePaths::get()) as $filePath) {
             $this->checkForViewMake($filePath, [
                 'View' => ['make', 0],
                 'Route' => ['view', 1],

@@ -33,7 +33,7 @@ class CheckImport
         foreach ($imports as $as => $import) {
             [$classImport, $line] = $import;
 
-            if (! self::isAbsent($classImport)) {
+            if (! CheckClassReferencesAreValid::isAbsent($classImport)) {
                 continue;
             }
 

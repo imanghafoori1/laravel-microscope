@@ -121,7 +121,9 @@ class CheckPsr4ArtisanCommand extends Command
             }
         }
 
-        return array_merge($paths, LaravelPaths::collectNonPsr4Paths());
+        $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
+
+        return array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
     }
 
     private function afterReferenceFix()

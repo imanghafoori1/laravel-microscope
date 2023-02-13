@@ -94,4 +94,16 @@ class FilePath
 
         return false;
     }
+
+    public static function removeExtraPaths($paths, $includeFile, $includeFolder)
+    {
+        $results = [];
+        foreach ($paths as $absFilePath) {
+            if (self::contains($absFilePath, $includeFile, $includeFolder)) {
+                $results[] = $absFilePath;
+            }
+        }
+
+        return $results;
+    }
 }

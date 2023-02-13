@@ -101,7 +101,7 @@ class LaravelPaths
         return $hints;
     }
 
-    public static function collectNonPsr4Paths()
+    public static function collectFilesInNonPsr4Paths()
     {
         $paths = [
             RoutePaths::get(),
