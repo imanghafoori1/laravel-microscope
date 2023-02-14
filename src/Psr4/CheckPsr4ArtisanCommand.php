@@ -13,6 +13,8 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckPsr4ArtisanCommand extends Command
 {
+    private static $pathesForReferenceFix = [];
+
     protected $signature = 'check:psr4
         {--d|detailed : Show classes being checked}
         {--f|force : Fixes namespaces without asking.}
@@ -36,7 +38,7 @@ class CheckPsr4ArtisanCommand extends Command
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
             $this->line($msg);
         }
-        : null;
+            : null;
 
         $autoloads = ComposerJson::readAutoload();
         $folder = ltrim($this->option('folder'), '=');
@@ -99,8 +101,13 @@ class CheckPsr4ArtisanCommand extends Command
                 NamespaceFixer::fix($absPath, $from, $to);
 
                 if ($from && ! $this->option('no-ref-fix')) {
-                    $changes = [$from.'\\'.$class => $to.'\\'.$class];
-                    ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
+                    $changes = [
+                        $from.'\\'.$class => $to.'\\'.$class
+                    ];
+
+                    ClassRefCorrector::fixAllRefs(
+                        $changes, self::getPathForReferenceFix(), $beforeFix, $afterFix
+                    );
                 }
                 CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
             }
@@ -111,6 +118,10 @@ class CheckPsr4ArtisanCommand extends Command
 
     private static function getPathForReferenceFix()
     {
+        if (self::$pathesForReferenceFix) {
+            return self::$pathesForReferenceFix;
+        }
+
         $paths = [];
 
         foreach (ComposerJson::readAutoload() as $autoload) {
@@ -123,7 +134,11 @@ class CheckPsr4ArtisanCommand extends Command
 
         $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
 
-        return array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
+        $paths = array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
+
+        self::$pathesForReferenceFix = $paths;
+
+        return $paths;
     }
 
     private function afterReferenceFix()
