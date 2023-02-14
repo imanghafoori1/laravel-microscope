@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Str;
+use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Stubs\ServiceProviderStub;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;

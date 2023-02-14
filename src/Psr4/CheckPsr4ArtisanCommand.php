@@ -89,9 +89,9 @@ class CheckPsr4ArtisanCommand extends Command
     private function handleError($wrong, $beforeFix, $afterFix)
     {
         if ($wrong['type'] === 'namespace') {
-            $absPath = $wrong['absPath'];
-            $from = $wrong['from'];
-            $to = $wrong['to'];
+            $absPath = $wrong['absFilePath'];
+            $from = $wrong['currentNamespace'];
+            $to = $wrong['correctNamespace'];
             $class = $wrong['class'];
             $relativePath = str_replace(base_path(), '', $absPath);
 

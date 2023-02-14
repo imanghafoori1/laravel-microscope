@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
-use ImanGhafoori\ComposerJson\ComposerJson as Compo;
+use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
@@ -15,7 +15,7 @@ class ClassListProvider
     public function getClasslists(array $autoloads, $folder, ?\Closure $filter)
     {
         $classLists = [];
-        foreach (Compo::purgeAutoloadShortcuts($autoloads) as $path => $autoload) {
+        foreach (ComposerJson::purgeAutoloadShortcuts($autoloads) as $path => $autoload) {
             $classLists[$path] = [];
             foreach ($autoload as $namespace => $psr4Path) {
                 $classes = $this->getClassesWithin($psr4Path, $folder, $filter);
@@ -30,11 +30,15 @@ class ClassListProvider
         return $classLists;
     }
 
-    public function getClassesWithin($composerPath, $folder, \Closure $filter)
+    public function getClassesWithin($composerPath, $folder, \Closure $filterClass, ?\Closure $filterPath = null)
     {
         $results = [];
         foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
+
+            if ($filterPath && ! $filterPath($absFilePath, $classFilePath->getFilename())) {
+                continue;
+            }
 
             if ($folder && ! strpos($absFilePath, $folder)) {
                 continue;
@@ -45,7 +49,7 @@ class ClassListProvider
                 continue;
             }
 
-            [$currentNamespace, $class, $parent] = $this->readClass($absFilePath);
+            [$currentNamespace, $class, $parent, $type] = $this->readClass($absFilePath);
 
             // Skip if there is no class/trait/interface definition found.
             // For example a route file or a config file.
@@ -53,21 +57,25 @@ class ClassListProvider
                 continue;
             }
 
-            if ($filter($classFilePath, $currentNamespace, $class, $parent) === false) {
+            if ($filterClass($classFilePath, $currentNamespace, $class, $parent) === false) {
                 continue;
             }
 
             $results[] = [
+                'relativePath' => $classFilePath->getRelativePath(),
+                'relativePathname' => $classFilePath->getRelativePathname(),
+                'fileName' => $classFilePath->getFilename(),
                 'currentNamespace' => $currentNamespace,
                 'absFilePath' => $absFilePath,
                 'class' => $class,
+                'type' => $type,
             ];
         }
 
         return $results;
     }
 
-    private function readClass($absFilePath): array
+    private function readClass($absFilePath)
     {
         $buffer = self::$buffer;
         do {
@@ -80,6 +88,6 @@ class ClassListProvider
             $buffer = $buffer + 1000;
         } while ($currentNamespace && ! $class && $buffer < 6000);
 
-        return [$currentNamespace, $class, $parent];
+        return [$currentNamespace, $class, $parent, $type];
     }
 }

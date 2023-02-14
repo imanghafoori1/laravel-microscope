@@ -17,30 +17,6 @@ class NamespaceCalculator
         return self::getNamespaceFromFullClass($class1) === self::getNamespaceFromFullClass($class2);
     }
 
-    public static function calculateCorrectNamespace($relativeClassPath, $composerPath, $rootNamespace)
-    {
-        $classPath = \explode(DIRECTORY_SEPARATOR, $relativeClassPath);
-        // Removes the filename
-        array_pop($classPath);
-
-        $classPath = \implode('\\', $classPath);
-
-        // Ensure back slashes in All Operating Systems.
-        $composerPath = \str_replace('/', '\\', $composerPath);
-
-        // replace composer base_path with composer namespace
-        /**
-         *  "psr-4": {
-         *      "App\\": "app/"
-         *  }.
-         */
-        return self::replaceFirst(
-            \trim($composerPath, '\\'),
-            \trim($rootNamespace, '\\/'),
-            $classPath
-        );
-    }
-
     public static function getRelativePathFromNamespace($namespace, $autoload = null)
     {
         [$namespaces, $paths] = self::getSortedAutoload($autoload);
@@ -93,20 +69,5 @@ class NamespaceCalculator
         }
 
         return [$_namespaces, $_paths];
-    }
-
-    private static function replaceFirst($search, $replace, $subject)
-    {
-        if ($search == '') {
-            return $subject;
-        }
-
-        $position = strpos($subject, $search);
-
-        if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
-        }
-
-        return $subject;
     }
 }

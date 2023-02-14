@@ -2,68 +2,52 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
+use ImanGhafoori\ComposerJson\NamespaceCalculator;
+
 class CheckNamespaces
 {
     public static function getErrorsLists(string $basePath, array $autoloads, array $classLists, ?\Closure $onCheck)
     {
         $errorsLists = [];
-        foreach ($classLists as $path => $classList) {
-            $errorsLists[$path] = self::findPsr4Errors($basePath, $autoloads[$path], $classList, $onCheck);
+        foreach ($classLists as $composerPath => $classList) {
+            $errorsLists[$composerPath] = self::findPsr4Errors($basePath, $autoloads[$composerPath], $classList, $composerPath, $onCheck);
         }
 
         return $errorsLists;
     }
 
-    public static function checkNamespace($basepath, $autoloads, $currentNamespace, $absFilePath, $class)
+    public static function checkNamespace($relativePath, $psr4Mapping, $currentNamespace, $class, $fileName)
     {
-        $relativePath = \trim(str_replace($basepath, '', $absFilePath), '/\\');
-        $correctNamespaces = self::getCorrectNamespaces($autoloads, $relativePath);
+        $correctNamespaces = NamespaceCalculator::getCorrectNamespaces($psr4Mapping, $relativePath);
 
         if (! in_array($currentNamespace, $correctNamespaces)) {
-            $correctNamespace = self::findShortest($correctNamespaces);
-
             return [
-                'absPath' => $absFilePath,
-                'from' => $currentNamespace,
-                'to' => $correctNamespace,
-                'class' => $class,
                 'type' => 'namespace',
+                'correctNamespace' => self::findShortest($correctNamespaces),
             ];
-        } elseif (($class.'.php') !== basename($absFilePath)) {
+        } elseif (($class.'.php') !== $fileName) {
             return [
-                'relativePath' => $relativePath,
-                'fileName' => basename($absFilePath),
-                'class' => $class,
                 'type' => 'filename',
             ];
         }
     }
 
-    public static function findPsr4Errors($basePath, $autoloads, $classes, ?\Closure $onCheck)
+    public static function findPsr4Errors($basePath, $psr4Mapping, $classes, $composerPath, ?\Closure $onCheck)
     {
         $errors = [];
         foreach ($classes as $class) {
             $onCheck && $onCheck($class);
-            $error = self::checkNamespace($basePath, $autoloads, $class['currentNamespace'], $class['absFilePath'], $class['class']);
+            $relativePath = \trim(str_replace($basePath, '', $class['absFilePath']), '/\\');
+            $error = self::checkNamespace($relativePath, $psr4Mapping, $class['currentNamespace'], $class['class'], $class['fileName']);
 
             if ($error) {
+                $error['relativePath'] = $relativePath;
+                $error = $error + $class;
                 $errors[] = $error;
             }
         }
 
         return $errors;
-    }
-
-    public static function getCorrectNamespaces($autoloads, $relativePath)
-    {
-        $correctNamespaces = [];
-        foreach ($autoloads as $namespacePrefix => $path) {
-            if (substr(str_replace('\\', '/', $relativePath), 0, strlen($path)) === $path) {
-                $correctNamespaces[] = NamespaceCalculator::calculateCorrectNamespace($relativePath, $path, $namespacePrefix);
-            }
-        }
-
-        return $correctNamespaces;
     }
 
     private static function findShortest($correctNamespaces)
