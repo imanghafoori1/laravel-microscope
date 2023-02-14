@@ -31,7 +31,7 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath, ComposerJson::readAutoload());
+        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath, base_path(), ComposerJson::readAutoload());
 
         if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
             return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
@@ -74,7 +74,7 @@ class Fixer
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
-        $hostNamespacedClass = NamespaceCalculator::getNamespacedClassFromPath($absPath, ComposerJson::readAutoload());
+        $hostNamespacedClass = NamespaceCalculator::getNamespacedClassFromPath($absPath, base_path(), ComposerJson::readAutoload());
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCalculator::haveSameNamespace($hostNamespacedClass, $correct[0])) {
             return [self::replaceSave("use $import;", '', $tokens, $absPath), [' Deleted!']];

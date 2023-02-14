@@ -25,12 +25,12 @@ class NamespaceCalculator
         return \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, \str_replace($namespaces, $paths, $namespace));
     }
 
-    public static function getNamespacedClassFromPath($path, $autoload = null)
+    public static function getNamespacedClassFromPath($absPath, $basePath, $autoload)
     {
         [$namespaces, $paths] = self::getSortedAutoload($autoload);
 
         // Remove .php from class path
-        $relPath = str_replace([base_path(), '.php'], '', $path);
+        $relPath = str_replace([$basePath, '.php'], '', $absPath);
         $relPath = \str_replace('\\', '/', $relPath);
 
         [$_namespaces, $_paths] = self::flatten($paths, $namespaces);

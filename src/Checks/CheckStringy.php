@@ -50,7 +50,7 @@ class CheckStringy
                 $classPath = $this->getClassyPath($classPath);
                 $command->info('<fg=green>✔ Replaced with: </><fg=red>'.$classPath.'</>');
 
-                $contextClass = NamespaceCalculator::getNamespacedClassFromPath($absFilePath, ComposerJson::readAutoload());
+                $contextClass = NamespaceCalculator::getNamespacedClassFromPath($absFilePath, base_path(), ComposerJson::readAutoload());
 
                 if (NamespaceCalculator::haveSameNamespace($contextClass, $classPath)) {
                     $classPath = trim(class_basename($classPath), '\\');
