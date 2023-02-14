@@ -38,7 +38,7 @@ class CheckPsr4ArtisanCommand extends Command
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
             $this->line($msg);
         }
-            : null;
+        : null;
 
         $autoloads = ComposerJson::readAutoload();
         $folder = ltrim($this->option('folder'), '=');
@@ -102,7 +102,7 @@ class CheckPsr4ArtisanCommand extends Command
 
                 if ($from && ! $this->option('no-ref-fix')) {
                     $changes = [
-                        $from.'\\'.$class => $to.'\\'.$class
+                        $from.'\\'.$class => $to.'\\'.$class,
                     ];
 
                     ClassRefCorrector::fixAllRefs(
