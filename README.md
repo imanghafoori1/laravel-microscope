@@ -74,6 +74,10 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:views`](#views)
         1. [`php artisan check:events`](#events)
         1. [`php artisan check:gates`](#gates)
+        1. [`php artisan check:aliases`](#aliases)
+        1. [`php artisan check:dead_controllers`](#dead_controllers)
+        1. [`php artisan check:generic_docblocks`](#generic_docblocks)
+        1. [`php artisan enforce:helper_functions`](#helper_functions)
 
      </details>
 
@@ -151,6 +155,10 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 |15|`php artisan check:events`|
 |16|`php artisan check:gates`|
 |17|`php artisan check:dynamic_where`|
+|18|`php artisan check:aliases`|
+|19|`php artisan check:dead_controllers`|
+|20|`php artisan check:generic_docblocks`|
+|21|`php artisan enforce:helper_functions`|
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions
@@ -723,10 +731,11 @@ and put the corresponding content in them.
 So this syntax will work: `'MyMod::myPartials.body'`
 
 <a name="action_comments"></a>
-### `php artisan check:action_comments`
+### `php artisan check:action_comments {--file=SomeFile.php}`
 
 
 - This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
+- You can use `--file=` option to narrow down the scanned files.
 
 <a name="route"></a>
 ### `php artisan pp:route`
@@ -821,6 +830,29 @@ Gate::define('someAbility', 'UserGate@someMethod');
 - It call the static `query` method on your eloquent query chains so that IDEs can understand eloquent.
 
 - For example, converts: `User::where(...` to `User::query()->where(...`
+
+<a name="dead_controllers"></a>
+
+### `php artisan check:dead_controllers`
+
+
+- We can find the controllers that doesn't have any routes.
+
+<a name="generic_docblocks"></a>
+
+### `php artisan check:generic_docblocks {--folder=app/Models} {--file=SomeFile.php}`
+
+
+- Removes Laravel's own docblocks.
+- You can use `--folder=` or `--file=` option to narrow down the scanned folders.
+
+<a name="helper_functions"></a>
+
+### `php artisan enforce:helper_functions {--folder=app/Models} {--file=SomeFile.php}`
+
+
+- Converting Laravel facade into helper functions.
+- You can use `--folder=` or `--file=` option to narrow down the scanned folders
 
 
 and more features will be added soon. ;)
