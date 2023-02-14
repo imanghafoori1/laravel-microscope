@@ -26,7 +26,9 @@ class CheckViews extends Command
         $folder = ltrim($this->option('folder'), '=');
 
         $errorPrinter->printer = $this->output;
-        $this->checkRoutePaths();
+        $this->checkRoutePaths(
+            FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder)
+        );
         ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
@@ -43,9 +45,9 @@ class CheckViews extends Command
         CheckView::checkViewCalls($tokens, $absPath, $staticCalls);
     }
 
-    private function checkRoutePaths()
+    private function checkRoutePaths($paths)
     {
-        foreach (FilePath::removeExtraPaths(RoutePaths::get()) as $filePath) {
+        foreach ($paths as $filePath) {
             $this->checkForViewMake($filePath, [
                 'View' => ['make', 0],
                 'Route' => ['view', 1],
