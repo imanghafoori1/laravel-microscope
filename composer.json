@@ -17,9 +17,9 @@
     ],
     "require": {
         "php": "^7.1.3|8.0.*|8.1.*|8.2.*",
-        "imanghafoori/composer-json": "^1.0.6",
-        "imanghafoori/php-abstract-filesystem": "^0.1.1",
-        "imanghafoori/php-search-replace": "^1.1.9",
+        "imanghafoori/composer-json": "^1.0.7",
+        "imanghafoori/php-abstract-filesystem": "^0.1.4",
+        "imanghafoori/php-search-replace": "^1.1.10",
         "imanghafoori/php-token-analyzer": "^0.1.45",
         "imanghafoori/smart-realtime-facades": "^1.1.6",
         "jetbrains/phpstorm-attributes" : "1.*",
