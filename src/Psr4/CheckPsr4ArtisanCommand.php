@@ -46,35 +46,9 @@ class CheckPsr4ArtisanCommand extends Command
             return $parent !== 'Migration';
         };
 
-        if ($folder) {
-            $pathFilter = function ($absFilePath, $fileName) use ($folder) {
-                return strpos($absFilePath, $folder);
-            };
-        } else {
-            $pathFilter = null;
-        }
+        $pathFilter = $folder ? $this->getPathFilter($folder) : null;
 
         $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $filter, $pathFilter);
-
-        $stats = [];
-        $typesStats = [
-            'enum' => 0,
-            'interface' => 0,
-            'class' => 0,
-            'trait' => 0,
-        ];
-
-        foreach ($classLists as $composerPath => $classList) {
-            foreach ($classList as $namespace => $classes) {
-                $stats[$namespace] = count($classes);
-                foreach ($classes as $class) {
-                    $class['type'] === T_INTERFACE && $typesStats['interface']++;
-                    $class['type'] === T_CLASS && $typesStats['class']++;
-                    $class['type'] === T_TRAIT && $typesStats['trait']++;
-                    $class['type'] === T_ENUM && $typesStats['enum']++;
-                }
-            }
-        }
 
         start:
         $errorsLists = CheckNamespaces::getErrorsLists(base_path(), $autoloads, $classLists, $onCheck);
@@ -82,13 +56,12 @@ class CheckPsr4ArtisanCommand extends Command
         $time = round(microtime(true) - $time, 5);
 
         $this->handleErrors($errorsLists);
-        $this->printReport($errorPrinter, $time, $autoloads, $stats, $typesStats);
+        $this->printReport($errorPrinter, $time, $autoloads, $classLists);
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
             sleep(8);
 
-            ClassListProvider::$checkedNamespacesStats = 0;
             $errorPrinter->errorsList = ['total' => 0];
 
             goto start;
@@ -104,8 +77,9 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, $stats, $typesStats)
+    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, $classLists)
     {
+        [$stats, $typesStats] = $this->countClasses($classLists);
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
@@ -128,18 +102,7 @@ class CheckPsr4ArtisanCommand extends Command
             CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
 
             if (CheckPsr4Printer::ask($this, $to)) {
-                NamespaceFixer::fix($absPath, $from, $to);
-
-                if ($from && ! $this->option('no-ref-fix')) {
-                    $changes = [
-                        $from.'\\'.$class => $to.'\\'.$class,
-                    ];
-
-                    ClassRefCorrector::fixAllRefs(
-                        $changes, self::getPathForReferenceFix(), $beforeFix, $afterFix
-                    );
-                }
-                CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
+                $this->fix($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath);
             }
         } elseif ($wrong['type'] === 'filename') {
             CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
@@ -217,5 +180,51 @@ class CheckPsr4ArtisanCommand extends Command
                 $this->handleError($wrong, $before, $after);
             }
         }
+    }
+
+    private function countClasses($classLists)
+    {
+        $stats = [];
+        $typesStats = [
+            'enum' => 0,
+            'interface' => 0,
+            'class' => 0,
+            'trait' => 0,
+        ];
+
+        foreach ($classLists as $composerPath => $classList) {
+            foreach ($classList as $namespace => $classes) {
+                $stats[$namespace] = count($classes);
+                foreach ($classes as $class) {
+                    $class['type'] === T_INTERFACE && $typesStats['interface']++;
+                    $class['type'] === T_CLASS && $typesStats['class']++;
+                    $class['type'] === T_TRAIT && $typesStats['trait']++;
+                    $class['type'] === T_ENUM && $typesStats['enum']++;
+                }
+            }
+        }
+
+        return [$stats, $typesStats];
+    }
+
+    private function getPathFilter(string $folder)
+    {
+        return function ($absFilePath, $fileName) use ($folder) {
+            return strpos($absFilePath, $folder);
+        };
+    }
+
+    private function fix($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath)
+    {
+        NamespaceFixer::fix($absPath, $from, $to);
+
+        if ($from && ! $this->option('no-ref-fix')) {
+            $changes = [
+                $from.'\\'.$class => $to.'\\'.$class,
+            ];
+
+            ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
+        }
+        CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
     }
 }

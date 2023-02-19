@@ -8,8 +8,6 @@ use Imanghafoori\TokenAnalyzer\GetClassProperties;
 
 class ClassListProvider
 {
-    public static $checkedNamespacesStats = [];
-
     public static $buffer = 800;
 
     public function getClasslists(array $autoloads, ?\Closure $filter, ?\Closure $pathFilter)
