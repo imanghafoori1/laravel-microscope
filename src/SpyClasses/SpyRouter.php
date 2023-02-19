@@ -7,7 +7,6 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Throwable;
 
 class SpyRouter extends Router
@@ -48,19 +47,21 @@ class SpyRouter extends Router
             ) {
                 $i++;
             }
-            $ns = $newAttr['namespace'] ?? null;
-            $dir = NamespaceCalculator::getRelativePathFromNamespace($ns, ComposerJson::readAutoload());
+
+            $namespace = $newAttr['namespace'] ?? null;
+            $dir = ComposerJson::make()->getRelativePathFromNamespace($namespace);
 
             if (isset($attributes['middlewares'])) {
                 $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
                 $this->routeError($info, $err, "Incorrect 'middlewares' key.");
             }
 
-            if ($ns && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ns) !== $dir) {
+            if ($namespace && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $namespace) !== $dir) {
                 $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
                 $this->routeError($info, $err, 'Incorrect namespace.');
             }
         } catch (Throwable $e) {
+            //
         }
     }
 

@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
+use Imanghafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Throwable;
 

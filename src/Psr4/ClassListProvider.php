@@ -12,40 +12,31 @@ class ClassListProvider
 
     public static $buffer = 800;
 
-    public function getClasslists(array $autoloads, $folder, ?\Closure $filter)
+    public function getClasslists(array $autoloads, ?\Closure $filter, ?\Closure $pathFilter)
     {
         $classLists = [];
-        foreach (ComposerJson::purgeAutoloadShortcuts($autoloads) as $path => $autoload) {
-            $classLists[$path] = [];
+        foreach (ComposerJson::purgeAutoloadShortcuts($autoloads) as $composerFilePath => $autoload) {
             foreach ($autoload as $namespace => $psr4Path) {
-                $classes = $this->getClassesWithin($psr4Path, $folder, $filter);
-                self::$checkedNamespacesStats[$namespace] = count($classes);
-                $classLists[$path] = array_merge(
-                    $classLists[$path],
-                    $classes
-                );
+                $classes = $this->getClassesWithin($psr4Path, $filter, $pathFilter);
+                $classLists[$composerFilePath][$namespace] = $classes;
             }
         }
 
         return $classLists;
     }
 
-    public function getClassesWithin($composerPath, $folder, \Closure $filterClass, ?\Closure $filterPath = null)
+    public function getClassesWithin($composerPath, \Closure $filterClass, ?\Closure $pathFilter = null)
     {
         $results = [];
         foreach (FilePath::getAllPhpFiles($composerPath) as $classFilePath) {
             $absFilePath = $classFilePath->getRealPath();
 
-            if ($filterPath && ! $filterPath($absFilePath, $classFilePath->getFilename())) {
-                continue;
-            }
-
-            if ($folder && ! strpos($absFilePath, $folder)) {
+            if ($pathFilter && ! $pathFilter($absFilePath, $classFilePath->getFilename())) {
                 continue;
             }
 
             // Exclude blade files
-            if (substr_count($classFilePath->getFilename(), '.') === 2) {
+            if (substr_count($classFilePath->getFilename(), '.') !== 1) {
                 continue;
             }
 

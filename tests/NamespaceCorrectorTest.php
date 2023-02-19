@@ -11,53 +11,6 @@ use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 class NamespaceCorrectorTest extends BaseTestClass
 {
     /** @test */
-    public function calculate_correct_namespace()
-    {
-        $ds = DIRECTORY_SEPARATOR;
-        $path = "app{$ds}Hello{$ds}T.php";
-        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/', 'App\\');
-        $this->assertEquals("App\Hello", $r);
-
-        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app', 'App\\');
-        $this->assertEquals("App\Hello", $r);
-
-        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
-        $this->assertEquals('Foo', $r);
-
-        $r = NamespaceCalculator::calculateCorrectNamespace($path, 'app/Hello', 'Foo\\');
-        $this->assertEquals('Foo', $r);
-
-        $r = NamespaceCalculator::calculateCorrectNamespace("app{$ds}Hello{$ds}Hello{$ds}T.php", 'app/Hello', 'Foo\\');
-        $this->assertEquals("Foo\Hello", $r);
-    }
-
-    /** @test */
-    public function can_extract_namespace()
-    {
-        $ns = 'Imanghafoori\LaravelMicroscope\Analyzers';
-        $class = "$ns\NamespaceCorrector";
-
-        $this->assertEquals($ns, NamespaceCalculator::getNamespaceFromFullClass($class));
-        $this->assertEquals('', NamespaceCalculator::getNamespaceFromFullClass('A'));
-        $this->assertEquals('B', NamespaceCalculator::getNamespaceFromFullClass('B\A'));
-    }
-
-    /** @test */
-    public function can_detect_same_namespaces()
-    {
-        $ns = 'Imanghafoori\LaravelMicroscope\Analyzers';
-        $class1 = "$ns\Iman";
-        $class2 = "$ns\Ghafoori";
-        $class3 = "$ns\Hello\Ghafoori";
-
-        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace('A', 'A'));
-        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace('A', 'B'));
-        $this->assertEquals(true, NamespaceCalculator::haveSameNamespace($class1, $class2));
-        $this->assertEquals(false, NamespaceCalculator::haveSameNamespace($class1, $class3));
-        $this->assertEquals(false, NamespaceCalculator::haveSameNamespace($class1, 'Faalse'));
-    }
-
-    /** @test */
     public function derive()
     {
         $psr4Path = 'branding_manager/app/';
@@ -137,31 +90,5 @@ class NamespaceCorrectorTest extends BaseTestClass
         // assert
         $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n");
         $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace_2.stub', "\n"));
-    }
-
-    /** @test */
-    public function get_namespace_from_relative_path()
-    {
-        $result = NamespaceCalculator::getNamespacedClassFromPath('app/Hello.php');
-        $this->assertEquals('App\\Hello', $result);
-
-        $result = NamespaceCalculator::getNamespacedClassFromPath('app/appollo.php');
-        $this->assertEquals('App\\appollo', $result);
-
-        $autoload = [
-            'App\\'=> 'app/',
-            'App\\lication\\'=> 'app/s/',
-            'Test\\'=> 'app/d/',
-            'Database\\Seeders\\'=> 'database/seeders/',
-        ];
-
-        $result = NamespaceCalculator::getNamespacedClassFromPath('app/s/Hello.php', $autoload);
-        $this->assertEquals('App\\lication\\Hello', $result);
-
-        $result = NamespaceCalculator::getNamespacedClassFromPath('app/appollo.php', $autoload);
-        $this->assertEquals('App\\appollo', $result);
-
-        $result = NamespaceCalculator::getNamespacedClassFromPath('app/d/appollo.php', $autoload);
-        $this->assertEquals('Test\\appollo', $result);
     }
 }

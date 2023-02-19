@@ -16,18 +16,20 @@ class CheckNamespaces
         return $errorsLists;
     }
 
-    public static function findPsr4Errors($basePath, $psr4Mapping, $classes, $composerPath, ?\Closure $onCheck)
+    public static function findPsr4Errors($basePath, $psr4Mapping, $classLists, $composerPath, ?\Closure $onCheck)
     {
         $errors = [];
-        foreach ($classes as $class) {
-            $onCheck && $onCheck($class);
-            $relativePath = \trim(str_replace($basePath, '', $class['absFilePath']), '/\\');
-            $error = NamespaceCalculator::checkNamespace($relativePath, $psr4Mapping, $class['currentNamespace'], $class['class'], $class['fileName']);
+        foreach ($classLists as $list) {
+            foreach ($list as $class) {
+                $onCheck && $onCheck($class);
+                $relativePath = \trim(str_replace($basePath, '', $class['absFilePath']), '/\\');
+                $error = NamespaceCalculator::checkNamespace($relativePath, $psr4Mapping, $class['currentNamespace'], $class['class'], $class['fileName']);
 
-            if ($error) {
-                $error['relativePath'] = $relativePath;
-                $error = $error + $class;
-                $errors[] = $error;
+                if ($error) {
+                    $error['relativePath'] = $relativePath;
+                    $error = $error + $class;
+                    $errors[] = $error;
+                }
             }
         }
 

@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -31,7 +31,7 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $contextClassNamespace = NamespaceCalculator::getNamespacedClassFromPath($absPath, base_path(), ComposerJson::readAutoload());
+        $contextClassNamespace = ComposerJson::make()->getNamespacedClassFromPath($absPath);
 
         if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
             return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
@@ -74,7 +74,7 @@ class Fixer
         }
 
         $tokens = token_get_all(file_get_contents($absPath));
-        $hostNamespacedClass = NamespaceCalculator::getNamespacedClassFromPath($absPath, base_path(), ComposerJson::readAutoload());
+        $hostNamespacedClass = ComposerJson::make()->getNamespacedClassFromPath($absPath);
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCalculator::haveSameNamespace($hostNamespacedClass, $correct[0])) {
             return [self::replaceSave("use $import;", '', $tokens, $absPath), [' Deleted!']];

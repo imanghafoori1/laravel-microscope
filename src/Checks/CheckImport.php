@@ -6,7 +6,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImport
@@ -38,7 +37,7 @@ class CheckImport
             }
 
             // for half imported namespaces
-            if (\is_dir(base_path(NamespaceCalculator::getRelativePathFromNamespace($classImport, ComposerJson::readAutoload())))) {
+            if (\is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport)))) {
                 continue;
             }
 

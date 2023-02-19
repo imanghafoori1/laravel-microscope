@@ -6,6 +6,11 @@ use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 
 class ComposerJson
 {
+    public static function make(): Composer
+    {
+        return Composer::make(base_path());
+    }
+
     public static function readAutoload($purgeAutoload = false)
     {
         $psr4Autoloads = Composer::make(base_path())->readAutoload($purgeAutoload);

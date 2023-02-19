@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Throwable;
 
@@ -28,7 +27,7 @@ class RoutePaths
             }
 
             // get tokens by class name
-            $path = NamespaceCalculator::getRelativePathFromNamespace($providerClass, $autoloads);
+            $path = ComposerJson::make()->getRelativePathFromNamespace($providerClass);
 
             try {
                 $methodCalls = self::readLoadedRouteFiles($path);

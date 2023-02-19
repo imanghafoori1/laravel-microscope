@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
@@ -92,6 +93,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         if (! $this->canRun()) {
             return;
         }
+
+        app()->singleton('microscope.composer', function () {
+            return Composer::make(base_path());
+        });
 
         FilePath::$basePath = base_path();
 

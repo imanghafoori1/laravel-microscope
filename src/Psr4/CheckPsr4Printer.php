@@ -41,7 +41,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($autoload, $stats, $time)
+    public static function reportResult($autoload, $stats, $time, $typesStats)
     {
         $messages = [];
         $separator = function ($color) {
@@ -53,7 +53,16 @@ class CheckPsr4Printer extends ErrorPrinter
         } catch (\Exception $e) {
             $messages[] = $separator('blue');
         }
-        $messages[] = '<options=bold;fg=yellow>'.array_sum($stats).' classes were checked under:</>';
+
+        $header = '<options=bold;fg=yellow> '.array_sum($stats).' entities are checked in:</>';
+        $types = '  ';
+        foreach ($typesStats as $type => $count) {
+            $types .= ' / '.$count.' <fg=blue>'.$type.'</>';
+        }
+        $types .= ' /';
+        $messages[] = $header.$types;
+        $messages[] = '';
+
         $len = 0;
         foreach ($autoload as $composerPath => $psr4) {
             $output = '';
@@ -66,6 +75,7 @@ class CheckPsr4Printer extends ErrorPrinter
             }
             $messages[] = $output;
         }
+
         $messages[] = 'Finished In: <fg=blue>'.$time.'(s)</>';
 
         return $messages;

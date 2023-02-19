@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
+use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Symfony\Component\Console\Terminal;
 
@@ -50,7 +50,7 @@ class CheckStringy
                 $classPath = $this->getClassyPath($classPath);
                 $command->info('<fg=green>✔ Replaced with: </><fg=red>'.$classPath.'</>');
 
-                $contextClass = NamespaceCalculator::getNamespacedClassFromPath($absFilePath, base_path(), ComposerJson::readAutoload());
+                $contextClass = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
 
                 if (NamespaceCalculator::haveSameNamespace($contextClass, $classPath)) {
                     $classPath = trim(class_basename($classPath), '\\');
@@ -91,6 +91,6 @@ class CheckStringy
 
     private static function refersToDir(string $classPath)
     {
-        return is_dir(base_path(NamespaceCalculator::getRelativePathFromNamespace($classPath, ComposerJson::readAutoload())));
+        return is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classPath)));
     }
 }

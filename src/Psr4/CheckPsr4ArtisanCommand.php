@@ -45,14 +45,45 @@ class CheckPsr4ArtisanCommand extends Command
         $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
             return $parent !== 'Migration';
         };
+
+        if ($folder) {
+            $pathFilter = function ($absFilePath, $fileName) use ($folder) {
+                return strpos($absFilePath, $folder);
+            };
+        } else {
+            $pathFilter = null;
+        }
+
+        $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $filter, $pathFilter);
+
+        $stats = [];
+        $typesStats = [
+            'enum' => 0,
+            'interface' => 0,
+            'class' => 0,
+            'trait' => 0,
+        ];
+
+        foreach ($classLists as $composerPath => $classList) {
+            foreach ($classList as $namespace => $classes) {
+                $stats[$namespace] = count($classes);
+                foreach ($classes as $class) {
+                    $class['type'] === T_INTERFACE && $typesStats['interface']++;
+                    $class['type'] === T_CLASS && $typesStats['class']++;
+                    $class['type'] === T_TRAIT && $typesStats['trait']++;
+                    $class['type'] === T_ENUM && $typesStats['enum']++;
+
+                }
+            }
+        }
+
         start:
-        $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $folder, $filter);
         $errorsLists = CheckNamespaces::getErrorsLists(base_path(), $autoloads, $classLists, $onCheck);
 
         $time = round(microtime(true) - $time, 5);
 
         $this->handleErrors($errorsLists);
-        $this->printReport($errorPrinter, $time, $autoloads);
+        $this->printReport($errorPrinter, $time, $autoloads, $stats, $typesStats);
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
@@ -74,15 +105,15 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload)
+    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, $stats, $typesStats)
     {
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, ClassListProvider::$checkedNamespacesStats, $time));
+            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, $stats, $time, $typesStats));
             $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->errorsList['total'], $time));
         } else {
-            $this->getOutput()->writeln(' - '.array_sum(ClassListProvider::$checkedNamespacesStats).' namespaces were checked.');
+            $this->getOutput()->writeln(' - '.array_sum($stats).' namespaces were checked.');
         }
     }
 
