@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Support\Str;
+use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Symfony\Component\Console\Terminal;
 

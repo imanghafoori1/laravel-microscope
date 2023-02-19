@@ -72,7 +72,6 @@ class CheckPsr4ArtisanCommand extends Command
                     $class['type'] === T_CLASS && $typesStats['class']++;
                     $class['type'] === T_TRAIT && $typesStats['trait']++;
                     $class['type'] === T_ENUM && $typesStats['enum']++;
-
                 }
             }
         }
