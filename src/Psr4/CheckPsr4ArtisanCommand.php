@@ -5,11 +5,11 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
+use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckPsr4ArtisanCommand extends Command
@@ -232,7 +232,8 @@ class CheckPsr4ArtisanCommand extends Command
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
             $this->line($msg);
-        } : null;
+        }
+        : null;
 
         return $composer->getErrorsLists($classLists, $onCheck);
     }
