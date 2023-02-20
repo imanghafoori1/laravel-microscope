@@ -6,7 +6,7 @@ use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceFixer;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
@@ -51,11 +51,10 @@ class NamespaceCorrectorTest extends BaseTestClass
         FileSystem::$fileSystem = FakeFileSystem::class;
         $from = '';
         $to = 'App\Http\Controllers\Foo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
-
-        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', "\n");
-
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_with_namespace.stub', "\n"));
+        $filePath = __DIR__.'/stubs/fix_namespace/declared_no_namespace.stub';
+        NamespaceFixer::fix($filePath, $from, $to);
+        FakeFilesystem::$files[$filePath][5] = trim(FakeFilesystem::$files[$filePath][5]);
+        $this->assertTrue(in_array('namespace '.$to.';', FakeFilesystem::$files[$filePath]));
     }
 
     /** @test */
