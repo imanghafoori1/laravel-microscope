@@ -9,11 +9,12 @@ use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class CheckPsr4ArtisanCommand extends Command
 {
-    private static $pathesForReferenceFix = [];
+    private static $pathsForReferenceFix = [];
 
     protected $signature = 'check:psr4
         {--d|detailed : Show classes being checked}
@@ -34,29 +35,15 @@ class CheckPsr4ArtisanCommand extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $onCheck = $this->option('detailed') ? function ($class) {
-            $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
-            $this->line($msg);
-        }
-        : null;
-
-        $autoloads = ComposerJson::readAutoload();
-        $folder = ltrim($this->option('folder'), '=');
-        $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
-            return $parent !== 'Migration';
-        };
-
-        $pathFilter = $folder ? $this->getPathFilter($folder) : null;
-
-        $classLists = resolve(ClassListProvider::class)->getClasslists($autoloads, $filter, $pathFilter);
-
+        $composer = ComposerJson::make();
+        $classLists = $this->getClassLists($composer);
         start:
-        $errorsLists = CheckNamespaces::getErrorsLists(base_path(), $autoloads, $classLists, $onCheck);
+        $errorsLists = $this->getErrorsLists($composer, $classLists);
 
         $time = round(microtime(true) - $time, 5);
 
         $this->handleErrors($errorsLists);
-        $this->printReport($errorPrinter, $time, $autoloads, $classLists);
+        $this->printReport($errorPrinter, $time, $composer->readAutoload(), $classLists);
 
         $this->composerDumpIfNeeded($errorPrinter);
         if ($this->option('watch')) {
@@ -111,8 +98,8 @@ class CheckPsr4ArtisanCommand extends Command
 
     private static function getPathForReferenceFix()
     {
-        if (self::$pathesForReferenceFix) {
-            return self::$pathesForReferenceFix;
+        if (self::$pathsForReferenceFix) {
+            return self::$pathsForReferenceFix;
         }
 
         $paths = [];
@@ -129,7 +116,7 @@ class CheckPsr4ArtisanCommand extends Command
 
         $paths = array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
 
-        self::$pathesForReferenceFix = $paths;
+        self::$pathsForReferenceFix = $paths;
 
         return $paths;
     }
@@ -226,5 +213,27 @@ class CheckPsr4ArtisanCommand extends Command
             ClassRefCorrector::fixAllRefs($changes, self::getPathForReferenceFix(), $beforeFix, $afterFix);
         }
         CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
+    }
+
+    private function getClassLists(Comp $composer)
+    {
+        $folder = ltrim($this->option('folder'), '=');
+        $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
+            return $parent !== 'Migration';
+        };
+
+        $pathFilter = $folder ? $this->getPathFilter($folder) : null;
+
+        return $composer->getClasslists($filter, $pathFilter);
+    }
+
+    private function getErrorsLists(Comp $composer, array $classLists)
+    {
+        $onCheck = $this->option('detailed') ? function ($class) {
+            $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
+            $this->line($msg);
+        } : null;
+
+        return $composer->getErrorsLists($classLists, $onCheck);
     }
 }

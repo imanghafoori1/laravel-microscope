@@ -94,8 +94,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-        app()->singleton('microscope.composer', function () {
-            return Composer::make(base_path());
+        app()->singleton(Composer::class, function () {
+            return Composer::make(base_path(), config('microscope.ignored_namespaces', []));
         });
 
         FilePath::$basePath = base_path();

@@ -122,7 +122,7 @@ class ForPsr4LoadedClasses
         $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
 
         return [
-            $path1 => ComposerJson::make($path1)->readAutoload(),
+            $path1 => Analyzers\ComposerJson::make()->readAutoload(),
             $path2 => ComposerJson::make($path2)->readAutoload(),
         ];
     }
