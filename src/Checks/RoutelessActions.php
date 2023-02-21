@@ -15,18 +15,12 @@ class RoutelessActions
         $orphanMethods = [];
         foreach ($methods as $method) {
             // we exclude non-public methods
-            if ($method['visibility'][0] !== T_PUBLIC) {
-                continue;
-            }
-
             // we exclude static methods
-            if ($method['is_static']) {
-                continue;
-            }
-
-            $methodName = $method['name'][1];
             // we exclude __construct
-            if ($methodName == '__construct') {
+            $conditions = ($method['visibility'][0] !== T_PUBLIC or
+                            $method['is_static'] or
+                            $method['name'][1] == '__construct');
+            if ($conditions) {
                 continue;
             }
 
