@@ -36,18 +36,17 @@ class GenericDocblocks
                 '* Handle the incoming request.',
             ]);
 
-            if ($contain) {
-                $hasReplacement = true;
-                unset($tokens[$i]);
-                if ($tokens[$i - 1][0] === T_WHITESPACE && ($tokens[$i + 1][0] ?? 0) === T_WHITESPACE) {
-                    unset($tokens[$i + 1]);
-                }
+            if (!$contain) {
+                continue;
+            }
+            $hasReplacement = true;
+            unset($tokens[$i]);
+            if ($tokens[$i - 1][0] === T_WHITESPACE && ($tokens[$i + 1][0] ?? 0) === T_WHITESPACE) {
+                unset($tokens[$i + 1]);
             }
         }
 
         $question = 'Do you want to remove docblocks from: <fg=yellow>'.basename($absFilePath).'</>';
-        if ($hasReplacement && (self::$command)->confirm($question, true)) {
-            Refactor::saveTokens($absFilePath, $tokens);
-        }
+        $hasReplacement && (self::$command)->confirm($question, true) && Refactor::saveTokens($absFilePath, $tokens);
     }
 }
