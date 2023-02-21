@@ -33,12 +33,14 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function fix_namespace()
     {
-        FakeFileSystem::reset();
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $correctNamespace = 'App\Http\Controllers\Foo';
         $filePath = __DIR__.'/stubs/PostController.stub';
         NamespaceFixer::fix($filePath, 'App\Http\Controllers', $correctNamespace);
+        // assert
         $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Controllers\\\Foo;/';
         $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
@@ -46,13 +48,15 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function fix_namespace_declare()
     {
-        FakeFileSystem::reset();
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = '';
         $to = 'App\Http\Controllers\Foo';
         $filePath = __DIR__.'/stubs/fix_namespace/declared_no_namespace.stub';
         NamespaceFixer::fix($filePath, $from, $to);
+        // assert
         FakeFilesystem::$files[$filePath][5] = trim(FakeFilesystem::$files[$filePath][5]);
         $this->assertTrue(in_array('namespace '.$to.';', FakeFilesystem::$files[$filePath]));
     }
@@ -60,14 +64,15 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function fix_namespace_class_with_no_namespace()
     {
-        FakeFileSystem::reset();
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
-
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = '';
         $to = 'App\Http\Roo';
         $filePath = __DIR__.'/stubs/fix_namespace/class_no_namespace.stub';
         NamespaceFixer::fix($filePath, $from, $to);
+        // assert
         $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
         $this->assertTrue(preg_match($pattern, FakeFilesystem::$files[$filePath][0]) == 1);
     }
@@ -76,11 +81,9 @@ class NamespaceCorrectorTest extends BaseTestClass
     public function fix_namespace_class_with_bad_namespace()
     {
         // arrange
-        FakeFileSystem::reset();
-        FileSystem::$fileSystem = FakeFileSystem::class;
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-
-        // act
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = 'App\Http\Controllers\Foo';
         $to = 'App\Http\Roo';
         $filePath = __DIR__.'/stubs/fix_namespace/class_with_namespace.stub';
