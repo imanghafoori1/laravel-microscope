@@ -49,14 +49,18 @@ class SpyRouter extends Router
             }
 
             $namespace = $newAttr['namespace'] ?? null;
-            $dir = ComposerJson::make()->getRelativePathFromNamespace($namespace);
+
+            if ($namespace) {
+                $dir = ComposerJson::make()->getRelativePathFromNamespace($namespace);
+            } else {
+                $dir = null;
+            }
 
             if (isset($attributes['middlewares'])) {
                 $err = "['middlewares' => ...] key passed to Route::group(...) is not correct.";
                 $this->routeError($info, $err, "Incorrect 'middlewares' key.");
             }
-
-            if ($namespace && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $namespace) !== $dir) {
+            if ($namespace && $dir && isset($attributes['namespace']) && ! is_dir($dir) && \str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $namespace) !== $dir) {
                 $err = "['namespace' => "."'".$attributes['namespace'].'\'] passed to Route::group(...) is not correct.';
                 $this->routeError($info, $err, 'Incorrect namespace.');
             }
