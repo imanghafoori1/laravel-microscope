@@ -92,7 +92,7 @@ Give your eyes a rest, we will detect and fix them for you.
 
 - It is created to be **smarter than phpstorm** and other IDEs in finding errors.
 - It is created to **understand laravel run-time** and magic.
-- It does **not show you stupid false errors**, all the errors are errors.
+- It does **not show you stupid false errors**, all the reported cases are really errors.
 - Even If you have written a lot of tests for your app, **you may still need this**.
 - **It can refactor your code**, by applying `early returns` automatically.
 - It is written from scratch to yield the **maximum performance** possible.
@@ -119,7 +119,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 ```
 
 <a name="usage"></a>
-## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage
+## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage:
 
 ### Useful Commands:
 
@@ -226,7 +226,7 @@ Here is a comprehensive list of placeholders you can use:
 |3|`<class_ref>`|for class references:  `\App\User::where(...` , `User::where`|
 |4|`<full_class_ref>`|only for full references:  `\App\User::`|
 |5|`<until>`|to capture all the code until you reach a certain character.|
-|6|`<comment>`|for comments (it does not capture doc-blocks beginning with: /*F* )|
+|6|`<comment>`|for comments (it does not capture doc-blocks beginning with: /** )|
 |7|`<doc_block>`|for php doc-blocks|
 |8|`<statement>`|to capture a whole php statement.|
 |9|`<name:nam1,nam2>` or `<name>`|for method or function names. `->where` or `::where`|
@@ -377,7 +377,7 @@ User::query()->where(...)->get();
 \App\Models\User::query()->find(...);
 ```
 
-- The filters here ensure that the captured class reference is a laravel Model and the method  name is one of the names mentioned in the list.
+- The filters here ensure that the captured class reference is a laravel Model and the method name is one of the names mentioned in the list.
 
 So it does not tamper with something like this:
 ```php
