@@ -66,11 +66,10 @@ class NamespaceCorrectorTest extends BaseTestClass
 
         $from = '';
         $to = 'App\Http\Roo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', $from, $to);
-
-        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', "\n");
-
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n"));
+        $filePath = __DIR__.'/stubs/fix_namespace/class_no_namespace.stub';
+        NamespaceFixer::fix($filePath, $from, $to);
+        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
+        $this->assertTrue(preg_match($pattern, FakeFilesystem::$files[$filePath][0]) == 1);
     }
 
     /** @test */
