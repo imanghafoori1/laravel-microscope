@@ -6,7 +6,7 @@ use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceCalculator;
+use Imanghafoori\LaravelMicroscope\Psr4\NamespaceFixer;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
@@ -33,62 +33,63 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function fix_namespace()
     {
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $correctNamespace = 'App\Http\Controllers\Foo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
-
-        $result = strpos(FakeFileSystem::read_file(__DIR__.'/stubs/PostController.stub'), 'namespace App\Http\Controllers\Foo;');
-
-        $this->assertTrue($result > 0);
+        $filePath = __DIR__.'/stubs/PostController.stub';
+        NamespaceFixer::fix($filePath, 'App\Http\Controllers', $correctNamespace);
+        // assert
+        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Controllers\\\Foo;/';
+        $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
 
     /** @test */
     public function fix_namespace_declare()
     {
-        FakeFileSystem::reset();
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = '';
         $to = 'App\Http\Controllers\Foo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', $from, $to);
-
-        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_no_namespace.stub', "\n");
-
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/declared_with_namespace.stub', "\n"));
+        $filePath = __DIR__.'/stubs/fix_namespace/declared_no_namespace.stub';
+        NamespaceFixer::fix($filePath, $from, $to);
+        // assert
+        FakeFilesystem::$files[$filePath][5] = trim(FakeFilesystem::$files[$filePath][5]);
+        $this->assertTrue(in_array('namespace '.$to.';', FakeFilesystem::$files[$filePath]));
     }
 
     /** @test */
     public function fix_namespace_class_with_no_namespace()
     {
-        FakeFileSystem::reset();
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-        FileSystem::$fileSystem = FakeFileSystem::class;
-
+        // arrange
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = '';
         $to = 'App\Http\Roo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', $from, $to);
-
-        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_no_namespace.stub', "\n");
-
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n"));
+        $filePath = __DIR__.'/stubs/fix_namespace/class_no_namespace.stub';
+        NamespaceFixer::fix($filePath, $from, $to);
+        // assert
+        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
+        $this->assertTrue(preg_match($pattern, FakeFilesystem::$files[$filePath][0]) == 1);
     }
 
     /** @test */
     public function fix_namespace_class_with_bad_namespace()
     {
         // arrange
-        FakeFileSystem::reset();
-        FileSystem::$fileSystem = FakeFileSystem::class;
-        FileManipulator::$fileSystem = FakeFileSystem::class;
-
-        // act
+        FileManipulator::fake();
+        FileSystem::fake();
+        // fix namespace
         $from = 'App\Http\Controllers\Foo';
         $to = 'App\Http\Roo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', $from, $to);
-
+        $filePath = __DIR__.'/stubs/fix_namespace/class_with_namespace.stub';
+        NamespaceFixer::fix($filePath, $from, $to);
         // assert
-        $result = FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace.stub', "\n");
-        $this->assertEquals($result, FakeFileSystem::read_file(__DIR__.'/stubs/fix_namespace/class_with_namespace_2.stub', "\n"));
+        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
+        $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
 }
