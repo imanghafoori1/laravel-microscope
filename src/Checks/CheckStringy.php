@@ -33,10 +33,7 @@ class CheckStringy
                 }
 
                 if (! \class_exists(\str_replace('\\\\', '\\', $classPath))) {
-                    if (self::refersToDir($classPath)) {
-                        continue;
-                    }
-                    $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    !self::refersToDir($classPath) && $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                     continue;
                 }
 
@@ -52,9 +49,8 @@ class CheckStringy
 
                 $contextClass = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
 
-                if (NamespaceCalculator::haveSameNamespace($contextClass, $classPath)) {
+                NamespaceCalculator::haveSameNamespace($contextClass, $classPath) &&
                     $classPath = trim(class_basename($classPath), '\\');
-                }
 
                 FileManipulator::replaceFirst($absFilePath, $token[1], $classPath);
                 $width = (new Terminal)->getWidth() - 4;

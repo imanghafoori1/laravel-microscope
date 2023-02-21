@@ -15,9 +15,8 @@ class CheckIsQuery
 
         foreach ($classes as $class) {
             $c = $class['class'];
-            if (self::isQueryClass($c)) {
-                app(ErrorPrinter::class)->queryInBlade($absPath, $class['class'], $class['line']);
-            }
+            self::isQueryClass($c) &&
+                    app(ErrorPrinter::class)->queryInBlade($absPath, $class['class'], $class['line']);
         }
     }
 
