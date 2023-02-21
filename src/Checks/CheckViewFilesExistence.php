@@ -17,10 +17,8 @@ class CheckViewFilesExistence
 
             $viewName = \trim($tokens[$i + 4][1], '\'\"');
             CheckView::$checkedCallsNum++;
-            if (! View::exists($viewName)) {
-                self::error($tokens, $absPath, $i);
-            }
-            $i = $i + 5;
+            !View::exists($viewName) && self::error($tokens, $absPath, $i);
+            $i += 5;
         }
     }
 
