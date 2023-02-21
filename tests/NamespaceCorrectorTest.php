@@ -33,14 +33,14 @@ class NamespaceCorrectorTest extends BaseTestClass
     /** @test */
     public function fix_namespace()
     {
+        FakeFileSystem::reset();
         FileManipulator::$fileSystem = FakeFileSystem::class;
         FileSystem::$fileSystem = FakeFileSystem::class;
         $correctNamespace = 'App\Http\Controllers\Foo';
-        NamespaceCalculator::fix(__DIR__.'/stubs/PostController.stub', 'App\Http\Controllers', $correctNamespace);
-
-        $result = strpos(FakeFileSystem::read_file(__DIR__.'/stubs/PostController.stub'), 'namespace App\Http\Controllers\Foo;');
-
-        $this->assertTrue($result > 0);
+        $filePath = __DIR__.'/stubs/PostController.stub';
+        NamespaceFixer::fix($filePath, 'App\Http\Controllers', $correctNamespace);
+        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Controllers\\\Foo;/';
+        $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
 
     /** @test */
