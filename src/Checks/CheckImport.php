@@ -32,12 +32,10 @@ class CheckImport
         foreach ($imports as $as => $import) {
             [$classImport, $line] = $import;
 
-            if (! CheckClassReferencesAreValid::isAbsent($classImport)) {
-                continue;
-            }
-
-            // for half imported namespaces
-            if (\is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport)))) {
+            $condition = (!CheckClassReferencesAreValid::isAbsent($classImport)) or
+                            // for half imported namespaces
+                            (\is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport))));
+            if ($condition) {
                 continue;
             }
 
@@ -62,9 +60,7 @@ class CheckImport
 
         [$isCorrected, $corrects] = Fixer::fixImport($absFilePath, $classImport, $line, self::isAliased($classImport, $as));
 
-        if ($isCorrected) {
-            $printer->printFixation($absFilePath, $classImport, $line, $corrects);
-        }
+        $isCorrected && $printer->printFixation($absFilePath, $classImport, $line, $corrects);
 
         return $isCorrected;
     }

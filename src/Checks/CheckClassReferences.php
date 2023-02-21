@@ -62,9 +62,7 @@ class CheckClassReferences
 
         foreach ($unusedRefs as $class) {
             // if is not a wrong import:
-            if (! isset($wrongs[$class[0]])) {
-                $unusedCorrectImports[] = $class;
-            }
+            !isset($wrongs[$class[0]]) && $unusedCorrectImports[] = $class;
         }
 
         return $unusedCorrectImports;
@@ -74,9 +72,7 @@ class CheckClassReferences
     {
         $wrongImports = [];
         foreach ($expandedClasses as $class) {
-            if (! self::exists($class['class'])) {
-                $wrongImports[] = $class;
-            }
+            !self::exists($class['class']) && $wrongImports[] = $class;
         }
 
         return $wrongImports;

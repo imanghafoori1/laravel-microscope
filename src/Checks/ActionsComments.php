@@ -20,9 +20,8 @@ class ActionsComments
     {
         $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
-        if (isset(static::$controllers[trim($fullNamespace, '\\')])) {
-            self::checkActions($tokens, $fullNamespace, $classFilePath);
-        }
+        isset(static::$controllers[trim($fullNamespace, '\\')])
+            && self::checkActions($tokens, $fullNamespace, $classFilePath);
     }
 
     protected static function checkActions($tokens, $fullNamespace, $path)
@@ -54,7 +53,7 @@ class ActionsComments
 
             foreach ($actions as $i => $action) {
                 $i === count($actions) - 1 && $separator = '';
-                $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
+                $msg .= "\n         " . rtrim(self::getMsg($action)) . $separator;
             }
 
             $msg .= "\n         */";
@@ -62,7 +61,7 @@ class ActionsComments
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
                 $shouldSave = true;
-                $tokens[$commentIndex][1] = "\n        ".$msg.$tokens[$commentIndex][1];
+                $tokens[$commentIndex][1] = "\n        " . $msg . $tokens[$commentIndex][1];
             } elseif ($msg !== $tokens[$commentIndex + 1][1]) {
                 // if the docblock is there, but needs update...
                 $shouldSave = true;
@@ -73,10 +72,8 @@ class ActionsComments
             $routelessActions[] = [$line, $classAtMethod];
         }
 
-        $question = 'Add route definition into the: <fg=yellow>'.$fullNamespace.'</>';
-        if ($shouldSave && (self::$command)->confirm($question, true)) {
-            Refactor::saveTokens($path->getRealpath(), $tokens);
-        }
+        $question = 'Add route definition into the: <fg=yellow>' . $fullNamespace . '</>';
+        $shouldSave && (self::$command)->confirm($question, true) && Refactor::saveTokens($path->getRealpath(), $tokens);
 
         return $routelessActions;
     }
@@ -91,9 +88,7 @@ class ActionsComments
         [$file, $line] = self::getCallsiteInfo($methods[0], $route);
         $url = $route->uri();
 
-        if (($url[0] ?? '') !== '/') {
-            $url = '/'.$url;
-        }
+        ($url[0] ?? '') !== '/' && $url = '/' . $url;
 
         $viewData = [
             'middlewares' => $middlewares,
@@ -108,9 +103,7 @@ class ActionsComments
             $viewFile = 'vendor.microscope.actions_comment';
         } else {
             $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
-            if (! view()->exists('vendor.microscope.actions_comment')) {
-                $viewFile = 'microscope_package::actions_comment';
-            }
+            !view()->exists('vendor.microscope.actions_comment') && $viewFile = 'microscope_package::actions_comment';
         }
 
         return view($viewFile, $viewData)->render();
@@ -119,8 +112,7 @@ class ActionsComments
     public static function getCallsiteInfo($methods, $route)
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
-        $file = $callsite[0]['file'] ?? '';
-        $line = $callsite[0]['line'] ?? '';
+        [$file, $line] = [$callsite[0]['file'] ?? '', $callsite[0]['line'] ?? ''];
         $file = \trim(str_replace(base_path(), '', $file), '\\/');
         $file = str_replace('\\', '/', $file);
 
@@ -132,9 +124,7 @@ class ActionsComments
         $middlewares = $route->gatherMiddleware();
 
         foreach ($middlewares as $i => $m) {
-            if (! is_string($m)) {
-                $middlewares[$i] = 'Closure';
-            }
+            !is_string($m) && $middlewares[$i] = 'Closure';
         }
 
         return $middlewares;
