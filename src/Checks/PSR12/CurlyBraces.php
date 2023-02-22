@@ -27,14 +27,17 @@ class CurlyBraces
                 $level--;
                 ($isInSideClass === true && $level === 0) && ($isInSideClass = false);
             }
-            $condition = $level === 0
-                && \in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])
-                && $tokens[$i - 1] !== T_DOUBLE_COLON;
-            $isInSideClass = $condition ? true : $isInSideClass;
-        }
-        self::openCurly($token, $level, $tokens, $i, $classFilePath);
+            if ($level === 0) {
+                if (\in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
+                    if ($tokens[$i - 1] !== T_DOUBLE_COLON) {
+                        $isInSideClass = true;
+                    }
+                }
+            }
+            self::openCurly($token, $level, $tokens, $i, $classFilePath);
 
-        [$tokens, $i] = self::writePublic($level, $token, $isInSideClass, $i, $tokens, $classFilePath);
+            [$tokens, $i] = self::writePublic($level, $token, $isInSideClass, $i, $tokens, $classFilePath);
+        }
     }
 
     private static function openCurly($token, $level, $tokens, $i, $classFilePath)
