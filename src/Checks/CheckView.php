@@ -29,14 +29,14 @@ class CheckView
         // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
-        if (!FunctionCall::isSolidString($paramTokens)) {
+        if (! FunctionCall::isSolidString($paramTokens)) {
             self::$skippedCallsNum++;
             return;
         }
         self::$checkedCallsNum++;
         $viewName = \trim($paramTokens[0][1], '\'\"');
         $viewName = str_replace('.', '/', $viewName);
-        $viewName && !View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
+        $viewName && ! View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
     }
 
     public static function checkViewCalls($tokens, $absPath, array $staticCalls)

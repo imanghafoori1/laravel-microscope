@@ -19,7 +19,7 @@ class FacadeAliases
 
         foreach ($imports as $import) {
             foreach ($import as $base => $use) {
-                if (!isset($aliases[$use[0]]) or !self::ask($absFilePath, $use, $base, $aliases[$use[0]])) {
+                if (! isset($aliases[$use[0]]) or ! self::ask($absFilePath, $use, $base, $aliases[$use[0]])) {
                     continue;
                 }
                 $isReplaced = true;
@@ -49,32 +49,33 @@ class FacadeAliases
     {
         $patterns = [
             [
-                ['search' => 'use '.$base.';', 'replace' => 'use '.ltrim($aliases).';']
+                ['search' => 'use '.$base.';', 'replace' => 'use '.ltrim($aliases).';'],
             ],
             [
-                ['search' => 'use \\'.$base.';', 'replace' => 'use '.ltrim($aliases).';']
+                ['search' => 'use \\'.$base.';', 'replace' => 'use '.ltrim($aliases).';'],
             ],
             [
                 ['search' => 'use '.$base.',', 'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use '],
-                ['search' => 'use \\'.$base.',', 'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use ']
+                ['search' => 'use \\'.$base.',', 'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use '],
             ],
             [
                 ['search' => ','.$base.';', 'replace' => ', '.ltrim($aliases).';'],
-                ['search' => ',\\'.$base.';', 'replace' => ', '.ltrim($aliases).';']
+                ['search' => ',\\'.$base.';', 'replace' => ', '.ltrim($aliases).';'],
             ],
             [
                 ['search' => ','.$base.',', 'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use '],
-                ['search' => ',\\'.$base.',', 'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use ']
-            ]
+                ['search' => ',\\'.$base.',', 'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use '],
+            ],
         ];
         $lines = false;
         $newVersion = null;
-        foreach ($patterns as $pattern){
-            if ($lines){
+        foreach ($patterns as $pattern) {
+            if ($lines) {
                 break;
             }
             [$newVersion, $lines] = Searcher::search($pattern, $tokens, 1);
         }
+
         return $newVersion;
     }
 }

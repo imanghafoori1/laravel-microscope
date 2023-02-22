@@ -33,7 +33,7 @@ class CheckStringy
                 }
 
                 if (! \class_exists(\str_replace('\\\\', '\\', $classPath))) {
-                    !self::refersToDir($classPath) && $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    ! self::refersToDir($classPath) && $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $token[2]);
                     continue;
                 }
 

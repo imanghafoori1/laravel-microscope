@@ -39,15 +39,15 @@ class CurlyBraces
 
     private static function openCurly($token, $level, $tokens, $i, $classFilePath)
     {
-        if ($token == '{' && !\in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
+        if ($token == '{' && ! \in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
             $sp = str_repeat('    ', $level);
             if ($tokens[$i + 1][0] === T_WHITESPACE) {
-                if ($tokens[$i + 1][1] !== PHP_EOL . $sp && $tokens[$i + 1][1] !== "\n" . $sp) {
-                    $tokens[$i + 1][1] = PHP_EOL . $sp;
+                if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
+                    $tokens[$i + 1][1] = PHP_EOL.$sp;
                     Refactor::saveTokens($classFilePath, $tokens);
                 }
             } else {
-                array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL . $sp]]);
+                array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
                 Refactor::saveTokens($classFilePath, $tokens);
             }
         }
@@ -55,7 +55,7 @@ class CurlyBraces
 
     private static function writePublic($level, $token, $isInClass, $i, $tokens, $absolutePath)
     {
-        if (($level !== 1) || ($token[0] !== T_FUNCTION) || !$isInClass) {
+        if (($level !== 1) || ($token[0] !== T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];
         }
 
@@ -64,7 +64,7 @@ class CurlyBraces
             $t = $t - 2;
         }
 
-        if (!\in_array($tokens[$t - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+        if (! \in_array($tokens[$t - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
             array_splice($tokens, $t, 0, [[T_WHITESPACE, ' ']]);
             array_splice($tokens, $t, 0, [[T_PUBLIC, 'public']]);
             $i += 2;

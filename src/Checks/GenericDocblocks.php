@@ -36,7 +36,7 @@ class GenericDocblocks
                 '* Handle the incoming request.',
             ]);
 
-            if (!$contain) {
+            if (! $contain) {
                 continue;
             }
             $hasReplacement = true;

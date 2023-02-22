@@ -21,7 +21,7 @@ class FacadeDocblocks
     {
         $facade = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
 
-        if (!self::isFacade($facade) or !is_string($accessor = self::getAccessor($facade))) {
+        if (! self::isFacade($facade) or ! is_string($accessor = self::getAccessor($facade))) {
             return null;
         }
 
@@ -93,7 +93,7 @@ class FacadeDocblocks
             ],
         ], $tokens);
 
-        !$lines &&
+        ! $lines &&
         [$newVersion] = Searcher::searchReplace([
             'fix' => [
                 'search' => "'<white_space>?'".$class,
