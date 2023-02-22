@@ -25,17 +25,23 @@ class CheckAll extends Command
         // turns off error logging.
         $errorPrinter->logErrors = false;
 
-        $this->call('check:psr4', ['--detailed' => $this->option('detailed'), '--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
-        $this->call('check:imports', ['--nofix' => $this->option('nofix'), '--detailed' => $this->option('detailed')]);
-        $this->call('check:events');
-        $this->call('check:gates');
-        $this->call('check:views', ['--detailed' => $this->option('detailed')]);
-        $this->call('check:routes');
-        $this->call('check:stringy_classes');
-        $this->call('check:dd');
-        $this->call('check:dead_controllers');
-        $this->call('check:early_returns', ['--nofix' => true]);
-        $this->call('check:bad_practices');
+        $callable = [
+            'check:psr4' => ['--detailed' => $this->option('detailed'), '--nofix' => $this->option('nofix'), '--force' => $this->option('force')],
+            'check:imports' => ['--nofix' => $this->option('nofix'), '--detailed' => $this->option('detailed')],
+            'check:events' => [],
+            'check:gates' => [],
+            'check:views' => ['--detailed' => $this->option('detailed')],
+            'check:routes'=> [],
+            'check:stringy_classes' => [],
+            'check:dd' => [],
+            'check:dead_controllers' => [],
+            'check:early_returns' => ['--nofix' => true],
+            'check:bad_practices' => [],
+        ];
+
+        foreach ($callable as $command => $options) {
+            $this->call($command, $options);
+        }
 
         // turns on error logging.
         $errorPrinter->logErrors = true;
