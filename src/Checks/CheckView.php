@@ -31,6 +31,7 @@ class CheckView
 
         if (! FunctionCall::isSolidString($paramTokens)) {
             self::$skippedCallsNum++;
+
             return;
         }
         self::$checkedCallsNum++;

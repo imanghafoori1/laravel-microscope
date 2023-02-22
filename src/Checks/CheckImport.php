@@ -32,7 +32,7 @@ class CheckImport
         foreach ($imports as $as => $import) {
             [$classImport, $line] = $import;
 
-            $condition = (!CheckClassReferencesAreValid::isAbsent($classImport)) or
+            $condition = (! CheckClassReferencesAreValid::isAbsent($classImport)) or
                             // for half imported namespaces
                             (\is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport))));
             if ($condition) {
