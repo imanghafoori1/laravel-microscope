@@ -6,8 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Symfony\Component\Console\Terminal;
 use ReflectionClass;
+use Symfony\Component\Console\Terminal;
 use Throwable;
 
 class ListModelsArtisanCommand extends Command
@@ -37,7 +37,7 @@ class ListModelsArtisanCommand extends Command
                     $models[$path][] = [
                         'table' => $table,
                         'class' => $classPath,
-                        'relative_path' => str_replace(base_path(), '',$class['absFilePath'])
+                        'relative_path' => str_replace(base_path(), '', $class['absFilePath']),
                     ];
                 }
             }
@@ -75,7 +75,7 @@ class ListModelsArtisanCommand extends Command
     {
         $output = $this->getOutput();
         foreach ($models as $path => $modelList) {
-            $output->writeln(' - '. $path);
+            $output->writeln(' - '.$path);
             foreach ($modelList as $model) {
                 $output->writeln('    <fg=yellow>'.$model['class'].'</>   (<fg=blue>\''.$model['table'].'\'</>)');
                 $output->writeln(str_replace('\\', '/', ErrorPrinter::getLink($model['relative_path'])));
