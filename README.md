@@ -78,7 +78,8 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:dead_controllers`](#dead_controllers)
         1. [`php artisan check:generic_docblocks`](#generic_docblocks)
         1. [`php artisan enforce:helper_functions`](#helper_functions)
-
+        1. [`php artisan list:models`](#models)
+    
      </details>
 
     - [Credits](#credits)
@@ -159,6 +160,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 |19|`php artisan check:dead_controllers`|
 |20|`php artisan check:generic_docblocks`|
 |21|`php artisan enforce:helper_functions`|
+|22|`php artisan list:models`|
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions
@@ -848,11 +850,19 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 <a name="helper_functions"></a>
 
-### `php artisan enforce:helper_functions {--folder=app/Models} {--file=SomeFile.php}`
+### `php artisan enforce:helper_functions {--folder=app/Models} {--file=SomeFile.php}`               
 
 
 - Converting Laravel facade into helper functions.
 - You can use `--folder=` or `--file=` option to narrow down the scanned folders.
+
+<a name="models"></a>
+
+### `php artisan list:models {--folder=app/Models}`               
+
+
+- It searches the project and lists the model classes.
+- You can use `--folder=` option to narrow down the scanned folders.
 
 
 And more features will be added soon. ;)
