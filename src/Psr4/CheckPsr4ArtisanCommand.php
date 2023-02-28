@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
@@ -36,8 +37,8 @@ class CheckPsr4ArtisanCommand extends Command
         $errorPrinter->printer = $this->output;
 
         $composer = ComposerJson::make();
-        $classLists = $this->getClassLists($composer);
         start:
+        $classLists = $this->getClassLists($composer);
         $errorsLists = $this->getErrorsLists($composer, $classLists);
 
         $time = round(microtime(true) - $time, 5);
@@ -113,6 +114,12 @@ class CheckPsr4ArtisanCommand extends Command
         }
 
         $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
+
+        foreach (ComposerJson::make()->readAutoloadClassMap() as $classmaps) {
+            foreach ($classmaps as $classmap) {
+                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
+            }
+        }
 
         $paths = array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
 

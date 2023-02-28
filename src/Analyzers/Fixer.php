@@ -26,7 +26,7 @@ class Fixer
 
         $correct = self::guessCorrect($classBaseName);
 
-        if (\count($correct) !== 1) {
+        if (count($correct) !== 1) {
             return [false, $correct];
         }
         $fullClassPath = $correct[0];
