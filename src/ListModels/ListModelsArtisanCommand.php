@@ -25,7 +25,7 @@ class ListModelsArtisanCommand extends Command
         $this->printList($data);
     }
 
-    private function inspectModels($classLists)
+    protected function inspectModels($classLists)
     {
         $models = [];
         foreach ($classLists as $path => $classList) {
@@ -46,24 +46,24 @@ class ListModelsArtisanCommand extends Command
         return $models;
     }
 
-    private function getPathFilter(string $folder)
+    protected function getPathFilter(string $folder)
     {
         return function ($absFilePath, $fileName) use ($folder) {
-            return strpos($absFilePath, $folder);
+            return strpos(str_replace(base_path(), '', $absFilePath), $folder);
         };
     }
 
-    private function getModelsLists()
+    protected function getModelsLists()
     {
         $folder = ltrim($this->option('folder'), '=');
         $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
             try {
-                $reflaction = new ReflectionClass($currentNamespace.'\\'.$class);
+                $reflection = new ReflectionClass($currentNamespace.'\\'.$class);
             } catch (Throwable $e) {
                 return false;
             }
 
-            return $reflaction->isSubclassOf(Model::class);
+            return $reflection->isSubclassOf(Model::class);
         };
 
         $pathFilter = $folder ? $this->getPathFilter($folder) : null;
@@ -71,7 +71,7 @@ class ListModelsArtisanCommand extends Command
         return ComposerJson::make()->getClasslists($filter, $pathFilter);
     }
 
-    private function printList($models)
+    protected function printList($models)
     {
         $output = $this->getOutput();
         foreach ($models as $path => $modelList) {
