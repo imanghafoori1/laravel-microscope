@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Psr4;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Imanghafoori\Filesystem\Filesystem;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -112,9 +113,11 @@ class HandleErrors
         }
 
         $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
-
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $classmaps) {
+        $basePath = base_path();
+        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
             foreach ($classmaps as $classmap) {
+                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
+                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
                 $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
             }
         }

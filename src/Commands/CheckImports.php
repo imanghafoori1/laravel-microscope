@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -48,8 +49,19 @@ class CheckImports extends Command
 
         $this->checkFilePaths($routeFiles);
 
+        $paths = ComposerJson::readAutoloadFiles();
+
+        $basePath = base_path();
+        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
+            foreach ($classmaps as $classmap) {
+                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
+                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
+                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
+            }
+        }
+
         $this->checkFilePaths(FilePath::removeExtraPaths(
-            ComposerJson::readAutoloadFiles(),
+            $paths,
             $fileName,
             $folder
         ));
