@@ -17,8 +17,8 @@ class CheckPsr4ArtisanCommand extends Command
         {--s|nofix : Skips fixing namespaces and only reports them.}
         {--o|force-ref-fix : Fix references without asking.}
         {--r|no-ref-fix : Skips searching for references to fix them.}
-        {--w|watch} : Re-runs the command every 8 seconds.
-        {--folder=} : Filter based on partial folder name.';
+        {--w|watch : Re-runs the command every 8 seconds.}
+        {--folder= : Filter based on partial folder name.}';
 
     protected $description = 'Checks the validity of namespaces';
 
