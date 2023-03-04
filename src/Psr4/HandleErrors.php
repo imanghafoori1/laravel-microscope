@@ -2,12 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Psr4;
 
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Composer\ClassMapGenerator\ClassMapGenerator;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+
 class HandleErrors
 {
     private static $pathsForReferenceFix = [];
@@ -48,7 +49,6 @@ class HandleErrors
             CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
         }
     }
-
 
     private static function afterReferenceFix()
     {
