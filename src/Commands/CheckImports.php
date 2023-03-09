@@ -28,54 +28,59 @@ class CheckImports extends Command
 
     protected $description = 'Checks the validity of use statements';
 
+    /**
+     * @throws \Exception
+     */
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');
-        $this->line('');
+
         $this->info('Checking imports...');
+        $this->line('');
 
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
+        // Set config for nofix option
+        if ($this->option('nofix')) {
+            config(['microscope.no_fix' => true]);
+        }
 
-        $errorPrinter->printer = $this->output;
+        // Set output for error printer
+        $errorPrinter->setOutput($this->output);
 
+        // Get file and folder options
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $routeFiles = FilePath::removeExtraPaths(
-            RoutePaths::get(),
-            $fileName,
-            $folder
-        );
-
+        // Check route files
+        $routeFiles = RoutePaths::get();
+        $routeFiles = FilePath::removeExtraPaths($routeFiles, $fileName, $folder);
         $this->checkFilePaths($routeFiles);
 
+        // Check autoload files
         $paths = ComposerJson::readAutoloadFiles();
-
+        $classMaps = ComposerJson::make()->readAutoloadClassMap();
         $basePath = base_path();
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
-            foreach ($classmaps as $classmap) {
-                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
+        foreach ($classMaps as $compPath => $classMapsInPath) {
+            foreach ($classMapsInPath as $classMap) {
+                $compPath = trim($compPath, '/') ? trim($compPath, '/') . DIRECTORY_SEPARATOR : '';
+                $classMap = $basePath . DIRECTORY_SEPARATOR . $compPath . $classMap;
+                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classMap)));
             }
         }
+        $paths = FilePath::removeExtraPaths($paths, $fileName, $folder);
+        $this->checkFilePaths($paths);
 
-        $this->checkFilePaths(FilePath::removeExtraPaths(
-            $paths,
-            $fileName,
-            $folder
-        ));
-
-        $foldersStats = $this->checkFolders([
+        // Check folders for config, seeders, migrations, and factories
+        $folders = [
             'config' => app()->configPath(),
             'seeds' => LaravelPaths::seedersDir(),
             'migrations' => LaravelPaths::migrationDirs(),
             'factories' => LaravelPaths::factoryDirs(),
-        ], $fileName, $folder);
+        ];
+        $foldersStats = $this->checkFolders($folders, $fileName, $folder);
 
+        // Check PSR-4 loaded classes for references
         $paramProvider = function ($tokens) {
             $imports = ParseUseStatement::parseUseStatements($tokens);
-
             return $imports[0] ?: [$imports[1]];
         };
         FacadeAliases::$command = $this;
@@ -84,19 +89,22 @@ class CheckImports extends Command
             FacadeAliases::class,
         ], $paramProvider, $fileName, $folder);
 
-        // Checks the blade files for class references.
+        // Check blade files for class references
         $bladeStats = BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
 
+        // Finish command and report results
         $this->finishCommand($errorPrinter);
         CheckImportReporter::report($this, $psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
 
+        // Print time and thank message if applicable
         $errorPrinter->printTime();
-
         if (random_int(1, 7) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
             ErrorPrinter::thanks($this);
         }
+
         $this->line('');
 
+        // Return exit code
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
