@@ -6,7 +6,7 @@ use Illuminate\View\Compilers\BladeCompiler;
 
 class SpyBladeCompiler extends BladeCompiler
 {
-    public function compileExtends($expression)
+    public function compileExtends($expression): string
     {
         $expression = $this->stripParentheses($expression);
 

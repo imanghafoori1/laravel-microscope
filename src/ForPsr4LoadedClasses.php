@@ -19,7 +19,7 @@ class ForPsr4LoadedClasses
      */
     public static $checkedFilesNum = 0;
 
-    public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
+    public static function check($checks, $params = [], $includeFile = '', $includeFolder = ''): array
     {
         $stats = [];
         foreach (Analyzers\ComposerJson::readAutoload() as $composerPath => $psr4) {
@@ -59,7 +59,7 @@ class ForPsr4LoadedClasses
         return $stats;
     }
 
-    public static function classList()
+    public static function classList(): array
     {
         if (self::$allNamespaces) {
             return self::$allNamespaces;

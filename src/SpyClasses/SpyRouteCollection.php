@@ -36,12 +36,12 @@ class SpyRouteCollection extends RouteCollection
         parent::addToCollections($route);
     }
 
-    private function isItSelf($info)
+    private function isItSelf($info): bool
     {
         return $info[0] == $info[1];
     }
 
-    private function _getDomainAndUrl($route)
+    private function _getDomainAndUrl($route): string
     {
         if (version_compare(app()->version(), '5.5.0', '<')) {
             $getDomain = 'domain';

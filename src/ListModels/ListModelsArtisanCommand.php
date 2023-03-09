@@ -25,7 +25,7 @@ class ListModelsArtisanCommand extends Command
         $this->printList($data);
     }
 
-    protected function inspectModels($classLists)
+    protected function inspectModels($classLists): array
     {
         $models = [];
         foreach ($classLists as $path => $classList) {
@@ -46,7 +46,7 @@ class ListModelsArtisanCommand extends Command
         return $models;
     }
 
-    protected function getPathFilter(string $folder)
+    protected function getPathFilter(string $folder): \Closure
     {
         return function ($absFilePath, $fileName) use ($folder) {
             return strpos(str_replace(base_path(), '', $absFilePath), $folder);

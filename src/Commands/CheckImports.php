@@ -28,7 +28,7 @@ class CheckImports extends Command
 
     protected $description = 'Checks the validity of use statements';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->line('');

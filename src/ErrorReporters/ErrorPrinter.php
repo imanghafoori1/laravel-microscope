@@ -152,7 +152,7 @@ class ErrorPrinter
         $this->doesNotExist($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
     }
 
-    public function color($msg)
+    public function color($msg): string
     {
         return "<fg=blue>$msg</>";
     }
@@ -195,7 +195,7 @@ class ErrorPrinter
         }
     }
 
-    public static function getLink($path, $lineNumber = 4)
+    public static function getLink($path, $lineNumber = 4): string
     {
         $relativePath = FilePath::normalize(trim($path, '\\/'));
 
@@ -233,7 +233,7 @@ class ErrorPrinter
         }
     }
 
-    private static function possibleFixMsg($pieces)
+    private static function possibleFixMsg($pieces): string
     {
         $fixes = \implode("\n - ", $pieces);
         $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;

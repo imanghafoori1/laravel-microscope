@@ -16,6 +16,9 @@ use RuntimeException;
 
 class CheckClassReferencesAreValid
 {
+    /**
+     * @throws ErrorException
+     */
     public static function check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params)
     {
         try {
@@ -69,12 +72,12 @@ class CheckClassReferencesAreValid
         return self::checkNotImportedClasses($tokens, $absFilePath, $imports);
     }
 
-    public static function isAbsent($class)
+    public static function isAbsent($class): bool
     {
         return ! \class_exists($class) && ! \interface_exists($class) && ! \trait_exists($class);
     }
 
-    public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
+    public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false): bool
     {
         $printer = app(ErrorPrinter::class);
         $fix = false;
@@ -125,7 +128,7 @@ class CheckClassReferencesAreValid
         return $fix;
     }
 
-    private static function fixClassReference($absFilePath, $class, $line, $namespace)
+    private static function fixClassReference($absFilePath, $class, $line, $namespace): array
     {
         $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
 
@@ -207,7 +210,7 @@ class CheckClassReferencesAreValid
         return $tokens;
     }
 
-    public static function findClassRefs($tokens, $absFilePath, $imports)
+    public static function findClassRefs($tokens, $absFilePath, $imports): array
     {
         try {
             //[$classReferences, $hostNamespace] = ParseUseStatement::findClassReferences($tokens);

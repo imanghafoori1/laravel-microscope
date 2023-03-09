@@ -29,7 +29,7 @@ class CheckRouteCalls
             $params = FunctionCall::readParameters($tokens, $i);
 
             $param1 = null;
-            // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+            // it should be a hard-coded string which is not concatenated like this: 'hi'. $there
             $paramTokens = $params[0] ?? ['_', '_'];
             FunctionCall::isSolidString($paramTokens) && ($param1 = $params[0]);
 
@@ -57,7 +57,7 @@ class CheckRouteCalls
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
     }
 
-    private static function redirectRouteTokens()
+    private static function redirectRouteTokens(): array
     {
         return [
             '(',

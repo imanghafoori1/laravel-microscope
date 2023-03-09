@@ -41,7 +41,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
     }
 
-    public static function reportResult($autoload, $stats, $time, $typesStats)
+    public static function reportResult($autoload, $stats, $time, $typesStats): array
     {
         $messages = [];
         $separator = function ($color) {
@@ -81,7 +81,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $messages;
     }
 
-    public static function noErrorFound($time)
+    public static function noErrorFound($time): array
     {
         $output = [];
         $output[] = [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'];
@@ -91,7 +91,7 @@ class CheckPsr4Printer extends ErrorPrinter
         return $output;
     }
 
-    public static function getErrorsCount($errorCount, $time)
+    public static function getErrorsCount($errorCount, $time): array
     {
         if ($errorCount) {
             return [[PHP_EOL.$errorCount.' error(s) found.', 'warn']];

@@ -16,7 +16,7 @@ class CheckEndIf extends Command
 
     protected $description = 'replaces endif with curly brackets.';
 
-    public function handle()
+    public function handle(): ?int
     {
         if (! $this->startWarning()) {
             return null;

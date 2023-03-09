@@ -40,7 +40,7 @@ class CheckClassReferences
         }
     }
 
-    private static function exists($class)
+    private static function exists($class): bool
     {
         try {
             return class_exists($class) || interface_exists($class) || function_exists($class);
@@ -51,7 +51,7 @@ class CheckClassReferences
         }
     }
 
-    private static function getUnusedCorrectImports($unusedRefs, $wrongImports)
+    private static function getUnusedCorrectImports($unusedRefs, $wrongImports): array
     {
         $wrongs = [];
         foreach ($wrongImports as $import) {
@@ -70,7 +70,7 @@ class CheckClassReferences
         return $unusedCorrectImports;
     }
 
-    private static function getWrongClassRefs($expandedClasses)
+    private static function getWrongClassRefs($expandedClasses): array
     {
         $wrongImports = [];
         foreach ($expandedClasses as $class) {
@@ -82,7 +82,7 @@ class CheckClassReferences
         return $wrongImports;
     }
 
-    private static function getBadImports($tokens)
+    private static function getBadImports($tokens): array
     {
         $imports = ParseUseStatement::parseUseStatements($tokens);
         $imports = $imports[0] ?: [$imports[1]];

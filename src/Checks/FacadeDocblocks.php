@@ -45,6 +45,9 @@ class FacadeDocblocks
         self::addDocBlocks($accessor, $facade, $tokens, $classFilePath);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private static function addDocBlocks(string $accessor, $facade, $tokens, SplFileInfo $classFilePath)
     {
         $publicMethods = (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -81,7 +84,7 @@ class FacadeDocblocks
         return is_object($accessor) ? get_class($accessor) : $accessor;
     }
 
-    protected static function isFacade($class)
+    protected static function isFacade($class): bool
     {
         return class_exists($class) && is_subclass_of($class, Facade::class);
     }

@@ -13,7 +13,7 @@ class ClassifyStrings extends Command
 
     protected $description = 'Replaces string references with ::class version of them.';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         $this->info('Checking stringy classes...');
         app()->singleton('current.command', function () {

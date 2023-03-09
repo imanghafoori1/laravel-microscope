@@ -21,7 +21,7 @@ class EnforceHelpers extends Command
 
     protected $description = 'Enforces helper functions over laravel internal facades.';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');

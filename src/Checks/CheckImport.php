@@ -10,7 +10,7 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImport
 {
-    private static function checkImports($currentNamespace, $className, $absPath, $tokens)
+    private static function checkImports($currentNamespace, $className, $absPath, $tokens): bool
     {
         $namespacedClassName = self::fullNamespace($currentNamespace, $className);
 
@@ -24,7 +24,7 @@ class CheckImport
         return $currentNamespace ? $currentNamespace.'\\'.$class : $class;
     }
 
-    private static function checkImportedClassesExist($imports, $absFilePath)
+    private static function checkImportedClassesExist($imports, $absFilePath): bool
     {
         $printer = app(ErrorPrinter::class);
         $fixed = false;
@@ -69,7 +69,7 @@ class CheckImport
         return $isCorrected;
     }
 
-    private static function isAliased($class, $as)
+    private static function isAliased($class, $as): bool
     {
         return class_basename($class) !== $as;
     }

@@ -74,7 +74,7 @@ class ExtractBladePartial
         return $tokens;
     }
 
-    public static function find($name)
+    public static function find($name): ?string
     {
         if (self::hasHintInformation($name = \trim($name))) {
             return self::findNamespacedView($name);
@@ -83,14 +83,14 @@ class ExtractBladePartial
         return self::findInPaths($name, View::getFinder()->getPaths());
     }
 
-    protected static function getPossibleViewFiles($name)
+    protected static function getPossibleViewFiles($name): array
     {
         return array_map(function ($extension) use ($name) {
             return \str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
         }, ['blade.php']);
     }
 
-    protected static function findNamespacedView($name)
+    protected static function findNamespacedView($name): ?string
     {
         [$namespace, $view] = self::parseNamespaceSegments($name);
 
@@ -124,7 +124,7 @@ class ExtractBladePartial
         }
     }
 
-    public static function hasHintInformation($name)
+    public static function hasHintInformation($name): bool
     {
         return strpos($name, '::') > 0;
     }

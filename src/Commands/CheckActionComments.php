@@ -32,7 +32,7 @@ class CheckActionComments extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private static function findDefinedRouteActions()
+    private static function findDefinedRouteActions(): array
     {
         $results = [];
         foreach (app('router')->getRoutes()->getRoutes() as $route) {

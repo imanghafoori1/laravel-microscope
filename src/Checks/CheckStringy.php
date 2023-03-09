@@ -71,7 +71,7 @@ class CheckStringy
         return str_replace('\\\\', '\\', $string);
     }
 
-    private function isPossiblyClassyString($namespaces, $classPath)
+    private function isPossiblyClassyString($namespaces, $classPath): bool
     {
         $chars = ['@', ' ', ',', ':', '/', '.', '-'];
 
@@ -89,7 +89,7 @@ class CheckStringy
         return $command->getOutput()->confirm($text, true);
     }
 
-    private static function refersToDir(string $classPath)
+    private static function refersToDir(string $classPath): bool
     {
         return is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classPath)));
     }

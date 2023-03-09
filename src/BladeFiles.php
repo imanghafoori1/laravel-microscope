@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($checkers, $fileName = '', $folder = '')
+    public static function check($checkers, $fileName = '', $folder = ''): array
     {
         $stats = [];
         $compiler = app('microscope.blade.compiler');
@@ -35,7 +36,7 @@ class BladeFiles
         return $hints;
     }
 
-    public static function checkPaths($paths, $checkers, $fileName, $folder)
+    public static function checkPaths($paths, $checkers, $fileName, $folder): array
     {
         $stats = [];
         foreach ($paths as $path) {
@@ -50,7 +51,7 @@ class BladeFiles
 
             foreach ($files as $blade) {
                 /**
-                 * @var \Symfony\Component\Finder\SplFileInfo $blade
+                 * @var SplFileInfo $blade
                  */
                 $absPath = $blade->getPathname();
 

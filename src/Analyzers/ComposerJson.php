@@ -16,7 +16,7 @@ class ComposerJson
         return self::make()->readAutoload($purgeAutoload);
     }
 
-    public static function readAutoloadFiles()
+    public static function readAutoloadFiles(): array
     {
         $basePath = base_path();
         $psr4Autoloads = self::make()->readAutoloadFiles();

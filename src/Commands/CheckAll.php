@@ -17,7 +17,7 @@ class CheckAll extends Command
 
     protected $commandType = 'checks';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         $t1 = microtime(true);
         $errorPrinter->printer = $this->output;

@@ -46,12 +46,12 @@ class SpyGate extends Gate
         }
     }
 
-    private function getWrongCallbackMessage($callback, $ability)
+    private function getWrongCallbackMessage($callback, $ability): string
     {
         return "The $callback callback for Gate, does not refer to a resolvable class, for ability: $ability";
     }
 
-    private function getWrongMethod($callback, $ability)
+    private function getWrongMethod($callback, $ability): string
     {
         return "The $callback callback for Gate, does not refer to a valid method, for ability: $ability";
     }
@@ -61,7 +61,7 @@ class SpyGate extends Gate
         return app(ErrorPrinter::class)->pended[] = $message;
     }
 
-    private function getGateOverriddenMsg($ability, $callback1, $callback2)
+    private function getGateOverriddenMsg($ability, $callback1, $callback2): string
     {
         return "The Gate definition '$ability' is overridden. loser:".$callback1.' Winner: '.$callback2;
     }

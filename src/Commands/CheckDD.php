@@ -20,7 +20,7 @@ class CheckDD extends Command
 
     protected $description = 'Checks the debug functions';
 
-    public function handle()
+    public function handle(): int
     {
         event('microscope.start.command');
         $this->info('Checking dd...');

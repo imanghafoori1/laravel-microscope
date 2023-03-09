@@ -25,7 +25,7 @@ class ActionsComments
         }
     }
 
-    protected static function checkActions($tokens, $fullNamespace, $path)
+    protected static function checkActions($tokens, $fullNamespace, $path): array
     {
         $methods = ClassMethods::read($tokens)['methods'];
 
@@ -116,7 +116,7 @@ class ActionsComments
         return view($viewFile, $viewData)->render();
     }
 
-    public static function getCallsiteInfo($methods, $route)
+    public static function getCallsiteInfo($methods, $route): array
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $file = $callsite[0]['file'] ?? '';

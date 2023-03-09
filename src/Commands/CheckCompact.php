@@ -19,7 +19,7 @@ class CheckCompact extends Command
 
     protected $description = 'Checks that compact() function calls are correct';
 
-    public function handle()
+    public function handle(): int
     {
         event('microscope.start.command');
         $this->info('Checking compact() calls, fast and furious!  mm(~_~)mm  ');
@@ -92,7 +92,7 @@ class CheckCompact extends Command
         }
     }
 
-    private function collectSignatureVars($tokens, $i)
+    private function collectSignatureVars($tokens, $i): array
     {
         [, $signatures,$conditionCloseIndex] = Ifs::readCondition($tokens, $i);
         [$nextToken, $startNextToken] = TokenManager::getNextToken($tokens, $conditionCloseIndex);

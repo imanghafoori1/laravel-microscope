@@ -51,7 +51,7 @@ class HandleErrors
         }
     }
 
-    private static function afterReferenceFix()
+    private static function afterReferenceFix(): \Closure
     {
         return function ($path, $changedLineNums, $content) {
             Filesystem::$fileSystem::file_put_contents($path, $content);
@@ -63,7 +63,7 @@ class HandleErrors
         };
     }
 
-    private static function beforeReferenceFix()
+    private static function beforeReferenceFix(): \Closure
     {
         $command = self::$command;
         if ($command->option('force-ref-fix')) {
@@ -96,7 +96,7 @@ class HandleErrors
         CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
     }
 
-    private static function getPathsForReferenceFix()
+    private static function getPathsForReferenceFix(): array
     {
         if (self::$pathsForReferenceFix) {
             return self::$pathsForReferenceFix;
