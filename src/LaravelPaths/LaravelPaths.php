@@ -9,7 +9,6 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Throwable;
 
 class LaravelPaths
@@ -33,7 +32,7 @@ class LaravelPaths
         }
     }
 
-    public static function migrationDirs(): array
+    public static function migrationDirs()
     {
         // normalize the migration paths
         $migrationDirs = [];
@@ -56,7 +55,7 @@ class LaravelPaths
      * @param  string  $path
      * @return bool
      */
-    public static function isIgnored($path): bool
+    public static function isIgnored($path)
     {
         $ignorePatterns = config('microscope.ignore');
 
@@ -73,7 +72,7 @@ class LaravelPaths
         return false;
     }
 
-    public static function bladeFilePaths(): array
+    public static function bladeFilePaths()
     {
         $bladeFiles = [];
         $hints = self::getNamespacedPaths();
@@ -84,7 +83,7 @@ class LaravelPaths
                 $files = is_dir($path) ? Finder::create()->name('*.blade.php')->files()->in($path) : [];
                 foreach ($files as $blade) {
                     /**
-                     * @var SplFileInfo $blade
+                     * @var \Symfony\Component\Finder\SplFileInfo $blade
                      */
                     $bladeFiles[] = $blade->getRealPath();
                 }
@@ -102,7 +101,7 @@ class LaravelPaths
         return $hints;
     }
 
-    public static function collectFilesInNonPsr4Paths(): array
+    public static function collectFilesInNonPsr4Paths()
     {
         $paths = [
             RoutePaths::get(),
@@ -116,7 +115,7 @@ class LaravelPaths
         return self::mergePaths($paths);
     }
 
-    private static function mergePaths($paths): array
+    private static function mergePaths($paths)
     {
         $all = [];
         foreach ($paths as $p) {

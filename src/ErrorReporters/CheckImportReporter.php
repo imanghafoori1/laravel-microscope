@@ -21,7 +21,7 @@ class CheckImportReporter
         self::printErrorsCount($command);
     }
 
-    private static function printFileCounts(CheckImports $command, $foldersStats, $bladeStats, int $countRouteFiles): void
+    private static function printFileCounts(CheckImports $command, $foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall'."</>\n";
         $output .= '   - <fg=blue>'.ForPsr4LoadedClasses::$checkedFilesNum.'</> class'.(ForPsr4LoadedClasses::$checkedFilesNum <= 1 ? '' : 'es').PHP_EOL;
@@ -43,6 +43,7 @@ class CheckImportReporter
         $output .= '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? '' : 's').PHP_EOL;
         $command->line($output);
 
+        return $output;
     }
 
     private static function printErrorsCount(CheckImports $command): void
@@ -87,7 +88,7 @@ class CheckImportReporter
         return max($lens);
     }
 
-    private static function foldersStats($foldersStats, string $output): string
+    private static function foldersStats($foldersStats, string $output)
     {
         foreach ($foldersStats as $fileType => $stats) {
             $output .= '   - <fg=blue>'.$stats['fileCount'].'</> '.$fileType;

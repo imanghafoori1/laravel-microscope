@@ -32,7 +32,7 @@ class PendingError
      * @param  string  $header
      * @return $this
      */
-    public function header(string $header): PendingError
+    public function header(string $header)
     {
         $this->header = $header;
 
@@ -57,10 +57,10 @@ class PendingError
      * Sets the link to the source error.
      *
      * @param $path
-     * @param int $lineNumber
+     * @param  int  $lineNumber
      * @return $this
      */
-    public function link($path = null, int $lineNumber = 4): PendingError
+    public function link($path = null, $lineNumber = 4)
     {
         $this->setMaxLength(strlen($path) - 13);
         $this->linkPath = $path;
@@ -89,7 +89,7 @@ class PendingError
         return $this->linkPath;
     }
 
-    public function getLinkLineNumber(): int
+    public function getLinkLineNumber()
     {
         return $this->linkLineNumber;
     }
