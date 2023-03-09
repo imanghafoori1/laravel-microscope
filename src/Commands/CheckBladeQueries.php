@@ -16,7 +16,7 @@ class CheckBladeQueries extends Command
 
     protected $description = 'Checks db queries in blade files';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Checking blade files for db queries...');

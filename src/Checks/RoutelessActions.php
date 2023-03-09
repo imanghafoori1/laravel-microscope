@@ -6,11 +6,12 @@ use Illuminate\Routing\Controller;
 use Imanghafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
+use ReflectionException;
 use Throwable;
 
 class RoutelessActions
 {
-    public static function getControllerActions($methods)
+    public static function getControllerActions($methods): array
     {
         $orphanMethods = [];
         foreach ($methods as $method) {
@@ -36,7 +37,7 @@ class RoutelessActions
         return $orphanMethods;
     }
 
-    public static function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
+    public static function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace): string
     {
         $absFilePath = $classFilePath->getRealPath();
         $className = $classFilePath->getFilename();
@@ -56,14 +57,14 @@ class RoutelessActions
         }
     }
 
-    public static function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
+    public static function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace): string
     {
         $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
 
         return \trim($fullNamespace, '.php');
     }
 
-    protected function findOrphanActions($tokens, $fullNamespace)
+    protected function findOrphanActions($tokens, $fullNamespace): array
     {
         $class = ClassMethods::read($tokens);
 
@@ -90,6 +91,9 @@ class RoutelessActions
         (new self())->checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
     {
         $errorPrinter = resolve(ErrorPrinter::class);
@@ -111,7 +115,7 @@ class RoutelessActions
         }
     }
 
-    public static function classAtMethod($fullNamespace, $methodName)
+    public static function classAtMethod($fullNamespace, $methodName): string
     {
         ($methodName == '__invoke') ? ($methodName = '') : ($methodName = '@'.$methodName);
 

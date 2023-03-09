@@ -10,7 +10,7 @@ use Throwable;
 
 class RoutePaths
 {
-    public static function get()
+    public static function get(): array
     {
         $routePaths = [];
 
@@ -48,7 +48,7 @@ class RoutePaths
         return $routePaths;
     }
 
-    private static function fullPath($calls, $providerClass, $path)
+    private static function fullPath($calls, $providerClass, $path): string
     {
         $fullPath = '';
 
@@ -67,7 +67,7 @@ class RoutePaths
         return FilePath::normalize(base_path($fullPath));
     }
 
-    private static function readLoadedRouteFiles($path)
+    private static function readLoadedRouteFiles($path): array
     {
         $tokens = token_get_all(file_get_contents(base_path($path).'.php'));
 

@@ -105,12 +105,12 @@ class SpyDispatcher extends Dispatcher
         }
     }
 
-    private function stringify($event)
+    private function stringify($event): string
     {
         return is_object($event) ? get_class($event) : $event;
     }
 
-    protected function noClass($event, $class, $method)
+    protected function noClass($event, $class, $method): string
     {
         $at = \implode('@', [$class, $method]);
         $e = $this->stringify($event);
@@ -118,7 +118,7 @@ class SpyDispatcher extends Dispatcher
         return 'The class of '.$at.' can not be resolved as a listener for "'.$e.'" event';
     }
 
-    protected function noMethod($event, $class, $method)
+    protected function noMethod($event, $class, $method): string
     {
         $at = \implode('@', [$class, $method]);
         $e = $this->stringify($event);
@@ -126,7 +126,7 @@ class SpyDispatcher extends Dispatcher
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
     }
 
-    protected function getTypeHintedClasses($listenerObj, $methodName)
+    protected function getTypeHintedClasses($listenerObj, $methodName): ?array
     {
         try {
             $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
@@ -164,7 +164,7 @@ class SpyDispatcher extends Dispatcher
         return $listeners;
     }
 
-    private function stringifyClosure($listener)
+    private function stringifyClosure($listener): string
     {
         try {
             $reflection = new ReflectionFunction($listener);

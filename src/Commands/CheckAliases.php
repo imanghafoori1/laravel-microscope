@@ -17,7 +17,7 @@ class CheckAliases extends Command
 
     protected $description = 'Replaces facade aliases with full namespace';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Checking Aliases...');

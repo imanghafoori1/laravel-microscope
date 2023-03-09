@@ -21,7 +21,7 @@ class CheckIsQuery
         }
     }
 
-    public static function isQueryClass($class)
+    public static function isQueryClass($class): bool
     {
         $queryBuilder = ['\\'.DB::class, DB::class, '\DB', 'DB'];
 

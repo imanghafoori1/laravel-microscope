@@ -36,7 +36,7 @@ class NamespaceFixer
         }
     }
 
-    private static function getNewLine($incorrectNamespace, $correctNamespace)
+    private static function getNewLine($incorrectNamespace, $correctNamespace): array
     {
         if ($incorrectNamespace) {
             return [$incorrectNamespace, $correctNamespace];

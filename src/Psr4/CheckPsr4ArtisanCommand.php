@@ -79,7 +79,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function countClasses($classLists)
+    private function countClasses($classLists): array
     {
         $stats = [];
         $typesStats = [
@@ -104,7 +104,7 @@ class CheckPsr4ArtisanCommand extends Command
         return [$stats, $typesStats];
     }
 
-    private function getPathFilter(string $folder)
+    private function getPathFilter(string $folder): \Closure
     {
         return function ($absFilePath, $fileName) use ($folder) {
             return strpos($absFilePath, $folder);

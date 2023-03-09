@@ -18,7 +18,7 @@ class CheckDeadControllers extends Command
 
     protected $description = 'Checks that public controller methods have routes.';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Checking for route-less controllers...');

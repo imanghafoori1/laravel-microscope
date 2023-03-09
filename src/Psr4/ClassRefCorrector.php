@@ -27,7 +27,7 @@ class ClassRefCorrector
         }
     }
 
-    private static function fixRefs($path, $changes)
+    private static function fixRefs($path, $changes): array
     {
         $lines = file($path);
         $changedLineNums = [];
@@ -47,7 +47,7 @@ class ClassRefCorrector
         return [$changedLineNums, implode('', $lines)];
     }
 
-    private static function possibleOccurrence($olds)
+    private static function possibleOccurrence($olds): array
     {
         $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '?', ',', '&'];
 
@@ -61,7 +61,7 @@ class ClassRefCorrector
         return $occurrences;
     }
 
-    private static function hasReference($lineContent, array $olds)
+    private static function hasReference($lineContent, array $olds): bool
     {
         return self::str_contains(
             str_replace(' ', '', $lineContent),
@@ -69,7 +69,7 @@ class ClassRefCorrector
         );
     }
 
-    private static function str_contains($haystack, $needles)
+    private static function str_contains($haystack, $needles): bool
     {
         foreach ($needles as $needle) {
             if (mb_strpos($haystack, $needle) !== false) {

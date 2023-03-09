@@ -11,12 +11,12 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class Fixer
 {
-    private static function guessCorrect($classBaseName)
+    private static function guessCorrect($classBaseName): array
     {
         return ForPsr4LoadedClasses::classList()[$classBaseName] ?? [];
     }
 
-    public static function fixReference($absPath, $inlinedClassRef, $lineNum)
+    public static function fixReference($absPath, $inlinedClassRef, $lineNum): array
     {
         if (config('microscope.no_fix')) {
             return [false, []];
@@ -61,7 +61,7 @@ class Fixer
         return [FileManipulator::insertNewLine($absPath, "use $fullClassPath;", $lineNum), $correct];
     }
 
-    public static function fixImport($absPath, $import, $lineNum, $isAliased)
+    public static function fixImport($absPath, $import, $lineNum, $isAliased): array
     {
         if (config('microscope.no_fix')) {
             return [false, []];

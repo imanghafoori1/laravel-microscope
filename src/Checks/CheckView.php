@@ -26,7 +26,7 @@ class CheckView
     {
         $params = FunctionCall::readParameters($tokens, $i);
 
-        // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+        // it should be a hard-coded string which is not concatenated like this: 'hi'. $there
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
         if (FunctionCall::isSolidString($paramTokens)) {

@@ -62,7 +62,7 @@ class CheckRefactorsCommand extends Command
         return file_get_contents(__DIR__.'/search_replace.stub');
     }
 
-    private function normalizePatterns($refactors)
+    private function normalizePatterns($refactors): array
     {
         foreach ($refactors as $i => $ref) {
             isset($ref['directory']) && $refactors[$i]['directory'] = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $ref['directory']);
@@ -71,7 +71,7 @@ class CheckRefactorsCommand extends Command
         return $refactors;
     }
 
-    private function filter($name, $tag, $patterns)
+    private function filter($name, $tag, $patterns): array
     {
         if ($name && isset($patterns[$name])) {
             return [$name => $patterns[$name]];

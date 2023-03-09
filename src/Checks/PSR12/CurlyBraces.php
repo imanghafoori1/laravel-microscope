@@ -58,7 +58,7 @@ class CurlyBraces
         }
     }
 
-    private static function writePublic($level, $token, $isInClass, $i, $tokens, $absolutePath)
+    private static function writePublic($level, $token, $isInClass, $i, $tokens, $absolutePath): array
     {
         if (($level !== 1) || ($token[0] !== T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];

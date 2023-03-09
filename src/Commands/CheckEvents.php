@@ -19,9 +19,9 @@ class CheckEvents extends Command
      * Execute the console command.
      *
      * @param  ErrorPrinter  $errorPrinter
-     * @return mixed
+     * @return int
      */
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Checking events...');

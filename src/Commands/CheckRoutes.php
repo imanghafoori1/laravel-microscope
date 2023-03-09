@@ -26,7 +26,7 @@ class CheckRoutes extends Command
 
     protected $description = 'Checks the validity of route definitions';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle(ErrorPrinter $errorPrinter): int
     {
         event('microscope.start.command');
         $this->info('Checking route definitions...');
@@ -55,7 +55,7 @@ class CheckRoutes extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private function getRouteId($route)
+    private function getRouteId($route): string
     {
         if ($routeName = $route->getName()) {
             $msg = 'name: "'.$routeName.'"';

@@ -24,7 +24,7 @@ class CheckViewFilesExistence
         }
     }
 
-    private static function isEnvMake($tokens, $i)
+    private static function isEnvMake($tokens, $i): bool
     {
         $varName = '$__env';
         $methods = [
@@ -46,12 +46,12 @@ class CheckViewFilesExistence
         BladeFile::warn($absPath, $tokens[$i + 4][2], $viewName);
     }
 
-    private static function isVariable($token, string $varName)
+    private static function isVariable($token, string $varName): bool
     {
         return ($token[0] == T_VARIABLE) && ($token[1] == $varName);
     }
 
-    private static function isMethodCall($tokens, $i, $varName, $methods)
+    private static function isMethodCall($tokens, $i, $varName, $methods): bool
     {
         return self::isVariable($tokens[$i], $varName) && \in_array($tokens[$i + 2][1] ?? null, $methods);
     }

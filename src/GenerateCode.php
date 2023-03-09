@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Stubs\ServiceProviderStub;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;
+use Symfony\Component\Finder\SplFileInfo;
 
 class GenerateCode
 {
@@ -24,7 +25,7 @@ class GenerateCode
     {
         foreach ($paths as $classFilePath) {
             /**
-             * @var $classFilePath \Symfony\Component\Finder\SplFileInfo
+             * @var $classFilePath SplFileInfo
              */
             if (! Str::endsWith($classFilePath->getFilename(), ['ServiceProvider.php'])) {
                 continue;
@@ -59,7 +60,7 @@ class GenerateCode
      * @param  string  $path
      * @return string
      */
-    protected static function makeDirectory($path)
+    protected static function makeDirectory($path): string
     {
         if (! is_dir($path)) {
             @mkdir($path, 0777, true);
@@ -73,7 +74,7 @@ class GenerateCode
         return $command->getOutput()->confirm('Do you want to generate a service provider: '.$name, true);
     }
 
-    private static function isProvidersKey($tokens, $i)
+    private static function isProvidersKey($tokens, $i): bool
     {
         $token = $tokens[$i];
 
@@ -82,7 +83,7 @@ class GenerateCode
             \in_array(T_DOUBLE_ARROW, [$tokens[$i + 1][0], $tokens[$i + 2][0]], true);
     }
 
-    private static function addToProvidersArray($providerPath)
+    private static function addToProvidersArray($providerPath): array
     {
         $tokens = token_get_all(file_get_contents(config_path('app.php')));
 
@@ -116,7 +117,7 @@ class GenerateCode
         self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'Models');
     }
 
-    protected static function routeContent($namespace)
+    protected static function routeContent($namespace): string
     {
         return "<?php
 

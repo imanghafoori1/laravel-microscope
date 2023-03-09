@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Stubs;
 
 class ServiceProviderStub
 {
-    public static function providerContent($correctNamespace, $className, $prefix)
+    public static function providerContent($correctNamespace, $className, $prefix): string
     {
         $template = file_get_contents(__DIR__.'/microscopeServiceProvider.stub');
 

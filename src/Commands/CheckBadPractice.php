@@ -19,7 +19,7 @@ class CheckBadPractice extends Command
 
     protected $description = 'Checks for bad practices';
 
-    public function handle()
+    public function handle(): int
     {
         event('microscope.start.command');
         $this->info('Checking bad practices...');
@@ -69,7 +69,7 @@ class CheckBadPractice extends Command
         }
     }
 
-    private function isLikelyConfigFile($fileName, $tokens)
+    private function isLikelyConfigFile($fileName, $tokens): bool
     {
         [$token,] = TokenManager::getNextToken($tokens, 0);
 

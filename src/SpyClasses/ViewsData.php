@@ -16,7 +16,7 @@ class ViewsData
         $this->all[$view->getName()] = $view;
     }
 
-    public function getMainVars()
+    public function getMainVars(): array
     {
         $new = [];
         $mainVars = $this->main->getData();
@@ -49,7 +49,7 @@ class ViewsData
         return $allVars;
     }
 
-    public static function getBladeTokens($path)
+    public static function getBladeTokens($path): array
     {
         return token_get_all(app('microscope.blade.compiler')->compileString(file_get_contents($path)));
     }
