@@ -212,7 +212,7 @@ return [
 - Here the key `optional_to_nullsafe` is the "unique name" of your pattern. (You can target your pattern by running ```php artisan search_replace --name=optional_to_nullsafe```)
 - The search pattern has a `"<in_between>"` placeholder which captures everything in between the pair of parenthesis.
 - In the `replace` block we substitute what we have captured by the first placeholder with the `"<1>"`.
-  If we have more placeholders, we could have had `"<2>"` and etc.
+  If we have more placeholders, we could have had `"<2>"` etc.
 - In the tag block we can mention some tags as an array of strings or a string separated by commas
   and target them by `--tag` flag: ```php artisan search_replace --tag=php8```
 
@@ -255,7 +255,7 @@ Just like the default keywords.
  'todo_comments' => [
         'search' => '<comment>',
         'predicate' => function($matches) {    //   <====  here we check comment has "todo:"
-            $comment = $matches[0]; // first placehoder value
+            $comment = $matches[0]; // first placeholder value
             $content = $comment[1]; // get its content
             
             return Str::contains($content, 'todo:') ? true : false;
@@ -274,7 +274,7 @@ _Note_ If you do not mention the `'replace'` key it only searches and reports th
     'replace' => '<1>',
 
     'predicate' => function($matches) {
-        $comment = $matches[0]; // first matched placehoder
+        $comment = $matches[0]; // first matched placeholder
         $content = $comment[1];
 
         return Str::contains($content, 'todo:') ? true : false;
@@ -297,7 +297,7 @@ In mutators, you are free to manipulate the `$matched` values as much as you nee
 You can also mention a static method instead of a function, like this: `[MyClass::class, 'myStaticMethod']`
 
 
-:three: Let's say you want to put the optional comma for the Let's  elements in the arrays if they are missing.
+:three: Let's say you want to put the optional comma for the Lets  elements in the arrays if they are missing.
 ```php
     'enforce_optional_comma' => [
         'search' => '<white_space>?]',
@@ -454,7 +454,7 @@ return [
 ```
 For `$c = $a + $b;` they act the same way, but for the second one `"<until>";` will not capture the whole closure and will stop as soon as it reaches `$a++;` and that is a problem.
 
-But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semi-colon at the end of closure definition and whole close would be captured.
+But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semicolon at the end of closure definition and whole close would be captured.
 
 <a name="capturing-global" ></a>
 :seven: **Capturing global function calls:**
@@ -635,7 +635,7 @@ if ($var1 > 1)
 <a name="psr4"></a>
 ### `php artisan check:psr4`
 
-- It checks for all the psr4 autoloads defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
+- It checks for all the psr4 autoload defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
 - It also checks for references to the old namespace with the system and replaces them with the new one.
 
@@ -657,7 +657,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
-- It auto-corrects some of the references, no ambiguity is around the class name.
+- It autocorrects some references, no ambiguity is around the class name.
 - It can understand the laravel aliased classes so `use Request;` would be valid.
 
 
@@ -666,7 +666,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 ### `php artisan check:bad_practices`
 
 
-- It detects bad practices like `env()` calls outside of the config files.
+- It detects bad practices like `env()` calls outside the config files.
 
 <a name="routes"></a>
 
