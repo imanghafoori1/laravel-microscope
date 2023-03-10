@@ -55,22 +55,17 @@ class CheckPsr4Printer extends ErrorPrinter
         }
 
         $header = '<options=bold;fg=yellow> '.array_sum($stats).' entities are checked in:</>';
-        $types = '  ';
-        foreach ($typesStats as $type => $count) {
-            $types .= ' / '.$count.' <fg=blue>'.$type.'</>';
-        }
-        $types .= ' /';
-        $messages[] = $header.$types;
+        $types = self::presentTypes($typesStats);
+
+        $max = self::getMaxNamespaceLength($autoload);
+        $messages[] = $header.'  '.$types;
         $messages[] = '';
 
-        $len = 0;
         foreach ($autoload as $composerPath => $psr4) {
             $output = '';
             $messages[] = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json </>';
             foreach ($psr4 as $namespace => $path) {
                 $count = $stats[$namespace] ?? 0;
-                $max = max($len, strlen($namespace));
-                $len = strlen($namespace);
                 $output .= '  '.str_pad($count, 4).' - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
             }
             $messages[] = $output;
@@ -83,12 +78,11 @@ class CheckPsr4Printer extends ErrorPrinter
 
     public static function noErrorFound($time)
     {
-        $output = [];
-        $output[] = [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'];
-        $output[] = ['<fg=red;options=bold>'.$time.'(s)</>', 'line'];
-        $output[] = ['', 'line'];
-
-        return $output;
+        return [
+            [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'],
+            ['<fg=red;options=bold>'.$time.'(s)</>', 'line'],
+            ['', 'line'],
+        ];
     }
 
     public static function getErrorsCount($errorCount, $time)
@@ -124,5 +118,29 @@ class CheckPsr4Printer extends ErrorPrinter
         $errorData = 'Class name: <fg=blue>'.$class.'</>'.PHP_EOL.'   File name:  <fg=blue>'.$file.'</>';
 
         $p->addPendingError($path, 1, $key, $header, $errorData);
+    }
+
+    private static function getMaxNamespaceLength($autoload): int
+    {
+        $max = 0;
+
+        foreach ($autoload as $psr4) {
+            foreach ($psr4 as $namespace => $path) {
+                $max = max($max, strlen($namespace));
+            }
+        }
+
+        return $max;
+    }
+
+    private static function presentTypes($typesStats)
+    {
+        $types = '';
+        foreach ($typesStats as $type => $count) {
+            $types .= ' / '.$count.' <fg=blue>'.$type.'</>';
+        }
+        $types .= ' /';
+
+        return $types;
     }
 }
