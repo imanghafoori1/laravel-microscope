@@ -33,7 +33,7 @@ class CheckImportReporter
             $path = FilePath::normalize(str_replace(base_path(), '.', $path));
             $output .= '<fg=green>'.$path.'</>';
             if (++$i !== $numBladeStats) {
-                $output .= ', ';
+                $output .= ','.PHP_EOL.'        ';
             }
         }
         $output .= ')'.PHP_EOL;
@@ -104,7 +104,7 @@ class CheckImportReporter
                 $path = FilePath::normalize(str_replace(base_path(), '.', $path));
                 $output .= '<fg=green>'.$path.'</>';
                 if (++$i !== $numPaths) {
-                    $output .= ', ';
+                    $output .= ','.PHP_EOL.'        ';
                 }
             }
             $output .= ')'.PHP_EOL;
