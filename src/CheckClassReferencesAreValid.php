@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use ErrorException;
-use Exception;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -217,7 +216,7 @@ class CheckClassReferencesAreValid
             $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens);
 
             $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports, $docblockRefs);
-            [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
+            [$classReferences, $hostNamespace] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
             return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
         } catch (ErrorException $e) {

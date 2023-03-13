@@ -87,7 +87,7 @@ class CheckClassReferences
         $imports = ParseUseStatement::parseUseStatements($tokens);
         $imports = $imports[0] ?: [$imports[1]];
         [$classes, $namespace] = ClassReferenceFinder::process($tokens);
-        [$expandedClasses,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
+        [$expandedClasses] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
         $wrongImports = self::getWrongClassRefs($expandedClasses);
         $unusedCorrectImports = self::getUnusedCorrectImports(

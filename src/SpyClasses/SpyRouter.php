@@ -82,7 +82,7 @@ class SpyRouter extends Router
 
     private function isExcluded($info)
     {
-        return Str::startsWith(($info['file'] ?? ''), [
+        return Str::startsWith($info['file'] ?? '', [
             base_path('vendor'.DIRECTORY_SEPARATOR.'laravel'),
             base_path('vendor'.DIRECTORY_SEPARATOR.'imanghafoori'),
         ]);

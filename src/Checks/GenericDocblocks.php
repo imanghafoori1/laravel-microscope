@@ -46,7 +46,7 @@ class GenericDocblocks
         }
 
         $question = 'Do you want to remove docblocks from: <fg=yellow>'.basename($absFilePath).'</>';
-        if ($hasReplacement && (self::$command)->confirm($question, true)) {
+        if ($hasReplacement && self::$command->confirm($question, true)) {
             Refactor::saveTokens($absFilePath, $tokens);
         }
     }
