@@ -78,7 +78,7 @@ class CheckBadPractice extends Command
 
     private function isLikelyConfigFile($fileName, $tokens)
     {
-        [$token,] = TokenManager::getNextToken($tokens, 0);
+        [$token] = TokenManager::getNextToken($tokens, 0);
 
         if ($token[0] === T_NAMESPACE) {
             return false;
