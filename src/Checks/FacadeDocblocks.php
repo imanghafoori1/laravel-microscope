@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Str;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
@@ -51,7 +52,12 @@ class FacadeDocblocks
 
         $_methods = [];
         foreach ($publicMethods as $method) {
-            ! method_exists($facade, $method->getName()) && $_methods[] = $method;
+            $methodName = $method->getName();
+
+            $magicMethods = ['__invoke', '__construct', '__destruct', '__toString', '__call', '__set', '__get'];
+            if (! method_exists($facade, $methodName) && ! $method->isStatic() && ! in_array($methodName, $magicMethods)) {
+                $_methods[] = $method;
+            }
         }
 
         if ($_methods === []) {
