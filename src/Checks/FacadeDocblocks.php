@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Str;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
