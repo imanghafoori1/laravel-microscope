@@ -58,4 +58,11 @@ return [
     'additional_config_paths' => [
         // 'my/folder/configs'
     ],
+
+    /**
+     * If you have additional composer.json files, you can list their file paths here.
+     */
+    'additional_composer_paths' => [
+        //
+    ],
 ];
