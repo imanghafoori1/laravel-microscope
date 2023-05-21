@@ -79,7 +79,7 @@ class CheckCompact extends Command
                 continue;
             }
 
-            [, $compactedVars,] = Ifs::readCondition($methodBody, $pp);
+            [, $compactedVars] = Ifs::readCondition($methodBody, $pp);
             $compactVars = [];
             foreach ($compactedVars as $uu => $var) {
                 $var[0] == T_CONSTANT_ENCAPSED_STRING && $compactVars[] = '$'.\trim($var[1], '\'\"');
@@ -98,7 +98,7 @@ class CheckCompact extends Command
         [$nextToken, $startNextToken] = TokenManager::getNextToken($tokens, $conditionCloseIndex);
 
         if ($nextToken[0] == T_USE) {
-            [, $useBodySignatures,] = Ifs::readCondition($tokens, $startNextToken);
+            [, $useBodySignatures] = Ifs::readCondition($tokens, $startNextToken);
 
             $signatures = array_merge($useBodySignatures, $signatures);
         }
@@ -123,7 +123,7 @@ class CheckCompact extends Command
 
         try {
             // fast-forward to the end of function body
-            [$methodBody,] = TokenManager::readBody($tokens, $methodBodyStartIndex);
+            [$methodBody] = TokenManager::readBody($tokens, $methodBodyStartIndex);
 
             return $methodBody;
         } catch (Exception $e) {

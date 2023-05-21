@@ -118,7 +118,7 @@ class ConsolePrinterInstaller
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)
     {
         $lastTimeError = $commandType.' errors, compared to the last run.';
-        if (($errorCount > $lastTimeCount)) {
+        if ($errorCount > $lastTimeCount) {
             return ' +'.($errorCount - $lastTimeCount).' new '.$lastTimeError;
         } elseif ($errorCount < $lastTimeCount) {
             return ' -'.($lastTimeCount - $errorCount).' less '.$lastTimeError;

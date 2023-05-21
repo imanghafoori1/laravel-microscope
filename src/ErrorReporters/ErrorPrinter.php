@@ -71,10 +71,10 @@ class ErrorPrinter
             return;
         }
         $this->count++;
-        ($this->errorsList[$key][] = (new PendingError($key))
+        $this->errorsList[$key][] = (new PendingError($key))
             ->header($header)
             ->errorData($errorData)
-            ->link($path, $lineNumber));
+            ->link($path, $lineNumber);
     }
 
     public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')

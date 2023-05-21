@@ -8,24 +8,22 @@ class ComposerJson
 {
     public static function make(): Composer
     {
-        return Composer::make(base_path());
+        return resolve(Composer::class);
     }
 
     public static function readAutoload($purgeAutoload = false)
     {
-        $psr4Autoloads = Composer::make(base_path())->readAutoload($purgeAutoload);
-
-        return self::removedIgnored($psr4Autoloads, config('microscope.ignored_namespaces', []));
+        return self::make()->readAutoload($purgeAutoload);
     }
 
     public static function readAutoloadFiles()
     {
-        $basepath = base_path();
-        $psr4Autoloads = Composer::make($basepath)->readAutoloadFiles();
+        $basePath = base_path();
+        $psr4Autoloads = self::make()->readAutoloadFiles();
 
         $allFiles = [];
         foreach ($psr4Autoloads as $path => $files) {
-            $p = $basepath.'/'.trim($path, '/');
+            $p = $basePath.'/'.trim($path, '/');
             foreach ($files['autoload'] as $f) {
                 $allFiles[] = $p.'/'.$f;
             }
@@ -35,20 +33,5 @@ class ComposerJson
         }
 
         return $allFiles;
-    }
-
-    private static function removedIgnored($mapping, $ignored = [])
-    {
-        $result = [];
-
-        foreach ($mapping as $i => $map) {
-            foreach ($map as $namespace => $path) {
-                if (! in_array($namespace, $ignored)) {
-                    $result[$i][$namespace] = $path;
-                }
-            }
-        }
-
-        return $result;
     }
 }

@@ -43,7 +43,7 @@ class CheckBadPractice extends Command
         $tokens = token_get_all(file_get_contents($absPath));
 
         foreach ($tokens as $i => $token) {
-            if (($index = FunctionCall::isGlobalCall('env', $tokens, $i))) {
+            if ($index = FunctionCall::isGlobalCall('env', $tokens, $i)) {
                 if (! $this->isLikelyConfigFile(basename($absPath), $tokens)) {
                     EnvFound::warn($absPath, $tokens[$index][2], $tokens[$index][1]);
                 }
@@ -60,10 +60,17 @@ class CheckBadPractice extends Command
 
     private function checkPsr4Classes()
     {
+        $configs = Paths::getAbsFilePaths(
+            array_merge([config_path()],
+                config('microscope.additional_config_paths', []))
+        );
+
         foreach (ComposerJson::readAutoload() as $psr4) {
-            foreach ($psr4 as $_namespace => $dirPath) {
+            foreach ($psr4 as $dirPath) {
                 foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
-                    $this->checkForEnv($filePath->getRealPath());
+                    if (! in_array($path = $filePath->getRealPath(), $configs)) {
+                        $this->checkForEnv($path);
+                    }
                 }
             }
         }
@@ -71,7 +78,7 @@ class CheckBadPractice extends Command
 
     private function isLikelyConfigFile($fileName, $tokens)
     {
-        [$token,] = TokenManager::getNextToken($tokens, 0);
+        [$token] = TokenManager::getNextToken($tokens, 0);
 
         if ($token[0] === T_NAMESPACE) {
             return false;

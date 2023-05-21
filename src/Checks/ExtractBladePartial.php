@@ -31,7 +31,7 @@ class ExtractBladePartial
 
             $partialName = $params[0][0][1] ?? $partialName;
             ! \in_array($partialName, $callsOrder) && $callsOrder[] = $partialName;
-            $calls[$partialName][] = ($params[0][0]) ?? ($tokens[$i - 1]);
+            $calls[$partialName][] = $params[0][0] ?? $tokens[$i - 1];
 
             $i++;
         }
@@ -49,7 +49,7 @@ class ExtractBladePartial
             }
             $replacement = ['@include('.$call[0][1].')'."\n"];
 
-            $start = $call[0][2] - (1);
+            $start = $call[0][2] - 1;
             $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
             $extracted = array_splice($file, $start, $removedLinesNumber, $replacement);
             $partialPath = self::find(\trim($call[0][1], '\'\"'));

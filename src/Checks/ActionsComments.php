@@ -73,7 +73,9 @@ class ActionsComments
         }
 
         $question = 'Add route definition into the: <fg=yellow>'.$fullNamespace.'</>';
-        $shouldSave && (self::$command)->confirm($question, true) && Refactor::saveTokens($path->getRealpath(), $tokens);
+        if ($shouldSave && self::$command->confirm($question, true)) {
+            Refactor::saveTokens($path->getRealpath(), $tokens);
+        }
 
         return $routelessActions;
     }

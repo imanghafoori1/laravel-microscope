@@ -44,7 +44,7 @@ class LaravelPaths
             }
         }
 
-        $migrationDirs[] = app()->databasePath().DIRECTORY_SEPARATOR.'migrations';
+        $migrationDirs[] = app()->databasePath('migrations');
 
         return $migrationDirs;
     }

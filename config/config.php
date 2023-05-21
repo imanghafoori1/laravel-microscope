@@ -51,4 +51,18 @@ return [
     'additional_route_files' => [
         // app()->basePath('some_folder/my_route.php''),
     ],
+
+    /**
+     * If you have additional config files, you can list their folders here.
+     */
+    'additional_config_paths' => [
+        // 'my/folder/configs'
+    ],
+
+    /**
+     * If you have additional composer.json files, you can list their file paths here.
+     */
+    'additional_composer_paths' => [
+        //
+    ],
 ];

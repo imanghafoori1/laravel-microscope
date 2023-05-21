@@ -18,6 +18,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
@@ -55,6 +56,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\EnforceHelpers::class,
         SearchReplace\CheckRefactorsCommand::class,
         Commands\CheckDynamicWhereMethod::class,
+        ListModelsArtisanCommand::class,
     ];
 
     public function boot()
@@ -94,8 +96,12 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-        app()->singleton('microscope.composer', function () {
-            return Composer::make(base_path());
+        app()->singleton(Composer::class, function () {
+            return Composer::make(
+                base_path(),
+                config('microscope.ignored_namespaces', []),
+                config('microscope.additional_composer_paths', [])
+            );
         });
 
         FilePath::$basePath = base_path();
@@ -200,11 +206,15 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function canRun()
     {
+        if (! $this->app->runningInConsole()) {
+            return false;
+        }
+
         if (windows_os()) {
             return true;
         }
 
-        return $this->app->runningInConsole() && config('microscope.is_enabled', true) && app()['env'] !== 'production';
+        return config('microscope.is_enabled', true) && app()['env'] !== 'production';
     }
 
     public function getActionName()

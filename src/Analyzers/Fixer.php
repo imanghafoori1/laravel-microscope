@@ -26,7 +26,7 @@ class Fixer
 
         $correct = self::guessCorrect($classBaseName);
 
-        if (\count($correct) !== 1) {
+        if (count($correct) !== 1) {
             return [false, $correct];
         }
         $fullClassPath = $correct[0];
@@ -52,11 +52,15 @@ class Fixer
             return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
         }
 
-        // replace in the class reference
+        // Replace in the class reference
         self::doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum);
 
-        // insert a new import at the top
+        // Insert a new import at the top
         $lineNum = array_values($uses)[0][1]; // first use statement
+
+        if (! class_exists($fullClassPath) && ! interface_exists($fullClassPath) && ! trait_exists($fullClassPath)) {
+            return [false, []];
+        }
 
         return [FileManipulator::insertNewLine($absPath, "use $fullClassPath;", $lineNum), $correct];
     }

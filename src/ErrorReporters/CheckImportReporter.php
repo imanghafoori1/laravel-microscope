@@ -33,7 +33,7 @@ class CheckImportReporter
             $path = FilePath::normalize(str_replace(base_path(), '.', $path));
             $output .= '<fg=green>'.$path.'</>';
             if (++$i !== $numBladeStats) {
-                $output .= ', ';
+                $output .= ','.PHP_EOL.'        ';
             }
         }
         $output .= ')'.PHP_EOL;
@@ -78,14 +78,14 @@ class CheckImportReporter
 
     private static function getMaxLength(array $psr4Stats)
     {
-        $lens = [];
+        $lengths = [1];
         foreach ($psr4Stats as $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                $lens[] = strlen($psr4Namespace);
+                $lengths[] = strlen($psr4Namespace);
             }
         }
 
-        return max($lens);
+        return max($lengths);
     }
 
     private static function foldersStats($foldersStats, string $output)
@@ -104,7 +104,7 @@ class CheckImportReporter
                 $path = FilePath::normalize(str_replace(base_path(), '.', $path));
                 $output .= '<fg=green>'.$path.'</>';
                 if (++$i !== $numPaths) {
-                    $output .= ', ';
+                    $output .= ','.PHP_EOL.'        ';
                 }
             }
             $output .= ')'.PHP_EOL;

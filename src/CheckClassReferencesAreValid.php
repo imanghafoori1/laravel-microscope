@@ -129,7 +129,7 @@ class CheckClassReferencesAreValid
     {
         $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
 
-        // imports the correct namespace
+        // Imports the correct namespace:
         [$wasCorrected, $corrections] = Analyzers\Fixer::fixReference($absFilePath, $baseClassName, $line);
 
         if ($wasCorrected) {
@@ -214,8 +214,9 @@ class CheckClassReferencesAreValid
             [$classes, $namespace] = ClassReferenceFinder::process($tokens);
 
             $docblockRefs = ClassReferenceFinder::readRefsInDocblocks($tokens);
+
             $unusedRefs = ParseUseStatement::getUnusedImports($classes, $imports, $docblockRefs);
-            [$classReferences, $hostNamespace,] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
+            [$classReferences, $hostNamespace] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
 
             return [$classReferences, $hostNamespace, $unusedRefs, $docblockRefs];
         } catch (ErrorException $e) {
