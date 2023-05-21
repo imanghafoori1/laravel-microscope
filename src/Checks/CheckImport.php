@@ -34,7 +34,7 @@ class CheckImport
 
             $condition = (! CheckClassReferencesAreValid::isAbsent($classImport)) or
                             // for half imported namespaces
-                            (\is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport))));
+                            \is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classImport)));
             if ($condition) {
                 continue;
             }
