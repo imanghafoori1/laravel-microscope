@@ -948,3 +948,7 @@ Albert Einstein
 
 This project exists thanks to all the people who contribute. [[Contributors](https://github.com/imanghafoori1/laravel-microscope/graphs/contributors)].
 <a href="https://github.com/imanghafoori1/laravel-microscope/graphs/contributors"><img src="https://opencollective.com/laravel-microscope/contributors.svg?width=890&button=false" /></a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=imanghafoori1/laravel-microscope&type=Date)](https://star-history.com/#imanghafoori1/laravel-microscope&Date)
