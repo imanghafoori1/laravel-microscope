@@ -19,7 +19,7 @@ class PendingError
     /**
      * PendingError constructor.
      *
-     * @param $type
+     * @param  $type
      */
     public function __construct($type)
     {
@@ -42,7 +42,7 @@ class PendingError
     /**
      * Sets the data to give out as error.
      *
-     * @param $data
+     * @param  $data
      * @return $this
      */
     public function errorData($data)
@@ -56,7 +56,7 @@ class PendingError
     /**
      * Sets the link to the source error.
      *
-     * @param $path
+     * @param  $path
      * @param  int  $lineNumber
      * @return $this
      */
