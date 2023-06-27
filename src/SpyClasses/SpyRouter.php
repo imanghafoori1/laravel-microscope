@@ -35,6 +35,12 @@ class SpyRouter extends Router
     {
         parent::updateGroupStack($attributes);
 
+        $command = $_SERVER['argv'][1] ?? '';
+        $checkAll = Str::startsWith('check:all', $command);
+        if (! $checkAll && ! Str::startsWith('check:routes', $command)) {
+            return;
+        }
+
         try {
             $e = $this->groupStack;
             $newAttr = end($e);

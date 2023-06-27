@@ -44,7 +44,7 @@ class CheckBadPractice extends Command
 
         foreach ($tokens as $i => $token) {
             if ($index = FunctionCall::isGlobalCall('env', $tokens, $i)) {
-                if (! $this->isLikelyConfigFile(basename($absPath), $tokens)) {
+                if (! $this->isLikelyConfigFile($absPath, $tokens)) {
                     EnvFound::warn($absPath, $tokens[$index][2], $tokens[$index][1]);
                 }
             }
@@ -76,7 +76,7 @@ class CheckBadPractice extends Command
         }
     }
 
-    private function isLikelyConfigFile($fileName, $tokens)
+    private function isLikelyConfigFile($absPath, $tokens)
     {
         [$token] = TokenManager::getNextToken($tokens, 0);
 
@@ -84,10 +84,10 @@ class CheckBadPractice extends Command
             return false;
         }
 
-        if ($token[0] === T_RETURN && strpos(strtolower($fileName), 'config') !== false) {
+        if ($token[0] === T_RETURN && strpos(strtolower($absPath), 'config')) {
             return true;
         }
 
-        return $fileName === 'config.php';
+        return basename($absPath) === 'config.php';
     }
 }

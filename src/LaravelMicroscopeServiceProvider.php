@@ -120,6 +120,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->loadConfig();
 
         app()->singleton(ErrorPrinter::class);
+        $this->spyRouter();
         // also we should spy the factory paths.
         if (class_exists('Illuminate\Database\Eloquent\Factory')) {
             $this->spyFactory();
@@ -129,7 +130,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $command = $_SERVER['argv'][1] ?? '';
         // We spy the router in order to have a list of route files.
         $checkAll = Str::startsWith('check:all', $command);
-        ($checkAll || Str::startsWith('check:routes', $command)) && $this->spyRouter();
         ($checkAll || Str::startsWith('check:eve', $command)) && $this->spyEvents();
         ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
         Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
