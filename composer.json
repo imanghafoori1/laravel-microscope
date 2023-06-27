@@ -20,7 +20,7 @@
         "imanghafoori/composer-json": "^1.0.10",
         "composer/class-map-generator": "^1.0.0",
         "imanghafoori/php-abstract-filesystem": "^0.1.4",
-        "imanghafoori/php-search-replace": "^1.1.10",
+        "imanghafoori/php-search-replace": "^1.1.11",
         "imanghafoori/php-token-analyzer": "^0.1.45",
         "imanghafoori/smart-realtime-facades": "^1.1.7",
         "jetbrains/phpstorm-attributes" : "1.*",

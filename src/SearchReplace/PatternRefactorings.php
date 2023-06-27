@@ -12,6 +12,8 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class PatternRefactorings
 {
+    public static $patternFound = false;
+
     public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace, $patterns)
     {
         foreach ($patterns[0] as $pattern) {
@@ -124,6 +126,8 @@ class PatternRefactorings
             ! $lineNum && $lineNum = ($tokens[$i][2] ?? 0);
             $from .= $tokens[$i][1] ?? $tokens[$i][0];
         }
+
+        self::$patternFound = true;
 
         /**
          * @var $printer ErrorPrinter::class
