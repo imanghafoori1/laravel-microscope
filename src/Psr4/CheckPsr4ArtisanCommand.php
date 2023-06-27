@@ -47,6 +47,8 @@ class CheckPsr4ArtisanCommand extends Command
             $errorPrinter->errorsList = ['total' => 0];
 
             goto start;
+        } else {
+            return $errorPrinter->errorsList['total'] > 0 ? 1 : 0;
         }
     }
 
