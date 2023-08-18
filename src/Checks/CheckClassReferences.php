@@ -43,7 +43,7 @@ class CheckClassReferences
     private static function exists($class)
     {
         try {
-            return class_exists($class) || interface_exists($class) || function_exists($class);
+            return class_exists($class) || interface_exists($class) || function_exists($class) || (function_exists('enum_exists') && enum_exists($class));
         } catch (Error $e) {
             app(ErrorPrinter::class)->simplePendError($e->getMessage(), $e->getFile(), $e->getLine(), 'error', 'File error');
 

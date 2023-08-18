@@ -71,7 +71,7 @@ class CheckClassReferencesAreValid
 
     public static function isAbsent($class)
     {
-        return ! \class_exists($class) && ! \interface_exists($class) && ! \trait_exists($class);
+        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class) && ! (function_exists('enum_exists') && enum_exists($class));
     }
 
     public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)

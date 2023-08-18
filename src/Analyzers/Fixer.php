@@ -58,7 +58,12 @@ class Fixer
         // Insert a new import at the top
         $lineNum = array_values($uses)[0][1]; // first use statement
 
-        if (! class_exists($fullClassPath) && ! interface_exists($fullClassPath) && ! trait_exists($fullClassPath)) {
+        if (
+            ! class_exists($fullClassPath) &&
+            ! interface_exists($fullClassPath) &&
+            ! trait_exists($fullClassPath) &&
+            ! (function_exists('enum_exists') && enum_exists($fullClassPath))
+        ) {
             return [false, []];
         }
 
