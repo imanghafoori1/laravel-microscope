@@ -8,7 +8,7 @@
 </p>
 
 <h4 align="center">
-Built with :heart: for lazy laravel developers ;)
+Built with :heart: for lazy Laravel developers ;)
 </h4>
 
 <h3 align="center">
@@ -44,7 +44,7 @@ Give your eyes a rest, we will detect and fix them for you.
     - [Usage](#usage)
         - [Useful Commands](#useful-commands)
         - [Fewer Use Commands](#less-use-commands)
-        - [Gloabl Helper Functions](#global-helper-functions)
+        - [Global Helper Functions](#global-helper-functions)
     - [What The Commands Do?](#what-the-commands-do)
 
       <details>
