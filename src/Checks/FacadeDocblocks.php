@@ -17,7 +17,7 @@ class FacadeDocblocks
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath, SplFileInfo $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath, $params, SplFileInfo $classFilePath, $psr4Path, $psr4Namespace)
     {
         $facade = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
 

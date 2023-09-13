@@ -2,6 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use ErrorException;
+use Illuminate\Support\Composer;
+use Illuminate\Support\Str as CoreStr;
 use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -37,10 +40,21 @@ class ForPsr4LoadedClasses
                         $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
                         foreach ($checks as $check) {
                             try {
-                                $newTokens = $check::check($tokens, $absFilePath, $phpFilePath, $psr4Path, $psr4Namespace, $params1);
-                                if ($newTokens) {
-                                    $tokens = $newTokens;
-                                    $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                                try {
+                                    $newTokens = $check::check($tokens, $absFilePath, $params1, $phpFilePath, $psr4Path, $psr4Namespace);
+                                    if ($newTokens) {
+                                        $tokens = $newTokens;
+                                        $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+                                    }
+                                } catch (ErrorException $e) {
+                                    // In case a file is moved or deleted,
+                                    // composer will need a dump autoload.
+                                    if (! CoreStr::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
+                                        throw $e;
+                                    }
+
+                                    self::warnDumping($e->getMessage());
+                                    resolve(Composer::class)->dumpAutoloads();
                                 }
                             } catch (\Throwable $e) {
                                 $msg = $e->getMessage();
@@ -126,4 +140,13 @@ class ForPsr4LoadedClasses
             $path2 => ComposerJson::make($path2)->readAutoload(),
         ];
     }
+
+    public static function warnDumping($msg)
+    {
+        $p = resolve(ErrorPrinter::class)->printer;
+        $p->writeln('It seems composer has some trouble with autoload...');
+        $p->writeln($msg);
+        $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
+    }
+
 }

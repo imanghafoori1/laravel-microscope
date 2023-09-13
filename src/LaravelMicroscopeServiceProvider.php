@@ -13,7 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -236,7 +236,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Event::listen('microscope.finished.checks', function () {
             CheckView::$checkedCallsNum = 0;
             CheckView::$skippedCallsNum = 0;
-            CheckClassReferences::$refCount = 0;
+            ImportsAnalyzer::$refCount = 0;
             ForPsr4LoadedClasses::$checkedFilesNum = 0;
         });
     }

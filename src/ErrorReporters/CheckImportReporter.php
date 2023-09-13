@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
 use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -12,7 +12,7 @@ class CheckImportReporter
 {
     public static function report(CheckImports $command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
     {
-        $command->getOutput()->writeln('<options=bold;fg=yellow>'.CheckClassReferences::$refCount.' imports were checked under:</>');
+        $command->getOutput()->writeln('<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' imports were checked under:</>');
 
         self::printPsr4($psr4Stats, $command);
 
@@ -48,11 +48,11 @@ class CheckImportReporter
 
     private static function printErrorsCount(CheckImports $command): void
     {
-        $totalErrors = CheckClassReferences::$unusedImportsCount + CheckClassReferences::$wrongImportsCount;
-        $output = '<options=bold;fg=yellow>'.CheckClassReferences::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
-        $output .= ' - <fg=yellow>'.CheckClassReferences::$unusedImportsCount.' unused</> import'.(CheckClassReferences::$unusedImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.CheckClassReferences::$wrongImportsCount.' wrong</> import'.(CheckClassReferences::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.CheckClassReferences::$wrongClassRefCount.' wrong</> class'.(CheckClassReferences::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
+        $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount;
+        $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
+        $output .= ' - <fg=yellow>'.ImportsAnalyzer::$unusedImportsCount.' unused</> import'.(ImportsAnalyzer::$unusedImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
+        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
+        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongClassRefCount.' wrong</> class'.(ImportsAnalyzer::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
         $command->getOutput()->writeln($output);
     }
 

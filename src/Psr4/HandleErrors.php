@@ -81,6 +81,20 @@ class HandleErrors
         };
     }
 
+    public static function getAbsoluteFilePaths($paths)
+    {
+        $basePath = base_path();
+        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
+            foreach ($classmaps as $classmap) {
+                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
+                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
+                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
+            }
+        }
+
+        return $paths;
+    }
+
     private static function updateOldRefs($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath)
     {
         NamespaceFixer::fix($absPath, $from, $to);
@@ -113,14 +127,7 @@ class HandleErrors
         }
 
         $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
-        $basePath = base_path();
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
-            foreach ($classmaps as $classmap) {
-                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
-            }
-        }
+        $paths = self::getAbsoluteFilePaths($paths);
 
         $paths = array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
 

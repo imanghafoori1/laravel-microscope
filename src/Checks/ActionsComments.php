@@ -11,7 +11,7 @@ class ActionsComments
 
     public static $controllers = [];
 
-    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {
         self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens);
     }

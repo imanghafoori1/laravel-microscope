@@ -20,15 +20,7 @@ class Paths
             $paths = [];
             foreach ($files as $f) {
                 $absFilePath = $f->getRealPath();
-                [$fileName, $folderPath] = FilePath::getFolderFile($absFilePath);
-
-                if ($file && mb_strpos($fileName, $file) === false) {
-                    continue;
-                }
-
-                if ($folder && mb_strpos($folderPath, $folder) === false) {
-                    continue;
-                }
+                FilePath::contains($absFilePath, $file, $folder);
 
                 $paths[] = $absFilePath;
             }

@@ -6,10 +6,16 @@ use Illuminate\Routing\Controller;
 use Imanghafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
+use Imanghafoori\TokenAnalyzer\Str;
 use Throwable;
 
 class RoutelessActions
 {
+    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
+    {
+        self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
+    }
+
     public static function getControllerActions($methods)
     {
         $orphanMethods = [];
@@ -60,10 +66,10 @@ class RoutelessActions
     {
         $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
 
-        return \trim($fullNamespace, '.php');
+        return Str::replaceFirst('.php', '', $fullNamespace);
     }
 
-    protected function findOrphanActions($tokens, $fullNamespace)
+    protected static function findOrphanActions($tokens, $fullNamespace)
     {
         $class = ClassMethods::read($tokens);
 
@@ -75,7 +81,7 @@ class RoutelessActions
             // Route::get('/', [Controller::class, '__invoke']);
             // Route::get('/', Controller::class);
             if (
-                ! $this->getByAction($classAtMethod) || ($method['name'][1] === '__invoke' && ! $this->getByAction($classAtMethod.'@__invoke'))
+                ! self::getByAction($classAtMethod) || ($method['name'][1] === '__invoke' && ! self::getByAction($classAtMethod.'@__invoke'))
             ) {
                 $line = $method['name'][2];
                 $actions[] = [$line, $classAtMethod];
@@ -85,12 +91,7 @@ class RoutelessActions
         return $actions;
     }
 
-    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
-    {
-        (new self())->checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
-    }
-
-    public function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
+    public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
     {
         $errorPrinter = resolve(ErrorPrinter::class);
         $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
@@ -104,7 +105,7 @@ class RoutelessActions
             return;
         }
 
-        $actions = $this->findOrphanActions($tokens, $fullNamespace);
+        $actions = self::findOrphanActions($tokens, $fullNamespace);
 
         foreach ($actions as $action) {
             $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
@@ -118,7 +119,7 @@ class RoutelessActions
         return \trim($fullNamespace, '\\').$methodName;
     }
 
-    protected function getByAction($classAtMethod)
+    protected static function getByAction($classAtMethod)
     {
         return app('router')->getRoutes()->getByAction($classAtMethod);
     }

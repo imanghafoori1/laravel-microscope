@@ -2,20 +2,22 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferences;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReplacer;
+use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\Psr4\HandleErrors;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -24,9 +26,25 @@ class CheckImports extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:imports {--w|wrong} {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:imports
+        {--force : fixes without asking}
+        {--w|wrong : Only reports wrong imports}
+        {--f|file= : Pattern for file names to scan}
+        {--d|folder= : Pattern for file names to scan}
+        {--detailed : Show files being checked}
+        {--s|nofix : avoids the automatic fixes}
+    ';
 
     protected $description = 'Checks the validity of use statements';
+
+    /**
+     * @var string[]
+     */
+    private $checks = [
+        1 => CheckClassAtMethod::class,
+        2 => CheckClassReferencesAreValid::class,
+        3 => FacadeAliases::class,
+    ];
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -34,12 +52,32 @@ class CheckImports extends Command
         $this->line('');
         $this->info('Checking imports...');
 
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
+        FacadeAliases::$command = $this;
+
+        if ($this->option('nofix')) {
+            config(['microscope.no_fix' => true]);
+            FacadeAliases::$handler = FacadeAliasReporter::class;
+        }
+
+        if ($this->option('force')) {
+            FacadeAliasReplacer::$forceReplace = true;
+        }
+
+        if ($this->option('wrong')) {
+            CheckClassReferencesAreValid::$checkUnused = false;
+            unset($this->checks[3]);
+        }
 
         $errorPrinter->printer = $this->output;
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
+
+        $paramProvider = function ($tokens) {
+            $imports = ParseUseStatement::parseUseStatements($tokens);
+
+            return $imports[0] ?: [$imports[1]];
+        };
 
         $routeFiles = FilePath::removeExtraPaths(
             RoutePaths::get(),
@@ -47,45 +85,27 @@ class CheckImports extends Command
             $folder
         );
 
-        $this->checkFilePaths($routeFiles);
+        $this->checkFilePaths($routeFiles, $paramProvider);
 
         $paths = ComposerJson::readAutoloadFiles();
 
-        $basePath = base_path();
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
-            foreach ($classmaps as $classmap) {
-                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
-            }
-        }
+        $paths = HandleErrors::getAbsoluteFilePaths($paths);
 
         $this->checkFilePaths(FilePath::removeExtraPaths(
             $paths,
             $fileName,
             $folder
-        ));
+        ), $paramProvider);
 
         $foldersStats = $this->checkFolders([
             'config' => app()->configPath(),
             'seeds' => LaravelPaths::seedersDir(),
             'migrations' => LaravelPaths::migrationDirs(),
             'factories' => LaravelPaths::factoryDirs(),
-        ], $fileName, $folder);
+        ], $fileName, $folder, $paramProvider);
 
-        $paramProvider = function ($tokens) {
-            $imports = ParseUseStatement::parseUseStatements($tokens);
-
-            return $imports[0] ?: [$imports[1]];
-        };
-        FacadeAliases::$command = $this;
-        $psr4Stats = ForPsr4LoadedClasses::check([
-            CheckClassReferencesAreValid::class,
-            FacadeAliases::class,
-        ], $paramProvider, $fileName, $folder);
-
-        // Checks the blade files for class references.
-        $bladeStats = BladeFiles::check([CheckClassReferences::class], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
+        $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
         CheckImportReporter::report($this, $psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
@@ -100,21 +120,22 @@ class CheckImports extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private function checkFilePaths($paths)
+    private function checkFilePaths($paths, $paramProvider)
     {
-        foreach ($paths as $path) {
-            $tokens = token_get_all(file_get_contents($path));
-            CheckClassReferences::check($tokens, $path);
-            CheckClassReferencesAreValid::checkAtSignStrings($tokens, $path, true);
+        foreach ($paths as $absFilePath) {
+            $tokens = token_get_all(file_get_contents($absFilePath));
+            foreach ($this->checks as $check) {
+                $check::check($tokens, $absFilePath, $paramProvider($tokens));
+            }
         }
     }
 
-    private function checkFolders($dirsList, $file, $folder)
+    private function checkFolders($dirsList, $file, $folder, $paramProvider)
     {
         $fileCounts = [];
         foreach ($dirsList as $listName => $dirs) {
             $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
-            $this->checkFilePaths($filePaths);
+            $this->checkFilePaths($filePaths, $paramProvider);
 
             $fileCounts[$listName] = [
                 'paths' => $dirs,

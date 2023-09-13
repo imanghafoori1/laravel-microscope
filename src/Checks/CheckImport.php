@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
-use Imanghafoori\LaravelMicroscope\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -32,7 +32,7 @@ class CheckImport
         foreach ($imports as $as => $import) {
             [$classImport, $line] = $import;
 
-            if (! CheckClassReferencesAreValid::isAbsent($classImport)) {
+            if (! ImportsAnalyzer::isAbsent($classImport)) {
                 continue;
             }
 

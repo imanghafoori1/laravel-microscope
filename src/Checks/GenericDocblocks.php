@@ -11,7 +11,7 @@ class GenericDocblocks
 
     public static $controllers = [];
 
-    public static function check($tokens, $absFilePath, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {
         $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 

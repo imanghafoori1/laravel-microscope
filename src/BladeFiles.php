@@ -11,7 +11,7 @@ class BladeFiles
 {
     public static $checkedFilesNum = 0;
 
-    public static function check($checkers, $fileName = '', $folder = '')
+    public static function check($checkers, $params = [], $fileName = '', $folder = '')
     {
         $stats = [];
         $compiler = app('microscope.blade.compiler');
@@ -21,7 +21,7 @@ class BladeFiles
         $hints['random_key_69471'] = View::getFinder()->getPaths();
 
         foreach ($hints as $paths) {
-            $stats = array_merge($stats, self::checkPaths($paths, $checkers, $fileName, $folder));
+            $stats = array_merge($stats, self::checkPaths($paths, $checkers, $fileName, $folder, $params));
         }
 
         return $stats;
@@ -35,7 +35,7 @@ class BladeFiles
         return $hints;
     }
 
-    public static function checkPaths($paths, $checkers, $fileName, $folder)
+    public static function checkPaths($paths, $checkers, $fileName, $folder, $params)
     {
         $stats = [];
         foreach ($paths as $path) {
@@ -57,11 +57,14 @@ class BladeFiles
                 if (! FilePath::contains($absPath, $fileName, $folder)) {
                     continue;
                 }
+
                 $count++;
                 self::$checkedFilesNum++;
                 $tokens = ViewsData::getBladeTokens($absPath);
+                $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
+
                 foreach ($checkers as $checkerClass) {
-                    call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath]);
+                    call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath, $params1]);
                 }
             }
 
