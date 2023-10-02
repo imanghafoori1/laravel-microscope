@@ -143,5 +143,4 @@ class ImportsAnalyzer
     {
         return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class) && ! (function_exists('enum_exists') && enum_exists($class));
     }
-
 }

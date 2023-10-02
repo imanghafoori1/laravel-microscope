@@ -148,5 +148,4 @@ class ForPsr4LoadedClasses
         $p->writeln($msg);
         $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
     }
-
 }
