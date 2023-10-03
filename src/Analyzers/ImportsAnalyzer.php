@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use Throwable;
 
 class ImportsAnalyzer
 {
@@ -130,7 +131,11 @@ class ImportsAnalyzer
             return true;
         }
 
-        require_once $absFilePath;
+        try {
+            require_once $absFilePath;
+        } catch (Throwable $e) {
+            return false;
+        }
 
         if (! self::isAbsent($class) || \function_exists($class)) {
             return true;

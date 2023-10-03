@@ -16,12 +16,29 @@ class Fixer
         $isInUserSpace = false;
         $class = ltrim($class, '\\');
         foreach (ComposerJson::readAutoload() as $autoload) {
-            if (Str::startsWith($class, \array_keys($autoload))) {
+            if (self::startsWith($class, array_keys($autoload))) {
                 $isInUserSpace = true;
             }
         }
 
+        $segments = explode('\\', $class);
+        $last = array_pop($segments);
+        if (class_exists($last) || interface_exists($last)) {
+            return false;
+        }
+
         return $isInUserSpace;
+    }
+
+    private static function startsWith($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (0 === strncmp($haystack, $needle, strlen($needle))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static function guessCorrect($classBaseName)

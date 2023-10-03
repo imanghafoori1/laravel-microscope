@@ -73,29 +73,20 @@ class CheckImports extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $paramProvider = function ($tokens) {
-            $imports = ParseUseStatement::parseUseStatements($tokens);
+        $paramProvider = $this->getParamProvider();
 
-            return $imports[0] ?: [$imports[1]];
-        };
+        $paths = array_merge(
+            $this->getAutoloadFiles(),
+            $routeFiles = RoutePaths::get()
+        );
 
-        $routeFiles = FilePath::removeExtraPaths(
-            RoutePaths::get(),
+        $paths = FilePath::removeExtraPaths(
+            $paths,
             $fileName,
             $folder
         );
 
-        $this->checkFilePaths($routeFiles, $paramProvider);
-
-        $paths = ComposerJson::readAutoloadFiles();
-
-        $paths = HandleErrors::getAbsoluteFilePaths($paths);
-
-        $this->checkFilePaths(FilePath::removeExtraPaths(
-            $paths,
-            $fileName,
-            $folder
-        ), $paramProvider);
+        $this->checkFilePaths($paths, $paramProvider);
 
         $foldersStats = $this->checkFolders([
             'config' => app()->configPath(),
@@ -151,5 +142,21 @@ class CheckImports extends Command
         $currentCommandName = request()->server('argv')[1] ?? '';
 
         return random_int(1, 7) == 2 && Str::startsWith($currentCommandName, 'check:im');
+    }
+
+    private function getParamProvider()
+    {
+        return function ($tokens) {
+            $imports = ParseUseStatement::parseUseStatements($tokens);
+
+            return $imports[0] ?: [$imports[1]];
+        };
+    }
+
+    private function getAutoloadFiles()
+    {
+        $paths = ComposerJson::readAutoloadFiles();
+
+        return HandleErrors::getAbsoluteFilePaths($paths);
     }
 }
