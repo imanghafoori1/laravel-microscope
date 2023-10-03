@@ -69,7 +69,7 @@ class CheckClassAtMethod
             $class = str_replace('\\\\', '\\', $class);
 
             if (! \class_exists($class)) {
-                $isInUserSpace = CheckClassReferencesAreValid::isInUserSpace($class);
+                $isInUserSpace = Analyzers\Fixer::isInUserSpace($class);
 
                 $result = [false];
                 if ($isInUserSpace) {

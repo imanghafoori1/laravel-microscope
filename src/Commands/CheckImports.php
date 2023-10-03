@@ -112,7 +112,7 @@ class CheckImports extends Command
 
         $errorPrinter->printTime();
 
-        if (random_int(1, 7) == 2 && Str::startsWith(request()->server('argv')[1] ?? '', 'check:im')) {
+        if ($this->shouldRequestThanks()) {
             ErrorPrinter::thanks($this);
         }
         $this->line('');
@@ -144,5 +144,12 @@ class CheckImports extends Command
         }
 
         return $fileCounts;
+    }
+
+    private function shouldRequestThanks(): bool
+    {
+        $currentCommandName = request()->server('argv')[1] ?? '';
+
+        return random_int(1, 7) == 2 && Str::startsWith($currentCommandName, 'check:im');
     }
 }

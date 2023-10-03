@@ -55,7 +55,7 @@ class CheckImport
 
     private static function tryToFix($classImport, $absFilePath, $line, $as, $printer)
     {
-        $isInUserSpace = CheckClassReferencesAreValid::isInUserSpace($classImport);
+        $isInUserSpace = Fixer::isInUserSpace($classImport);
         if (! $isInUserSpace) {
             return false;
         }

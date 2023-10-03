@@ -11,6 +11,19 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class Fixer
 {
+    public static function isInUserSpace($class): bool
+    {
+        $isInUserSpace = false;
+        $class = ltrim($class, '\\');
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            if (Str::startsWith($class, \array_keys($autoload))) {
+                $isInUserSpace = true;
+            }
+        }
+
+        return $isInUserSpace;
+    }
+
     private static function guessCorrect($classBaseName)
     {
         return ForPsr4LoadedClasses::classList()[$classBaseName] ?? [];
