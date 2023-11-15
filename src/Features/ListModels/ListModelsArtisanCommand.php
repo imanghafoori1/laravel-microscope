@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ListModels;
+namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;

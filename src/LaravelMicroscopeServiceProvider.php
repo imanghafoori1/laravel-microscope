@@ -13,12 +13,12 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
-use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
+use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
@@ -34,8 +34,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
         Commands\CheckViews::class,
-        Psr4\CheckPsr4ArtisanCommand::class,
-        Commands\CheckImports::class,
+        Features\Psr4\CheckPsr4ArtisanCommand::class,
+        Features\CheckImports\CheckImportsCommand::class,
         Commands\CheckAliases::class,
         Commands\CheckAll::class,
         Commands\ClassifyStrings::class,

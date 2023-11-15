@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ListModels;
+namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;

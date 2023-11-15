@@ -10,7 +10,7 @@ class FacadeAliases
     public static $handler = FacadeAliasReplacer::class;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Commands\CheckImports
+     * @var \Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportsCommand
      */
     public static $command;
 

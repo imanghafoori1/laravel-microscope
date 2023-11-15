@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\NamespaceFixer;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Psr4\NamespaceFixer;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
-use Imanghafoori\LaravelMicroscope\Handlers\UnusedImports;
-use Imanghafoori\LaravelMicroscope\Handlers\UnusedWrongImports;
-use Imanghafoori\LaravelMicroscope\Handlers\WrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedWrongImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\WrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid
 {

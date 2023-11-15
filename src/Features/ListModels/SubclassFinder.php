@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ListModels;
+namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use ReflectionClass;

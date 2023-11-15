@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Commands\CheckImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportsCommand;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckImportReporter
 {
-    public static function report(CheckImports $command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
+    public static function report(CheckImportsCommand $command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
     {
         $command->getOutput()->writeln('<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' imports were checked under:</>');
 
@@ -21,7 +21,7 @@ class CheckImportReporter
         self::printErrorsCount($command);
     }
 
-    private static function printFileCounts(CheckImports $command, $foldersStats, $bladeStats, int $countRouteFiles): string
+    private static function printFileCounts(CheckImportsCommand $command, $foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall'."</>\n";
         $output .= '   - <fg=blue>'.ForPsr4LoadedClasses::$checkedFilesNum.'</> class'.(ForPsr4LoadedClasses::$checkedFilesNum <= 1 ? '' : 'es').PHP_EOL;
@@ -46,7 +46,7 @@ class CheckImportReporter
         return $output;
     }
 
-    private static function printErrorsCount(CheckImports $command): void
+    private static function printErrorsCount(CheckImportsCommand $command): void
     {
         $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount;
         $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
@@ -56,7 +56,7 @@ class CheckImportReporter
         $command->getOutput()->writeln($output);
     }
 
-    private static function printPsr4(array $psr4Stats, CheckImports $command): void
+    private static function printPsr4(array $psr4Stats, CheckImportsCommand $command): void
     {
         $spaces = self::getMaxLength($psr4Stats);
 

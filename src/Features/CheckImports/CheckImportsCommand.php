@@ -1,28 +1,28 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassAtMethod;
-use Imanghafoori\LaravelMicroscope\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\HandleErrors;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\Psr4\HandleErrors;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class CheckImports extends Command
+class CheckImportsCommand extends Command
 {
     use LogsErrors;
 

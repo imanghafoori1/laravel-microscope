@@ -1,7 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzers;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ErrorException;
+use Imanghafoori\LaravelMicroscope\Analyzers\RuntimeException;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -34,29 +36,6 @@ class ImportsAnalyzer
         }
 
         return $unusedCorrectImports;
-    }
-
-    public static function getBadClassRefs($tokens, $absFilePath = '')
-    {
-        $imports = ParseUseStatement::parseUseStatements($tokens);
-        $imports = $imports[0] ?: [$imports[1]];
-
-        [
-            $expandedClasses,
-            $hostNamespace,
-            $unusedImports,
-            $docblockRefs,
-        ] = self::findClassRefs($tokens, $absFilePath, $imports);
-
-        [$wrongClassRefs] = self::filterWrongClassRefs($expandedClasses, $absFilePath);
-
-        $unusedCorrectImports = self::getUnusedCorrectImports($unusedImports, $wrongClassRefs);
-
-        return [
-            $wrongClassRefs,
-            $unusedCorrectImports,
-            count($expandedClasses),
-        ];
     }
 
     public static function getWrongRefs($tokens, $absFilePath, $imports): array

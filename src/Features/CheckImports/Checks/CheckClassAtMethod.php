@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers;

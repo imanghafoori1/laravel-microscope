@@ -1,9 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
 class UnusedWrongImports
 {

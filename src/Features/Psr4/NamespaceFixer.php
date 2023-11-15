@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
