@@ -29,7 +29,7 @@ class WrongClassRefs
             $isFixed = $beforeFix !== $afterFix;
 
             // print
-            $method = $isFixed ? 'printFixation' : 'wrongImportPossibleFixes';
+            $method = $isFixed ? 'printFixation' : 'wrongUsedClassError';
             $printer->$method($absFilePath, $wrongClassRef, $line, $corrections);
 
             if ($isFixed) {

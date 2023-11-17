@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ErrorException;
-use Imanghafoori\LaravelMicroscope\Analyzers\RuntimeException;
+use ErrorException;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use RuntimeException;
 use Throwable;
 
 class ImportsAnalyzer
@@ -18,25 +18,6 @@ class ImportsAnalyzer
     public static $wrongImportsCount = 0;
 
     public static $wrongClassRefCount = 0;
-
-    public static function getUnusedCorrectImports($unusedImports, $wrongImports)
-    {
-        $wrongs = [];
-        foreach ($wrongImports as $import) {
-            $wrongs[$import['class']] = 1;
-        }
-
-        $unusedCorrectImports = [];
-
-        foreach ($unusedImports as $class) {
-            // if is not a wrong import:
-            if (! isset($wrongs[$class[0]])) {
-                $unusedCorrectImports[] = $class;
-            }
-        }
-
-        return $unusedCorrectImports;
-    }
 
     public static function getWrongRefs($tokens, $absFilePath, $imports): array
     {

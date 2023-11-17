@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
+use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Refactor;
 

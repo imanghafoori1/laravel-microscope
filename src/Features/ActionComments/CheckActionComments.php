@@ -1,10 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Checks\ActionsComments;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;

@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;

@@ -3,8 +3,8 @@
     ($all_methods == $methods) && ($methods = ['any']);
 @endphp
 @if (\count($methods) > 1)
-         * @methods('{!! \implode("', ", $methods) !!}')
-         * @uri('{!! $url !!}')
+         * {!! '@' !!}methods('{!! \implode("', ", $methods) !!}')
+         * {!! '@' !!}uri('{!! $url !!}')
 @else
          * {!! '@'.strtolower(\implode('', $methods)) !!}('{!! $url !!}')
 @endif

@@ -1,27 +1,32 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportsCommand;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckImportReporter
 {
+    /**
+     * @var CheckImportsCommand $command
+     */
+    private static $command;
+
     public static function report(CheckImportsCommand $command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
     {
-        $command->getOutput()->writeln('<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' imports were checked under:</>');
+        self::$command = $command;
 
-        self::printPsr4($psr4Stats, $command);
+        $command->getOutput()->writeln(self::totalImportsMsg());
 
-        self::printFileCounts($command, $foldersStats, $bladeStats, $countRouteFiles);
+        self::printPsr4($psr4Stats);
 
-        self::printErrorsCount($command);
+        self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles);
+
+        self::printErrorsCount();
     }
 
-    private static function printFileCounts(CheckImportsCommand $command, $foldersStats, $bladeStats, int $countRouteFiles): string
+    private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall'."</>\n";
         $output .= '   - <fg=blue>'.ForPsr4LoadedClasses::$checkedFilesNum.'</> class'.(ForPsr4LoadedClasses::$checkedFilesNum <= 1 ? '' : 'es').PHP_EOL;
@@ -41,23 +46,27 @@ class CheckImportReporter
         $output = self::foldersStats($foldersStats, $output);
 
         $output .= '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? '' : 's').PHP_EOL;
-        $command->line($output);
+        self::$command->line($output);
 
         return $output;
     }
 
-    private static function printErrorsCount(CheckImportsCommand $command): void
+    private static function printErrorsCount(): void
     {
         $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount;
         $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
         $output .= ' - <fg=yellow>'.ImportsAnalyzer::$unusedImportsCount.' unused</> import'.(ImportsAnalyzer::$unusedImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongClassRefCount.' wrong</> class'.(ImportsAnalyzer::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
-        $command->getOutput()->writeln($output);
+        self::$command->getOutput()->writeln($output);
     }
 
-    private static function printPsr4(array $psr4Stats, CheckImportsCommand $command): void
+    private static function printPsr4(array $psr4Stats): void
     {
+        /**
+         * @var CheckImportsCommand $command
+         */
+        $command = self::$command;
         $spaces = self::getMaxLength($psr4Stats);
 
         foreach ($psr4Stats as $composerPath => $psr4) {
@@ -111,5 +120,10 @@ class CheckImportReporter
         }
 
         return $output;
+    }
+
+    private static function totalImportsMsg(): string
+    {
+        return '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' imports were checked under:</>';
     }
 }
