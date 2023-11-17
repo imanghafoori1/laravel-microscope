@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 class CheckImportReporter
 {
     /**
-     * @var CheckImportsCommand $command
+     * @var CheckImportsCommand
      */
     private static $command;
 
