@@ -1,11 +1,14 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class FacadeAliasReporter
 {
+    /**
+     * @var \Illuminate\Console\Command
+     */
     public static $command;
 
     public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens)

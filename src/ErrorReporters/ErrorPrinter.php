@@ -139,17 +139,17 @@ class ErrorPrinter
 
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
-        $this->doesNotExist($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
+        $this->simplePendError($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 
     public function extraImport($absPath, $class, $lineNumber)
     {
-        $this->doesNotExist($class, $absPath, $lineNumber, 'extraImport', 'Import is not used:');
+        $this->simplePendError($class, $absPath, $lineNumber, 'extraImport', 'Import is not used:');
     }
 
     public function wrongMethodError($absPath, $class, $lineNumber)
     {
-        $this->doesNotExist($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
+        $this->simplePendError($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
     }
 
     public function color($msg)

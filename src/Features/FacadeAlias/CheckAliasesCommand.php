@@ -1,15 +1,14 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class CheckAliases extends Command
+class CheckAliasesCommand extends Command
 {
     use LogsErrors;
 
@@ -28,14 +27,14 @@ class CheckAliases extends Command
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
-        FacadeAliases::$command = $this;
+        FacadeAliasesCheck::$command = $this;
 
         $paramProvider = function ($tokens) {
             $imports = ParseUseStatement::parseUseStatements($tokens);
 
             return $imports[0] ?: [$imports[1]];
         };
-        ForPsr4LoadedClasses::check([FacadeAliases::class], $paramProvider, $fileName, $folder);
+        ForPsr4LoadedClasses::check([FacadeAliasesCheck::class], $paramProvider, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
 

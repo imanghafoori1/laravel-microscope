@@ -1,16 +1,15 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Foundation\AliasLoader;
-use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReplacer;
 
-class FacadeAliases
+class FacadeAliasesCheck
 {
     public static $handler = FacadeAliasReplacer::class;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportsCommand
+     * @var \Illuminate\Console\Command
      */
     public static $command;
 

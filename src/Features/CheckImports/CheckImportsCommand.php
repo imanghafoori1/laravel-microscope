@@ -6,16 +6,16 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Checks\FacadeAliases;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
+use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
+use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\HandleErrors;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReplacer;
-use Imanghafoori\LaravelMicroscope\Handlers\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -42,7 +42,7 @@ class CheckImportsCommand extends Command
     private $checks = [
         1 => CheckClassAtMethod::class,
         2 => CheckClassReferencesAreValid::class,
-        3 => FacadeAliases::class,
+        3 => FacadeAliasesCheck::class,
     ];
 
     public function handle(ErrorPrinter $errorPrinter)
@@ -51,11 +51,11 @@ class CheckImportsCommand extends Command
         $this->line('');
         $this->info('Checking imports...');
 
-        FacadeAliases::$command = $this;
+        FacadeAliasesCheck::$command = $this;
 
         if ($this->option('nofix')) {
             config(['microscope.no_fix' => true]);
-            FacadeAliases::$handler = FacadeAliasReporter::class;
+            FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
         if ($this->option('force')) {

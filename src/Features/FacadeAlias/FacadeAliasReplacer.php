@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -9,6 +9,9 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class FacadeAliasReplacer
 {
+    /**
+     * @var \Illuminate\Console\Command
+     */
     public static $command;
 
     public static $forceReplace = false;
