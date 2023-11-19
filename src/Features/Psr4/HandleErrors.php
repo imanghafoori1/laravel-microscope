@@ -56,7 +56,7 @@ class HandleErrors
         return function ($path, $changedLineNums, $content) {
             Filesystem::$fileSystem::file_put_contents($path, $content);
 
-            $p = app(ErrorPrinter::class);
+            $p = ErrorPrinter::singleton();
             foreach ($changedLineNums as $line) {
                 $p->simplePendError('', $path, $line, 'ns_replacement', 'Namespace replacement:');
             }

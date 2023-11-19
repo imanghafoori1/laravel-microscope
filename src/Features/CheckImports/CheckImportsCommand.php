@@ -30,7 +30,6 @@ class CheckImportsCommand extends Command
         {--w|wrong : Only reports wrong imports}
         {--f|file= : Pattern for file names to scan}
         {--d|folder= : Pattern for file names to scan}
-        {--detailed : Show files being checked}
         {--s|nofix : avoids the automatic fixes}
     ';
 
@@ -112,10 +111,12 @@ class CheckImportsCommand extends Command
 
     private function checkFilePaths($paths, $paramProvider)
     {
-        foreach ($paths as $absFilePath) {
-            $tokens = token_get_all(file_get_contents($absFilePath));
-            foreach ($this->checks as $check) {
-                $check::check($tokens, $absFilePath, $paramProvider($tokens));
+        foreach ($paths as $dir => $absFilePaths) {
+            foreach ((array) $absFilePaths as $absFilePath) {
+                $tokens = token_get_all(file_get_contents($absFilePath));
+                foreach ($this->checks as $check) {
+                    $check::check($tokens, $absFilePath, $paramProvider($tokens));
+                }
             }
         }
     }
@@ -127,10 +128,9 @@ class CheckImportsCommand extends Command
             $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
             $this->checkFilePaths($filePaths, $paramProvider);
 
-            $fileCounts[$listName] = [
-                'paths' => $dirs,
-                'fileCount' => count($filePaths),
-            ];
+            foreach ($filePaths as $dir => $filePathList) {
+                $fileCounts[$listName][$dir] = $filePathList;
+            }
         }
 
         return $fileCounts;

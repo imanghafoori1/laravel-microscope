@@ -11,64 +11,54 @@ class CheckImportReporter
     /**
      * @var CheckImportsCommand
      */
-    private static $command;
+    public static $command;
 
-    public static function report(CheckImportsCommand $command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
+    public static function report($command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
     {
         self::$command = $command;
 
-        $command->getOutput()->writeln(self::totalImportsMsg());
+        self::$command->getOutput()->writeln(self::totalImportsMsg());
 
-        self::printPsr4($psr4Stats);
-
-        self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles);
-
-        self::printErrorsCount();
+        self::$command->getOutput()->writeln(self::printPsr4($psr4Stats));
+        self::$command->getOutput()->writeln(self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles));
+        self::$command->getOutput()->writeln(self::printErrorsCount());
     }
 
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
-        $output = ' <fg=blue>Overall'."</>\n";
-        $output .= '   - <fg=blue>'.ForPsr4LoadedClasses::$checkedFilesNum.'</> class'.(ForPsr4LoadedClasses::$checkedFilesNum <= 1 ? '' : 'es').PHP_EOL;
+        $output = ' <fg=blue>Overall:'."</>\n";
+        $output .= self::getFilesStats(ForPsr4LoadedClasses::$checkedFilesNum);
 
-        $output .= '   - <fg=blue>'.BladeFiles::$checkedFilesNum.'</> blade'.(BladeFiles::$checkedFilesNum <= 1 ? '' : 's').' (';
-        $numBladeStats = count($bladeStats);
-        $i = 0;
-        foreach ($bladeStats as $path => $count) {
-            $path = FilePath::normalize(str_replace(base_path(), '.', $path));
-            $output .= '<fg=green>'.$path.'</>';
-            if (++$i !== $numBladeStats) {
-                $output .= ','.PHP_EOL.'        ';
-            }
+        if ($bladeStats) {
+            $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesNum);
         }
-        $output .= ')'.PHP_EOL;
 
-        $output = self::foldersStats($foldersStats, $output);
+        if ($foldersStats) {
+            $output .= self::foldersStats($foldersStats);
+        }
 
-        $output .= '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? '' : 's').PHP_EOL;
-        self::$command->line($output);
+        if ($countRouteFiles) {
+            $output .= self::getRouteStats($countRouteFiles);
+        }
 
         return $output;
     }
 
-    private static function printErrorsCount(): void
+    public static function printErrorsCount()
     {
-        $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount;
+        $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount + ImportsAnalyzer::$wrongClassRefCount;
         $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
         $output .= ' - <fg=yellow>'.ImportsAnalyzer::$unusedImportsCount.' unused</> import'.(ImportsAnalyzer::$unusedImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongClassRefCount.' wrong</> class'.(ImportsAnalyzer::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
-        self::$command->getOutput()->writeln($output);
+
+        return $output;
     }
 
-    private static function printPsr4(array $psr4Stats): void
+    public static function printPsr4(array $psr4Stats)
     {
-        /**
-         * @var CheckImportsCommand $command
-         */
-        $command = self::$command;
         $spaces = self::getMaxLength($psr4Stats);
-
+        $result = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
             $composerPath = trim($composerPath, '/');
             $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
@@ -81,8 +71,10 @@ class CheckImportReporter
                     $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
                 }
             }
-            $command->getOutput()->writeln($output);
+            $result .= $output.PHP_EOL;
         }
+
+        return $result;
     }
 
     private static function getMaxLength(array $psr4Stats)
@@ -97,33 +89,100 @@ class CheckImportReporter
         return max($lengths);
     }
 
-    private static function foldersStats($foldersStats, string $output)
+    private static function foldersStats($foldersStats)
     {
+        $output = '';
         foreach ($foldersStats as $fileType => $stats) {
-            $output .= '   - <fg=blue>'.$stats['fileCount'].'</> '.$fileType;
-            if (empty($stats['paths'])) {
-                $output .= PHP_EOL;
-                continue;
+            $total = 0;
+            foreach ($stats as $dir => $files) {
+                $total += count($files);
             }
-            $output .= '  (';
-            $paths = (array) $stats['paths'];
-            $numPaths = count($paths);
+
+            $output .= self::blue($total).$fileType;
+            $numPaths = count($stats);
+            $output .= self::hyphen();
             $i = 0;
-            foreach ($paths as $path) {
-                $path = FilePath::normalize(str_replace(base_path(), '.', $path));
-                $output .= '<fg=green>'.$path.'</>';
-                if (++$i !== $numPaths) {
-                    $output .= ','.PHP_EOL.'        ';
-                }
+            foreach ($stats as $dir => $files) {
+                $count = count($files);
+                $output .= self::addLine($dir, $count, ++$i, $numPaths);
             }
-            $output .= ')'.PHP_EOL;
+
+            $output .= PHP_EOL;
         }
 
         return $output;
     }
 
-    private static function totalImportsMsg(): string
+    public static function totalImportsMsg()
     {
         return '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' imports were checked under:</>';
+    }
+
+    private static function getBladeStats($stats, $checkedFilesNum): string
+    {
+        $output = self::blue($checkedFilesNum).'blade'.($checkedFilesNum <= 1 ? '' : 's');
+        $numPaths = count($stats);
+        $output .= self::hyphen();
+        $i = 0;
+        foreach ($stats as $path => $count) {
+            $output .= self::addLine($path, $count, ++$i, $numPaths);
+        }
+
+        $output .= PHP_EOL;
+
+        return $output;
+    }
+
+    private static function getRouteStats($countRouteFiles)
+    {
+        return '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? '' : 's').PHP_EOL;
+    }
+
+    private static function getFilesStats($checkedFilesNum)
+    {
+        return '   - <fg=blue>'.$checkedFilesNum.'</> class'.($checkedFilesNum <= 1 ? '' : 'es').PHP_EOL;
+    }
+
+    private static function nextLine(int $numPaths)
+    {
+        return self::hyphen();
+    }
+
+    private static function normalize($dir)
+    {
+        return FilePath::normalize(str_replace(base_path(), '.', $dir));
+    }
+
+    private static function green(string $path)
+    {
+        return '<fg=green>'.$path.'</>';
+    }
+
+    private static function hyphen()
+    {
+        return PHP_EOL.'        - ';
+    }
+
+    private static function files($count)
+    {
+        return ' ( '.$count.' files )';
+    }
+
+    private static function addLine($path, $count, $i, $numPaths)
+    {
+        $output = '';
+        $path = self::normalize($path);
+        $output .= self::green($path);
+        $output .= self::files($count);
+        if ($i !== $numPaths) {
+            $output .= self::hyphen();
+        }
+
+        return $output;
+    }
+
+    private static function blue($checkedFilesNum)
+    {
+        return '   - <fg=blue>'.$checkedFilesNum.'</> ';
     }
 }

@@ -13,7 +13,7 @@ class CheckPsr4Printer extends ErrorPrinter
         /**
          * @var $p ErrorPrinter
          */
-        $p = app(ErrorPrinter::class);
+        $p = ErrorPrinter::singleton();
         $msg = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
         $p->end();
@@ -99,7 +99,7 @@ class CheckPsr4Printer extends ErrorPrinter
         /**
          * @var $p ErrorPrinter
          */
-        $p = app(ErrorPrinter::class);
+        $p = ErrorPrinter::singleton();
         $key = 'badNamespace';
         $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
         $errorData = '  namespace fixed to:  '.$p->color("namespace $correct;");
@@ -112,7 +112,7 @@ class CheckPsr4Printer extends ErrorPrinter
         /**
          * @var $p ErrorPrinter
          */
-        $p = app(ErrorPrinter::class);
+        $p = ErrorPrinter::singleton();
         $key = 'badFileName';
         $header = 'The file name and the class name are different.';
         $errorData = 'Class name: <fg=blue>'.$class.'</>'.PHP_EOL.'   File name:  <fg=blue>'.$file.'</>';

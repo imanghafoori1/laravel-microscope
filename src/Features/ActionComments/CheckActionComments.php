@@ -28,7 +28,7 @@ class CheckActionComments extends Command
 
         ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
 
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return 0;
     }
 
     private static function findDefinedRouteActions()

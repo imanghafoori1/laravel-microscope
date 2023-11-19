@@ -16,6 +16,8 @@ class FacadeAliasReplacer
 
     public static $forceReplace = false;
 
+    public static $replacementsCount = 0;
+
     public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens)
     {
         if (self::$forceReplace || self::ask($absFilePath, $usageInfo, $base, $alias)) {
@@ -24,6 +26,8 @@ class FacadeAliasReplacer
             Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newVersion));
 
             $tokens = token_get_all(Filesystem::$fileSystem::file_get_contents($absFilePath));
+
+            self::$replacementsCount++;
         }
 
         return $tokens;

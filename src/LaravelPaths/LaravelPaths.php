@@ -49,29 +49,6 @@ class LaravelPaths
         return $migrationDirs;
     }
 
-    /**
-     * Check given path should be ignored.
-     *
-     * @param  string  $path
-     * @return bool
-     */
-    public static function isIgnored($path)
-    {
-        $ignorePatterns = config('microscope.ignore');
-
-        if (! $ignorePatterns || ! is_array($ignorePatterns)) {
-            return false;
-        }
-
-        foreach ($ignorePatterns as $ignorePattern) {
-            if (Str::is(base_path($ignorePattern), $path)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static function bladeFilePaths()
     {
         $bladeFiles = [];

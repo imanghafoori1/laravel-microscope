@@ -1,9 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SpyClasses;
+namespace Imanghafoori\LaravelMicroscope\Features\RouteOverride;
 
 use Illuminate\Routing\RouteCollection;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
 
 class SpyRouteCollection extends RouteCollection
 {

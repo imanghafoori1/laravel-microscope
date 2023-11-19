@@ -21,8 +21,6 @@ class CheckClassReferencesAreValid
 
     public static function check($tokens, $absFilePath, $params = [])
     {
-        event('laravel_microscope.checking_file', [$absFilePath]);
-
         return self::checkAndHandleClassRefs($tokens, $absFilePath, $params);
     }
 

@@ -10,14 +10,14 @@ class WrongClassRefs
 {
     public static function handle(array $wrongClassRefs, $absFilePath, $hostNamespace, array $tokens): array
     {
-        $printer = app(ErrorPrinter::class);
+        $printer = ErrorPrinter::singleton();
 
         foreach ($wrongClassRefs as $classReference) {
             $wrongClassRef = $classReference['class'];
             $line = $classReference['line'];
 
             if (! Fixer::isInUserSpace($wrongClassRef)) {
-                $printer->doesNotExist($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
+                self::wrongRef($printer, $wrongClassRef, $absFilePath, $line);
                 continue;
             }
 
@@ -29,13 +29,16 @@ class WrongClassRefs
             $isFixed = $beforeFix !== $afterFix;
 
             // print
-            $method = $isFixed ? 'printFixation' : 'wrongUsedClassError';
-            $printer->$method($absFilePath, $wrongClassRef, $line, $corrections);
+            if ($isFixed) {
+                self::printFixation($absFilePath, $wrongClassRef, $line, $corrections);
+            } else {
+                self::wrongUsedClassError($absFilePath, $wrongClassRef, $line);
+            }
 
             if ($isFixed) {
                 $tokens = token_get_all($afterFix);
 
-                return [$tokens, $isFixed];
+                return [$tokens, true];
             }
         }
 
@@ -54,5 +57,32 @@ class WrongClassRefs
         }
 
         return Fixer::fixReference($absFilePath, $class, $line);
+    }
+
+    private static function wrongRef($printer, $wrongClassRef, $absFilePath, $line): void
+    {
+        $printer->simplePendError($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
+    }
+
+    private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
+    {
+        ErrorPrinter::singleton()->simplePendError(
+            'Fixed to:   '.substr($correct[0], 0, 55),
+            $absPath,
+            $lineNumber,
+            'ns_replacement',
+            $wrongClass.'  <=== Did not exist'
+        );
+    }
+
+    private static function wrongUsedClassError($absPath, $class, $lineNumber)
+    {
+        ErrorPrinter::singleton()->simplePendError(
+            $class,
+            $absPath,
+            $lineNumber,
+            'wrongUsedClassError',
+            'Class does not exist:'
+        );
     }
 }

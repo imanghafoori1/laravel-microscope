@@ -18,7 +18,7 @@ class UnusedImports
 
     public static function extraImport($absPath, $class, $lineNumber)
     {
-        app(ErrorPrinter::class)->simplePendError(
+        ErrorPrinter::singleton()->simplePendError(
             $class,
             $absPath,
             $lineNumber,

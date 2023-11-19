@@ -73,7 +73,7 @@ class PatternRefactorings
 
     private static function printLinks($lineNum, $absFilePath, $startingCode, $endResult)
     {
-        $printer = app(ErrorPrinter::class);
+        $printer = ErrorPrinter::singleton();
         // Print Replacement Links
         $printer->print('Replacing:
 <fg=yellow>'.Str::limit($startingCode, 150).'</>', '', 0);
@@ -132,7 +132,7 @@ class PatternRefactorings
         /**
          * @var $printer ErrorPrinter::class
          */
-        $printer = app(ErrorPrinter::class);
+        $printer = ErrorPrinter::singleton();
         // Print Replacement Links
         $printer->print('Detected:
 <fg=yellow>'.Str::limit($from, 150).'</>', '', 0);

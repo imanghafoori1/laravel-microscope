@@ -53,7 +53,7 @@ class CheckEndIf extends Command
 
         $this->printFinalMsg($fixedFilesCount);
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }
 
     private function printFinalMsg($fixed)

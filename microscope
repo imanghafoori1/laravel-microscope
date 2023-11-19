@@ -1,0 +1,57 @@
+<?php
+
+use ImanGhafoori\ComposerJson\ComposerJson as Composer;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportReporter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+
+if (isset($GLOBALS['_composer_autoload_path'])) {
+    define('COMPOSER_INSTALL', $GLOBALS['_composer_autoload_path']);
+
+    unset($GLOBALS['_composer_autoload_path']);
+} else {
+    foreach ([__DIR__.'/../../autoload.php', __DIR__.'/../vendor/autoload.php', __DIR__.'/vendor/autoload.php'] as $file) {
+        if (file_exists($file)) {
+            define('COMPOSER_INSTALL', $file);
+
+            break;
+        }
+    }
+
+    unset($file);
+}
+
+require_once COMPOSER_INSTALL;
+
+\Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson::$composer = function () {
+    $comp = FilePath::$basePath = base_path();
+
+    return Composer::make($comp);
+};
+function base_path() {
+    if (file_exists(__DIR__.'/composer.json')) {
+        $comp = __DIR__;
+    } elseif (file_exists(__DIR__.'/../../composer.json')) {
+        $comp = __DIR__.'/../..';
+    }
+
+    return $comp;
+}
+
+$psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], function ($tokens) {
+    $imports = ParseUseStatement::parseUseStatements($tokens);
+
+    return $imports[0] ?: [$imports[1]];
+});
+
+$output = new ConsoleOutput();
+ErrorPrinter::singleton($output)->logErrors();
+
+$output->writeln(CheckImportReporter::totalImportsMsg());
+$output->writeln(CheckImportReporter::printPsr4($psr4Stats));
+$output->writeln(CheckImportReporter::printErrorsCount());

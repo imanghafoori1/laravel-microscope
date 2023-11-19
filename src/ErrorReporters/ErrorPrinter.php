@@ -2,12 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Symfony\Component\Console\Terminal;
 
 class ErrorPrinter
 {
+    public static $ignored;
+
     public $errorsList = [
         'total' => 0,
     ];
@@ -20,6 +22,23 @@ class ErrorPrinter
 
     public $count = 0;
 
+    public static $instance;
+
+    public static $basePath;
+
+    /**
+     * @return self
+     */
+    public static function singleton($output = null)
+    {
+        if (! self::$instance) {
+            self::$instance = new self;
+        }
+        $output && (self::$instance->printer = $output);
+
+        return self::$instance;
+    }
+
     public function view($absPath, $message, $lineNumber, $fileName)
     {
         $this->simplePendError($fileName.'.blade.php', $absPath, $lineNumber, 'view', \trim($message), ' does not exist');
@@ -31,11 +50,6 @@ class ErrorPrinter
         $msg = 'Fixed to:   '.substr($correct[0], 0, 55);
 
         $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
-    }
-
-    public function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
-    {
-        $this->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);
     }
 
     public function authConf()
@@ -67,7 +81,7 @@ class ErrorPrinter
 
     public function addPendingError($path, $lineNumber, $key, $header, $errorData)
     {
-        if (LaravelPaths::isIgnored($path)) {
+        if (self::isIgnored($path)) {
             return;
         }
         $this->count++;
@@ -91,52 +105,6 @@ class ErrorPrinter
         $this->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }
 
-    public function queryInBlade($absPath, $class, $lineNumber)
-    {
-        $key = 'queryInBlade';
-        $errorData = $this->color($class).'  <=== DB query in blade file';
-        $header = 'Query in blade file: ';
-
-        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
-    }
-
-    public function routeDefinitionConflict($route1, $route2, $info)
-    {
-        if (LaravelPaths::isIgnored($info[0]['file'] ?? 'unknown')) {
-            return;
-        }
-
-        $key = 'routeDefinitionConflict';
-        $routeName = $route1->getName();
-        if ($routeName) {
-            $routeName = $this->color($routeName);
-            $msg = 'Route name: '.$routeName;
-        } else {
-            $routeUri = $route1->uri();
-            $routeUri = $this->color($routeUri);
-            $msg = 'Route uri: '.$routeUri;
-        }
-
-        $msg .= "\n".' at '.($info[0]['file'] ?? 'unknown').':'.($info[0]['line'] ?? 2);
-        $msg .= "\n".' is overridden by ';
-
-        $routeName = $route2->getName();
-        if ($routeName) {
-            $routeName = $this->color($routeName);
-            $msg .= 'route name: '.$routeName;
-        } else {
-            $msg .= 'an other route with same uri.';
-        }
-
-        $msg .= "\n".' at '.($info[1]['file'] ?? ' ').':'.$info[1]['line']."\n";
-
-        $methods = \implode(',', $route1->methods());
-
-        $this->errorsList[$key][$methods] = (new PendingError($key))
-            ->header('Route with uri: '.$this->color($methods.': /'.$route1->uri()).' is overridden.')
-            ->errorData($msg);
-    }
-
     public function wrongUsedClassError($absPath, $class, $lineNumber)
     {
         $this->simplePendError($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
@@ -145,11 +113,6 @@ class ErrorPrinter
     public function extraImport($absPath, $class, $lineNumber)
     {
         $this->simplePendError($class, $absPath, $lineNumber, 'extraImport', 'Import is not used:');
-    }
-
-    public function wrongMethodError($absPath, $class, $lineNumber)
-    {
-        $this->simplePendError($class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:');
     }
 
     public function color($msg)
@@ -267,5 +230,28 @@ class ErrorPrinter
         $command->line('<fg=blue>|  \(^_^)/    Regards, Iman Ghafoori    \(^_^)/   |</>');
         $command->line('<fg=blue>|-------------------------------------------------|</>');
         $command->line('https://github.com/imanghafoori1/microscope');
+    }
+
+    /**
+     * Check given path should be ignored.
+     *
+     * @param  string  $path
+     * @return bool
+     */
+    public static function isIgnored($path)
+    {
+        $ignorePatterns = self::$ignored;
+
+        if (! $ignorePatterns || ! is_array($ignorePatterns)) {
+            return false;
+        }
+
+        foreach ($ignorePatterns as $ignorePattern) {
+            if (Str::is(base_path($ignorePattern), $path)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

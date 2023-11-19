@@ -42,7 +42,7 @@ class SpyGate extends Gate
     public function policy($model, $policy)
     {
         if (! is_subclass_of($model, Model::class)) {
-            return app(ErrorPrinter::class)->pended[] = ("The \"$model\" you are trying to define policy for, is not an eloquent model class.");
+            return ErrorPrinter::singleton()->pended[] = ("The \"$model\" you are trying to define policy for, is not an eloquent model class.");
         }
     }
 
@@ -58,7 +58,7 @@ class SpyGate extends Gate
 
     private function pendError($message)
     {
-        return app(ErrorPrinter::class)->pended[] = $message;
+        return ErrorPrinter::singleton()->pended[] = $message;
     }
 
     private function getGateOverriddenMsg($ability, $callback1, $callback2)

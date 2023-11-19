@@ -14,12 +14,20 @@ class Paths
         }
 
         $folder && ($folder = str_replace('\\', '/', $folder));
-        try {
-            $files = Finder::create()->files()->name('*.php')->in($dirs);
+        $paths = [];
+        foreach ((array) $dirs as $dir) {
+            $paths[$dir] = self::getPaths($dir, $file, $folder);
+        }
 
+        return $paths;
+    }
+
+    private static function getPaths($dir, $file, $folder): array
+    {
+        try {
+            $files = Finder::create()->files()->name('*.php')->in($dir);
             $paths = [];
-            foreach ($files as $f) {
-                $absFilePath = $f->getRealPath();
+            foreach ($files as $absFilePath => $f) {
                 FilePath::contains($absFilePath, $file, $folder);
 
                 $paths[] = $absFilePath;

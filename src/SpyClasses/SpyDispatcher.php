@@ -67,7 +67,7 @@ class SpyDispatcher extends Dispatcher
     {
         $len = strlen($string);
         PendingError::$maxLength < $len && PendingError::$maxLength = $len;
-        app(ErrorPrinter::class)->pended[] = $string;
+        ErrorPrinter::singleton()->pended[] = $string;
     }
 
     protected function validateCallback($event, $listener)

@@ -11,20 +11,33 @@ class CheckIsQuery
 {
     public static function check($tokens, $absPath)
     {
-        [$classes] = ParseUseStatement::findClassReferences($tokens, $absPath);
+        [$classes] = ParseUseStatement::findClassReferences($tokens);
 
         foreach ($classes as $class) {
             $c = $class['class'];
             if (self::isQueryClass($c)) {
-                app(ErrorPrinter::class)->queryInBlade($absPath, $class['class'], $class['line']);
+                self::queryInBlade($absPath, $class['class'], $class['line']);
             }
         }
     }
 
-    public static function isQueryClass($class)
+    private static function isQueryClass($class)
     {
         $queryBuilder = ['\\'.DB::class, DB::class, '\DB', 'DB'];
 
         return is_subclass_of($class, Model::class) || \in_array($class, $queryBuilder);
+    }
+
+    private function queryInBlade($absPath, $class, $lineNumber)
+    {
+        $key = 'queryInBlade';
+        $header = 'Query in blade file: ';
+        $errorData = $this->color($class).'  <=== DB query in blade file';
+
+        /**
+         * @var $p ErrorPrinter
+         */
+        $p = ErrorPrinter::singleton();
+        $p->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 }

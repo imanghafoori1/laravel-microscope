@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SpyClasses;
+namespace Imanghafoori\LaravelMicroscope\Features\RouteOverride;
 
 use Closure;
 use Illuminate\Routing\Router;
@@ -14,7 +14,7 @@ class SpyRouter extends Router
     public $routePaths = [];
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouteCollection
+     * @var \Imanghafoori\LaravelMicroscope\Features\RouteOverride\SpyRouteCollection
      */
     private $routesSpy = null;
 
@@ -77,12 +77,18 @@ class SpyRouter extends Router
 
     public function routeError($info, $err, $msg)
     {
-        app(ErrorPrinter::class)->route(
+        /**
+         * @var $p ErrorPrinter
+         */
+        $p = ErrorPrinter::singleton();
+
+        $p->simplePendError(
             null,
-            $msg,
-            $err,
             $info['file'] ?? '',
-            $info['line'] ?? 1
+            $info['line'] ?? 1,
+            'route',
+            $msg,
+            $err
         );
     }
 

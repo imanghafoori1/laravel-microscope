@@ -13,17 +13,18 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
+use Imanghafoori\LaravelMicroscope\Features\RouteOverride\SpyRouter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyRouter;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
@@ -77,6 +78,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->commands(self::$commandNames);
 
+        ErrorPrinter::$ignored = config('microscope.ignore');
+
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('microscope.php'),
         ], 'config');
@@ -96,13 +99,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
-        app()->singleton(Composer::class, function () {
+        ComposerJson::$composer = function () {
             return Composer::make(
                 base_path(),
                 config('microscope.ignored_namespaces', []),
                 config('microscope.additional_composer_paths', [])
             );
-        });
+        };
 
         FilePath::$basePath = base_path();
 
@@ -119,7 +122,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         $this->loadConfig();
 
-        app()->singleton(ErrorPrinter::class);
+        app()->singleton(ErrorPrinter::class, function () {
+            return ErrorPrinter::singleton();
+        });
         $this->spyRouter();
         // also we should spy the factory paths.
         if (class_exists('Illuminate\Database\Eloquent\Factory')) {

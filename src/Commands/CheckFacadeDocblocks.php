@@ -29,7 +29,7 @@ class CheckFacadeDocblocks extends Command
         });
 
         Event::listen('microscope.facade.accessor_error', function ($accessor, $absFilePath) {
-            app(ErrorPrinter::class)->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
+            ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
         });
 
         $fileName = ltrim($this->option('file'), '=');

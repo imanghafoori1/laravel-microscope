@@ -37,11 +37,7 @@ class ActionsComments
 
         foreach ($methods as $method) {
             $classAtMethod = RoutelessActions::classAtMethod($fullNamespace, $method['name'][1]);
-            $actions = [];
-            foreach ($allRoutes as $route) {
-                $action = $route->getAction('uses');
-                $classAtMethod === $action && $actions[] = $route;
-            }
+            $actions = self::getActions($allRoutes, $classAtMethod);
 
             if (! $actions) {
                 continue;
@@ -50,15 +46,7 @@ class ActionsComments
             /**
              * @var $route \Illuminate\Routing\Route
              */
-            $msg = '/**';
-            $separator = "\n         *";
-
-            foreach ($actions as $i => $action) {
-                $i === count($actions) - 1 && $separator = '';
-                $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
-            }
-
-            $msg .= "\n         */";
+            $msg = self::getComment($actions);
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
@@ -90,31 +78,18 @@ class ActionsComments
         $routeName = $route->getName() ?: '';
         $middlewares = self::gatherMiddlewares($route);
         [$file, $line] = self::getCallsiteInfo($methods[0], $route);
-        $url = $route->uri();
+        $url = self::getUrl($route);
 
-        if (($url[0] ?? '') !== '/') {
-            $url = '/'.$url;
-        }
+        $viewFile = self::getViewFileName();
 
-        $viewData = [
+        return view($viewFile, [
             'middlewares' => $middlewares,
             'routeName' => $routeName,
             'file' => $file,
             'line' => $line,
             'methods' => $methods,
             'url' => $url,
-        ];
-
-        if (view()->exists('vendor.microscope.actions_comment')) {
-            $viewFile = 'vendor.microscope.actions_comment';
-        } else {
-            $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
-            if (! view()->exists('vendor.microscope.actions_comment')) {
-                $viewFile = 'microscope_package::actions_comment';
-            }
-        }
-
-        return view($viewFile, $viewData)->render();
+        ])->render();
     }
 
     public static function getCallsiteInfo($methods, $route)
@@ -139,5 +114,56 @@ class ActionsComments
         }
 
         return $middlewares;
+    }
+
+    private static function getComment(array $actions)
+    {
+        $msg = '/**';
+        $separator = "\n         *";
+
+        foreach ($actions as $i => $action) {
+            $i === count($actions) - 1 && $separator = '';
+            $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
+        }
+
+        $msg .= "\n         */";
+
+        return $msg;
+    }
+
+    private static function getActions($allRoutes, $classAtMethod)
+    {
+        $actions = [];
+        foreach ($allRoutes as $route) {
+            $action = $route->getAction('uses');
+            $classAtMethod === $action && $actions[] = $route;
+        }
+
+        return $actions;
+    }
+
+    private static function getUrl($route)
+    {
+        $url = $route->uri();
+
+        if (($url[0] ?? '') !== '/') {
+            $url = '/'.$url;
+        }
+
+        return $url;
+    }
+
+    private static function getViewFileName()
+    {
+        if (view()->exists('vendor.microscope.actions_comment')) {
+            $viewFile = 'vendor.microscope.actions_comment';
+        } else {
+            $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
+            if (! view()->exists('vendor.microscope.actions_comment')) {
+                $viewFile = 'microscope_package::actions_comment';
+            }
+        }
+
+        return $viewFile;
     }
 }

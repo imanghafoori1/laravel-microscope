@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\RouteDefinitionConflict;
+use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer;
 
 class ConsolePrinterInstaller
 {
@@ -17,7 +17,7 @@ class ConsolePrinterInstaller
         /**
          * @var $errorPrinter ErrorPrinter
          */
-        $errorPrinter = app(ErrorPrinter::class);
+        $errorPrinter = ErrorPrinter::singleton();
         $errorPrinter->printer = $command->getOutput();
 
         $commandName = class_basename($command);
@@ -56,7 +56,7 @@ class ConsolePrinterInstaller
             $data = $event->data;
             $msg = 'The blade file is missing:';
 
-            app(ErrorPrinter::class)->view(
+            ErrorPrinter::singleton()->view(
                 $data['absPath'],
                 $msg,
                 $data['lineNumber'],
@@ -66,7 +66,7 @@ class ConsolePrinterInstaller
 
         Event::listen(ddFound::class, function (ddFound $event) {
             $data = $event->data;
-            app(ErrorPrinter::class)->simplePendError(
+            ErrorPrinter::singleton()->simplePendError(
                 $data['name'],
                 $data['absPath'],
                 $data['lineNumber'],
@@ -77,17 +77,11 @@ class ConsolePrinterInstaller
 
         self::compactCall();
 
-        Event::listen(RouteDefinitionConflict::class, function ($e) {
-            app(ErrorPrinter::class)->routeDefinitionConflict(
-                $e->data['poorRoute'],
-                $e->data['bullyRoute'],
-                $e->data['info']
-            );
-        });
+        Installer::install();
 
         Event::listen(EnvFound::class, function (EnvFound $event) {
             $data = $event->data;
-            app(ErrorPrinter::class)->simplePendError(
+            ErrorPrinter::singleton()->simplePendError(
                 $data['name'],
                 $data['absPath'],
                 $data['lineNumber'],
@@ -106,7 +100,7 @@ class ConsolePrinterInstaller
         Event::listen(CompactCall::class, function ($event) {
             $data = $event->data;
 
-            app(ErrorPrinter::class)->compactError(
+            ErrorPrinter::singleton()->compactError(
                 $data['absPath'],
                 $data['lineNumber'],
                 $data['name'],

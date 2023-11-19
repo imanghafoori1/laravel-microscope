@@ -12,6 +12,6 @@
          * @name('{!! $routeName !!}')
 @endif
 @if ($file)
-         * @at({!! $file !!}:{!! $line !!})
+         * {!! '@' !!}at({!! $file !!}:{!! $line !!})
 @endif
-         * @middlewares('{!! implode("', '", $middlewares) !!}')
+         * {!! '@' !!}middlewares('{!! implode("', '", $middlewares) !!}')

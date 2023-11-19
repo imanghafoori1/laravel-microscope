@@ -35,20 +35,19 @@ class CheckRoutes extends Command
         app(Filesystem::class)->delete(app()->getCachedRoutesPath());
 
         $routes = app(Router::class)->getRoutes()->getRoutes();
-        $this->checkRouteDefinitions($errorPrinter, $routes);
+
+        $this->checkRouteDefinitions($routes);
         // checks calls like this: route('admin.user')
         $this->getOutput()->writeln(
-            ' - '.CheckRoutes::$checkedRoutesNum.
-            ' Route:: definitions were checked. ('.
-            CheckRoutes::$skippedRoutesNum.' skipped)'
+            $this->getRouteDefinitionStatistics()
         );
         $this->info('Checking route names exists...');
         ForPsr4LoadedClasses::check([CheckRouteCalls::class]);
         BladeFiles::check([CheckRouteCalls::class]);
 
-        $this->getOutput()->writeln(' - '.CheckRouteCalls::$checkedRouteCallsNum.
-            ' route(...) calls were checked. ('
-            .CheckRouteCalls::$skippedRouteCallsNum.' skipped)');
+        $this->getOutput()->writeln(
+            $this->getStatisticsMsg()
+        );
 
         event('microscope.finished.checks', [$this]);
 
@@ -66,7 +65,7 @@ class CheckRoutes extends Command
         return $msg;
     }
 
-    private function checkRouteDefinitions($errorPrinter, $routes)
+    private function checkRouteDefinitions($routes)
     {
         foreach ($routes as $route) {
             if (! is_string($ctrl = $route->getAction()['uses'])) {
@@ -83,7 +82,7 @@ class CheckRoutes extends Command
                 $msg1 = $this->getRouteId($route);
                 $msg2 = 'The controller can not be resolved: ('.$msg1.')';
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                $errorPrinter->route($ctrlClass, $msg2, '', $path, $line);
+                self::route($ctrlClass, $msg2, '', $path, $line);
 
                 continue;
             }
@@ -91,8 +90,24 @@ class CheckRoutes extends Command
             if (! method_exists($ctrlObj, $method)) {
                 $msg2 = 'Absent method for route'.' '.$this->getRouteId($route);
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                $errorPrinter->route($ctrl, $msg2, '', $path, $line);
+                self::route($ctrl, $msg2, '', $path, $line);
             }
         }
+    }
+
+    public static function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
+    {
+        $p = ErrorPrinter::singleton();
+        $p->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);
+    }
+
+    private function getStatisticsMsg()
+    {
+        return ' - '.CheckRouteCalls::$checkedRouteCallsNum.' route(...) calls were checked. ('.CheckRouteCalls::$skippedRouteCallsNum.' skipped)';
+    }
+
+    private function getRouteDefinitionStatistics()
+    {
+        return ' - '.CheckRoutes::$checkedRoutesNum.' Route:: definitions were checked. ('.CheckRoutes::$skippedRoutesNum.' skipped)';
     }
 }

@@ -17,7 +17,7 @@ class UnusedWrongImports
 
     public static function wrongImport($absPath, $class, $lineNumber)
     {
-        app(ErrorPrinter::class)->simplePendError(
+        ErrorPrinter::singleton()->simplePendError(
             "use $class;",
             $absPath,
             $lineNumber,

@@ -6,9 +6,11 @@ use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 
 class ComposerJson
 {
+    public static $composer;
+
     public static function make(): Composer
     {
-        return resolve(Composer::class);
+        return (self::$composer)();
     }
 
     public static function readAutoload($purgeAutoload = false)

@@ -16,18 +16,22 @@ class CheckAliasesCommand extends Command
 
     protected $description = 'Replaces facade aliases with full namespace';
 
+    protected $finishMsg = '✅  Finished checking for facade aliases.';
+
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');
-        $this->info('Checking Aliases...');
-
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
+        $this->info(' 🔍 Looking Facade Aliases...');
 
         $errorPrinter->printer = $this->output;
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
         FacadeAliasesCheck::$command = $this;
+
+        if ($this->option('nofix')) {
+            FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
+        }
 
         $paramProvider = function ($tokens) {
             $imports = ParseUseStatement::parseUseStatements($tokens);
@@ -36,10 +40,10 @@ class CheckAliasesCommand extends Command
         };
         ForPsr4LoadedClasses::check([FacadeAliasesCheck::class], $paramProvider, $fileName, $folder);
 
-        $this->finishCommand($errorPrinter);
+        $this->info(PHP_EOL.' '.$this->finishMsg);
 
         $errorPrinter->printTime();
 
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
     }
 }

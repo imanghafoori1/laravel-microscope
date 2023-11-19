@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\ErrorTypes;
+namespace Imanghafoori\LaravelMicroscope\Features\RouteOverride;
 
 class RouteDefinitionConflict
 {

@@ -59,7 +59,7 @@ class ForPsr4LoadedClasses
                             } catch (\Throwable $e) {
                                 $msg = $e->getMessage();
                                 if (Str::startsWith($msg, ['Interface \'', 'Class \'', 'Trait \'']) && Str::endsWith($msg, ' not found')) {
-                                    app(ErrorPrinter::class)->simplePendError(
+                                    ErrorPrinter::singleton()->simplePendError(
                                         $msg, $e->getFile(), $e->getLine(), 'error', get_class($e), ''
                                     );
                                 }
