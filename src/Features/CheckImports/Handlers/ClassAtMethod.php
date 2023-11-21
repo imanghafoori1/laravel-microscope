@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Analyzers;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ClassAtMethod
 {
