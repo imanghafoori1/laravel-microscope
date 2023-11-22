@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class WrongClassRefs
+class FixWrongClassRefs
 {
     public static function handle(array $wrongClassRefs, $absFilePath, $hostNamespace, array $tokens): array
     {

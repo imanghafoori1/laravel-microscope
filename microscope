@@ -4,6 +4,7 @@ use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -43,6 +44,7 @@ function base_path() {
     return $comp;
 }
 
+CheckClassReferencesAreValid::$wrongClassRefs = PrintWrongClassRefs::class;
 $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], function ($tokens) {
     $imports = ParseUseStatement::parseUseStatements($tokens);
 

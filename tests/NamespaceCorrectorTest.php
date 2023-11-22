@@ -35,7 +35,7 @@ class NamespaceCorrectorTest extends BaseTestClass
     {
         // arrange
         FileManipulator::fake();
-        FileSystem::fake();
+        Filesystem::fake();
         // fix namespace
         $correctNamespace = 'App\Http\Controllers\Foo';
         $filePath = __DIR__.'/stubs/PostController.stub';
@@ -50,7 +50,7 @@ class NamespaceCorrectorTest extends BaseTestClass
     {
         // arrange
         FileManipulator::fake();
-        FileSystem::fake();
+        Filesystem::fake();
         // fix namespace
         $from = '';
         $to = 'App\Http\Controllers\Foo';
@@ -66,7 +66,7 @@ class NamespaceCorrectorTest extends BaseTestClass
     {
         // arrange
         FileManipulator::fake();
-        FileSystem::fake();
+        Filesystem::fake();
         // fix namespace
         $from = '';
         $to = 'App\Http\Roo';
@@ -82,7 +82,7 @@ class NamespaceCorrectorTest extends BaseTestClass
     {
         // arrange
         FileManipulator::fake();
-        FileSystem::fake();
+        Filesystem::fake();
         // fix namespace
         $from = 'App\Http\Controllers\Foo';
         $to = 'App\Http\Roo';

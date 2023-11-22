@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedWrongImports;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\WrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\FixWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid
@@ -17,7 +17,7 @@ class CheckClassReferencesAreValid
 
     public static $unusedWrongImports = UnusedWrongImports::class;
 
-    public static $wrongClassRefs = WrongClassRefs::class;
+    public static $wrongClassRefs = FixWrongClassRefs::class;
 
     public static function check($tokens, $absFilePath, $params = [])
     {
