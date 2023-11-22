@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\FixWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\UnusedWrongImports;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\FixWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid

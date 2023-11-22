@@ -35,10 +35,11 @@ require_once COMPOSER_INSTALL;
     return Composer::make($comp);
 };
 function base_path() {
-    if (file_exists(__DIR__.'/composer.json')) {
+    if (file_exists(__DIR__.'/../../../composer.json')) {
+        $comp = __DIR__.'/../../..';
+    } elseif (file_exists(__DIR__.'/composer.json')) {
+        // for dev
         $comp = __DIR__;
-    } elseif (file_exists(__DIR__.'/../../composer.json')) {
-        $comp = __DIR__.'/../..';
     }
 
     return $comp;
