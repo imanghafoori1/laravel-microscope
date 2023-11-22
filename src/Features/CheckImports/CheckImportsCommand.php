@@ -111,10 +111,13 @@ class CheckImportsCommand extends Command
 
     private function checkFilePaths($paths, $paramProvider)
     {
+        $checks = $this->checks;
+        unset($checks[1]);
+
         foreach ($paths as $dir => $absFilePaths) {
             foreach ((array) $absFilePaths as $absFilePath) {
                 $tokens = token_get_all(file_get_contents($absFilePath));
-                foreach ($this->checks as $check) {
+                foreach ($checks as $check) {
                     $check::check($tokens, $absFilePath, $paramProvider($tokens));
                 }
             }
