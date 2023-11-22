@@ -21,7 +21,7 @@ class FacadeAliasReplacer
     public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens)
     {
         if (self::$forceReplace || self::ask($absFilePath, $usageInfo, $base, $alias)) {
-            $newVersion = self::searchReplace($base, $alias, $tokens);
+            $newVersion = self::searchReplace($usageInfo[0], $alias, $tokens, $base);
 
             Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newVersion));
 
@@ -42,7 +42,7 @@ class FacadeAliasReplacer
         return self::$command->confirm($question, true);
     }
 
-    private static function searchReplace($base, $aliases, $tokens)
+    private static function searchReplace($base, $aliases, $tokens, $as)
     {
         [$newVersion, $lines] = Searcher::search(
             [
@@ -59,6 +59,17 @@ class FacadeAliasReplacer
                     [
                         'search' => 'use \\'.$base.';',
                         'replace' => 'use '.ltrim($aliases).';',
+                    ],
+                ], $tokens, 1
+            );
+        }
+
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
+                    [
+                        'search' => 'use '.$base.' as '.$as,
+                        'replace' => 'use '.ltrim($aliases).' as '.$as,
                     ],
                 ], $tokens, 1
             );
@@ -104,6 +115,17 @@ class FacadeAliasReplacer
                     [
                         'search' => ',\\'.$base.',',
                         'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use ',
+                    ],
+                ], $tokens, 1
+            );
+        }
+
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
+                    [
+                        'search' => 'use \\'.$base.' as '.$as,
+                        'replace' => 'use '.ltrim($aliases).' as '.$as,
                     ],
                 ], $tokens, 1
             );
