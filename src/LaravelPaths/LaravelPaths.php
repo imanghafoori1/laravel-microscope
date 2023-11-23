@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -26,7 +25,7 @@ class LaravelPaths
     public static function factoryDirs()
     {
         try {
-            return app()->make(Factory::class)->loadedPaths;
+            return app()->make('Illuminate\Database\Eloquent\Factory')->loadedPaths;
         } catch (Throwable $e) {
             return [];
         }

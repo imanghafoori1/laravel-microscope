@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -153,7 +152,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function spyFactory()
     {
-        $this->app->singleton(EloquentFactory::class, function ($app) {
+        $this->app->singleton('Illuminate\Database\Eloquent\Factory', function ($app) {
             return SpyFactory::construct(
                 $app->make(FakerGenerator::class), $app->databasePath('factories')
             );
