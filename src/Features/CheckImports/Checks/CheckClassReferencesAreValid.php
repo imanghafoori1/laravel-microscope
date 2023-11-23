@@ -35,7 +35,7 @@ class CheckClassReferencesAreValid
             $wrongDocblockRefs,
         ] = ImportsAnalyzer::getWrongRefs($tokens, $absFilePath, $imports);
 
-        if (self::$checkWrong) {
+        if (self::$checkWrong && self::$wrongClassRefs) {
             [$tokens, $isFixed] = self::$wrongClassRefs::handle(
                 array_merge($wrongClassRefs, $wrongDocblockRefs),
                 $absFilePath,
@@ -46,11 +46,15 @@ class CheckClassReferencesAreValid
             if ($isFixed) {
                 goto loopStart;
             }
+        }
 
+        // Extra wrong imports:
+        if (self::$unusedWrongImports) {
             self::$unusedWrongImports::handle($unusedWrongImports, $absFilePath);
         }
 
-        if (self::$checkUnused) {
+        // Extra correct imports:
+        if (self::$checkUnused && self::$unusedImportsHandler) {
             self::$unusedImportsHandler::handle($unusedCorrectImports, $absFilePath);
         }
 

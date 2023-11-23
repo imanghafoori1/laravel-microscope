@@ -65,7 +65,7 @@ class ImportsAnalyzer
             $unusedImports = ParseUseStatement::getUnusedImports($classes, $imports, $docblockRefs);
 
             [$classReferences, $hostNamespace] = ClassRefExpander::expendReferences($classes, $imports, $namespace);
-            $docblockRefs = self::getExpandedDocblockRefs($imports, $docblockRefs, $hostNamespace);
+            $docblockRefs = ClassReferenceFinder::getExpandedDocblockRefs($imports, $docblockRefs, $hostNamespace);
 
             return [$classReferences, $hostNamespace, $unusedImports, $docblockRefs];
         } catch (ErrorException $e) {
@@ -77,28 +77,6 @@ class ImportsAnalyzer
 
             return [[], '', [], []];
         }
-    }
-
-    public static function getExpandedDocblockRefs($imports, $docblockRefs, $hostNamespace)
-    {
-        $imported_ref = [];
-        foreach ($imports as $_imps) {
-            $imported_ref = array_merge($imported_ref, $_imps);
-        }
-
-        foreach ($docblockRefs as $i => $ref) {
-            $class = $ref['class'];
-            if ($class === '' || $class[0] === '\\') {
-                continue;
-            }
-            if (isset($imported_ref[$class])) {
-                $docblockRefs[$i]['class'] = $imported_ref[$class][0];
-            } else {
-                $docblockRefs[$i]['class'] = $hostNamespace.'\\'.$ref['class'];
-            }
-        }
-
-        return $docblockRefs;
     }
 
     private static function requestIssue(string $path)

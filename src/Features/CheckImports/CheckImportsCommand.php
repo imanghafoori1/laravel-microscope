@@ -28,6 +28,7 @@ class CheckImportsCommand extends Command
     protected $signature = 'check:imports
         {--force : fixes without asking}
         {--w|wrong : Only reports wrong imports}
+        {--e|extra : Only reports extra imports}
         {--f|file= : Pattern for file names to scan}
         {--d|folder= : Pattern for file names to scan}
         {--s|nofix : avoids the automatic fixes}
@@ -63,6 +64,11 @@ class CheckImportsCommand extends Command
 
         if ($this->option('wrong')) {
             CheckClassReferencesAreValid::$checkUnused = false;
+            unset($this->checks[3]);
+        }
+
+        if ($this->option('extra')) {
+            CheckClassReferencesAreValid::$checkWrong = false;
             unset($this->checks[3]);
         }
 
