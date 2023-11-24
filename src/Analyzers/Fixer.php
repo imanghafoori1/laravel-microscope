@@ -48,10 +48,6 @@ class Fixer
 
     public static function fixReference($absPath, $inlinedClassRef, $lineNum)
     {
-        if (config('microscope.no_fix')) {
-            return [false, []];
-        }
-
         $classBaseName = class_basename($inlinedClassRef);
 
         $correct = self::guessCorrect($classBaseName);
@@ -102,10 +98,6 @@ class Fixer
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
     {
-        if (config('microscope.no_fix')) {
-            return [false, []];
-        }
-
         $correct = self::guessCorrect(class_basename($import));
 
         if (\count($correct) !== 1) {

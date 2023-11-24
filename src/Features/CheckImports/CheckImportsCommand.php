@@ -9,6 +9,8 @@ use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
@@ -54,8 +56,9 @@ class CheckImportsCommand extends Command
         FacadeAliasesCheck::$command = $this;
 
         if ($this->option('nofix')) {
-            config(['microscope.no_fix' => true]);
+            ClassAtMethodHandler::$fix = false;
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
+            CheckClassReferencesAreValid::$wrongClassRefs = PrintWrongClassRefs::class;
         }
 
         if ($this->option('force')) {

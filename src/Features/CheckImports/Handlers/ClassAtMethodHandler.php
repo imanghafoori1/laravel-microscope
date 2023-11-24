@@ -5,27 +5,25 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class ClassAtMethod
+class ClassAtMethodHandler
 {
+    public static $fix = true;
+
     public static function handle($absFilePath, $atSignTokens)
     {
         $fix = false;
-        /**
-         * @var ErrorPrinter $printer
-         */
         $printer = ErrorPrinter::singleton();
 
         foreach ($atSignTokens as $token) {
             $trimmed = \trim($token[1], '\'\"');
             [$class, $method] = \explode('@', $trimmed);
 
-            $class = str_replace('\\\\', '\\', $class);
+            $class = \str_replace('\\\\', '\\', $class);
 
             if (! \class_exists($class)) {
-                $isInUserSpace = Analyzers\Fixer::isInUserSpace($class);
-
                 $result = [false];
-                if ($isInUserSpace) {
+
+                if (self::$fix && Analyzers\Fixer::isInUserSpace($class)) {
                     $result = Analyzers\Fixer::fixReference($absFilePath, $class, $token[2]);
                 }
 

@@ -2,12 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
-use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethod;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 
 class CheckClassAtMethod
 {
-    public static $handler = ClassAtMethod::class;
+    public static $handler = ClassAtMethodHandler::class;
 
     public static function check($tokens, $absFilePath)
     {
@@ -46,7 +45,7 @@ class CheckClassAtMethod
                 continue;
             }
 
-            if (Str::contains($trimmed, ['-', '/', '[', '*', '+', '.', '(', '$', '^'])) {
+            if (self::contains($trimmed, ['-', '/', '[', '*', '+', '.', '(', '$', '^'])) {
                 continue;
             }
 
@@ -54,5 +53,16 @@ class CheckClassAtMethod
         }
 
         return $atSignTokens;
+    }
+
+    public static function contains($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (mb_strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
