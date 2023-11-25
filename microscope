@@ -1,6 +1,5 @@
 <?php
 
-use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
@@ -27,19 +26,20 @@ if (isset($GLOBALS['_composer_autoload_path'])) {
     unset($file);
 }
 
+require_once base_path().'\vendor\autoload.php';
 require_once COMPOSER_INSTALL;
 
 \Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson::$composer = function () {
     $comp = FilePath::$basePath = base_path();
 
-    return Composer::make($comp);
+    return \ImanGhafoori\ComposerJson\ComposerJson::make($comp);
 };
 function base_path() {
-    if (file_exists(__DIR__.'/../../../composer.json')) {
-        $comp = __DIR__.'/../../..';
-    } elseif (file_exists(__DIR__.'/composer.json')) {
+    if (file_exists(getcwd().'/../../../composer.json')) {
+        $comp = getcwd().'/../../..';
+    } elseif (file_exists(getcwd().'/composer.json')) {
         // for dev
-        $comp = __DIR__;
+        $comp = getcwd();
     }
 
     return $comp;

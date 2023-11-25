@@ -62,7 +62,7 @@ class FilePath
         $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
         try {
-            return Finder::create()->files()->name('*.php')->in($path);
+            return Finder::create()->files()->name('*.php')->in($path)->getIterator();
         } catch (Exception $e) {
             return [];
         }
@@ -70,7 +70,7 @@ class FilePath
 
     public static function getFolderFile($absFilePath): array
     {
-        $segments = explode('/', str_replace('\\', '/', FilePath::getRelativePath($absFilePath)));
+        $segments = explode('/', str_replace('\\', '/', self::getRelativePath($absFilePath)));
         $fileName = array_pop($segments);
 
         return [$fileName, implode('/', $segments)];
@@ -82,7 +82,7 @@ class FilePath
             return true;
         }
 
-        [$fileName, $folderPath] = FilePath::getFolderFile($absFilePath);
+        [$fileName, $folderPath] = self::getFolderFile($absFilePath);
 
         if ($excludeFile && mb_strpos($fileName, $excludeFile) !== false) {
             return true;

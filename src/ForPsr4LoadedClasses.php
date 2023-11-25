@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use ErrorException;
 use Illuminate\Support\Composer;
-use Illuminate\Support\Str as CoreStr;
 use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -49,7 +48,9 @@ class ForPsr4LoadedClasses
                                 } catch (ErrorException $e) {
                                     // In case a file is moved or deleted,
                                     // composer will need a dump autoload.
-                                    if (! CoreStr::endsWith($e->getFile(), 'vendor\composer\ClassLoader.php')) {
+
+                                    $end = str_replace('|', DIRECTORY_SEPARATOR, 'vendor|composer|ClassLoader.php');
+                                    if (! self::endsWith($e->getFile(), $end)) {
                                         throw $e;
                                     }
 
@@ -147,5 +148,9 @@ class ForPsr4LoadedClasses
         $p->writeln('It seems composer has some trouble with autoload...');
         $p->writeln($msg);
         $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
+    }
+    private static function endsWith($haystack, $needle)
+    {
+        return substr($haystack, -strlen($needle)) === $needle;
     }
 }
