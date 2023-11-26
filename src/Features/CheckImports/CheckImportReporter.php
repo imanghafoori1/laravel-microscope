@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
 class CheckImportReporter
 {
@@ -21,7 +21,7 @@ class CheckImportReporter
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall:'."</>\n";
-        $output .= self::getFilesStats(ForPsr4LoadedClasses::$checkedFilesNum);
+        $output .= self::getFilesStats(ChecksOnPsr4Classes::$checkedFilesNum);
 
         if ($bladeStats) {
             $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesNum);
@@ -41,9 +41,9 @@ class CheckImportReporter
     public static function printErrorsCount()
     {
         $totalErrors = ImportsAnalyzer::$unusedImportsCount + ImportsAnalyzer::$wrongImportsCount + ImportsAnalyzer::$wrongClassRefCount;
-        $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
-        $output .= ' - <fg=yellow>'.ImportsAnalyzer::$unusedImportsCount.' unused</> import'.(ImportsAnalyzer::$unusedImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
+        $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$refCount.' refs were checked, '.$totalErrors.' error'.($totalErrors == 1 ? ' ' : 's').' found.</>'.PHP_EOL;
+        $output .= ' - <fg=yellow>'.ImportsAnalyzer::$unusedImportsCount.' unused</> import'.(ImportsAnalyzer::$unusedImportsCount == 1 ? ' ' : 's').' found.'.PHP_EOL;
+        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? ' ' : 's').' found.'.PHP_EOL;
         $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongClassRefCount.' wrong</> class'.(ImportsAnalyzer::$wrongClassRefCount <= 1 ? '' : 'es').' ref found.';
 
         return $output;
@@ -62,7 +62,7 @@ class CheckImportReporter
                     $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
                     $len = strlen($psr4Namespace);
                     $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
-                    $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
+                    $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? ' ' : 's').' found (<fg=green>./'.$path."</>)\n";
                 }
             }
             $result .= $output.PHP_EOL;
@@ -114,7 +114,7 @@ class CheckImportReporter
 
     private static function getBladeStats($stats, $checkedFilesNum): string
     {
-        $output = self::blue($checkedFilesNum).'blade'.($checkedFilesNum <= 1 ? '' : 's');
+        $output = self::blue($checkedFilesNum).'blade'.($checkedFilesNum <= 1 ? ' ' : 's');
         $numPaths = count($stats);
         $output .= self::hyphen();
         $i = 0;
@@ -129,7 +129,7 @@ class CheckImportReporter
 
     private static function getRouteStats($countRouteFiles)
     {
-        return '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? '' : 's').PHP_EOL;
+        return '   - <fg=blue>'.$countRouteFiles.'</> route'.($countRouteFiles <= 1 ? ' ' : 's').PHP_EOL;
     }
 
     private static function getFilesStats($checkedFilesNum)

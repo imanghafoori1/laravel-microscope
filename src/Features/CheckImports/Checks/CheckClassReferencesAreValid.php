@@ -9,11 +9,11 @@ class CheckClassReferencesAreValid
 {
     public static $checkWrong = true;
 
-    public static $checkUnused = true;
+    public static $checkExtra = true;
 
-    public static $extraImportsHandler = Handlers\UnusedImports::class;
+    public static $extraImportsHandler = Handlers\ExtraCorrectImports::class;
 
-    public static $unusedWrongImportsHandler = Handlers\UnusedWrongImports::class;
+    public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
 
     public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
@@ -49,12 +49,12 @@ class CheckClassReferencesAreValid
     private static function handleExtraImports($absFilePath, $extraWrongImports, $extraCorrectImports)
     {
         // Extra wrong imports:
-        if (self::$unusedWrongImportsHandler) {
-            self::$unusedWrongImportsHandler::handle($extraWrongImports, $absFilePath);
+        if (self::$extraWrongImportsHandler) {
+            self::$extraWrongImportsHandler::handle($extraWrongImports, $absFilePath);
         }
 
         // Extra correct imports:
-        if (self::$checkUnused && self::$extraImportsHandler) {
+        if (self::$checkExtra && self::$extraImportsHandler) {
             self::$extraImportsHandler::handle($extraCorrectImports, $absFilePath);
         }
     }

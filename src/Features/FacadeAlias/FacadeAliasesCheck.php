@@ -9,7 +9,7 @@ class FacadeAliasesCheck
     public static $handler = FacadeAliasReplacer::class;
 
     /**
-     * @var \Illuminate\Console\Command
+     * @var \Illuminate\Console\OutputStyle
      */
     public static $command;
 

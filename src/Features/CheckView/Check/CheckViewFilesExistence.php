@@ -1,9 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\BladeFile;
 
 class CheckViewFilesExistence
 {

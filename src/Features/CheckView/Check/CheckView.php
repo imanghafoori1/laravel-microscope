@@ -1,9 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Illuminate\Support\Facades\View;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\BladeFile;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckView
@@ -56,5 +57,16 @@ class CheckView
         }
 
         return $tokens;
+    }
+
+    public static function viewError($absPath, $message, $lineNumber, $fileName)
+    {
+        ErrorPrinter::singleton()->simplePendError(
+            $fileName.'.blade.php',
+            $absPath,
+            $lineNumber,
+            'view', \trim($message),
+            ' does not exist'
+        );
     }
 }

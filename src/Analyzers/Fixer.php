@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\ClassListProvider;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -13,21 +13,26 @@ class Fixer
 {
     public static function isInUserSpace($class): bool
     {
-        $isInUserSpace = false;
         $class = ltrim($class, '\\');
-        foreach (ComposerJson::readAutoload() as $autoload) {
-            if (self::startsWith($class, array_keys($autoload))) {
-                $isInUserSpace = true;
-            }
-        }
-
         $segments = explode('\\', $class);
-        $last = array_pop($segments);
-        if (class_exists($last) || interface_exists($last)) {
+        $baseClassName = array_pop($segments);
+
+        if (class_exists($baseClassName) || interface_exists($baseClassName)) {
             return false;
         }
 
-        return $isInUserSpace;
+        return self::compare($class);
+    }
+
+    private static function compare($class)
+    {
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            if (self::startsWith($class, array_keys($autoload))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static function startsWith($haystack, $needles)
@@ -43,7 +48,7 @@ class Fixer
 
     private static function guessCorrect($classBaseName)
     {
-        return ForPsr4LoadedClasses::classList()[$classBaseName] ?? [];
+        return ClassListProvider::get()[$classBaseName] ?? [];
     }
 
     public static function fixReference($absPath, $inlinedClassRef, $lineNum)

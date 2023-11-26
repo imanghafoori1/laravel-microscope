@@ -12,9 +12,7 @@ class RouteDefinitionPrinter
         if (ErrorPrinter::isIgnored($info[0]['file'] ?? 'unknown')) {
             return;
         }
-        /**
-         * @var $printer ErrorPrinter
-         */
+
         $printer = ErrorPrinter::singleton();
 
         $msg = self::getMsg($route1, $route2, $printer, $info);

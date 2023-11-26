@@ -4,19 +4,16 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\BladeFile;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
-use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\ViewsInstaller;
+use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 
 class ConsolePrinterInstaller
 {
     protected static function finishCommand($command)
     {
-        /**
-         * @var $errorPrinter ErrorPrinter
-         */
         $errorPrinter = ErrorPrinter::singleton();
         $errorPrinter->printer = $command->getOutput();
 
@@ -52,18 +49,6 @@ class ConsolePrinterInstaller
 
     public static function boot()
     {
-        Event::listen(BladeFile::class, function (BladeFile $event) {
-            $data = $event->data;
-            $msg = 'The blade file is missing:';
-
-            ErrorPrinter::singleton()->view(
-                $data['absPath'],
-                $msg,
-                $data['lineNumber'],
-                $data['name']
-            );
-        });
-
         Event::listen(ddFound::class, function (ddFound $event) {
             $data = $event->data;
             ErrorPrinter::singleton()->simplePendError(
@@ -75,9 +60,11 @@ class ConsolePrinterInstaller
             );
         });
 
+        ViewsInstaller::boot();
+
         self::compactCall();
 
-        Installer::install();
+        RouteOverrideInstaller::install();
 
         Event::listen(EnvFound::class, function (EnvFound $event) {
             $data = $event->data;
@@ -100,13 +87,21 @@ class ConsolePrinterInstaller
         Event::listen(CompactCall::class, function ($event) {
             $data = $event->data;
 
-            ErrorPrinter::singleton()->compactError(
+            self::compactError(
                 $data['absPath'],
                 $data['lineNumber'],
                 $data['name'],
                 'CompactCall',
-                'compact() function call has problems man ! ');
+                'compact() function call has problems man!');
         });
+    }
+
+    private static function compactError($path, $lineNumber, $absent, $key, $header)
+    {
+        $p = ErrorPrinter::singleton();
+        $errorData = $p->color(\implode(', ', array_keys($absent))).' does not exist';
+
+        $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }
 
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)

@@ -14,7 +14,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClas
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
-use Imanghafoori\LaravelMicroscope\Features\Psr4\HandleErrors;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\FilePathsForReferenceFix;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -51,9 +51,9 @@ class CheckImportsCommand extends Command
     {
         event('microscope.start.command');
         $this->line('');
-        $this->info('Checking imports...');
+        $this->info('Checking imports and class references...');
 
-        FacadeAliasesCheck::$command = $this;
+        FacadeAliasesCheck::$command = $this->getOutput();
 
         if ($this->option('nofix')) {
             ClassAtMethodHandler::$fix = false;
@@ -66,13 +66,13 @@ class CheckImportsCommand extends Command
         }
 
         if ($this->option('wrong')) {
-            CheckClassReferencesAreValid::$checkUnused = false;
-            unset($this->checks[3]);
+            CheckClassReferencesAreValid::$checkExtra = false;
+            unset($this->checks[3]); // avoid checking facades
         }
 
         if ($this->option('extra')) {
             CheckClassReferencesAreValid::$checkWrong = false;
-            unset($this->checks[3]);
+            unset($this->checks[3]); // avoid checking facades
         }
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
@@ -83,7 +83,8 @@ class CheckImportsCommand extends Command
         $paramProvider = $this->getParamProvider();
 
         $paths = array_merge(
-            $this->getAutoloadFiles(),
+            FilePathsForReferenceFix::getClassMaps(base_path()),
+            ComposerJson::readAutoloadFiles(base_path()),
             $routeFiles = RoutePaths::get()
         );
 
@@ -106,7 +107,7 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
-        $this->reportAll($psr4Stats, $foldersStats, $bladeStats, $routeFiles);
+        $this->reportAll($psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
 
         $errorPrinter->printTime();
 
@@ -164,16 +165,9 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private function getAutoloadFiles()
+    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts)
     {
-        $paths = ComposerJson::readAutoloadFiles();
-
-        return HandleErrors::getAbsoluteFilePaths($paths);
-    }
-
-    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeFiles)
-    {
-        $messages = CheckImportReporter::report($psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
+        $messages = CheckImportReporter::report($psr4Stats, $foldersStats, $bladeStats, $routeCounts);
 
         foreach ($messages as $message) {
             $this->getOutput()->writeln($message);

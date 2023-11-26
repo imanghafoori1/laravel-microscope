@@ -12,7 +12,6 @@ class ClassAtMethodHandler
     public static function handle($absFilePath, $atSignTokens)
     {
         $fix = false;
-        $printer = ErrorPrinter::singleton();
 
         foreach ($atSignTokens as $token) {
             $trimmed = \trim($token[1], '\'\"');
@@ -29,9 +28,9 @@ class ClassAtMethodHandler
 
                 if ($result[0]) {
                     $fix = true;
-                    $printer->printFixation($absFilePath, $class, $token[2], $result[1]);
+                    self::printFixation($absFilePath, $class, $token[2], $result[1]);
                 } else {
-                    $printer->wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    self::wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
             } elseif (! \method_exists($class, $method)) {
                 self::wrongMethodError($absFilePath, $trimmed, $token[2]);
@@ -46,5 +45,18 @@ class ClassAtMethodHandler
         ErrorPrinter::singleton()->simplePendError(
             $class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:'
         );
+    }
+
+    private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
+    {
+        $header = $wrongClass.'  <=== Did not exist';
+        $msg = 'Fixed to:  '.substr($correct[0], 0, 55);
+
+        ErrorPrinter::singleton()->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
+    }
+
+    private static function wrongUsedClassError($absPath, $class, $lineNumber)
+    {
+        ErrorPrinter::singleton()->simplePendError($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 }

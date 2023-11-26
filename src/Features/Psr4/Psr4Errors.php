@@ -2,26 +2,18 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
-use Composer\ClassMapGenerator\ClassMapGenerator;
 use Illuminate\Console\Command;
 use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
-class HandleErrors
+class Psr4Errors
 {
-    private static $pathsForReferenceFix = [];
-
     /**
      * @var Command
      */
     private static $command;
 
-    public static function handleErrors(array $errorsLists, Command $command)
+    public static function handle(array $errorsLists, Command $command)
     {
         self::$command = $command;
         $before = self::beforeReferenceFix();
@@ -83,20 +75,6 @@ class HandleErrors
         };
     }
 
-    public static function getAbsoluteFilePaths($paths)
-    {
-        $basePath = base_path();
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
-            foreach ($classmaps as $classmap) {
-                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
-            }
-        }
-
-        return $paths;
-    }
-
     private static function updateOldRefs($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath)
     {
         NamespaceFixer::fix($absPath, $from, $to);
@@ -107,58 +85,8 @@ class HandleErrors
                 $from.'\\'.$class => $to.'\\'.$class,
             ];
 
-            ClassRefCorrector::fixAllRefs($changes, self::getPathsForReferenceFix(), $beforeFix, $afterFix);
+            ClassRefCorrector::fixAllRefs($changes, FilePathsForReferenceFix::getFiles(), $beforeFix, $afterFix);
         }
         CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
-    }
-
-    public static function getPathsForReferenceFix()
-    {
-        if (self::$pathsForReferenceFix) {
-            return self::$pathsForReferenceFix;
-        }
-
-        $paths = [];
-
-        foreach (ComposerJson::readAutoload() as $autoload) {
-            foreach ($autoload as $psr4Path) {
-                foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    $paths['psr4'][] = $file->getRealPath();
-                }
-            }
-        }
-
-        $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
-        $paths = self::getAbsoluteFilePaths($paths);
-
-        $paths = array_merge(self::collectFilesInNonPsr4Paths(), $paths);
-
-        self::$pathsForReferenceFix = $paths;
-
-        return $paths;
-    }
-
-    public static function collectFilesInNonPsr4Paths()
-    {
-        $paths = [
-            ['routes' => RoutePaths::get()],
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
-            Paths::getAbsFilePaths(config_path()),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
-            ['blades' => LaravelPaths::bladeFilePaths()],
-        ];
-
-        return self::mergePaths($paths);
-    }
-
-    private static function mergePaths($paths)
-    {
-        $all = [];
-        foreach ($paths as $p) {
-            $all = array_merge($all, $p);
-        }
-
-        return $all;
     }
 }

@@ -2,156 +2,74 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use ErrorException;
 use Illuminate\Support\Composer;
-use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\TokenAnalyzer\Str;
+use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
 class ForPsr4LoadedClasses
 {
-    /**
-     * @var array<string, array>
-     */
-    public static $allNamespaces = [];
-
-    /**
-     * @var int
-     */
-    public static $checkedFilesNum = 0;
-
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
-        $stats = [];
-        foreach (Analyzers\ComposerJson::readAutoload() as $composerPath => $psr4) {
-            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                foreach ((array) $psr4Paths as $psr4Path) {
-                    foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {
-                        $absFilePath = $phpFilePath->getRealPath();
-                        if (! FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
-                            continue;
-                        }
-                        $stats[$composerPath][$psr4Namespace][$psr4Path] = 1 + ($stats[$composerPath][$psr4Namespace][$psr4Path] ?? 0);
-                        self::$checkedFilesNum++;
-                        $tokens = token_get_all(file_get_contents($absFilePath));
+        $stats = ChecksOnPsr4Classes::apply($includeFile, $includeFolder, $params, $checks);
 
-                        $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
-                        foreach ($checks as $check) {
-                            try {
-                                try {
-                                    $newTokens = $check::check($tokens, $absFilePath, $params1, $phpFilePath, $psr4Path, $psr4Namespace);
-                                    if ($newTokens) {
-                                        $tokens = $newTokens;
-                                        $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
-                                    }
-                                } catch (ErrorException $e) {
-                                    // In case a file is moved or deleted,
-                                    // composer will need a dump autoload.
-
-                                    $end = str_replace('|', DIRECTORY_SEPARATOR, 'vendor|composer|ClassLoader.php');
-                                    if (! self::endsWith($e->getFile(), $end)) {
-                                        throw $e;
-                                    }
-
-                                    self::warnDumping($e->getMessage());
-                                    resolve(Composer::class)->dumpAutoloads();
-                                }
-                            } catch (\Throwable $e) {
-                                $msg = $e->getMessage();
-                                if (Str::startsWith($msg, ['Interface \'', 'Class \'', 'Trait \'']) && Str::endsWith($msg, ' not found')) {
-                                    ErrorPrinter::singleton()->simplePendError(
-                                        $msg, $e->getFile(), $e->getLine(), 'error', get_class($e), ''
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        foreach (ChecksOnPsr4Classes::$exceptions as $e) {
+            self::handleErrorException($e);
+            self::handleClassNotFound($e);
         }
 
         return $stats;
     }
 
-    public static function classList()
+    private static function warnDumping($msg)
     {
-        if (self::$allNamespaces) {
-            return self::$allNamespaces;
-        }
-
-        foreach (self::getCandidateSearchPaths() as $baseComposerPath => $psr4) {
-            foreach ($psr4 as $folder => $psr4Mappings) {
-                foreach ((array) $psr4Mappings as $namespace => $_psr4Paths) {
-                    foreach ((array) $_psr4Paths as $psr4Path) {
-                        self::calculate($psr4Path, $baseComposerPath, $namespace);
-                    }
-                }
-            }
-        }
-
-        return self::$allNamespaces;
-    }
-
-    private static function calculate($psr4Path, $baseComposerPath, $namespace): void
-    {
-        foreach (FilePath::getAllPhpFiles($psr4Path, $baseComposerPath) as $classFilePath) {
-            $fileName = $classFilePath->getFilename();
-            if (\substr_count($fileName, '.') > 1) {
-                continue;
-            }
-
-            $relativePath = \str_replace($baseComposerPath ?: base_path(), '', $classFilePath->getRealPath());
-
-            [$classBaseName, $fullClassPath] = self::derive($psr4Path, $relativePath, $namespace, $fileName);
-            self::$allNamespaces[$classBaseName][] = $fullClassPath;
-        }
-    }
-
-    public static function derive($psr4Path, $relativePath, $namespace, $fileName): array
-    {
-        $composerPath = \str_replace('/', '\\', $psr4Path);
-        $relativePath = \str_replace('/', '\\', $relativePath);
-
-        /**
-         * // replace composer base_path with composer namespace
-         *  "psr-4": {
-         *      "App\\": "app/"
-         *  }.
-         */
-        // calculate namespace
-        $ns = Str::replaceFirst(\trim($composerPath, '\\'), \trim($namespace, '\\/'), $relativePath);
-        $t = \str_replace('.php', '', [$ns, $fileName]);
-        $t = \str_replace('/', '\\', $t); // for linux environments.
-
-        $classBaseName = $t[1];
-        $fullClassPath = $t[0];
-
-        return [$classBaseName, \trim($fullClassPath, '\\')];
-    }
-
-    private static function getCandidateSearchPaths()
-    {
-        $sp = DIRECTORY_SEPARATOR;
-        $path1 = base_path();
-        $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
-
-        return [
-            $path1 => Analyzers\ComposerJson::make()->readAutoload(),
-            $path2 => ComposerJson::make($path2)->readAutoload(),
-        ];
-    }
-
-    public static function warnDumping($msg)
-    {
-        $p = resolve(ErrorPrinter::class)->printer;
+        $p = ErrorPrinter::singleton()->printer;
         $p->writeln('It seems composer has some trouble with autoload...');
         $p->writeln($msg);
         $p->writeln('Running "composer dump-autoload" command...  \(*_*)\  ');
     }
 
+    private static function entityNotFound(string $msg)
+    {
+        return self::startsWith($msg, ['Enum ', 'Interface ', 'Class ', 'Trait ']) && self::endsWith($msg, ' not found');
+    }
+
+    private static function composerWillNeedADumpAutoload($e)
+    {
+        $end = str_replace('|', DIRECTORY_SEPARATOR, 'vendor|composer|ClassLoader.php');
+
+        return self::endsWith($e->getFile(), $end);
+    }
+
+    private static function startsWith($haystack, $needles)
+    {
+        foreach ($needles as $needle) {
+            if (substr($haystack, 0, strlen($needle)) === $needle) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static function endsWith($haystack, $needle)
     {
         return substr($haystack, -strlen($needle)) === $needle;
+    }
+
+    private static function handleErrorException($e)
+    {
+        // In case a file is moved or deleted, composer will need a dump autoload.
+        if (self::composerWillNeedADumpAutoload($e)) {
+            self::warnDumping($e->getMessage());
+            resolve(Composer::class)->dumpAutoloads();
+        }
+    }
+
+    private static function handleClassNotFound($e)
+    {
+        if (self::entityNotFound($e->getMessage())) {
+        } else {
+            ErrorPrinter::singleton()->simplePendError($e->getMessage(), $e->getFile(), $e->getLine(), 'error', get_class($e));
+        }
     }
 }

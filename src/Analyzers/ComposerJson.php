@@ -18,19 +18,15 @@ class ComposerJson
         return self::make()->readAutoload($purgeAutoload);
     }
 
-    public static function readAutoloadFiles()
+    public static function readAutoloadFiles($basePath)
     {
-        $basePath = base_path();
         $psr4Autoloads = self::make()->readAutoloadFiles();
 
         $allFiles = [];
         foreach ($psr4Autoloads as $path => $files) {
             $p = $basePath.'/'.trim($path, '/');
-            foreach ($files['autoload'] as $f) {
-                $allFiles[] = $p.'/'.$f;
-            }
-            foreach ($files['autoload-dev'] as $f) {
-                $allFiles[] = $p.'/'.$f;
+            foreach (array_merge($files['autoload'], $files['autoload-dev']) as $f) {
+                $allFiles[] = str_replace('/', DIRECTORY_SEPARATOR, $p.'/'.trim($f, '/'));
             }
         }
 

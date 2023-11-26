@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
-class UnusedImports
+class ExtraCorrectImports
 {
     public static function handle($unusedCorrectImports, $absFilePath)
     {
@@ -23,7 +23,7 @@ class UnusedImports
             $absPath,
             $lineNumber,
             'extraImport',
-            'Import is not used:'
+            'Extra Import:'
         );
     }
 }

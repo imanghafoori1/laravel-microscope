@@ -93,7 +93,6 @@ class RoutelessActions
 
     public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
     {
-        $errorPrinter = resolve(ErrorPrinter::class);
         $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
         if (! self::isLaravelController($fullNamespace)) {
@@ -107,9 +106,7 @@ class RoutelessActions
 
         $actions = self::findOrphanActions($tokens, $fullNamespace);
 
-        foreach ($actions as $action) {
-            $errorPrinter->routelessAction($absFilePath, $action[0], $action[1]);
-        }
+        self::printErrors($actions, $absFilePath);
     }
 
     public static function classAtMethod($fullNamespace, $methodName)
@@ -122,5 +119,14 @@ class RoutelessActions
     protected static function getByAction($classAtMethod)
     {
         return app('router')->getRoutes()->getByAction($classAtMethod);
+    }
+
+    private static function printErrors(array $actions, $absFilePath): void
+    {
+        $errorPrinter = ErrorPrinter::singleton();
+
+        foreach ($actions as $action) {
+            $errorPrinter->simplePendError($action[1], $absFilePath, $action[0], 'routelessCtrl', 'No route is defined for controller action:');
+        }
     }
 }

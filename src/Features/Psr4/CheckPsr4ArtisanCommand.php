@@ -22,13 +22,13 @@ class CheckPsr4ArtisanCommand extends Command
 
     protected $description = 'Checks the validity of namespaces';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle()
     {
         $this->line('');
         $this->info('Started checking PSR-4 namespaces...');
         $time = microtime(true);
 
-        $errorPrinter->printer = $this->output;
+        $errorPrinter = ErrorPrinter::singleton($this->output);
 
         $composer = ComposerJson::make();
         start:
@@ -37,7 +37,7 @@ class CheckPsr4ArtisanCommand extends Command
 
         $time = round(microtime(true) - $time, 5);
 
-        HandleErrors::handleErrors($errorsLists, $this);
+        Psr4Errors::handle($errorsLists, $this);
         $this->printReport($errorPrinter, $time, $composer->readAutoload(), $classLists);
 
         $this->composerDumpIfNeeded($errorPrinter);
@@ -55,7 +55,7 @@ class CheckPsr4ArtisanCommand extends Command
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
         if ($c = $errorPrinter->getCount('badNamespace')) {
-            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
+            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : ' ').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'Finished: "composer dump"');
         }

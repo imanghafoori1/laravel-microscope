@@ -13,10 +13,10 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Checks\CheckView;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\Features\RouteOverride\SpyRouter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -33,7 +33,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckEvents::class,
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
-        Commands\CheckViews::class,
+        Features\CheckView\CheckViewsCommand::class,
         Features\Psr4\CheckPsr4ArtisanCommand::class,
         Features\CheckImports\CheckImportsCommand::class,
         Features\FacadeAlias\CheckAliasesCommand::class,
@@ -241,7 +241,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckView::$checkedCallsNum = 0;
             CheckView::$skippedCallsNum = 0;
             ImportsAnalyzer::$refCount = 0;
-            ForPsr4LoadedClasses::$checkedFilesNum = 0;
+            Iterators\ChecksOnPsr4Classes::$checkedFilesNum = 0;
         });
     }
 
