@@ -8,7 +8,9 @@ use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class HandleErrors
 {
@@ -110,7 +112,7 @@ class HandleErrors
         CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
     }
 
-    private static function getPathsForReferenceFix()
+    public static function getPathsForReferenceFix()
     {
         if (self::$pathsForReferenceFix) {
             return self::$pathsForReferenceFix;
@@ -121,7 +123,7 @@ class HandleErrors
         foreach (ComposerJson::readAutoload() as $autoload) {
             foreach ($autoload as $psr4Path) {
                 foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    $paths[] = $file->getRealPath();
+                    $paths['psr4'][] = $file->getRealPath();
                 }
             }
         }
@@ -129,10 +131,34 @@ class HandleErrors
         $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
         $paths = self::getAbsoluteFilePaths($paths);
 
-        $paths = array_merge($paths, LaravelPaths::collectFilesInNonPsr4Paths());
+        $paths = array_merge(self::collectFilesInNonPsr4Paths(), $paths);
 
         self::$pathsForReferenceFix = $paths;
 
         return $paths;
+    }
+
+    public static function collectFilesInNonPsr4Paths()
+    {
+        $paths = [
+            ['routes' => RoutePaths::get()],
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
+            Paths::getAbsFilePaths(config_path()),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
+            ['blades' => LaravelPaths::bladeFilePaths()],
+        ];
+
+        return self::mergePaths($paths);
+    }
+
+    private static function mergePaths($paths)
+    {
+        $all = [];
+        foreach ($paths as $p) {
+            $all = array_merge($all, $p);
+        }
+
+        return $all;
     }
 }

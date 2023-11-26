@@ -76,28 +76,4 @@ class LaravelPaths
 
         return $hints;
     }
-
-    public static function collectFilesInNonPsr4Paths()
-    {
-        $paths = [
-            RoutePaths::get(),
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
-            Paths::getAbsFilePaths(config_path()),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
-            LaravelPaths::bladeFilePaths(),
-        ];
-
-        return self::mergePaths($paths);
-    }
-
-    private static function mergePaths($paths)
-    {
-        $all = [];
-        foreach ($paths as $p) {
-            $all = array_merge($all, $p);
-        }
-
-        return $all;
-    }
 }

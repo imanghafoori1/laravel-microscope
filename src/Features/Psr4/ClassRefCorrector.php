@@ -13,7 +13,9 @@ class ClassRefCorrector
         self::$afterFix = $afterFix;
         self::$beforeFix = $beforeFix;
         foreach ($paths as $path) {
-            self::fix($path, $changes);
+            foreach ($path as $p) {
+                self::fix($p, $changes);
+            }
         }
     }
 
