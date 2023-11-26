@@ -11,25 +11,25 @@ class CheckClassReferencesAreValid
 
     public static $checkUnused = true;
 
-    public static $unusedImportsHandler = Handlers\UnusedImports::class;
+    public static $extraImportsHandler = Handlers\UnusedImports::class;
 
-    public static $unusedWrongImports = Handlers\UnusedWrongImports::class;
+    public static $unusedWrongImportsHandler = Handlers\UnusedWrongImports::class;
 
-    public static $wrongClassRefs = Handlers\FixWrongClassRefs::class;
+    public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
     public static function check($tokens, $absFilePath, $imports = [])
     {
         loopStart:
         [
             $hostNamespace,
-            $unusedWrongImports,
-            $unusedCorrectImports,
+            $extraWrongImports,
+            $extraCorrectImports,
             $wrongClassRefs,
             $wrongDocblockRefs,
         ] = ImportsAnalyzer::getWrongRefs($tokens, $absFilePath, $imports);
 
-        if (self::$checkWrong && self::$wrongClassRefs) {
-            [$tokens, $isFixed] = self::$wrongClassRefs::handle(
+        if (self::$checkWrong && self::$wrongClassRefsHandler) {
+            [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
                 array_merge($wrongClassRefs, $wrongDocblockRefs),
                 $absFilePath,
                 $hostNamespace,
@@ -41,21 +41,21 @@ class CheckClassReferencesAreValid
             }
         }
 
-        self::handleExtraImports($absFilePath, $unusedWrongImports, $unusedCorrectImports);
+        self::handleExtraImports($absFilePath, $extraWrongImports, $extraCorrectImports);
 
         return $tokens;
     }
 
-    private static function handleExtraImports($absFilePath, $unusedWrongImports, $unusedCorrectImports)
+    private static function handleExtraImports($absFilePath, $extraWrongImports, $extraCorrectImports)
     {
         // Extra wrong imports:
-        if (self::$unusedWrongImports) {
-            self::$unusedWrongImports::handle($unusedWrongImports, $absFilePath);
+        if (self::$unusedWrongImportsHandler) {
+            self::$unusedWrongImportsHandler::handle($extraWrongImports, $absFilePath);
         }
 
         // Extra correct imports:
-        if (self::$checkUnused && self::$unusedImportsHandler) {
-            self::$unusedImportsHandler::handle($unusedCorrectImports, $absFilePath);
+        if (self::$checkUnused && self::$extraImportsHandler) {
+            self::$extraImportsHandler::handle($extraCorrectImports, $absFilePath);
         }
     }
 }

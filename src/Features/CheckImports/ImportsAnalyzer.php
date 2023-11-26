@@ -7,7 +7,6 @@ use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\ClassRefExpander;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use RuntimeException;
-use Throwable;
 
 class ImportsAnalyzer
 {
@@ -19,18 +18,20 @@ class ImportsAnalyzer
 
     public static $wrongClassRefCount = 0;
 
+    public static $existenceChecker = ExistenceChecker::class;
+
     public static function getWrongRefs($tokens, $absFilePath, $imports): array
     {
         [$classReferences, $hostNamespace, $unusedImports, $docblockRefs] = self::findClassRefs($tokens, $absFilePath, $imports);
 
         [$wrongClassRefs] = self::filterWrongClassRefs($classReferences, $absFilePath);
         [$wrongDocblockRefs] = self::filterWrongClassRefs($docblockRefs, $absFilePath);
-        [$unusedWrongImports, $unusedCorrectImports] = self::filterWrongClassRefs($unusedImports, $absFilePath);
+        [$extraWrongImports, $extraCorrectImports] = self::filterWrongClassRefs($unusedImports, $absFilePath);
 
         return [
             $hostNamespace,
-            $unusedWrongImports,
-            $unusedCorrectImports,
+            $extraWrongImports,
+            $extraCorrectImports,
             $wrongClassRefs,
             $wrongDocblockRefs,
         ];
@@ -44,7 +45,7 @@ class ImportsAnalyzer
             ImportsAnalyzer::$refCount++;
             $class = $classReference['class'] ?? $classReference[0];
 
-            if (self::exists($class, $absFilePath)) {
+            if (self::$existenceChecker::check($class, $absFilePath)) {
                 $correctClassRefs[$y] = $classReference;
             } else {
                 ImportsAnalyzer::$wrongClassRefCount++;
@@ -84,29 +85,5 @@ class ImportsAnalyzer
         dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
         dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
         dump('Send us the contents of: '.$path);
-    }
-
-    private static function exists($class, $absFilePath): bool
-    {
-        if (! self::isAbsent($class) || \function_exists($class)) {
-            return true;
-        }
-
-        try {
-            require_once $absFilePath;
-        } catch (Throwable $e) {
-            return false;
-        }
-
-        if (! self::isAbsent($class) || \function_exists($class)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isAbsent($class)
-    {
-        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class) && ! (function_exists('enum_exists') && enum_exists($class));
     }
 }

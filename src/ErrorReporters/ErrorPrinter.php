@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Symfony\Component\Console\Terminal;
 
@@ -181,14 +180,28 @@ class ErrorPrinter
 
     public function logErrors()
     {
-        collect($this->errorsList)->except('total')->flatten()->each(function ($error) {
+        $errList = $this->errorsList;
+        unset($errList['total']);
+
+        foreach ($errList as $list) {
+            foreach ($list as $error) {
+                if ($error instanceof PendingError) {
+                    $this->printHeader($error->getHeader());
+                    $this->print($error->getErrorData());
+                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+                    $this->end();
+                }
+            }
+        }
+
+        /*collect($this->errorsList)->except('total')->flatten()->each(function ($error) {
             if ($error instanceof PendingError) {
                 $this->printHeader($error->getHeader());
                 $this->print($error->getErrorData());
                 $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
                 $this->end();
             }
-        });
+        });*/
 
         foreach ($this->pended as $pend) {
             $this->print($pend);
@@ -247,7 +260,33 @@ class ErrorPrinter
         }
 
         foreach ($ignorePatterns as $ignorePattern) {
-            if (Str::is(base_path($ignorePattern), $path)) {
+            if (self::is(base_path($ignorePattern), $path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function is($pattern, $value)
+    {
+        if (! is_iterable($pattern)) {
+            $pattern = [$pattern];
+        }
+
+        foreach ($pattern as $pattern) {
+            if ($pattern === $value) {
+                return true;
+            }
+
+            $pattern = preg_quote($pattern, '#');
+
+            // Asterisks are translated into zero-or-more regular expression wildcards
+            // to make it convenient to check if the strings starts with the given
+            // pattern such as "library/*", making any string check convenient.
+            $pattern = str_replace('\*', '.*', $pattern);
+
+            if (preg_match('#^'.$pattern.'\z#u', $value) === 1) {
                 return true;
             }
         }

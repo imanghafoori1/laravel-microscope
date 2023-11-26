@@ -8,20 +8,14 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckImportReporter
 {
-    /**
-     * @var CheckImportsCommand
-     */
-    public static $command;
-
-    public static function report($command, array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles): void
+    public static function report(array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles)
     {
-        self::$command = $command;
-
-        self::$command->getOutput()->writeln(self::totalImportsMsg());
-
-        self::$command->getOutput()->writeln(self::printPsr4($psr4Stats));
-        self::$command->getOutput()->writeln(self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles));
-        self::$command->getOutput()->writeln(self::printErrorsCount());
+        return [
+            self::totalImportsMsg(),
+            self::printPsr4($psr4Stats),
+            self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles),
+            self::printErrorsCount(),
+        ];
     }
 
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string

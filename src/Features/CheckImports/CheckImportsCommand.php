@@ -47,7 +47,7 @@ class CheckImportsCommand extends Command
         3 => FacadeAliasesCheck::class,
     ];
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle()
     {
         event('microscope.start.command');
         $this->line('');
@@ -58,7 +58,7 @@ class CheckImportsCommand extends Command
         if ($this->option('nofix')) {
             ClassAtMethodHandler::$fix = false;
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
-            CheckClassReferencesAreValid::$wrongClassRefs = PrintWrongClassRefs::class;
+            CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
         if ($this->option('force')) {
@@ -75,7 +75,7 @@ class CheckImportsCommand extends Command
             unset($this->checks[3]);
         }
 
-        $errorPrinter->printer = $this->output;
+        $errorPrinter = ErrorPrinter::singleton($this->output);
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
@@ -106,7 +106,7 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
-        CheckImportReporter::report($this, $psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
+        $this->reportAll($psr4Stats, $foldersStats, $bladeStats, $routeFiles);
 
         $errorPrinter->printTime();
 
@@ -169,5 +169,14 @@ class CheckImportsCommand extends Command
         $paths = ComposerJson::readAutoloadFiles();
 
         return HandleErrors::getAbsoluteFilePaths($paths);
+    }
+
+    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeFiles)
+    {
+        $messages = CheckImportReporter::report($psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
+
+        foreach ($messages as $message) {
+            $this->getOutput()->writeln($message);
+        }
     }
 }

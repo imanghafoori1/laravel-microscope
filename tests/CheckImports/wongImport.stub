@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http;
+
+use doo;
+use Foooo;
+
+class Bar {
+ public function f () {
+    \Corroct::class;
+    \Foooo::class;
+    \Corroct::class;
+ }
+}

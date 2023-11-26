@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
@@ -47,7 +46,7 @@ class FixWrongClassRefs
 
     private static function fixClassReference($absFilePath, $class, $line, $namespace)
     {
-        $baseClassName = Str::replaceFirst($namespace.'\\', '', $class);
+        $baseClassName = self::removeFirst($namespace.'\\', $class);
 
         // Imports the correct namespace:
         [$wasCorrected, $corrections] = Fixer::fixReference($absFilePath, $baseClassName, $line);
@@ -84,5 +83,14 @@ class FixWrongClassRefs
             'wrongUsedClassError',
             'Class does not exist:'
         );
+    }
+
+    private static function removeFirst($search, $subject)
+    {
+        if (($position = strpos($subject, $search)) !== false) {
+            return substr_replace($subject, '', $position, strlen($search));
+        }
+
+        return $subject;
     }
 }
