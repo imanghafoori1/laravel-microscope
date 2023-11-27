@@ -55,7 +55,7 @@ class CheckPsr4ArtisanCommand extends Command
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
         if ($c = $errorPrinter->getCount('badNamespace')) {
-            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : '').' Fixed, Running: "composer dump"');
+            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : ' ').' Fixed, Running: "composer dump"');
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'Finished: "composer dump"');
         }

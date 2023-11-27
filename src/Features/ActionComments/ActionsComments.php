@@ -14,11 +14,6 @@ class ActionsComments
 
     public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {
-        self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens);
-    }
-
-    public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens)
-    {
         $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
 
         if (isset(static::$controllers[trim($fullNamespace, '\\')])) {
@@ -26,7 +21,7 @@ class ActionsComments
         }
     }
 
-    protected static function checkActions($tokens, $fullNamespace, $path)
+    private static function checkActions($tokens, $fullNamespace, $path)
     {
         $methods = ClassMethods::read($tokens)['methods'];
 
@@ -46,7 +41,7 @@ class ActionsComments
             /**
              * @var $route \Illuminate\Routing\Route
              */
-            $msg = self::getComment($actions);
+            $msg = CommentMaker::getComment($actions);
             $commentIndex = $method['startBodyIndex'][0] + 1;
 
             if (T_DOC_COMMENT !== $tokens[$commentIndex + 1][0]) {
@@ -70,28 +65,6 @@ class ActionsComments
         return $routelessActions;
     }
 
-    protected static function getMsg($route)
-    {
-        $methods = $route->methods();
-        ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
-
-        $routeName = $route->getName() ?: '';
-        $middlewares = self::gatherMiddlewares($route);
-        [$file, $line] = self::getCallsiteInfo($methods[0], $route);
-        $url = self::getUrl($route);
-
-        $viewFile = self::getViewFileName();
-
-        return view($viewFile, [
-            'middlewares' => $middlewares,
-            'routeName' => $routeName,
-            'file' => $file,
-            'line' => $line,
-            'methods' => $methods,
-            'url' => $url,
-        ])->render();
-    }
-
     public static function getCallsiteInfo($methods, $route)
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
@@ -103,34 +76,6 @@ class ActionsComments
         return [$file, $line];
     }
 
-    private static function gatherMiddlewares($route)
-    {
-        $middlewares = $route->gatherMiddleware();
-
-        foreach ($middlewares as $i => $m) {
-            if (! is_string($m)) {
-                $middlewares[$i] = 'Closure';
-            }
-        }
-
-        return $middlewares;
-    }
-
-    private static function getComment(array $actions)
-    {
-        $msg = '/**';
-        $separator = "\n         *";
-
-        foreach ($actions as $i => $action) {
-            $i === count($actions) - 1 && $separator = '';
-            $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
-        }
-
-        $msg .= "\n         */";
-
-        return $msg;
-    }
-
     private static function getActions($allRoutes, $classAtMethod)
     {
         $actions = [];
@@ -140,30 +85,5 @@ class ActionsComments
         }
 
         return $actions;
-    }
-
-    private static function getUrl($route)
-    {
-        $url = $route->uri();
-
-        if (($url[0] ?? '') !== '/') {
-            $url = '/'.$url;
-        }
-
-        return $url;
-    }
-
-    private static function getViewFileName()
-    {
-        if (view()->exists('vendor.microscope.actions_comment')) {
-            $viewFile = 'vendor.microscope.actions_comment';
-        } else {
-            $viewFile = config('microscope.action_comment_template', 'microscope_package::actions_comment');
-            if (! view()->exists('vendor.microscope.actions_comment')) {
-                $viewFile = 'microscope_package::actions_comment';
-            }
-        }
-
-        return $viewFile;
     }
 }

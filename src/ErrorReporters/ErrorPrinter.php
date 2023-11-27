@@ -38,19 +38,6 @@ class ErrorPrinter
         return self::$instance;
     }
 
-    public function view($absPath, $message, $lineNumber, $fileName)
-    {
-        $this->simplePendError($fileName.'.blade.php', $absPath, $lineNumber, 'view', \trim($message), ' does not exist');
-    }
-
-    public function printFixation($absPath, $wrongClass, $lineNumber, $correct)
-    {
-        $header = $wrongClass.'  <=== Did not exist';
-        $msg = 'Fixed to:   '.substr($correct[0], 0, 55);
-
-        $this->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
-    }
-
     public function authConf()
     {
         $this->print('The model in the "config/auth.php" is not a valid class');
@@ -60,22 +47,12 @@ class ErrorPrinter
     {
         $header = 'Wrong model is passed in relation:';
 
-        $this->doesNotExist($relatedModel, $absPath, $lineNumber, 'badRelation', $header);
-    }
-
-    public function doesNotExist($yellowText, $absPath, $lineNumber, $key, $header)
-    {
-        $this->simplePendError($yellowText, $absPath, $lineNumber, $key, $header);
-    }
-
-    public function routelessAction($absPath, $lineNumber, $msg)
-    {
-        $this->simplePendError($msg, $absPath, $lineNumber, 'routelessCtrl', 'No route is defined for controller action:');
+        $this->simplePendError($relatedModel, $absPath, $lineNumber, 'badRelation', $header);
     }
 
     public function wrongImport($absPath, $class, $lineNumber)
     {
-        $this->doesNotExist("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
+        $this->simplePendError("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
     }
 
     public function addPendingError($path, $lineNumber, $key, $header, $errorData)
@@ -95,18 +72,6 @@ class ErrorPrinter
         $errorData = $pre.$this->color($yellowText).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
-    }
-
-    public function compactError($path, $lineNumber, $absent, $key, $header)
-    {
-        $errorData = $this->color(\implode(', ', array_keys($absent))).' does not exist';
-
-        $this->addPendingError($path, $lineNumber, $key, $header, $errorData);
-    }
-
-    public function wrongUsedClassError($absPath, $class, $lineNumber)
-    {
-        $this->simplePendError($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 
     public function extraImport($absPath, $class, $lineNumber)

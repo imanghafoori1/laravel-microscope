@@ -1,17 +1,17 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\Checks\CheckView;
-use Imanghafoori\LaravelMicroscope\Checks\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
-class CheckViews extends Command
+class CheckViewsCommand extends Command
 {
     protected $signature = 'check:views {--detailed : Show files being checked} {--f|file=} {--d|folder=}';
 
@@ -32,7 +32,7 @@ class CheckViews extends Command
         ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
-        $this->getOutput()->writeln(' - '.CheckView::$checkedCallsNum.' view references were checked to exist. ('.CheckView::$skippedCallsNum.' skipped)');
+        $this->getOutput()->writeln($this->stats());
         event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
@@ -58,5 +58,10 @@ class CheckViews extends Command
     private function checkBladeFiles()
     {
         BladeFiles::check([CheckViewFilesExistence::class]);
+    }
+
+    private function stats(): string
+    {
+        return ' - '.CheckView::$checkedCallsNum.' view references were checked to exist. ('.CheckView::$skippedCallsNum.' skipped)';
     }
 }
