@@ -5,13 +5,13 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
 
-class UnusedWrongImports
+class ExtraWrongImports
 {
-    public static function handle($unusedWrongImports, $absFilePath)
+    public static function handle($unusedWrongImports, $absPath)
     {
         foreach ($unusedWrongImports as $class) {
             ImportsAnalyzer::$wrongImportsCount++;
-            self::wrongImport($absFilePath, $class[0], $class[1]);
+            self::wrongImport($absPath, $class[0], $class[1]);
         }
     }
 
@@ -22,7 +22,7 @@ class UnusedWrongImports
             $absPath,
             $lineNumber,
             'wrongImport',
-            'Wrong import:'
+            'Unused & wrong import:'
         );
     }
 }

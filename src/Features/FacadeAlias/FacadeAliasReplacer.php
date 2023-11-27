@@ -10,7 +10,7 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 class FacadeAliasReplacer
 {
     /**
-     * @var \Illuminate\Console\Command
+     * @var \Illuminate\Console\OutputStyle
      */
     public static $command;
 
@@ -36,7 +36,7 @@ class FacadeAliasReplacer
     private static function ask($absFilePath, $use, $base, $aliases)
     {
         $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
-        self::$command->getOutput()->writeln('at '.$relativePath.':'.$use[1]);
+        self::$command->writeln('at '.$relativePath.':'.$use[1]);
         $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases.'</>';
 
         return self::$command->confirm($question, true);

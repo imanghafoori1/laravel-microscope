@@ -27,7 +27,7 @@ class CheckAliasesCommand extends Command
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
-        FacadeAliasesCheck::$command = $this;
+        FacadeAliasesCheck::$command = $this->getOutput();
 
         if ($this->option('nofix')) {
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
