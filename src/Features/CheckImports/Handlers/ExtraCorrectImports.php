@@ -10,7 +10,6 @@ class ExtraCorrectImports
     public static function handle($unusedCorrectImports, $absFilePath)
     {
         foreach ($unusedCorrectImports as $class) {
-            ImportsAnalyzer::$refCount++;
             ImportsAnalyzer::$unusedImportsCount++;
             self::extraImport($absFilePath, $class[0], $class[1]);
         }
