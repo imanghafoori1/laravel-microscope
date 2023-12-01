@@ -45,7 +45,7 @@ function base_path() {
     return $comp;
 }
 
-CheckClassReferencesAreValid::$wrongClassRefs = PrintWrongClassRefs::class;
+CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
 $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], function ($tokens) {
     $imports = ParseUseStatement::parseUseStatements($tokens);
 

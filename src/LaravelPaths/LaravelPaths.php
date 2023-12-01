@@ -5,8 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 

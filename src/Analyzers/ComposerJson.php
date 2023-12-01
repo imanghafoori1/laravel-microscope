@@ -26,11 +26,8 @@ class ComposerJson
         $allFiles = [];
         foreach ($psr4Autoloads as $path => $files) {
             $p = $basePath.'/'.trim($path, '/');
-            foreach ($files['autoload'] as $f) {
-                $allFiles[] = $p.'/'.$f;
-            }
-            foreach ($files['autoload-dev'] as $f) {
-                $allFiles[] = $p.'/'.$f;
+            foreach (array_merge($files['autoload'], $files['autoload-dev']) as $f) {
+                $allFiles[] = str_replace('/', DIRECTORY_SEPARATOR, $p.'/'.trim($f, '/'));
             }
         }
 

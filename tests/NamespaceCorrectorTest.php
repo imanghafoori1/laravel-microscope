@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 use Imanghafoori\Filesystem\FakeFilesystem;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
+use Imanghafoori\LaravelMicroscope\ClassListProvider;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\NamespaceFixer;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
@@ -18,13 +18,13 @@ class NamespaceCorrectorTest extends BaseTestClass
         $fileName = 'DNS.php';
         $relativePath = "\branding_manager\app\Cert\DNS.php"; // windows path
 
-        $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
+        $result = ClassListProvider::derive($psr4Path, $relativePath, $namespace, $fileName);
 
         $this->assertEquals('DNS', $result[0]);
         $this->assertEquals("Branding\Cert\DNS", $result[1]);
 
         $relativePath = '/branding_manager/app/Cert/DNS.php'; // unix paths
-        $result = ForPsr4LoadedClasses::derive($psr4Path, $relativePath, $namespace, $fileName);
+        $result = ClassListProvider::derive($psr4Path, $relativePath, $namespace, $fileName);
 
         $this->assertEquals('DNS', $result[0]);
         $this->assertEquals("Branding\Cert\DNS", $result[1]);

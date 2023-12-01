@@ -83,18 +83,19 @@ class HandleErrors
         };
     }
 
-    public static function getAbsoluteFilePaths($paths)
+    public static function getClassMaps($basePath)
     {
-        $basePath = base_path();
+        $result = [];
         foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
             foreach ($classmaps as $classmap) {
                 $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
                 $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $paths = array_merge($paths, array_values(ClassMapGenerator::createMap($classmap)));
+                $classmap = array_values(ClassMapGenerator::createMap($classmap));
+                $result = array_merge($classmap, $result);
             }
         }
 
-        return $paths;
+        return $result;
     }
 
     private static function updateOldRefs($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath)
@@ -119,46 +120,45 @@ class HandleErrors
         }
 
         $paths = [];
+        $paths['psr4'] = self::getPsr4();
+        $paths['autoload_files'] = ComposerJson::readAutoloadFiles();
+        $paths['class_map'] = self::getClassMaps(base_path());
+        $paths['routes'] = RoutePaths::get();
+        $paths['blades'] = LaravelPaths::bladeFilePaths();
 
-        foreach (ComposerJson::readAutoload() as $autoload) {
-            foreach ($autoload as $psr4Path) {
-                foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    $paths['psr4'][] = $file->getRealPath();
-                }
-            }
-        }
-
-        $paths = array_merge(ComposerJson::readAutoloadFiles(), $paths);
-        $paths = self::getAbsoluteFilePaths($paths);
-
-        $paths = array_merge(self::collectFilesInNonPsr4Paths(), $paths);
+        $dirs = [
+            LaravelPaths::migrationDirs(),
+            config_path(),
+            LaravelPaths::factoryDirs(),
+            LaravelPaths::seedersDir(),
+        ];
+        $paths = self::collectFilesInNonPsr4Paths($paths, $dirs);
 
         self::$pathsForReferenceFix = $paths;
 
         return $paths;
     }
 
-    public static function collectFilesInNonPsr4Paths()
+    public static function collectFilesInNonPsr4Paths($paths, $dirs)
     {
-        $paths = [
-            ['routes' => RoutePaths::get()],
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
-            Paths::getAbsFilePaths(config_path()),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
-            ['blades' => LaravelPaths::bladeFilePaths()],
-        ];
-
-        return self::mergePaths($paths);
-    }
-
-    private static function mergePaths($paths)
-    {
-        $all = [];
-        foreach ($paths as $p) {
-            $all = array_merge($all, $p);
+        foreach ($dirs as $dir) {
+            $paths = array_merge(Paths::getAbsFilePaths($dir), $paths);
         }
 
-        return $all;
+        return $paths;
+    }
+
+    private static function getPsr4()
+    {
+        $psr4 = [];
+        foreach (ComposerJson::readAutoload() as $autoload) {
+            foreach ($autoload as $psr4Path) {
+                foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
+                    $psr4[] = $file->getRealPath();
+                }
+            }
+        }
+
+        return $psr4;
     }
 }

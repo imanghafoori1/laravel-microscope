@@ -10,17 +10,14 @@ class CheckClassAtMethod
 
     public static function check($tokens, $absFilePath)
     {
-        if (self::checkAtSignStrings($tokens, $absFilePath)) {
+        $replaced = self::$handler::handle(
+            $absFilePath,
+            self::getAtSignTokens($tokens, $absFilePath)
+        );
+
+        if ($replaced) {
             return token_get_all(file_get_contents($absFilePath));
         }
-    }
-
-    public static function checkAtSignStrings($tokens, $absFilePath, $onlyAbsClassPath = false)
-    {
-        return self::$handler::handle(
-            $absFilePath,
-            self::getAtSignTokens($tokens, $onlyAbsClassPath)
-        );
     }
 
     private static function getAtSignTokens($tokens, $onlyAbsClassPath)
@@ -55,7 +52,7 @@ class CheckClassAtMethod
         return $atSignTokens;
     }
 
-    public static function contains($haystack, $needles)
+    private static function contains($haystack, $needles)
     {
         foreach ($needles as $needle) {
             if (mb_strpos($haystack, $needle) !== false) {

@@ -50,7 +50,7 @@ class ClassAtMethodHandler
     private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
     {
         $header = $wrongClass.'  <=== Did not exist';
-        $msg = 'Fixed to:   '.substr($correct[0], 0, 55);
+        $msg = 'Fixed to:  '.substr($correct[0], 0, 55);
 
         ErrorPrinter::singleton()->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
     }

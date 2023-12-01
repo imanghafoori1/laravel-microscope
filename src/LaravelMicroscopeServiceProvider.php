@@ -241,7 +241,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckView::$checkedCallsNum = 0;
             CheckView::$skippedCallsNum = 0;
             ImportsAnalyzer::$refCount = 0;
-            ForPsr4LoadedClasses::$checkedFilesNum = 0;
+            Iterators\ChecksOnPsr4Classes::$checkedFilesNum = 0;
         });
     }
 

@@ -83,7 +83,8 @@ class CheckImportsCommand extends Command
         $paramProvider = $this->getParamProvider();
 
         $paths = array_merge(
-            $this->getAutoloadFiles(),
+            HandleErrors::getClassMaps(base_path()),
+            ComposerJson::readAutoloadFiles(),
             $routeFiles = RoutePaths::get()
         );
 
@@ -162,13 +163,6 @@ class CheckImportsCommand extends Command
 
             return $imports[0] ?: [$imports[1]];
         };
-    }
-
-    private function getAutoloadFiles()
-    {
-        $paths = ComposerJson::readAutoloadFiles();
-
-        return HandleErrors::getAbsoluteFilePaths($paths);
     }
 
     private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts)
