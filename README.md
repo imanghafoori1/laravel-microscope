@@ -108,7 +108,7 @@ Give your eyes a rest, we will detect and fix them for you.
 <a name="installation"></a>
 ## <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation
 
-You can **install** the package via composer:
+You can **install** the package via Composer:
 
 ```bash
 composer require imanghafoori/laravel-microscope --dev
@@ -135,7 +135,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 
 
 <a name="less-use-commands"></a>
-### Less Use Commands
+### Less Used Commands:
 
 |#|Artisan Command|
 |---|---|
@@ -163,7 +163,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 |22|`php artisan list:models`|
 
 <a name="global-helper-functions"></a>
-## Global Helper Functions
+## Global Helper Functions:
 >Also, You will have access to some global helper functions
 
 ```php 
@@ -311,12 +311,12 @@ You can also mention a static method instead of a function, like this: `[MyClass
     ]
 ```
 In this case, our pattern is not very accurate and in some cases, it may result in syntax errors.
-Because of  that, we turn on php syntax validator to check the result, but that costs us a performance penalty!!!
-To exclude the usage of php, to validate the results we have mentioned the `avoid_result_in` so that if they happen in the result it skips.
+Because of  that, we turn on the php syntax validator to check the result, but that costs us a performance penalty!!!
+To exclude the usage of PHP, to validate the results we have mentioned the `avoid_result_in` so that if they happen in the result it skips.
 
 - **Note**: The `?` in the "<white_space>?" notes this is an `optional` placeholder.
 
-If you are curious to see a better pattern which does not need any syntax checking, try this:
+If you are curious to see a better pattern that does not need any syntax checking, try this:
 
 ```
 'enforce_optional_comma' => [
@@ -339,9 +339,9 @@ If you are curious to see a better pattern which does not need any syntax checki
 ```
 This is more complex but works much faster. (since it does not need the php syntax validator)
 
-- Here `'post_replace'` is a pattern which is applied only and only on the resulting code to refine it, and NOT on the entire file.
+- Here `'post_replace'` is a pattern that is applied only and only on the resulting code to refine it, and NOT on the entire file.
 
-- You can optionally comment your placeholders (as above `<1:any>`) with numbers, so that you know which one corresponds to which when replaced.
+- You can optionally comment your placeholders (as above `<1:any>`) with numbers so that you know which one corresponds to which when replaced.
 
 <a name="filters" ></a>
 :four: **Filters:**
@@ -431,7 +431,7 @@ $closure = function ($a) {
 
 :six: **Difference between `<statement>` and `<until>;`**
 
-They seem to be very similar but there is an important case which you can not use `<until>;` in order to cover it properly!
+They seem to be very similar but there is an important case in which you can not use `<until>;` to cover it properly!
 
 ```php
 $first = $a + $b;
@@ -480,7 +480,7 @@ new      dd('I am a class');  // here "dd" is the name of a class.
 But will detect and remove real global `dd()` calls with whatever parameters they have received.
 
 ```
-dd(                // <=== will be detected, even the pattern above is written all in one line.
+dd(                // <=== will be detected, even if the pattern above is written all in one line.
    auth('admin')
         ->user()->id   
 );
@@ -690,7 +690,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 ### `php artisan check:blade_queries`
 
 - Blade files should not contain DB queries. We should move them back into controllers and pass variables.
-This command searches all the blade files for `Eloquent models` and `DB` query builder and shows them if any.
+This command searches all the blade files for the `Eloquent models` and `DB` query builder and shows them if any.
 
 <a name="extract_blades"></a>
 ### `php artisan check:extract_blades`
@@ -729,7 +729,7 @@ Also, it will create:
 
 And put the corresponding content in them.
 
-- It is also compatible with namespaced views in modular laravel applications.
+- It is also compatible with namespaced views in modular Laravel applications.
 So this syntax will work: `'MyMod::myPartials.body'`
 
 <a name="action_comments"></a>
@@ -882,7 +882,7 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 <a name="contributing"></a>
 
 ### :raising_hand: Contributing
-If you find an issue or have a better way to do something, feel free to open an issue, or a pull request.
+If you find an issue or have a better way to do something, feel free to open an issue or a pull request.
 If you use laravel-microscope in your open source project, create a pull request to provide its URL as a sample application in the README.md file.
 
 <a name="security"></a>
@@ -894,7 +894,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 
 ### Laravel HeyMan
 
-:gem: It allows us to write expressive code to authorize, validate and authenticate.
+:gem: It allows us to write expressive code to authorize, validate, and authenticate.
 
 - https://github.com/imanghafoori1/laravel-heyman
 
@@ -904,7 +904,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 ### Laravel Terminator
 
 
- :gem: A minimal yet powerful package to allow you to refactor your controllers.
+ :gem: A minimal yet powerful package which allows you to refactor your controllers.
 
 - https://github.com/imanghafoori1/laravel-terminator
 
@@ -949,6 +949,6 @@ Albert Einstein
 This project exists thanks to all the people who contribute. [[Contributors](https://github.com/imanghafoori1/laravel-microscope/graphs/contributors)].
 <a href="https://github.com/imanghafoori1/laravel-microscope/graphs/contributors"><img src="https://opencollective.com/laravel-microscope/contributors.svg?width=890&button=false" /></a>
 
-## Star History
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=imanghafoori1/laravel-microscope&type=Date)](https://star-history.com/#imanghafoori1/laravel-microscope&Date)

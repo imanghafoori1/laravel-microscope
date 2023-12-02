@@ -43,12 +43,12 @@ class CheckClassReferencesAreValidTest extends TestCase
 
         $this->assertEquals([[
             0 => [],
-            1 => __DIR__.'/wongImport.stub'
+            1 => __DIR__.'/wongImport.stub',
         ]], $unusedWrongImportsHandler);
 
         $this->assertEquals([[
             0 => [],
-            1 => __DIR__.'/wongImport.stub'
+            1 => __DIR__.'/wongImport.stub',
         ]], $wrongClassRefsHandler);
     }
 }
