@@ -84,7 +84,7 @@ class CheckImportsCommand extends Command
 
         $paths = array_merge(
             FilePathsForReferenceFix::getClassMaps(base_path()),
-            ComposerJson::readAutoloadFiles(base_path()),
+            ComposerJson::autoloadedFilesList(base_path()),
             $routeFiles = RoutePaths::get()
         );
 

@@ -21,7 +21,7 @@ class FilePathsForReferenceFix
 
         $paths = [];
         $paths['psr4'] = self::getPsr4();
-        $paths['autoload_files'] = ComposerJson::readAutoloadFiles(base_path());
+        $paths['autoload_files'] = ComposerJson::autoloadedFilesList(base_path());
         $paths['class_map'] = self::getClassMaps(base_path());
         $paths['routes'] = RoutePaths::get();
         $paths['blades'] = LaravelPaths::bladeFilePaths();
