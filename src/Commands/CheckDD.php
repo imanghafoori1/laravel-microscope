@@ -29,9 +29,19 @@ class CheckDD extends Command
         $folder = ltrim($this->option('folder'), '=');
 
         $this->checkPaths(RoutePaths::get());
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $file, $folder));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $file, $folder));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $file, $folder));
+
+        $paths = [
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $file, $folder),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $file, $folder),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $file, $folder),
+        ];
+
+        foreach ($paths as $path) {
+            foreach ($path as $p) {
+                $this->checkPaths($p);
+            }
+        }
+
         $this->checkPsr4Classes();
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');

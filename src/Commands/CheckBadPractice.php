@@ -25,9 +25,19 @@ class CheckBadPractice extends Command
         $this->info('Checking bad practices...');
 
         $this->checkPaths(RoutePaths::get());
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::migrationDirs()));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::factoryDirs()));
-        $this->checkPaths(Paths::getAbsFilePaths(LaravelPaths::seedersDir()));
+
+        $paths = [
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
+        ];
+
+        foreach ($paths as $path) {
+            foreach ($path as $p) {
+                $this->checkPaths($p);
+            }
+        }
+
         $this->checkPsr4Classes();
 
         event('microscope.finished.checks', [$this]);

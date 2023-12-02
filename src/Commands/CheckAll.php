@@ -25,8 +25,8 @@ class CheckAll extends Command
         // turns off error logging.
         $errorPrinter->logErrors = false;
 
-        $this->call('check:psr4', ['--detailed' => $this->option('detailed'), '--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
-        $this->call('check:imports', ['--nofix' => $this->option('nofix'), '--detailed' => $this->option('detailed')]);
+        $this->call('check:psr4', ['--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
+        $this->call('check:imports', ['--nofix' => $this->option('nofix')]);
         $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:views', ['--detailed' => $this->option('detailed')]);
