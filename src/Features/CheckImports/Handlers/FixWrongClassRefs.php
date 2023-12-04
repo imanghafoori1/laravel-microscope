@@ -74,13 +74,13 @@ class FixWrongClassRefs
         );
     }
 
-    private static function wrongUsedClassError($absPath, $class, $lineNumber)
+    private static function wrongUsedClassError($absPath, $class, $line)
     {
         ErrorPrinter::singleton()->simplePendError(
             $class,
             $absPath,
-            $lineNumber,
-            'wrongUsedClassError',
+            $line,
+            'wrongClassRef',
             'Class does not exist:'
         );
     }

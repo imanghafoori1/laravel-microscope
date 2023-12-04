@@ -10,20 +10,46 @@ class ErrorPrinter
 {
     public static $ignored;
 
-    public $errorsList = [
-        'total' => 0,
-    ];
+    /**
+     * @var array
+     */
+    public $errorsList = [];
 
+    /**
+     * @var int
+     */
+    public $total = 0;
+
+    /**
+     * The output interface implementation.
+     *
+     * @var \Illuminate\Console\OutputStyle
+     */
     public $printer;
 
+    /**
+     * @var bool
+     */
     public $logErrors = true;
 
+    /**
+     * @var string[]
+     */
     public $pended = [];
 
+    /**
+     * @var int
+     */
     public $count = 0;
 
+    /**
+     * @var self
+     */
     public static $instance;
 
+    /**
+     * @var string
+     */
     public static $basePath;
 
     /**
@@ -70,7 +96,7 @@ class ErrorPrinter
 
     public function printHeader($msg)
     {
-        $number = ++$this->errorsList['total'];
+        $number = ++$this->total;
         ($number < 10) && $number = " $number";
 
         $number = '<fg=cyan>'.$number.' </>';
@@ -121,16 +147,16 @@ class ErrorPrinter
     public function logErrors()
     {
         $errList = $this->errorsList;
-        unset($errList['total']);
 
         foreach ($errList as $list) {
             foreach ($list as $error) {
-                if ($error instanceof PendingError) {
-                    $this->printHeader($error->getHeader());
-                    $this->print($error->getErrorData());
-                    $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
-                    $this->end();
-                }
+                $this->printHeader($error->getHeader());
+                $this->print($error->getErrorData());
+                $this->printLink(
+                    $error->getLinkPath(),
+                    $error->getLinkLineNumber()
+                );
+                $this->end();
             }
         }
 

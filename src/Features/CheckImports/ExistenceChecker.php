@@ -6,9 +6,9 @@ use Throwable;
 
 class ExistenceChecker
 {
-    public static function check($class, $absFilePath): bool
+    public static function check($import, $absFilePath): bool
     {
-        if (! self::isAbsent($class) || \function_exists($class)) {
+        if (self::entityExists($import)) {
             return true;
         }
 
@@ -18,15 +18,19 @@ class ExistenceChecker
             return false;
         }
 
-        if (! self::isAbsent($class) || \function_exists($class)) {
+        if (self::entityExists($import)) {
             return true;
         }
 
         return false;
     }
 
-    private static function isAbsent($class)
+    private static function entityExists($import)
     {
-        return ! class_exists($class) && ! interface_exists($class) && ! trait_exists($class) && ! (function_exists('enum_exists') && enum_exists($class));
+        return class_exists($import) ||
+            interface_exists($import) ||
+            trait_exists($import) ||
+            function_exists($import) ||
+            (function_exists('enum_exists') && enum_exists($import));
     }
 }

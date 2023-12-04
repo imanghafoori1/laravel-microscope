@@ -1,10 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEvents;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckEvents extends Command

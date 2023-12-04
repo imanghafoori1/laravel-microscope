@@ -11,15 +11,13 @@ class PrintWrongClassRefs
         $printer = ErrorPrinter::singleton();
 
         foreach ($wrongClassRefs as $classReference) {
-            $wrongClassRef = $classReference['class'];
-            $line = $classReference['line'];
-
-            self::wrongRef($printer, $wrongClassRef, $absFilePath, $line);
+            $printer->simplePendError(
+                $classReference['class'],
+                $absFilePath,
+                $classReference['line'],
+                'wrongClassReference',
+                'Class Reference does not exist:'
+            );
         }
-    }
-
-    private static function wrongRef($printer, $wrongClassRef, $absFilePath, $line): void
-    {
-        $printer->simplePendError($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
     }
 }

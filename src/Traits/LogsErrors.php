@@ -22,9 +22,7 @@ trait LogsErrors
             return;
         }
 
-        if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
-            $errorCount && $this->warn(PHP_EOL.$errorCount.' errors found for '.$commandType);
-
+        if ($errorPrinter->hasErrors() || $errorPrinter->pended) {
             $errorPrinter->logErrors();
         } elseif (property_exists($this, 'customMsg')) {
             $this->info(PHP_EOL.$this->customMsg);

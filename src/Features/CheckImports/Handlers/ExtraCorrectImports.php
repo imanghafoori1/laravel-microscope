@@ -6,21 +6,18 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ExtraCorrectImports
 {
-    public static function handle($unusedCorrectImports, $absFilePath)
+    public static function handle($extraCorrectImports, $absFilePath)
     {
-        foreach ($unusedCorrectImports as $class) {
-            self::extraImport($absFilePath, $class[0], $class[1]);
-        }
-    }
+        $printer = ErrorPrinter::singleton();
 
-    public static function extraImport($absPath, $class, $lineNumber)
-    {
-        ErrorPrinter::singleton()->simplePendError(
-            $class,
-            $absPath,
-            $lineNumber,
-            'extraImport',
-            'Extra Import:'
-        );
+        foreach ($extraCorrectImports as [$class, $lineNumber]) {
+            $printer->simplePendError(
+                $class,
+                $absFilePath,
+                $lineNumber,
+                'extraCorrectImport',
+                'Extra Import:'
+            );
+        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Stubs;
+namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 
 class ServiceProviderStub
 {

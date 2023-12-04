@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\RouteOverride;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Closure;
 use Illuminate\Routing\Router;
@@ -14,7 +14,7 @@ class SpyRouter extends Router
     public $routePaths = [];
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Features\RouteOverride\SpyRouteCollection
+     * @var \Imanghafoori\LaravelMicroscope\Features\CheckRoutes\SpyRouteCollection
      */
     private $routesSpy = null;
 

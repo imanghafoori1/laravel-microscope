@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Faker\Generator as FakerGenerator;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
-use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -15,13 +14,13 @@ use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
+use Imanghafoori\LaravelMicroscope\Features\CheckRoutes\SpyRouter;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
-use Imanghafoori\LaravelMicroscope\Features\RouteOverride\SpyRouter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyDispatcher;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
@@ -30,7 +29,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     private static $commandNames = [
         Commands\CheckFacadeDocblocks::class,
-        Commands\CheckEvents::class,
+        Features\CheckEvents\CheckEvents::class,
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
         Features\CheckView\CheckViewsCommand::class,
@@ -47,7 +46,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\CheckBadPractice::class,
         Commands\CheckExtractBladeIncludes::class,
         Commands\PrettyPrintRoutes::class,
-        Commands\CheckCodeGeneration::class,
+        Features\ServiceProviderGenerator\CheckCodeGeneration::class,
         Commands\CheckDeadControllers::class,
         Commands\CheckGenericDocBlocks::class,
         Commands\CheckPsr12::class,
@@ -110,11 +109,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         [$major] = explode('.', app()->version());
 
-        if ((int) $major >= 8) {
-            $color = 'gray';
-        } else {
-            $color = 'blue';
-        }
+        $color = (int) $major >= 8 ? 'gray' : 'blue';
+
         config()->set('microscope.colors.line_separator', $color);
 
         $this->registerCompiler();
@@ -124,7 +120,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         app()->singleton(ErrorPrinter::class, function () {
             return ErrorPrinter::singleton();
         });
-        $this->spyRouter();
+        \Imanghafoori\LaravelMicroscope\Features\CheckRoutes\Installer::spyRouter();
         // also we should spy the factory paths.
         if (class_exists('Illuminate\Database\Eloquent\Factory')) {
             $this->spyFactory();
@@ -134,20 +130,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $command = $_SERVER['argv'][1] ?? '';
         // We spy the router in order to have a list of route files.
         $checkAll = Str::startsWith('check:all', $command);
-        ($checkAll || Str::startsWith('check:eve', $command)) && $this->spyEvents();
+        ($checkAll || Str::startsWith('check:eve', $command)) && Installer::spyEvents();
         ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
         Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
         // ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
         ($checkAll || Str::startsWith('check:gates', $command)) && $this->spyGates();
-    }
-
-    private function spyRouter()
-    {
-        $router = new SpyRouter(app('events'), app());
-        $this->app->singleton('router', function ($app) use ($router) {
-            return $router;
-        });
-        Route::swap($router);
     }
 
     private function spyFactory()
@@ -165,18 +152,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return new SpyGate($app, function () use ($app) {
                 return call_user_func($app['auth']->userResolver());
             });
-        });
-    }
-
-    private function spyEvents()
-    {
-        app()->booting(function () {
-            $this->app->singleton('events', function ($app) {
-                return (new SpyDispatcher($app))->setQueueResolver(function () use ($app) {
-                    return $app->make(QueueFactoryContract::class);
-                });
-            });
-            Event::clearResolvedInstance('events');
         });
     }
 
@@ -241,6 +216,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckView::$checkedCallsCount = 0;
             CheckView::$skippedCallsCount = 0;
             ImportsAnalyzer::$checkedRefCount = 0;
+            ImportsAnalyzer::$extraCorrectImportsCount = 0;
+            ImportsAnalyzer::$wrongImportsCount = 0;
+            ImportsAnalyzer::$wrongClassRefCount = 0;
             Iterators\ChecksOnPsr4Classes::$checkedFilesCount = 0;
         });
     }

@@ -1,18 +1,17 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Stubs\ServiceProviderStub;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class GenerateCode
 {
     /**
-     * Get all of the listeners and their corresponding events.
+     * Get all the listeners and their corresponding events.
      *
      * @param  $paths
      * @param  $composerPath
@@ -108,12 +107,12 @@ class GenerateCode
 
     protected static function generateFolderStructure($classFilePath, $namespace, $prefix)
     {
-        $_basePath = $classFilePath->getPath().DIRECTORY_SEPARATOR;
-        file_put_contents($_basePath.$prefix.'_routes.php', self::routeContent($namespace));
-        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
-        self::makeDirectory($_basePath.'views');
-        self::makeDirectory($_basePath.'Http');
-        self::makeDirectory($_basePath.'Database'.DIRECTORY_SEPARATOR.'Models');
+        $basePath = $classFilePath->getPath().DIRECTORY_SEPARATOR;
+        file_put_contents($basePath.$prefix.'_routes.php', self::routeContent($namespace));
+        self::makeDirectory($basePath.'Database'.DIRECTORY_SEPARATOR.'migrations');
+        self::makeDirectory($basePath.'views');
+        self::makeDirectory($basePath.'Http');
+        self::makeDirectory($basePath.'Database'.DIRECTORY_SEPARATOR.'Models');
     }
 
     protected static function routeContent($namespace)

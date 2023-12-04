@@ -1,12 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\GenerateCode;
 
 class CheckCodeGeneration extends Command
 {
@@ -14,10 +13,10 @@ class CheckCodeGeneration extends Command
 
     protected $description = 'Generates code';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handle()
     {
         $this->info('Scanning for Empty Provider Files');
-        $errorPrinter->printer = $this->output;
+        ErrorPrinter::singleton($this->output);
 
         foreach (ComposerJson::readAutoload() as $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Path) {

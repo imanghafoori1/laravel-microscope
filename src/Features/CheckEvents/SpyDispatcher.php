@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SpyClasses;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEvents;
 
 use Exception;
 use Illuminate\Events\Dispatcher;

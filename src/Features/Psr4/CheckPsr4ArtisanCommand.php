@@ -44,11 +44,12 @@ class CheckPsr4ArtisanCommand extends Command
         if ($this->option('watch')) {
             sleep(8);
 
-            $errorPrinter->errorsList = ['total' => 0];
+            $errorPrinter->errorsList = [];
+            $errorPrinter->total = 0;
 
             goto start;
         } else {
-            return $errorPrinter->errorsList['total'] > 0 ? 1 : 0;
+            return $errorPrinter->total > 0 ? 1 : 0;
         }
     }
 
@@ -68,7 +69,7 @@ class CheckPsr4ArtisanCommand extends Command
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
             $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, $stats, $time, $typesStats));
-            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->errorsList['total'], $time));
+            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->total, $time));
         } else {
             $this->getOutput()->writeln(' - '.array_sum($stats).' namespaces were checked.');
         }
