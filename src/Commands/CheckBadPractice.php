@@ -15,7 +15,9 @@ use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class CheckBadPractice extends Command
 {
-    protected $signature = 'check:bad_practices';
+    protected $signature = 'check:bad_practices
+        {--f|file= : Pattern for file names to scan}
+        {--d|folder= : Pattern for file names to scan}';
 
     protected $description = 'Checks for bad practices';
 
@@ -26,10 +28,13 @@ class CheckBadPractice extends Command
 
         $this->checkPaths(RoutePaths::get());
 
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
         $paths = [
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs()),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir()),
+            Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $fileName, $folder),
+            Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $fileName, $folder),
+            Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $fileName, $folder),
         ];
 
         foreach ($paths as $path) {
@@ -71,8 +76,7 @@ class CheckBadPractice extends Command
     private function checkPsr4Classes()
     {
         $configs = Paths::getAbsFilePaths(
-            array_merge([config_path()],
-                config('microscope.additional_config_paths', []))
+            LaravelPaths::configDirs()
         );
 
         foreach (ComposerJson::readAutoload() as $psr4) {

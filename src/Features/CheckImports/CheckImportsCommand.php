@@ -14,7 +14,6 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClas
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
-use Imanghafoori\LaravelMicroscope\Features\Psr4\FilePathsForReferenceFix;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -75,15 +74,11 @@ class CheckImportsCommand extends Command
             unset($this->checks[3]); // avoid checking facades
         }
 
-        $errorPrinter = ErrorPrinter::singleton($this->output);
-
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $paramProvider = $this->getParamProvider();
-
         $paths = array_merge(
-            FilePathsForReferenceFix::getClassMaps(base_path()),
+            ComposerJson::getClassMaps(base_path()),
             ComposerJson::autoloadedFilesList(base_path()),
             $routeFiles = RoutePaths::get()
         );
@@ -94,18 +89,20 @@ class CheckImportsCommand extends Command
             $folder
         );
 
+        $paramProvider = $this->getParamProvider();
         $this->checkFilePaths($paths, $paramProvider);
 
-        $foldersStats = $this->checkFolders([
-            'config' => app()->configPath(),
-            'seeds' => LaravelPaths::seedersDir(),
-            'migrations' => LaravelPaths::migrationDirs(),
-            'factories' => LaravelPaths::factoryDirs(),
-        ], $fileName, $folder, $paramProvider);
+        $foldersStats = $this->checkFolders(
+            $this->getLaravelFolders(),
+            $paramProvider,
+            $fileName,
+            $folder
+        );
 
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
+        $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
         $this->reportAll($psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
 
@@ -134,7 +131,7 @@ class CheckImportsCommand extends Command
         }
     }
 
-    private function checkFolders($dirsList, $file, $folder, $paramProvider)
+    private function checkFolders($dirsList, $paramProvider, $file, $folder)
     {
         $fileCounts = [];
         foreach ($dirsList as $listName => $dirs) {
@@ -172,5 +169,15 @@ class CheckImportsCommand extends Command
         foreach ($messages as $message) {
             $this->getOutput()->writeln($message);
         }
+    }
+
+    private function getLaravelFolders()
+    {
+        return [
+            'config' => LaravelPaths::configDirs(),
+            'seeds' => LaravelPaths::seedersDir(),
+            'migrations' => LaravelPaths::migrationDirs(),
+            'factories' => LaravelPaths::factoryDirs(),
+        ];
     }
 }

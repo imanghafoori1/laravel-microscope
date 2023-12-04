@@ -22,13 +22,13 @@ class FilePathsForReferenceFix
         $paths = [];
         $paths['psr4'] = self::getPsr4();
         $paths['autoload_files'] = ComposerJson::autoloadedFilesList(base_path());
-        $paths['class_map'] = self::getClassMaps(base_path());
+        $paths['class_map'] = ComposerJson::getClassMaps(base_path());
         $paths['routes'] = RoutePaths::get();
         $paths['blades'] = LaravelPaths::bladeFilePaths();
 
         $dirs = [
             LaravelPaths::migrationDirs(),
-            config_path(),
+            LaravelPaths::configDirs(),
             LaravelPaths::factoryDirs(),
             LaravelPaths::seedersDir(),
         ];
@@ -60,20 +60,5 @@ class FilePathsForReferenceFix
         }
 
         return $psr4;
-    }
-
-    public static function getClassMaps($basePath)
-    {
-        $result = [];
-        foreach (ComposerJson::make()->readAutoloadClassMap() as $compPath => $classmaps) {
-            foreach ($classmaps as $classmap) {
-                $compPath = trim($compPath, '/') ? trim($compPath, '/').DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $classmap = array_values(ClassMapGenerator::createMap($classmap));
-                $result = array_merge($classmap, $result);
-            }
-        }
-
-        return $result;
     }
 }

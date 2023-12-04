@@ -10,6 +10,11 @@ use Throwable;
 
 class LaravelPaths
 {
+    public static function configDirs()
+    {
+        return array_merge([config_path()], config('microscope.additional_config_paths', []));
+    }
+
     public static function seedersDir()
     {
         $dir = app()->databasePath('seeds');
