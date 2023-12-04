@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope;
 use ImanGhafoori\ComposerJson\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Str;
+
 use function str_replace;
 use function trim;
 

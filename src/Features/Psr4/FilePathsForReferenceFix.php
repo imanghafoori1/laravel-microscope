@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
-use Composer\ClassMapGenerator\ClassMapGenerator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
