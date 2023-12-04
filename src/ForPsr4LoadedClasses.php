@@ -10,9 +10,9 @@ class ForPsr4LoadedClasses
 {
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
-        $stats = ChecksOnPsr4Classes::apply($includeFile, $includeFolder, $params, $checks);
+        [$stats, $exceptions] = ChecksOnPsr4Classes::apply($checks, $params, $includeFile, $includeFolder);
 
-        foreach (ChecksOnPsr4Classes::$exceptions as $e) {
+        foreach ($exceptions as $e) {
             self::handleErrorException($e);
             self::handleClassNotFound($e);
         }

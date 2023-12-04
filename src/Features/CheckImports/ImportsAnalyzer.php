@@ -10,9 +10,9 @@ use RuntimeException;
 
 class ImportsAnalyzer
 {
-    public static $refCount = 0;
+    public static $checkedRefCount = 0;
 
-    public static $unusedImportsCount = 0;
+    public static $extraCorrectImportsCount = 0;
 
     public static $wrongImportsCount = 0;
 
@@ -20,7 +20,7 @@ class ImportsAnalyzer
 
     public static $existenceChecker = ExistenceChecker::class;
 
-    public static function getWrongRefs($tokens, $absFilePath, $imports): array
+    public static function getWrongRefs($tokens, $absFilePath, $imports)
     {
         [
             $classReferences,
@@ -33,6 +33,9 @@ class ImportsAnalyzer
         [$wrongDocblockRefs] = self::filterWrongClassRefs($docblockRefs, $absFilePath);
         [$extraWrongImports, $extraCorrectImports] = self::filterWrongClassRefs($unusedImports, $absFilePath);
 
+        ImportsAnalyzer::$wrongImportsCount += count($extraWrongImports);
+        ImportsAnalyzer::$extraCorrectImportsCount += count($extraCorrectImports);
+
         return [
             $hostNamespace,
             $extraWrongImports,
@@ -42,7 +45,7 @@ class ImportsAnalyzer
         ];
     }
 
-    private static function filterWrongClassRefs($classReferences, $absFilePath): array
+    private static function filterWrongClassRefs($classReferences, $absFilePath)
     {
         $wrongClassRefs = [];
         $correctClassRefs = [];
@@ -57,7 +60,7 @@ class ImportsAnalyzer
             }
         }
 
-        ImportsAnalyzer::$refCount += count($classReferences);
+        ImportsAnalyzer::$checkedRefCount += count($classReferences);
         ImportsAnalyzer::$wrongClassRefCount += count($wrongClassRefs);
 
         return [$wrongClassRefs, $correctClassRefs];

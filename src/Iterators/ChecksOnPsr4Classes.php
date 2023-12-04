@@ -13,9 +13,9 @@ class ChecksOnPsr4Classes
     /**
      * @var int
      */
-    public static $checkedFilesNum = 0;
+    public static $checkedFilesCount = 0;
 
-    public static function apply($includeFile, $includeFolder, $params, $checks)
+    public static function apply($checks, $params, $includeFile, $includeFolder)
     {
         $stats = [];
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
@@ -23,13 +23,17 @@ class ChecksOnPsr4Classes
                 foreach ((array) $psr4Paths as $psr4Path) {
                     $filesCount = self::applyChecksInPath($psr4Path, $includeFile, $includeFolder, $params, $psr4Namespace, $checks);
 
-                    self::$checkedFilesNum += $filesCount;
+                    self::$checkedFilesCount += $filesCount;
                     $stats[$composerPath][$psr4Namespace][$psr4Path] = $filesCount;
                 }
             }
         }
 
-        return $stats;
+        try {
+            return [$stats, self::$exceptions];
+        } finally {
+            self::$exceptions = [];
+        }
     }
 
     private static function getParams($params, array $tokens, $absFilePath, $psr4Path, $psr4Namespace)

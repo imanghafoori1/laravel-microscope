@@ -9,9 +9,9 @@ use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckView
 {
-    public static $checkedCallsNum = 0;
+    public static $checkedCallsCount = 0;
 
-    public static $skippedCallsNum = 0;
+    public static $skippedCallsCount = 0;
 
     public static function check($tokens, $absPath)
     {
@@ -31,13 +31,13 @@ class CheckView
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
         if (FunctionCall::isSolidString($paramTokens)) {
-            self::$checkedCallsNum++;
+            self::$checkedCallsCount++;
             $viewName = \trim($paramTokens[0][1], '\'\"');
 
             $viewName = str_replace('.', '/', $viewName);
             $viewName && ! View::exists($viewName) && BladeFile::warn($absPath, $paramTokens[0][2], $viewName);
         } else {
-            self::$skippedCallsNum++;
+            self::$skippedCallsCount++;
         }
     }
 

@@ -238,10 +238,10 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function resetCountersOnFinish()
     {
         Event::listen('microscope.finished.checks', function () {
-            CheckView::$checkedCallsNum = 0;
-            CheckView::$skippedCallsNum = 0;
-            ImportsAnalyzer::$refCount = 0;
-            Iterators\ChecksOnPsr4Classes::$checkedFilesNum = 0;
+            CheckView::$checkedCallsCount = 0;
+            CheckView::$skippedCallsCount = 0;
+            ImportsAnalyzer::$checkedRefCount = 0;
+            Iterators\ChecksOnPsr4Classes::$checkedFilesCount = 0;
         });
     }
 

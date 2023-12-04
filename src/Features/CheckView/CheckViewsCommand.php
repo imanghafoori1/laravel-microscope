@@ -62,6 +62,6 @@ class CheckViewsCommand extends Command
 
     private function stats(): string
     {
-        return ' - '.CheckView::$checkedCallsNum.' view references were checked to exist. ('.CheckView::$skippedCallsNum.' skipped)';
+        return ' - '.CheckView::$checkedCallsCount.' view references were checked to exist. ('.CheckView::$skippedCallsCount.' skipped)';
     }
 }
