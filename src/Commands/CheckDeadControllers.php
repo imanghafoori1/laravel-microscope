@@ -25,8 +25,6 @@ class CheckDeadControllers extends Command
 
         $errorPrinter->printer = $this->output;
 
-        // checks calls like this: route('admin.user')
-        // in the psr-4 loaded classes.
         ForPsr4LoadedClasses::check([RoutelessActions::class]);
 
         $this->finishCommand($errorPrinter);

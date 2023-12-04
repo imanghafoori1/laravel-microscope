@@ -65,7 +65,7 @@ class CheckEarlyReturns extends Command
 
         $this->printFinalMsg($fixedFilesCount, $fixingFilesCount);
 
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        return ErrorPrinter::singleton($this->getOutput())->hasErrors() ? 1 : 0;
     }
 
     private function fix($filePath, $tokens, $tries)

@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Exception;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Symfony\Component\Console\Terminal;
 
@@ -38,23 +39,6 @@ class ErrorPrinter
         return self::$instance;
     }
 
-    public function authConf()
-    {
-        $this->print('The model in the "config/auth.php" is not a valid class');
-    }
-
-    public function badRelation($absPath, $lineNumber, $relatedModel)
-    {
-        $header = 'Wrong model is passed in relation:';
-
-        $this->simplePendError($relatedModel, $absPath, $lineNumber, 'badRelation', $header);
-    }
-
-    public function wrongImport($absPath, $class, $lineNumber)
-    {
-        $this->simplePendError("use $class;", $absPath, $lineNumber, 'wrongImport', 'Wrong import:');
-    }
-
     public function addPendingError($path, $lineNumber, $key, $header, $errorData)
     {
         if (self::isIgnored($path)) {
@@ -72,11 +56,6 @@ class ErrorPrinter
         $errorData = $pre.$this->color($yellowText).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
-    }
-
-    public function extraImport($absPath, $class, $lineNumber)
-    {
-        $this->simplePendError($class, $absPath, $lineNumber, 'extraImport', 'Import is not used:');
     }
 
     public function color($msg)
@@ -110,7 +89,7 @@ class ErrorPrinter
         };
         try {
             $line('gray');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $line('blue'); // for older versions of laravel
         }
     }
@@ -132,15 +111,11 @@ class ErrorPrinter
     /**
      * Checks for errors for the run command.
      *
-     * @return int
+     * @return bool
      */
     public function hasErrors()
     {
-        $errorsCollection = collect($this->errorsList);
-
-        return $errorsCollection->flatten()->filter(function ($action) {
-            return $action instanceof PendingError;
-        })->count();
+        return $this->count > 0;
     }
 
     public function logErrors()
@@ -159,33 +134,10 @@ class ErrorPrinter
             }
         }
 
-        /*collect($this->errorsList)->except('total')->flatten()->each(function ($error) {
-            if ($error instanceof PendingError) {
-                $this->printHeader($error->getHeader());
-                $this->print($error->getErrorData());
-                $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
-                $this->end();
-            }
-        });*/
-
         foreach ($this->pended as $pend) {
             $this->print($pend);
             $this->end();
         }
-    }
-
-    private static function possibleFixMsg($pieces)
-    {
-        $fixes = \implode("\n - ", $pieces);
-        $fixes && $fixes = "\n Possible fixes:\n - ".$fixes;
-
-        return $fixes;
-    }
-
-    public function wrongImportPossibleFixes($absPath, $class, $line, $fixes)
-    {
-        $fixes = self::possibleFixMsg($fixes);
-        $this->wrongUsedClassError($absPath, $class.' '.$fixes, $line);
     }
 
     public function getCount($key)

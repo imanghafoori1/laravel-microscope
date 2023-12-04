@@ -65,7 +65,8 @@ class CheckView
             $fileName.'.blade.php',
             $absPath,
             $lineNumber,
-            'view', \trim($message),
+            'missing_view',
+            \trim($message),
             ' does not exist'
         );
     }
