@@ -15,7 +15,7 @@ class PrintWrongClassRefs
                 $classReference['class'],
                 $absFilePath,
                 $classReference['line'],
-                'wrongClassReference',
+                'wrongClassRef',
                 'Class Reference does not exist:'
             );
         }

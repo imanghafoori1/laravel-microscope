@@ -12,12 +12,6 @@ class ImportsAnalyzer
 {
     public static $checkedRefCount = 0;
 
-    public static $extraCorrectImportsCount = 0;
-
-    public static $wrongImportsCount = 0;
-
-    public static $wrongClassRefCount = 0;
-
     public static $existenceChecker = ExistenceChecker::class;
 
     public static function getWrongRefs($tokens, $absFilePath, $imports)
@@ -25,16 +19,13 @@ class ImportsAnalyzer
         [
             $classReferences,
             $hostNamespace,
-            $unusedImports,
+            $extraImports,
             $docblockRefs,
         ] = self::findClassRefs($tokens, $absFilePath, $imports);
 
         [$wrongClassRefs] = self::filterWrongClassRefs($classReferences, $absFilePath);
         [$wrongDocblockRefs] = self::filterWrongClassRefs($docblockRefs, $absFilePath);
-        [$extraWrongImports, $extraCorrectImports] = self::filterWrongClassRefs($unusedImports, $absFilePath);
-
-        ImportsAnalyzer::$wrongImportsCount += count($extraWrongImports);
-        ImportsAnalyzer::$extraCorrectImportsCount += count($extraCorrectImports);
+        [$extraWrongImports, $extraCorrectImports] = self::filterWrongClassRefs($extraImports, $absFilePath);
 
         return [
             $hostNamespace,
@@ -61,7 +52,6 @@ class ImportsAnalyzer
         }
 
         ImportsAnalyzer::$checkedRefCount += count($classReferences);
-        ImportsAnalyzer::$wrongClassRefCount += count($wrongClassRefs);
 
         return [$wrongClassRefs, $correctClassRefs];
     }

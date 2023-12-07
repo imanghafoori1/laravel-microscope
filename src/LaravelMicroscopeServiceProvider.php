@@ -6,7 +6,6 @@ use Faker\Generator as FakerGenerator;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -16,7 +15,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
-use Imanghafoori\LaravelMicroscope\Features\CheckRoutes\SpyRouter;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -28,7 +26,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     private static $commandNames = [
-        Commands\CheckFacadeDocblocks::class,
+        Features\CheckFacadeDocblocks\CheckFacadeDocblocks::class,
         Features\CheckEvents\CheckEvents::class,
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
@@ -48,7 +46,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Commands\PrettyPrintRoutes::class,
         Features\ServiceProviderGenerator\CheckCodeGeneration::class,
         Commands\CheckDeadControllers::class,
-        Commands\CheckGenericDocBlocks::class,
+        Features\CheckGenericDocBlocks\CheckGenericDocBlocksCommand::class,
         Commands\CheckPsr12::class,
         Commands\CheckEndIf::class,
         Commands\EnforceQuery::class,
@@ -216,9 +214,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             CheckView::$checkedCallsCount = 0;
             CheckView::$skippedCallsCount = 0;
             ImportsAnalyzer::$checkedRefCount = 0;
-            ImportsAnalyzer::$extraCorrectImportsCount = 0;
-            ImportsAnalyzer::$wrongImportsCount = 0;
-            ImportsAnalyzer::$wrongClassRefCount = 0;
             Iterators\ChecksOnPsr4Classes::$checkedFilesCount = 0;
         });
     }

@@ -9,7 +9,7 @@ use Symfony\Component\Finder\Finder;
 
 class BladeFiles
 {
-    public static $checkedFilesNum = 0;
+    public static $checkedFilesCount = 0;
 
     public static function check($checkers, $params = [], $fileName = '', $folder = '')
     {
@@ -59,7 +59,7 @@ class BladeFiles
                 }
 
                 $count++;
-                self::$checkedFilesNum++;
+                self::$checkedFilesCount++;
                 $tokens = ViewsData::getBladeTokens($absPath);
                 $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
 

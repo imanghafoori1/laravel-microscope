@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\BladeFiles;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
@@ -24,7 +25,7 @@ class CheckImportReporter
         $output .= self::getFilesStats(ChecksOnPsr4Classes::$checkedFilesCount);
 
         if ($bladeStats) {
-            $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesNum);
+            $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount);
         }
 
         if ($foldersStats) {
@@ -40,11 +41,19 @@ class CheckImportReporter
 
     public static function printErrorsCount()
     {
-        $totalErrors = ImportsAnalyzer::$extraCorrectImportsCount + ImportsAnalyzer::$wrongImportsCount + ImportsAnalyzer::$wrongClassRefCount;
+        $printer = ErrorPrinter::singleton();
+        $wrongUsedClassCount = count($printer->errorsList['wrongClassRef'] ?? []);
+        $extraCorrectImportsCount = count($printer->errorsList['extraCorrectImport'] ?? []);
+        $extraWrongImportCount = count($printer->errorsList['extraWrongImport'] ?? []);
+
+        $wrongCount = $extraWrongImportCount;
+        $extraImportsCount = $extraCorrectImportsCount + $extraWrongImportCount;
+        $totalErrors = $wrongUsedClassCount + $extraCorrectImportsCount + $extraWrongImportCount;
+
         $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$checkedRefCount.' references were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
-        $output .= ' - <fg=yellow>'.ImportsAnalyzer::$extraCorrectImportsCount.' unused</> import'.(ImportsAnalyzer::$extraCorrectImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongImportsCount.' wrong</> import'.(ImportsAnalyzer::$wrongImportsCount <= 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.ImportsAnalyzer::$wrongClassRefCount.' wrong</> class reference'.(ImportsAnalyzer::$wrongClassRefCount <= 1 ? '' : 's').' found.';
+        $output .= ' - <fg=yellow>'.$extraImportsCount.' unused</> import'.($extraImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
+        $output .= ' - <fg=red>'.$wrongCount.' wrong</> import'.($wrongCount <= 1 ? '' : 's').' found.'.PHP_EOL;
+        $output .= ' - <fg=red>'.$wrongUsedClassCount.' wrong</> class reference'.($wrongUsedClassCount <= 1 ? '' : 's').' found.';
 
         return $output;
     }
