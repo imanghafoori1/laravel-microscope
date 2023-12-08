@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckImportReporter
 {

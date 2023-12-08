@@ -14,7 +14,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;

@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsAnalyzer;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid
 {
