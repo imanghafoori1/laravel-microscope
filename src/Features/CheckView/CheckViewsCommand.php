@@ -32,6 +32,7 @@ class CheckViewsCommand extends Command
         ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
         $this->checkBladeFiles();
 
+        $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats());
         event('microscope.finished.checks', [$this]);
 
@@ -63,5 +64,14 @@ class CheckViewsCommand extends Command
     private function stats(): string
     {
         return ' - '.CheckView::$checkedCallsCount.' view references were checked to exist. ('.CheckView::$skippedCallsCount.' skipped)';
+    }
+
+    private function logErrors(ErrorPrinter $errorPrinter)
+    {
+        if ($errorPrinter->hasErrors()) {
+            $errorPrinter->logErrors();
+        } else {
+            $this->info('All views are correct!');
+        }
     }
 }
