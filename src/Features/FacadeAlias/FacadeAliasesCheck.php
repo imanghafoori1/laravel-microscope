@@ -25,7 +25,7 @@ class FacadeAliasesCheck
                 }
                 $alias = $aliases[$usageInfo[0]];
 
-                $tokens = self::$handler::handle($absFilePath, $usageInfo, $base, $alias, $tokens);
+                $tokens = self::$handler::handle($absFilePath, $usageInfo, $base, $alias, $tokens, $import);
             }
         }
 

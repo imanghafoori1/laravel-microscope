@@ -18,10 +18,10 @@ class FacadeAliasReplacer
 
     public static $replacementsCount = 0;
 
-    public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens)
+    public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens, $imports)
     {
         if (self::$forceReplace || self::ask($absFilePath, $usageInfo, $base, $alias)) {
-            $newVersion = self::searchReplace($usageInfo[0], $alias, $tokens, $base);
+            $newVersion = self::searchReplace($usageInfo[0], $alias, $tokens, $base, $imports);
 
             Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newVersion));
 
@@ -42,8 +42,16 @@ class FacadeAliasReplacer
         return self::$command->confirm($question, true);
     }
 
-    private static function searchReplace($base, $aliases, $tokens, $as)
+    private static function searchReplace($base, $aliases, $tokens, $as, $imports)
     {
+        if (self::isAlreadyImported($imports, $aliases)) {
+            return self::replaceWithAs($base, $aliases, $tokens);
+        }
+
+        if (self::needsAlias($base, $aliases, $as)) {
+            return self::replaceWithAs($base, $aliases, $tokens);
+        }
+
         [$newVersion, $lines] = Searcher::search(
             [
                 [
@@ -127,10 +135,44 @@ class FacadeAliasReplacer
                         'search' => 'use \\'.$base.' as '.$as,
                         'replace' => 'use '.ltrim($aliases).' as '.$as,
                     ],
+                ], $tokens, 1);
+        }
+
+        return $newVersion;
+    }
+
+    private static function isAlreadyImported($imports, $alias)
+    {
+        return isset($imports[class_basename($alias)]) && $imports[class_basename($alias)][0] === $alias;
+    }
+
+    private static function replaceWithAs($base, $aliases, $tokens)
+    {
+        [$newVersion, $lines] = Searcher::search(
+            [
+                [
+                    'search' => 'use '.$base.';',
+                    'replace' => 'use '.ltrim($aliases).' as '.$base.';',
+                ],
+            ], $tokens, 1
+        );
+
+        if (! $lines) {
+            [$newVersion, $lines] = Searcher::search(
+                [
+                    [
+                        'search' => 'use \\'.$base.';',
+                        'replace' => 'use '.ltrim($aliases).' as '.$base.';',
+                    ],
                 ], $tokens, 1
             );
         }
 
         return $newVersion;
+    }
+
+    private static function needsAlias($base, $aliases, $as)
+    {
+        return $base !== class_basename($aliases) && $base === $as;
     }
 }

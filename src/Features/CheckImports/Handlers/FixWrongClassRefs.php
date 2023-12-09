@@ -60,7 +60,13 @@ class FixWrongClassRefs
 
     private static function wrongRef($printer, $wrongClassRef, $absFilePath, $line): void
     {
-        $printer->simplePendError($wrongClassRef, $absFilePath, $line, 'wrongReference', 'Inline class Ref does not exist:');
+        $printer->simplePendError(
+            $wrongClassRef,
+            $absFilePath,
+            $line,
+            'wrongClassRef',
+            'Inline class Ref does not exist:'
+        );
     }
 
     private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
