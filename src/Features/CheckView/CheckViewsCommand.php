@@ -34,7 +34,6 @@ class CheckViewsCommand extends Command
 
         $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats());
-        event('microscope.finished.checks', [$this]);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
@@ -71,7 +70,9 @@ class CheckViewsCommand extends Command
         if ($errorPrinter->hasErrors()) {
             $errorPrinter->logErrors();
         } else {
-            $this->info('All views are correct!');
+            $this->info('...'.PHP_EOL.'- All views are correct!');
         }
+
+        $errorPrinter->printTime();
     }
 }
