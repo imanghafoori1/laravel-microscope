@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
-use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Tests\CheckImports\MockExistenceChecker\AlwaysExistsMock;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use PHPUnit\Framework\TestCase;
 

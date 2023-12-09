@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\ddFound;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
+use Imanghafoori\LaravelMicroscope\Features\CheckDD\ddFound;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\ViewsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 

@@ -37,6 +37,8 @@ class CheckImportsCommand extends Command
 
     protected $description = 'Checks the validity of use statements';
 
+    protected $customMsg = 'All imports are Correct! \(^_^)/';
+
     /**
      * @var string[]
      */
@@ -175,9 +177,7 @@ class CheckImportsCommand extends Command
     {
         return [
             'config' => LaravelPaths::configDirs(),
-            'seeds' => LaravelPaths::seedersDir(),
             'migrations' => LaravelPaths::migrationDirs(),
-            'factories' => LaravelPaths::factoryDirs(),
         ];
     }
 }

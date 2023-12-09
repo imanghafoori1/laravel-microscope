@@ -14,7 +14,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
-use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -22,6 +21,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
@@ -36,7 +36,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Features\FacadeAlias\CheckAliasesCommand::class,
         Commands\CheckAll::class,
         Commands\ClassifyStrings::class,
-        Commands\CheckDD::class,
+        Features\CheckDD\CheckDDCommand::class,
         Commands\CheckEarlyReturns::class,
         Commands\CheckCompact::class,
         Commands\CheckBladeQueries::class,
