@@ -118,7 +118,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         app()->singleton(ErrorPrinter::class, function () {
             return ErrorPrinter::singleton();
         });
-        \Imanghafoori\LaravelMicroscope\Features\CheckRoutes\Installer::spyRouter();
+        Features\CheckRoutes\Installer::spyRouter();
         // also we should spy the factory paths.
         if (class_exists('Illuminate\Database\Eloquent\Factory')) {
             $this->spyFactory();
