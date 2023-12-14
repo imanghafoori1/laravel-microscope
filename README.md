@@ -142,7 +142,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 |1|`php artisan check:views`|
 |2|`php artisan check:routes`|
 |3|`php artisan check:psr4 {-s\|--nofix} `|
-|4|`php artisan check:imports {-s\|--nofix}`|
+|4|`php artisan check:imports {-s\|--nofix} {--wrong} {--extra}`|
 |5|`php artisan check:stringy_classes`|
 |6|`php artisan check:dd`|
 |7|`php artisan check:bad_practices`|
@@ -603,7 +603,7 @@ if ($cond1) {
     }
 }
 
-// merge into:
+// we get merged into:
 
 if ($cond1 && $cond2) { 
     ...  

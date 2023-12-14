@@ -23,7 +23,7 @@ class LaravelPathsTest extends BaseTestClass
             app()->databasePath('migrations'),
         ];
 
-        $this->assertIsArray($result);
+        $this->assertTrue(is_array($result));
         $this->assertEquals($expected, $result);
         $this->assertCount(2, $result);
     }
