@@ -28,6 +28,9 @@ Give your eyes a rest, we will detect and fix them for you.
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Today Downloads][ico-today-downloads]][link-downloads]
+[![tests](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/tests.yml)
+[![Imports](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/imports.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/imports.yml)
+
 <!--
 <p align="center">
 <a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/8d75e05f4b67de65b51e10772b054f506aa8cfab/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f762f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Latest Version on Packagist" data-canonical-src="https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
@@ -924,7 +927,7 @@ A man will never fail unless he stops trying.
 Albert Einstein
 ```
 
-[ico-laravel]: https://img.shields.io/badge/Laravel-%E2%89%A5%205.4-ff2d20?style=flat-square&logo=laravel
+[ico-laravel]: https://img.shields.io/badge/Laravel-%E2%89%A5%205.6-ff2d20?style=flat-square&logo=laravel
 [ico-php]: https://img.shields.io/packagist/php-v/imanghafoori/laravel-microscope?color=%238892BF&style=flat-square&logo=php
 [ico-version]: https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
