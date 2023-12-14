@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
-use Faker\Generator as FakerGenerator;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +17,6 @@ use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyFactory;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -119,10 +117,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return ErrorPrinter::singleton();
         });
         Features\CheckRoutes\Installer::spyRouter();
-        // also we should spy the factory paths.
-        if (class_exists('Illuminate\Database\Eloquent\Factory')) {
-            $this->spyFactory();
-        }
 
         // We need to start spying before the boot process starts.
         $command = $_SERVER['argv'][1] ?? '';
@@ -133,15 +127,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
         // ($checkAll || Str::startsWith('check:events', $command)) && $this->spyEvents();
         ($checkAll || Str::startsWith('check:gates', $command)) && $this->spyGates();
-    }
-
-    private function spyFactory()
-    {
-        $this->app->singleton('Illuminate\Database\Eloquent\Factory', function ($app) {
-            return SpyFactory::construct(
-                $app->make(FakerGenerator::class), $app->databasePath('factories')
-            );
-        });
     }
 
     private function spyGates()
