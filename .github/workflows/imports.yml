@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  check_imports:
 
     runs-on: ubuntu-latest
 
