@@ -11,7 +11,7 @@ class CheckClassReferencesAreValid
 
     public static $checkExtra = true;
 
-    public static $extraImportsHandler = Handlers\ExtraCorrectImports::class;
+    public static $extraCorrectImportsHandler = Handlers\ExtraCorrectImports::class;
 
     public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
 
@@ -54,8 +54,8 @@ class CheckClassReferencesAreValid
         }
 
         // Extra correct imports:
-        if (self::$checkExtra && self::$extraImportsHandler) {
-            self::$extraImportsHandler::handle($extraCorrectImports, $absFilePath);
+        if (self::$checkExtra && self::$extraCorrectImportsHandler) {
+            self::$extraCorrectImportsHandler::handle($extraCorrectImports, $absFilePath);
         }
     }
 }

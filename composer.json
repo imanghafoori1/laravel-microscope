@@ -17,11 +17,11 @@
     ],
     "require": {
         "php": "^7.2|8.0.*|8.1.*|8.2.*|8.3.*",
-        "imanghafoori/composer-json": "^1.0.12",
+        "imanghafoori/composer-json": "^1.0.13",
         "composer/class-map-generator": "^1.0.0",
         "imanghafoori/php-abstract-filesystem": "^0.1.4",
         "imanghafoori/php-search-replace": "^1.1.12",
-        "imanghafoori/php-token-analyzer": "^0.1.60",
+        "imanghafoori/php-token-analyzer": "^0.1.61",
         "imanghafoori/php-imports-analyzer": "^1.0.4",
         "imanghafoori/smart-realtime-facades": "^1.1.8",
         "jetbrains/phpstorm-attributes": "1.*",

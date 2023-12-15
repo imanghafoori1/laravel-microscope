@@ -15,7 +15,7 @@ class CheckClassReferencesAreValidTest extends TestCase
     {
         $absPath = __DIR__.'/wongImport.stub';
         $tokens = token_get_all(file_get_contents($absPath));
-        CheckClassReferencesAreValid::$extraImportsHandler = MockHandlers\MockExtraImportsHandler::class;
+        CheckClassReferencesAreValid::$extraCorrectImportsHandler = MockHandlers\MockExtraImportsHandler::class;
         CheckClassReferencesAreValid::$extraWrongImportsHandler = MockHandlers\MockerUnusedWrongImportsHandler::class;
         CheckClassReferencesAreValid::$wrongClassRefsHandler = MockHandlers\MockWrongClassRefsHandler::class;
 
