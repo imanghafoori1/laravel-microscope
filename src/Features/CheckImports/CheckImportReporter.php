@@ -71,10 +71,9 @@ class CheckImportReporter
             'wrongUsedClassCount' => $wrongUsedClassCount,
             'extraImportsCount' => $extraImportsCount,
             'wrongCount' => $extraWrongImportCount,
-            'totalErrors' => $totalErrors
+            'totalErrors' => $totalErrors,
         ];
     }
-
 
     private static function formatErrorSummary($totalErrors): string
     {
