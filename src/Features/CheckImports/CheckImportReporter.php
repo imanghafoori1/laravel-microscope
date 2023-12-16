@@ -48,20 +48,42 @@ class CheckImportReporter
 
     public static function printErrorsCount($errorsList)
     {
-        $wrongUsedClassCount = count($errorsList['wrongClassRef'] ?? []);
-        $extraCorrectImportsCount = count($errorsList['extraCorrectImport'] ?? []);
-        $extraWrongImportCount = count($errorsList['extraWrongImport'] ?? []);
-
-        $wrongCount = $extraWrongImportCount;
-        $extraImportsCount = $extraCorrectImportsCount + $extraWrongImportCount;
-        $totalErrors = $wrongUsedClassCount + $extraCorrectImportsCount + $extraWrongImportCount;
-
-        $output = '<options=bold;fg=yellow>'.ImportsAnalyzer::$checkedRefCount.' references were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
-        $output .= ' - <fg=yellow>'.$extraImportsCount.' unused</> import'.($extraImportsCount == 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.$wrongCount.' wrong</> import'.($wrongCount <= 1 ? '' : 's').' found.'.PHP_EOL;
-        $output .= ' - <fg=red>'.$wrongUsedClassCount.' wrong</> class reference'.($wrongUsedClassCount <= 1 ? '' : 's').' found.';
+        $counts = self::calculateErrorCounts($errorsList);
+        $output = self::formatErrorSummary($counts['totalErrors']);
+        $output .= self::formatDetail('unused import', $counts['extraImportsCount']);
+        $output .= self::formatDetail('wrong import', $counts['wrongCount']);
+        $output .= self::formatDetail('wrong class reference', $counts['wrongUsedClassCount']);
 
         return $output;
+    }
+
+    private static function calculateErrorCounts($errorsList): array
+    {
+        return [
+            'wrongUsedClassCount' => count($errorsList['wrongClassRef'] ?? []),
+            'extraCorrectImportsCount' => count($errorsList['extraCorrectImport'] ?? []),
+            'extraWrongImportCount' => count($errorsList['extraWrongImport'] ?? []),
+            'extraImportsCount' => array_sum([
+                count($errorsList['extraCorrectImport'] ?? []),
+                count($errorsList['extraWrongImport'] ?? [])
+            ]),
+            'wrongCount' => count($errorsList['extraWrongImport'] ?? []),
+            'totalErrors' => array_sum([
+                count($errorsList['wrongClassRef'] ?? []),
+                count($errorsList['extraCorrectImport'] ?? []),
+                count($errorsList['extraWrongImport'] ?? [])
+            ])
+        ];
+    }
+
+    private static function formatErrorSummary($totalErrors): string
+    {
+        return '<options=bold;fg=yellow>'.ImportsAnalyzer::$checkedRefCount.' references were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
+    }
+
+    private static function formatDetail($errorType, $count): string
+    {
+        return ' - <fg=yellow>'.$count.' '.$errorType.($count == 1 ? '' : 's').' found.'.PHP_EOL;
     }
 
     public static function printPsr4(array $psr4Stats)
