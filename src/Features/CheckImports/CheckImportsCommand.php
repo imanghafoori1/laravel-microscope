@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
+use DateInterval;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -100,13 +100,24 @@ class CheckImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
-        $this->reportAll($psr4Stats, $foldersStats, $bladeStats, count($routeFiles));
+
+        $messages = CheckImportReporter::report(
+            $psr4Stats,
+            $foldersStats,
+            $bladeStats,
+            count($routeFiles)
+        );
+
+        $messages[] = CheckImportReporter::printErrorsCount($errorPrinter->errorsList);
+
+        $this->getOutput()->writeln(implode(PHP_EOL, $messages));
 
         $errorPrinter->printTime();
 
         if ($this->shouldRequestThanks()) {
             ErrorPrinter::thanks($this);
         }
+
         $this->line('');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
@@ -144,9 +155,17 @@ class CheckImportsCommand extends Command
 
     private function shouldRequestThanks(): bool
     {
-        $currentCommandName = request()->server('argv')[1] ?? '';
+        $key = 'microscope_thanks_throttle';
 
-        return random_int(1, 7) == 2 && Str::startsWith($currentCommandName, 'check:im');
+        if (cache()->get($key)) {
+            return false;
+        }
+
+        // $currentCommandName = request()->server('argv')[1] ?? '';
+        $show = random_int(1, 5) === 2;
+        $show && cache()->set($key, '_', DateInterval::createFromDateString('3 days'));
+
+        return $show;
     }
 
     private function getParamProvider()
@@ -158,13 +177,9 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts)
+    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts, $errors)
     {
-        $messages = CheckImportReporter::report($psr4Stats, $foldersStats, $bladeStats, $routeCounts);
 
-        foreach ($messages as $message) {
-            $this->getOutput()->writeln($message);
-        }
     }
 
     private function getLaravelFolders()

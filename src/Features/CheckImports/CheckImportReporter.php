@@ -10,13 +10,12 @@ use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckImportReporter
 {
-    public static function report(array $psr4Stats, array $foldersStats, array $bladeStats, int $countRouteFiles)
+    public static function report($psr4Stats, $foldersStats, $bladeStats, int $routeFilesCount)
     {
         return [
             self::totalImportsMsg(),
             self::printPsr4($psr4Stats),
-            self::printFileCounts($foldersStats, $bladeStats, $countRouteFiles),
-            self::printErrorsCount(),
+            self::printFileCounts($foldersStats, $bladeStats, $routeFilesCount),
         ];
     }
 
@@ -26,10 +25,7 @@ class CheckImportReporter
         $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
         $checkedFilesCount && $output .= self::getFilesStats($checkedFilesCount);
 
-        if ($bladeStats) {
-            $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount);
-        }
-
+        $bladeStats && ($output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount));
         $foldersStats && ($output .= self::foldersStats($foldersStats));
 
         $output .= self::getRouteStats($countRouteFiles);
@@ -37,12 +33,11 @@ class CheckImportReporter
         return $output;
     }
 
-    public static function printErrorsCount()
+    public static function printErrorsCount($errorsList)
     {
-        $printer = ErrorPrinter::singleton();
-        $wrongUsedClassCount = count($printer->errorsList['wrongClassRef'] ?? []);
-        $extraCorrectImportsCount = count($printer->errorsList['extraCorrectImport'] ?? []);
-        $extraWrongImportCount = count($printer->errorsList['extraWrongImport'] ?? []);
+        $wrongUsedClassCount = count($errorsList['wrongClassRef'] ?? []);
+        $extraCorrectImportsCount = count($errorsList['extraCorrectImport'] ?? []);
+        $extraWrongImportCount = count($errorsList['extraWrongImport'] ?? []);
 
         $wrongCount = $extraWrongImportCount;
         $extraImportsCount = $extraCorrectImportsCount + $extraWrongImportCount;
@@ -103,9 +98,7 @@ class CheckImportReporter
 
             foreach ($stats as $dir => $files) {
                 $count = count($files);
-                if ($count) {
-                    $output .= (self::hyphen().self::addLine($dir, $count));
-                }
+                $count && ($output .= self::addLine($dir, $count));
             }
 
             $output .= PHP_EOL;
@@ -123,7 +116,7 @@ class CheckImportReporter
     {
         $output = self::blue($filesCount).'blade'.($filesCount <= 1 ? '' : 's');
         foreach ($stats as $path => $count) {
-            $count && $output .= (self::hyphen(). self::addLine($path, $count));
+            $count && ($output .= self::addLine($path, $count));
         }
 
         $output .= PHP_EOL;
@@ -163,7 +156,8 @@ class CheckImportReporter
 
     private static function addLine($path, $count)
     {
-        $output = self::green(self::normalize($path));
+        $output = self::hyphen();
+        $output .= self::green(self::normalize($path));
         $output .= self::files($count);
 
         return $output;
