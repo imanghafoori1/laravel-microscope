@@ -48,7 +48,12 @@ class CheckImportReporter
 
     public static function printErrorsCount($errorsList)
     {
-        $counts = self::calculateErrorCounts($errorsList);
+        $wrongUsedClassCount = count($errorsList['wrongClassRef'] ?? []);
+        $extraCorrectImportsCount = count($errorsList['extraCorrectImport'] ?? []);
+        $extraWrongImportCount = count($errorsList['extraWrongImport'] ?? []);
+
+        $counts = self::calculateErrorCounts($wrongUsedClassCount, $extraCorrectImportsCount, $extraWrongImportCount);
+
         $output = self::formatErrorSummary($counts['totalErrors']);
         $output .= self::formatDetail('unused import', $counts['extraImportsCount']);
         $output .= self::formatDetail('wrong import', $counts['wrongCount']);
@@ -57,24 +62,19 @@ class CheckImportReporter
         return $output;
     }
 
-    private static function calculateErrorCounts($errorsList): array
+    private static function calculateErrorCounts($wrongUsedClassCount, $extraCorrectImportsCount, $extraWrongImportCount): array
     {
+        $extraImportsCount = $extraCorrectImportsCount + $extraWrongImportCount;
+        $totalErrors = $wrongUsedClassCount + $extraImportsCount;
+
         return [
-            'wrongUsedClassCount' => count($errorsList['wrongClassRef'] ?? []),
-            'extraCorrectImportsCount' => count($errorsList['extraCorrectImport'] ?? []),
-            'extraWrongImportCount' => count($errorsList['extraWrongImport'] ?? []),
-            'extraImportsCount' => array_sum([
-                count($errorsList['extraCorrectImport'] ?? []),
-                count($errorsList['extraWrongImport'] ?? [])
-            ]),
-            'wrongCount' => count($errorsList['extraWrongImport'] ?? []),
-            'totalErrors' => array_sum([
-                count($errorsList['wrongClassRef'] ?? []),
-                count($errorsList['extraCorrectImport'] ?? []),
-                count($errorsList['extraWrongImport'] ?? [])
-            ])
+            'wrongUsedClassCount' => $wrongUsedClassCount,
+            'extraImportsCount' => $extraImportsCount,
+            'wrongCount' => $extraWrongImportCount,
+            'totalErrors' => $totalErrors
         ];
     }
+
 
     private static function formatErrorSummary($totalErrors): string
     {
