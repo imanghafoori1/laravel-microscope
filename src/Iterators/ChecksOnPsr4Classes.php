@@ -52,12 +52,12 @@ class ChecksOnPsr4Classes
             $filesCount++;
             $tokens = token_get_all(file_get_contents($absFilePath));
 
-            $params1 = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+            $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
             foreach ($checks as $check) {
-                $newTokens = self::applyCheck($check, $tokens, $absFilePath, $params1, $phpFilePath, $psr4Path, $psr4Namespace);
+                $newTokens = self::applyCheck($check, $tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
                 if ($newTokens) {
                     $tokens = $newTokens;
-                    $params1 = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+                    $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
                 }
             }
         }
@@ -65,10 +65,10 @@ class ChecksOnPsr4Classes
         return $filesCount;
     }
 
-    private static function applyCheck($check, $tokens, $absFilePath, $params1, $phpFilePath, $psr4Path, $psr4Namespace)
+    private static function applyCheck($check, $tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace)
     {
         try {
-            return $check::check($tokens, $absFilePath, $params1, $phpFilePath, $psr4Path, $psr4Namespace);
+            return $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
         } catch (Throwable $exception) {
             self::$exceptions[] = $exception;
         }
