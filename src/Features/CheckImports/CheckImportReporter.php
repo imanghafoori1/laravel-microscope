@@ -32,6 +32,7 @@ class CheckImportReporter
     private static function compileCheckedFilesStats(): string
     {
         $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+
         return $checkedFilesCount ? self::getFilesStats($checkedFilesCount) : '';
     }
 
@@ -44,7 +45,6 @@ class CheckImportReporter
     {
         return $foldersStats ? self::foldersStats($foldersStats) : '';
     }
-
 
     public static function printErrorsCount($errorsList)
     {
