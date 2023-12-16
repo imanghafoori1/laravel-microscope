@@ -79,17 +79,11 @@ class CheckImportsCommand extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $paths = array_merge(
-            ComposerJson::getClassMaps(base_path()),
-            ComposerJson::autoloadedFilesList(base_path()),
-            $routeFiles = RoutePaths::get()
-        );
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
+        $classMapFiles = FilePath::removeExtraPaths(ComposerJson::getClassMaps(base_path()), $fileName, $folder);
+        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
 
-        $paths = FilePath::removeExtraPaths(
-            $paths,
-            $fileName,
-            $folder
-        );
+        $paths = array_merge($classMapFiles, $autoloadedFiles, $routeFiles);
 
         $paramProvider = $this->getParamProvider();
         $this->checkFilePaths($paths, $paramProvider);
@@ -135,17 +129,17 @@ class CheckImportsCommand extends Command
 
     private function checkFolders($dirsList, $paramProvider, $file, $folder)
     {
-        $fileCounts = [];
+        $files = [];
         foreach ($dirsList as $listName => $dirs) {
             $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
             $this->checkFilePaths($filePaths, $paramProvider);
 
             foreach ($filePaths as $dir => $filePathList) {
-                $fileCounts[$listName][$dir] = $filePathList;
+                $files[$listName][$dir] = $filePathList;
             }
         }
 
-        return $fileCounts;
+        return $files;
     }
 
     private function shouldRequestThanks(): bool

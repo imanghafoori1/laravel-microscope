@@ -16,21 +16,21 @@ class Paths
         $folder && ($folder = str_replace('\\', '/', $folder));
         $paths = [];
         foreach ((array) $dirs as $dir) {
-            $paths[$dir] = self::getPaths($dir, $file, $folder);
+            $paths[$dir] = self::getPathsInDir($dir, $file, $folder);
         }
 
         return $paths;
     }
 
-    private static function getPaths($dir, $file, $folder): array
+    private static function getPathsInDir($dir, $file, $folder): array
     {
         try {
             $files = Finder::create()->files()->name('*.php')->in($dir);
             $paths = [];
             foreach ($files as $absFilePath => $f) {
-                FilePath::contains($absFilePath, $file, $folder);
-
-                $paths[] = $absFilePath;
+                if (FilePath::contains($absFilePath, $file, $folder)) {
+                    $paths[] = $absFilePath;
+                }
             }
 
             return $paths;

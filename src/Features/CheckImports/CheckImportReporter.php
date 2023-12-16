@@ -23,19 +23,16 @@ class CheckImportReporter
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall:'."</>\n";
-        $output .= self::getFilesStats(ChecksOnPsr4Classes::$checkedFilesCount);
+        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+        $checkedFilesCount && $output .= self::getFilesStats($checkedFilesCount);
 
         if ($bladeStats) {
             $output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount);
         }
 
-        if ($foldersStats) {
-            $output .= self::foldersStats($foldersStats);
-        }
+        $foldersStats && ($output .= self::foldersStats($foldersStats));
 
-        if ($countRouteFiles) {
-            $output .= self::getRouteStats($countRouteFiles);
-        }
+        $output .= self::getRouteStats($countRouteFiles);
 
         return $output;
     }
@@ -69,10 +66,10 @@ class CheckImportReporter
             $output = ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ($psr4Paths as $path => $countClasses) {
-                    $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
-                    $len = strlen($psr4Namespace);
-                    $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
-                    $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
+                        $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
+                        $len = strlen($psr4Namespace);
+                        $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
+                        $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
                 }
             }
             $result .= $output.PHP_EOL;
@@ -103,12 +100,12 @@ class CheckImportReporter
             }
 
             $output .= self::blue($total).$fileType;
-            $numPaths = count($stats);
-            $output .= self::hyphen();
-            $i = 0;
+
             foreach ($stats as $dir => $files) {
                 $count = count($files);
-                $output .= self::addLine($dir, $count, ++$i, $numPaths);
+                if ($count) {
+                    $output .= (self::hyphen().self::addLine($dir, $count));
+                }
             }
 
             $output .= PHP_EOL;
@@ -125,11 +122,8 @@ class CheckImportReporter
     private static function getBladeStats($stats, $filesCount): string
     {
         $output = self::blue($filesCount).'blade'.($filesCount <= 1 ? '' : 's');
-        $numPaths = count($stats);
-        $output .= self::hyphen();
-        $i = 0;
         foreach ($stats as $path => $count) {
-            $output .= self::addLine($path, $count, ++$i, $numPaths);
+            $count && $output .= (self::hyphen(). self::addLine($path, $count));
         }
 
         $output .= PHP_EOL;
@@ -167,13 +161,10 @@ class CheckImportReporter
         return ' ( '.$count.' files )';
     }
 
-    private static function addLine($path, $count, $i, $numPaths)
+    private static function addLine($path, $count)
     {
         $output = self::green(self::normalize($path));
         $output .= self::files($count);
-        if ($i !== $numPaths) {
-            $output .= self::hyphen();
-        }
 
         return $output;
     }
