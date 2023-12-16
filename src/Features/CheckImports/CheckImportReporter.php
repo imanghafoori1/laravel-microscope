@@ -21,16 +21,30 @@ class CheckImportReporter
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall:'."</>\n";
-        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-        $checkedFilesCount && $output .= self::getFilesStats($checkedFilesCount);
-
-        $bladeStats && ($output .= self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount));
-        $foldersStats && ($output .= self::foldersStats($foldersStats));
-
+        $output .= self::compileCheckedFilesStats();
+        $output .= self::compileBladeStats($bladeStats);
+        $output .= self::compileFolderStats($foldersStats);
         $output .= self::getRouteStats($countRouteFiles);
 
         return $output;
     }
+
+    private static function compileCheckedFilesStats(): string
+    {
+        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+        return $checkedFilesCount ? self::getFilesStats($checkedFilesCount) : '';
+    }
+
+    private static function compileBladeStats($bladeStats): string
+    {
+        return $bladeStats ? self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount) : '';
+    }
+
+    private static function compileFolderStats($foldersStats): string
+    {
+        return $foldersStats ? self::foldersStats($foldersStats) : '';
+    }
+
 
     public static function printErrorsCount($errorsList)
     {
