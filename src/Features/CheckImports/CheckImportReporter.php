@@ -12,7 +12,7 @@ class CheckImportReporter
     public static function report($psr4Stats, $foldersStats, $bladeStats, int $routeFilesCount)
     {
         return [
-            self::totalImportsMsg(),
+            self::totalImportsMsg(ImportsAnalyzer::$checkedRefCount),
             self::printPsr4($psr4Stats),
             self::printFileCounts($foldersStats, $bladeStats, $routeFilesCount),
         ];
@@ -48,13 +48,13 @@ class CheckImportReporter
 
     public static function printErrorsCount($errorsList)
     {
-        $wrongUsedClassCount = count($errorsList['wrongClassRef'] ?? []);
-        $extraCorrectImportsCount = count($errorsList['extraCorrectImport'] ?? []);
-        $extraWrongImportCount = count($errorsList['extraWrongImport'] ?? []);
+        $counts = self::calculateErrorCounts(
+            count($errorsList['wrongClassRef'] ?? []),
+            count($errorsList['extraCorrectImport'] ?? []),
+            count($errorsList['extraWrongImport'] ?? [])
+        );
 
-        $counts = self::calculateErrorCounts($wrongUsedClassCount, $extraCorrectImportsCount, $extraWrongImportCount);
-
-        $output = self::formatErrorSummary($counts['totalErrors']);
+        $output = self::formatErrorSummary($counts['totalErrors'], ImportsAnalyzer::$checkedRefCount);
         $output .= self::formatDetail('unused import', $counts['extraImportsCount']);
         $output .= self::formatDetail('wrong import', $counts['wrongCount']);
         $output .= self::formatDetail('wrong class reference', $counts['wrongUsedClassCount']);
@@ -64,20 +64,17 @@ class CheckImportReporter
 
     private static function calculateErrorCounts($wrongUsedClassCount, $extraCorrectImportsCount, $extraWrongImportCount): array
     {
-        $extraImportsCount = $extraCorrectImportsCount + $extraWrongImportCount;
-        $totalErrors = $wrongUsedClassCount + $extraImportsCount;
-
         return [
-            'wrongUsedClassCount' => $wrongUsedClassCount,
-            'extraImportsCount' => $extraImportsCount,
             'wrongCount' => $extraWrongImportCount,
-            'totalErrors' => $totalErrors,
+            'wrongUsedClassCount' => $wrongUsedClassCount,
+            'extraImportsCount' => $extraCorrectImportsCount + $extraWrongImportCount,
+            'totalErrors' => $wrongUsedClassCount + $extraCorrectImportsCount + $extraWrongImportCount,
         ];
     }
 
-    private static function formatErrorSummary($totalErrors): string
+    private static function formatErrorSummary($totalCount, $checkedRefCount): string
     {
-        return '<options=bold;fg=yellow>'.ImportsAnalyzer::$checkedRefCount.' references were checked, '.$totalErrors.' error'.($totalErrors == 1 ? '' : 's').' found.</>'.PHP_EOL;
+        return '<options=bold;fg=yellow>'.$checkedRefCount.' references were checked, '.$totalCount.' error'.($totalCount == 1 ? '' : 's').' found.</>'.PHP_EOL;
     }
 
     private static function formatDetail($errorType, $count): string
@@ -112,7 +109,7 @@ class CheckImportReporter
             foreach ($psr4Paths as $path => $countClasses) {
                 $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
                 $len = strlen($psr4Namespace);
-                $result .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
+                $result .= self::hyphen().'<fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
                 $result .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
             }
         }
@@ -154,9 +151,9 @@ class CheckImportReporter
         return $output;
     }
 
-    public static function totalImportsMsg()
+    public static function totalImportsMsg($checkedRefCount)
     {
-        return '<options=bold;fg=yellow>'.ImportsAnalyzer::$checkedRefCount.' imports were checked under:</>';
+        return '<options=bold;fg=yellow>'.$checkedRefCount.' imports were checked under:</>';
     }
 
     private static function getBladeStats($stats, $filesCount): string
@@ -173,12 +170,12 @@ class CheckImportReporter
 
     private static function getRouteStats($count)
     {
-        return '   - <fg=blue>'.$count.'</> route'.($count <= 1 ? '' : 's').PHP_EOL;
+        return self::blue($count).' route'.($count <= 1 ? '' : 's').PHP_EOL;
     }
 
     private static function getFilesStats($count)
     {
-        return '   - <fg=blue>'.$count.'</> class'.($count <= 1 ? '' : 'es').PHP_EOL;
+        return self::blue($count).' class'.($count <= 1 ? '' : 'es').PHP_EOL;
     }
 
     private static function normalize($dirPath)
@@ -191,9 +188,14 @@ class CheckImportReporter
         return '<fg=green>'.$string.'</>';
     }
 
+    private static function hyphen2()
+    {
+        return PHP_EOL.'     '.self::hyphen();
+    }
+
     private static function hyphen()
     {
-        return PHP_EOL.'        - ';
+        return '   - ';
     }
 
     private static function files($count)
@@ -212,6 +214,6 @@ class CheckImportReporter
 
     private static function blue($checkedFilesNum)
     {
-        return '   - <fg=blue>'.$checkedFilesNum.'</> ';
+        return self::hyphen().'<fg=blue>'.$checkedFilesNum.'</> ';
     }
 }
