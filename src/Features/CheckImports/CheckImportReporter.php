@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\BladeFiles;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -61,10 +60,10 @@ class CheckImportReporter
             $output = ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ($psr4Paths as $path => $countClasses) {
-                        $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
-                        $len = strlen($psr4Namespace);
-                        $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
-                        $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
+                    $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
+                    $len = strlen($psr4Namespace);
+                    $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
+                    $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
                 }
             }
             $result .= $output.PHP_EOL;

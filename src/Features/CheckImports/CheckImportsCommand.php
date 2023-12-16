@@ -179,7 +179,6 @@ class CheckImportsCommand extends Command
 
     private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts, $errors)
     {
-
     }
 
     private function getLaravelFolders()
