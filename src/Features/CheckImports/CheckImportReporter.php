@@ -79,6 +79,7 @@ class CheckImportReporter
     {
         $composerPath = trim($composerPath, '/');
         $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
+
         return ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
     }
 
