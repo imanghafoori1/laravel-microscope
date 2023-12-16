@@ -66,21 +66,33 @@ class CheckImportReporter
 
     public static function printPsr4(array $psr4Stats)
     {
-        $spaces = self::getMaxLength($psr4Stats);
-        $result = '';
+        $output = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
-            $composerPath = trim($composerPath, '/');
-            $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
-            $output = ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
-            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                foreach ($psr4Paths as $path => $countClasses) {
-                    $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
-                    $len = strlen($psr4Namespace);
-                    $output .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
-                    $output .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
-                }
+            $output .= self::formatComposerPath($composerPath);
+            $output .= self::formatPsr4Stats($psr4);
+        }
+
+        return $output;
+    }
+
+    private static function formatComposerPath($composerPath): string
+    {
+        $composerPath = trim($composerPath, '/');
+        $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
+        return ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
+    }
+
+    private static function formatPsr4Stats($psr4): string
+    {
+        $spaces = self::getMaxLength($psr4);
+        $result = '';
+        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+            foreach ($psr4Paths as $path => $countClasses) {
+                $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
+                $len = strlen($psr4Namespace);
+                $result .= '   - <fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
+                $result .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
             }
-            $result .= $output.PHP_EOL;
         }
 
         return $result;
