@@ -21,7 +21,7 @@ class CheckImportReporter
     private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
     {
         $output = ' <fg=blue>Overall:'."</>\n";
-        $output .= self::compileCheckedFilesStats();
+        $output .= self::compileCheckedFilesStats(ChecksOnPsr4Classes::$checkedFilesCount);
         $output .= self::compileBladeStats($bladeStats);
         $output .= self::compileFolderStats($foldersStats);
         $output .= self::getRouteStats($countRouteFiles);
@@ -29,10 +29,8 @@ class CheckImportReporter
         return $output;
     }
 
-    private static function compileCheckedFilesStats(): string
+    private static function compileCheckedFilesStats($checkedFilesCount): string
     {
-        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-
         return $checkedFilesCount ? self::getFilesStats($checkedFilesCount) : '';
     }
 
@@ -82,6 +80,11 @@ class CheckImportReporter
         return ' - <fg=yellow>'.$count.' '.$errorType.($count == 1 ? '' : 's').' found.'.PHP_EOL;
     }
 
+    /**
+     * @param array<string, array<string, string[]>> $psr4Stats
+     *
+     * @return string
+     */
     public static function printPsr4(array $psr4Stats)
     {
         $output = '';
@@ -101,29 +104,34 @@ class CheckImportReporter
         return ' <fg=blue>./'.$composerPath.'composer.json'.'</>'.PHP_EOL;
     }
 
-    private static function formatPsr4Stats($psr4): string
+    /**
+     * @param array<string, string[]> $psr4
+     *
+     * @return string
+     */
+    private static function formatPsr4Stats(array $psr4)
     {
-        $spaces = self::getMaxLength($psr4);
+        $maxLen = self::getMaxLength($psr4);
         $result = '';
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             foreach ($psr4Paths as $path => $countClasses) {
-                $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
-                $len = strlen($psr4Namespace);
-                $result .= self::hyphen().'<fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
-                $result .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
+                $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
+                $result .= self::blue(' '.self::paddedClassCount($countClasses))."file".($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")\n";
             }
         }
 
         return $result;
     }
 
-    private static function getMaxLength(array $psr4Stats)
+    /**
+     * @param array<string, string[]> $psr4
+     * @return int
+     */
+    private static function getMaxLength(array $psr4)
     {
         $lengths = [1];
-        foreach ($psr4Stats as $psr4) {
-            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                $lengths[] = strlen($psr4Namespace);
-            }
+        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+            $lengths[] = strlen($psr4Namespace);
         }
 
         return max($lengths);
@@ -215,5 +223,17 @@ class CheckImportReporter
     private static function blue($checkedFilesNum)
     {
         return self::hyphen().'<fg=blue>'.$checkedFilesNum.'</> ';
+    }
+
+    private static function paddedNamespace($longest, $namespace)
+    {
+        $padLength = $longest - strlen($namespace);
+
+        return $namespace.str_repeat(' ', $padLength);
+    }
+
+    private static function paddedClassCount($countClasses)
+    {
+        return str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
     }
 }
