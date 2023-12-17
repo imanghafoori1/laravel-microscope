@@ -81,8 +81,7 @@ class CheckImportReporter
     }
 
     /**
-     * @param array<string, array<string, string[]>> $psr4Stats
-     *
+     * @param  array<string, array<string, string[]>>  $psr4Stats
      * @return string
      */
     public static function printPsr4(array $psr4Stats)
@@ -105,8 +104,7 @@ class CheckImportReporter
     }
 
     /**
-     * @param array<string, string[]> $psr4
-     *
+     * @param  array<string, string[]>  $psr4
      * @return string
      */
     private static function formatPsr4Stats(array $psr4)
@@ -116,7 +114,7 @@ class CheckImportReporter
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             foreach ($psr4Paths as $path => $countClasses) {
                 $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
-                $result .= self::blue(' '.self::paddedClassCount($countClasses))."file".($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")\n";
+                $result .= self::blue(' '.self::paddedClassCount($countClasses)).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")\n";
             }
         }
 
@@ -124,7 +122,7 @@ class CheckImportReporter
     }
 
     /**
-     * @param array<string, string[]> $psr4
+     * @param  array<string, string[]>  $psr4
      * @return int
      */
     private static function getMaxLength(array $psr4)
