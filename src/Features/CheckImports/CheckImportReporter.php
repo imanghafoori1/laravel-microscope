@@ -108,8 +108,9 @@ class CheckImportReporter
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             foreach ($psr4Paths as $path => $countClasses) {
                 $countClasses = str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
-                $len = strlen($psr4Namespace);
-                $result .= self::hyphen().'<fg=red>'.$psr4Namespace.str_repeat(' ', $spaces - $len).' </>';
+                $indentationLen = $spaces - strlen($psr4Namespace);
+                $indentationLen = max($indentationLen, 1);
+                $result .= self::hyphen().'<fg=red>'.$psr4Namespace.str_repeat(' ', $indentationLen).' </>';
                 $result .= " <fg=blue>$countClasses </>file".($countClasses == 1 ? '' : 's').' found (<fg=green>./'.$path."</>)\n";
             }
         }
