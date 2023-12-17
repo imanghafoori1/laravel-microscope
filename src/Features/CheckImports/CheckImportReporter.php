@@ -44,30 +44,14 @@ class CheckImportReporter
         return $foldersStats ? self::foldersStats($foldersStats) : '';
     }
 
-    public static function printErrorsCount($errorsList)
+    public static function printErrorsCount(ErrorCounter $errorCounter)
     {
-        $counts = self::calculateErrorCounts(
-            count($errorsList['wrongClassRef'] ?? []),
-            count($errorsList['extraCorrectImport'] ?? []),
-            count($errorsList['extraWrongImport'] ?? [])
-        );
-
-        $output = self::formatErrorSummary($counts['totalErrors'], ImportsAnalyzer::$checkedRefCount);
-        $output .= self::formatDetail('unused import', $counts['extraImportsCount']);
-        $output .= self::formatDetail('wrong import', $counts['wrongCount']);
-        $output .= self::formatDetail('wrong class reference', $counts['wrongUsedClassCount']);
+        $output = self::formatErrorSummary($errorCounter->getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
+        $output .= self::formatDetail('unused import', $errorCounter->getExtraImportsCount());
+        $output .= self::formatDetail('wrong import', $errorCounter->getWrongCount());
+        $output .= self::formatDetail('wrong class reference', $errorCounter->getWrongUsedClassCount());
 
         return $output;
-    }
-
-    private static function calculateErrorCounts($wrongUsedClassCount, $extraCorrectImportsCount, $extraWrongImportCount): array
-    {
-        return [
-            'wrongCount' => $extraWrongImportCount,
-            'wrongUsedClassCount' => $wrongUsedClassCount,
-            'extraImportsCount' => $extraCorrectImportsCount + $extraWrongImportCount,
-            'totalErrors' => $wrongUsedClassCount + $extraCorrectImportsCount + $extraWrongImportCount,
-        ];
     }
 
     private static function formatErrorSummary($totalCount, $checkedRefCount): string
