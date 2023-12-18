@@ -108,7 +108,8 @@ class CheckImportsCommand extends Command
             count($routeFiles)
         );
 
-        $messages[] = CheckImportReporter::printErrorsCount($errorPrinter->errorsList);
+        $errorCounter = new ErrorCounter($errorPrinter->errorsList);
+        $messages[] = CheckImportReporter::printErrorsCount($errorCounter);
 
         $this->getOutput()->writeln(implode(PHP_EOL, $messages));
 
