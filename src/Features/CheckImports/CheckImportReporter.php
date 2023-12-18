@@ -14,17 +14,23 @@ class CheckImportReporter
         return [
             self::totalImportsMsg(ImportsAnalyzer::$checkedRefCount),
             self::printPsr4($psr4Stats),
-            self::printFileCounts($foldersStats, $bladeStats, $routeFilesCount),
+            self::printFileCounts(
+                $foldersStats,
+                $bladeStats,
+                $routeFilesCount,
+                ChecksOnPsr4Classes::$checkedFilesCount,
+                BladeFiles::$checkedFilesCount
+            ),
         ];
     }
 
-    private static function printFileCounts($foldersStats, $bladeStats, int $countRouteFiles): string
+    private static function printFileCounts($foldersStats, $bladeStats, $routesCount, $Psr4Count, $bladesCount): string
     {
         $output = ' <fg=blue>Overall:'."</>\n";
-        $output .= self::compileCheckedFilesStats(ChecksOnPsr4Classes::$checkedFilesCount);
-        $output .= self::compileBladeStats($bladeStats);
+        $output .= self::compileCheckedFilesStats($Psr4Count);
+        $output .= self::compileBladeStats($bladeStats, $bladesCount);
         $output .= self::compileFolderStats($foldersStats);
-        $output .= self::getRouteStats($countRouteFiles);
+        $output .= self::getRouteStats($routesCount);
 
         return $output;
     }
@@ -34,9 +40,9 @@ class CheckImportReporter
         return $checkedFilesCount ? self::getFilesStats($checkedFilesCount) : '';
     }
 
-    private static function compileBladeStats($bladeStats): string
+    private static function compileBladeStats($bladeStats, $checkedBladesCount): string
     {
-        return $bladeStats ? self::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount) : '';
+        return $bladeStats ? self::getBladeStats($bladeStats, $checkedBladesCount) : '';
     }
 
     private static function compileFolderStats($foldersStats): string
@@ -44,12 +50,12 @@ class CheckImportReporter
         return $foldersStats ? self::foldersStats($foldersStats) : '';
     }
 
-    public static function printErrorsCount(ErrorCounter $errorCounter)
+    public static function printErrorsCount($checkedRefCount)
     {
-        $output = self::formatErrorSummary($errorCounter->getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
-        $output .= self::formatDetail('unused import', $errorCounter->getExtraImportsCount());
-        $output .= self::formatDetail('wrong import', $errorCounter->getWrongCount());
-        $output .= self::formatDetail('wrong class reference', $errorCounter->getWrongUsedClassCount());
+        $output = self::formatErrorSummary(ErrorCounter::getTotalErrors(), $checkedRefCount);
+        $output .= self::format('unused import', ErrorCounter::getExtraImportsCount());
+        $output .= self::format('wrong import', ErrorCounter::getWrongCount());
+        $output .= self::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
 
         return $output;
     }
@@ -59,7 +65,7 @@ class CheckImportReporter
         return '<options=bold;fg=yellow>'.$checkedRefCount.' references were checked, '.$totalCount.' error'.($totalCount == 1 ? '' : 's').' found.</>'.PHP_EOL;
     }
 
-    private static function formatDetail($errorType, $count): string
+    private static function format($errorType, $count)
     {
         return ' - <fg=yellow>'.$count.' '.$errorType.($count == 1 ? '' : 's').' found.'.PHP_EOL;
     }
@@ -176,11 +182,6 @@ class CheckImportReporter
     private static function green(string $string)
     {
         return '<fg=green>'.$string.'</>';
-    }
-
-    private static function hyphen2()
-    {
-        return PHP_EOL.'     '.self::hyphen();
     }
 
     private static function hyphen()

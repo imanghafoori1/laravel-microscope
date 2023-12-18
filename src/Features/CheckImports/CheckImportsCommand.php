@@ -20,6 +20,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImportsCommand extends Command
@@ -108,8 +109,8 @@ class CheckImportsCommand extends Command
             count($routeFiles)
         );
 
-        $errorCounter = new ErrorCounter($errorPrinter->errorsList);
-        $messages[] = CheckImportReporter::printErrorsCount($errorCounter);
+        ErrorCounter::$errors = $errorPrinter->errorsList;
+        $messages[] = CheckImportReporter::printErrorsCount(ImportsAnalyzer::$checkedRefCount);
 
         $this->getOutput()->writeln(implode(PHP_EOL, $messages));
 

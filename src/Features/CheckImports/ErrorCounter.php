@@ -5,32 +5,32 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 class ErrorCounter
 {
     /**
-     * @var array
+     * @var array<string, array>
      */
-    protected $errors;
+    public static $errors;
 
-    public function __construct(array $errors)
+    public static function getWrongCount(): int
     {
-        $this->errors = $errors;
+        return self::getCount('extraWrongImport');
     }
 
-    public function getWrongCount(): int
+    public static function getWrongUsedClassCount(): int
     {
-        return count($this->errors['extraWrongImport'] ?? []);
+        return self::getCount('wrongClassRef');
     }
 
-    public function getWrongUsedClassCount(): int
+    public static function getExtraImportsCount(): int
     {
-        return count($this->errors['wrongClassRef'] ?? []);
+        return self::getCount('extraCorrectImport') + self::getWrongCount();
     }
 
-    public function getExtraImportsCount(): int
+    public static function getTotalErrors(): int
     {
-        return count($this->errors['extraCorrectImport'] ?? []) + $this->getWrongCount();
+        return self::getWrongCount() + self::getWrongUsedClassCount() + self::getExtraImportsCount();
     }
 
-    public function getTotalErrors(): int
+    private static function getCount(string $key)
     {
-        return $this->getWrongCount() + $this->getWrongUsedClassCount() + $this->getExtraImportsCount();
+        return count(self::$errors[$key] ?? []);
     }
 }
