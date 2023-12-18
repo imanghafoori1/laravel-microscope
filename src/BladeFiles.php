@@ -11,22 +11,29 @@ class BladeFiles
 {
     public static $checkedFilesCount = 0;
 
+    /**
+     * @param $checkers
+     * @param $params
+     * @param $fileName
+     * @param $folder
+     * @return array<string, int>
+     */
     public static function check($checkers, $params = [], $fileName = '', $folder = '')
     {
-        $stats = [];
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
 
-        $hints = self::getNamespacedPaths();
-        $hints['random_key_69471'] = View::getFinder()->getPaths();
-
-        foreach ($hints as $paths) {
+        $stats = [];
+        foreach (self::getViews() as $paths) {
             $stats = array_merge($stats, self::checkPaths($paths, $checkers, $fileName, $folder, $params));
         }
 
         return $stats;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private static function getNamespacedPaths()
     {
         $hints = View::getFinder()->getHints();
@@ -35,6 +42,15 @@ class BladeFiles
         return $hints;
     }
 
+    /**
+     * @param string[] $paths
+     * @param $checkers
+     * @param $fileName
+     * @param $folder
+     * @param $params
+     *
+     * @return array<string, int>
+     */
     public static function checkPaths($paths, $checkers, $fileName, $folder, $params)
     {
         $stats = [];
@@ -72,5 +88,16 @@ class BladeFiles
         }
 
         return $stats;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function getViews()
+    {
+        $hints = self::getNamespacedPaths();
+        $hints['random_key_69471'] = View::getFinder()->getPaths();
+
+        return $hints;
     }
 }

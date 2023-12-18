@@ -17,6 +17,7 @@ use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -41,7 +42,7 @@ class CheckImportsCommand extends Command
     protected $customMsg = 'All imports are Correct! \(^_^)/';
 
     /**
-     * @var string[]
+     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>
      */
     private $checks = [
         1 => CheckClassAtMethod::class,
@@ -100,20 +101,25 @@ class CheckImportsCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
+        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
-
-        $messages = CheckImportReporter::report(
-            $psr4Stats,
-            $foldersStats,
-            $bladeStats,
-            count($routeFiles)
-        );
-
         ErrorCounter::$errors = $errorPrinter->errorsList;
-        $messages[] = CheckImportReporter::printErrorsCount(ImportsAnalyzer::$checkedRefCount);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, $messages));
+        $messages = [];
+        $messages[] = CheckImportReporter::totalImportsMsg(ImportsAnalyzer::$checkedRefCount);
+        $messages[] = CheckImportReporter::printPsr4($psr4Stats);
+        $messages[] = CheckImportReporter::header();
+        $checkedFilesCount && $messages[] = CheckImportReporter::getFilesStats($checkedFilesCount);
+        $bladeStats && $messages[] = CheckImportReporter::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount);
+        $foldersStats && $messages[] = CheckImportReporter::foldersStats($foldersStats);
+        $messages[] = CheckImportReporter::getRouteStats(count($routeFiles));
+        $messages[] = CheckImportReporter::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
+        $messages[] = CheckImportReporter::format('unused import', ErrorCounter::getExtraImportsCount());
+        $messages[] = CheckImportReporter::format('wrong import', ErrorCounter::getExtraWrongCount());
+        $messages[] = CheckImportReporter::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
+
+        $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));
 
         $errorPrinter->printTime();
 
@@ -141,6 +147,13 @@ class CheckImportsCommand extends Command
         }
     }
 
+    /**
+     * @param $dirsList
+     * @param $paramProvider
+     * @param $file
+     * @param $folder
+     * @return array<string, array<string, array<string, array<int, string>>>>
+     */
     private function checkFolders($dirsList, $paramProvider, $file, $folder)
     {
         $files = [];

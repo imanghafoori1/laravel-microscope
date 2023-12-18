@@ -7,6 +7,12 @@ use Symfony\Component\Finder\Finder;
 
 class Paths
 {
+    /**
+     * @param $dirs
+     * @param $file
+     * @param $folder
+     * @return array<string, array<int, string>>
+     */
     public static function getAbsFilePaths($dirs, $file = null, $folder = null)
     {
         if (! $dirs) {
@@ -22,7 +28,13 @@ class Paths
         return $paths;
     }
 
-    private static function getPathsInDir($dir, $file, $folder): array
+    /**
+     * @param $dir
+     * @param $file
+     * @param $folder
+     * @return string[]
+     */
+    private static function getPathsInDir($dir, $file, $folder)
     {
         try {
             $files = Finder::create()->files()->name('*.php')->in($dir);
