@@ -6,6 +6,9 @@ use Illuminate\Foundation\AliasLoader;
 
 class FacadeAliasesCheck
 {
+    /**
+     * @var class-string
+     */
     public static $handler = FacadeAliasReplacer::class;
 
     /**
