@@ -9,7 +9,7 @@ class ErrorCounter
      */
     public static $errors;
 
-    public static function getWrongCount(): int
+    public static function getExtraWrongCount(): int
     {
         return self::getCount('extraWrongImport');
     }
@@ -21,12 +21,12 @@ class ErrorCounter
 
     public static function getExtraImportsCount(): int
     {
-        return self::getCount('extraCorrectImport') + self::getWrongCount();
+        return self::getCount('extraCorrectImport') + self::getExtraWrongCount();
     }
 
     public static function getTotalErrors(): int
     {
-        return self::getWrongCount() + self::getWrongUsedClassCount() + self::getExtraImportsCount();
+        return self::getExtraWrongCount() + self::getWrongUsedClassCount() + self::getExtraImportsCount();
     }
 
     private static function getCount(string $key)

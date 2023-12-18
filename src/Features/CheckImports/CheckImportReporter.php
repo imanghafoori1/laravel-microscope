@@ -54,7 +54,7 @@ class CheckImportReporter
     {
         $output = self::formatErrorSummary(ErrorCounter::getTotalErrors(), $checkedRefCount);
         $output .= self::format('unused import', ErrorCounter::getExtraImportsCount());
-        $output .= self::format('wrong import', ErrorCounter::getWrongCount());
+        $output .= self::format('wrong import', ErrorCounter::getExtraWrongCount());
         $output .= self::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
 
         return $output;
