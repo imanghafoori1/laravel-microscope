@@ -10,6 +10,9 @@ use Throwable;
 
 class LaravelPaths
 {
+    /**
+     * @return string[]
+     */
     public static function configDirs()
     {
         return array_merge([config_path()], config('microscope.additional_config_paths', []));

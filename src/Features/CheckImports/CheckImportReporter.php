@@ -14,7 +14,8 @@ class CheckImportReporter
     {
         $output = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
-            $output .= self::formatComposerPath($composerPath).PHP_EOL;
+            $output .= self::formatComposerPath($composerPath);
+            $output .= PHP_EOL;
             $output .= self::formatPsr4Stats($psr4);
         }
 
@@ -33,14 +34,16 @@ class CheckImportReporter
      * @param array<string, array<string, int>>  $psr4
      * @return string
      */
-    public static function formatPsr4Stats(array $psr4)
+    public static function formatPsr4Stats($psr4)
     {
         $maxLen = self::getMaxLength($psr4);
         $result = '';
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             foreach ($psr4Paths as $path => $countClasses) {
-                $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
-                $result .= PHP_EOL.'    '.self::blue($countClasses).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")".PHP_EOL;
+                if ($countClasses) {
+                    $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
+                    $result .= PHP_EOL.'    '.self::blue($countClasses).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")".PHP_EOL;
+                }
             }
         }
 
@@ -74,7 +77,7 @@ class CheckImportReporter
                 $total += count($files);
             }
 
-            $output .= self::blue($total).$fileType;
+            $total && ($output .= self::blue($total).$fileType);
 
             foreach ($stats as $dir => $files) {
                 $count = count($files);
@@ -156,11 +159,6 @@ class CheckImportReporter
         $padLength = $longest - strlen($namespace);
 
         return $namespace.str_repeat(' ', $padLength);
-    }
-
-    public static function paddedClassCount($countClasses)
-    {
-        return str_pad((string) $countClasses, 3, ' ', STR_PAD_LEFT);
     }
 
     public static function header(): string

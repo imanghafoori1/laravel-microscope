@@ -39,7 +39,7 @@ class CheckImportsCommand extends Command
 
     protected $description = 'Checks the validity of use statements';
 
-    protected $customMsg = 'All imports are Correct! \(^_^)/';
+    protected $customMsg = '';
 
     /**
      * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>
@@ -101,23 +101,29 @@ class CheckImportsCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
-        $checkedFilesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+        $bladeCount = BladeFiles::$checkedFilesCount;
+        $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
         ErrorCounter::$errors = $errorPrinter->errorsList;
 
         $messages = [];
-        $messages[] = CheckImportReporter::totalImportsMsg(ImportsAnalyzer::$checkedRefCount);
+        $messages[] = CheckImportReporter::totalImportsMsg($refCount);
         $messages[] = CheckImportReporter::printPsr4($psr4Stats);
         $messages[] = CheckImportReporter::header();
-        $checkedFilesCount && $messages[] = CheckImportReporter::getFilesStats($checkedFilesCount);
-        $bladeStats && $messages[] = CheckImportReporter::getBladeStats($bladeStats, BladeFiles::$checkedFilesCount);
-        $foldersStats && $messages[] = CheckImportReporter::foldersStats($foldersStats);
-        $messages[] = CheckImportReporter::getRouteStats(count($routeFiles));
+        $filesCount && $messages[] = CheckImportReporter::getFilesStats($filesCount);
+        $bladeCount && $messages[] = CheckImportReporter::getBladeStats($bladeStats, $bladeCount);
+        $messages[] = CheckImportReporter::foldersStats($foldersStats);
+        count($routeFiles) && $messages[] = CheckImportReporter::getRouteStats(count($routeFiles));
         $messages[] = CheckImportReporter::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
         $messages[] = CheckImportReporter::format('unused import', ErrorCounter::getExtraImportsCount());
         $messages[] = CheckImportReporter::format('wrong import', ErrorCounter::getExtraWrongCount());
         $messages[] = CheckImportReporter::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
+
+        if (! $refCount) {
+            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'. ($fileName ?: $folder).'"</>'];
+        }
 
         $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));
 
@@ -132,6 +138,11 @@ class CheckImportsCommand extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
+    /**
+     * @param string[] $paths
+     * @param \Closure $paramProvider
+     * @return void
+     */
     private function checkFilePaths($paths, $paramProvider)
     {
         $checks = $this->checks;
@@ -148,11 +159,11 @@ class CheckImportsCommand extends Command
     }
 
     /**
-     * @param $dirsList
+     * @param array<string, string[]> $dirsList
      * @param $paramProvider
-     * @param $file
-     * @param $folder
-     * @return array<string, array<string, array<string, array<int, string>>>>
+     * @param string $file
+     * @param string $folder
+     * @return array<string, array<string, array<string, string[]>>>
      */
     private function checkFolders($dirsList, $paramProvider, $file, $folder)
     {
@@ -184,6 +195,9 @@ class CheckImportsCommand extends Command
         return $show;
     }
 
+    /**
+     * @return \Closure
+     */
     private function getParamProvider()
     {
         return function ($tokens) {
@@ -193,10 +207,9 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private function reportAll($psr4Stats, $foldersStats, $bladeStats, $routeCounts, $errors)
-    {
-    }
-
+    /**
+     * @return array<string, string[]>
+     */
     private function getLaravelFolders()
     {
         return [
