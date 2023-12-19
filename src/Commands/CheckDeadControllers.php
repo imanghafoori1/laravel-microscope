@@ -25,7 +25,7 @@ class CheckDeadControllers extends Command
 
         $errorPrinter->printer = $this->output;
 
-        ForPsr4LoadedClasses::check([RoutelessActions::class]);
+        ForPsr4LoadedClasses::checkNow([RoutelessActions::class]);
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();

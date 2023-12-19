@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckIsQuery;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckBladeQueries extends Command
@@ -24,11 +24,16 @@ class CheckBladeQueries extends Command
         $errorPrinter->printer = $this->output;
 
         // checks the blade files for database queries.
-        BladeFiles::check([CheckIsQuery::class]);
+        $this->checkBlades();
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
+    }
+
+    private function checkBlades()
+    {
+        iterator_to_array(BladeFiles::check([CheckIsQuery::class]));
     }
 }

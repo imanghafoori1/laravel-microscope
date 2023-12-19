@@ -9,12 +9,9 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 class ForPsr4LoadedClasses
 {
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param $params
-     * @param $includeFile
-     * @param $includeFolder
-     *
-     * @return array<string, array<string, array<string, int>>>
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  $params
+     * @return \Traversable
      */
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
@@ -26,6 +23,13 @@ class ForPsr4LoadedClasses
         }
 
         return $stats;
+    }
+
+    public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '')
+    {
+        foreach (self::check($checks, $params, $includeFile, $includeFolder) as $result) {
+            iterator_to_array($result);
+        };
     }
 
     private static function warnDumping($msg)

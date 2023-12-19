@@ -79,10 +79,12 @@ class CheckDDCommand extends Command
     private function checkPsr4Classes()
     {
         foreach (ComposerJson::readAutoload() as $psr4) {
-            foreach ($psr4 as $_namespace => $dirPath) {
-                foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
-                    self::$checkedCallsNum++;
-                    $this->checkForDD($filePath->getRealPath());
+            foreach ($psr4 as $_namespace => $dirPaths) {
+                foreach ((array) $dirPaths as $dirPath) {
+                    foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
+                        self::$checkedCallsNum++;
+                        $this->checkForDD($filePath->getRealPath());
+                    }
                 }
             }
         }

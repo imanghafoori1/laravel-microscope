@@ -24,7 +24,7 @@ class ClassifyStrings extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        ForPsr4LoadedClasses::check([CheckStringy::class], [], $fileName, $folder);
+        ForPsr4LoadedClasses::checkNow([CheckStringy::class], [], $fileName, $folder);
 
         $this->getOutput()->writeln(' <fg='.config('microscope.colors.line_separator').'>✔ - Finished looking for stringy classes.</>');
 

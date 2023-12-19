@@ -57,7 +57,8 @@ class CheckRefactorsCommand extends Command
         $file = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $file, $folder);
+        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $file, $folder);
+
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return PatternRefactorings::$patternFound ? 1 : 0;

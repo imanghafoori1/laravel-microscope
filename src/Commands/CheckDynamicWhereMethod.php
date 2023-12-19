@@ -85,7 +85,7 @@ class CheckDynamicWhereMethod extends Command
         $patterns = $this->getPatterns();
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
+        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
 
         // Checks the blade files for class references.
         // BladeFiles::check([PatternRefactorings::class], $fileName, $folder);

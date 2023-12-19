@@ -30,7 +30,7 @@ class CheckPsr12 extends Command
 
         ActionsComments::$command = $this;
 
-        ForPsr4LoadedClasses::check([CurlyBraces::class]);
+        ForPsr4LoadedClasses::checkNow([CurlyBraces::class]);
 
         $this->finishCommand($errorPrinter);
 

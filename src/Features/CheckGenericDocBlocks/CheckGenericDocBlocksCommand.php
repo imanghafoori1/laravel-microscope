@@ -17,7 +17,8 @@ class CheckGenericDocBlocksCommand extends Command
 
         GenericDocblocks::$confirmer = $this->getConformer();
 
-        ForPsr4LoadedClasses::check([GenericDocblocks::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
+        $results = ForPsr4LoadedClasses::check([GenericDocblocks::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
+        iterator_to_array($results);
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
         $this->info(GenericDocblocks::$removedCount.' of them were removed.');

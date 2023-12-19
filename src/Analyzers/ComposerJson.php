@@ -29,11 +29,11 @@ class ComposerJson
         $result = [];
         foreach (self::make()->readAutoloadClassMap() as $compPath => $classMaps) {
             foreach ($classMaps as $classmap) {
-                $compPath = trim($compPath, '/');
-                $compPath = $compPath ? $compPath.DIRECTORY_SEPARATOR : '';
-                $classmap = $basePath.DIRECTORY_SEPARATOR.$compPath.$classmap;
-                $classmap = array_values(ClassMapGenerator::createMap($classmap));
-                $result = array_merge($classmap, $result);
+                $compPath1 = trim($compPath, '/');
+                $compPath1 = $compPath1 ? $compPath1.DIRECTORY_SEPARATOR : '';
+                $classmapFullPath = $basePath.DIRECTORY_SEPARATOR.$compPath1.$classmap;
+                $classes = array_values(ClassMapGenerator::createMap($classmapFullPath));
+                $result[$compPath][$classmap] = $classes;
             }
         }
 

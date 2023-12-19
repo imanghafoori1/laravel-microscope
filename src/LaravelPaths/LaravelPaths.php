@@ -2,20 +2,19 @@
 
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Symfony\Component\Finder\Finder;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Throwable;
 
 class LaravelPaths
 {
     /**
-     * @return string[]
+     * @return \Generator
      */
     public static function configDirs()
     {
-        return array_merge([config_path()], config('microscope.additional_config_paths', []));
+        yield from array_merge([config_path()], config('microscope.additional_config_paths', []));
     }
 
     public static function seedersDir()
@@ -40,46 +39,28 @@ class LaravelPaths
     public static function migrationDirs()
     {
         // normalize the migration paths
-        $migrationDirs = [];
-
         foreach (app('migrator')->paths() as $path) {
             // Excludes the migrations within "vendor" folder:
             if (! Str::startsWith($path, [base_path('vendor')])) {
-                $migrationDirs[] = FilePath::normalize($path);
+                yield FilePath::normalize($path);
             }
         }
 
-        $migrationDirs[] = app()->databasePath('migrations');
-
-        return $migrationDirs;
+        yield app()->databasePath('migrations');
     }
 
-    public static function bladeFilePaths()
+    public static function allBladeFiles()
     {
-        $bladeFiles = [];
-        $hints = self::getNamespacedPaths();
-        $hints['1'] = View::getFinder()->getPaths();
-
-        foreach ($hints as $paths) {
+        foreach (BladeFiles::getViews() as $paths) {
             foreach ($paths as $path) {
-                $files = is_dir($path) ? Finder::create()->name('*.blade.php')->files()->in($path) : [];
+                $files = is_dir($path) ? BladeFiles\CheckBladePaths::findFiles($path) : [];
                 foreach ($files as $blade) {
                     /**
                      * @var \Symfony\Component\Finder\SplFileInfo $blade
                      */
-                    $bladeFiles[] = $blade->getRealPath();
+                    yield $blade->getRealPath();
                 }
             }
         }
-
-        return $bladeFiles;
-    }
-
-    private static function getNamespacedPaths()
-    {
-        $hints = View::getFinder()->getHints();
-        unset($hints['notifications'], $hints['pagination']);
-
-        return $hints;
     }
 }

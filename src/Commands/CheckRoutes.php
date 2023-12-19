@@ -7,11 +7,11 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
@@ -42,8 +42,8 @@ class CheckRoutes extends Command
             $this->getRouteDefinitionStatistics()
         );
         $this->info('Checking route names exists...');
-        ForPsr4LoadedClasses::check([CheckRouteCalls::class]);
-        BladeFiles::check([CheckRouteCalls::class]);
+        ForPsr4LoadedClasses::checkNow([CheckRouteCalls::class]);
+        iterator_to_array(BladeFiles::check([CheckRouteCalls::class]));
 
         $this->getOutput()->writeln(
             $this->getStatisticsMsg()

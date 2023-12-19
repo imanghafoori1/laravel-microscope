@@ -42,7 +42,7 @@ class EnforceQuery extends Command
         $patterns = $this->getPatterns();
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        ForPsr4LoadedClasses::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
+        $this->checkPsr4($parsedPatterns, $patterns, $fileName, $folder);
 
         // Checks the blade files for class references.
         // BladeFiles::check([PatternRefactorings::class], $fileName, $folder);
@@ -99,5 +99,10 @@ class EnforceQuery extends Command
             'insert',
             'findMany',
         ];
+    }
+
+    private function checkPsr4($parsedPatterns, $patterns, $fileName, $folder)
+    {
+        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
     }
 }

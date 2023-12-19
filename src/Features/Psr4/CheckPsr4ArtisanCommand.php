@@ -33,6 +33,7 @@ class CheckPsr4ArtisanCommand extends Command
         $composer = ComposerJson::make();
         start:
         $classLists = $this->getClassLists($composer);
+
         $errorsLists = $this->getErrorsLists($composer, $classLists);
 
         $time = round(microtime(true) - $time, 5);
@@ -126,7 +127,7 @@ class CheckPsr4ArtisanCommand extends Command
         return $composer->getClasslists($filter, $pathFilter);
     }
 
-    private function getErrorsLists(Comp $composer, array $classLists)
+    private function getErrorsLists(Comp $composer, $classLists)
     {
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];

@@ -9,6 +9,10 @@ class FilePath
 {
     public static $basePath = '';
 
+    public static $fileName = '*';
+
+    public static $directory;
+
     /**
      * Normalize file path to standard formal
      * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
@@ -62,7 +66,10 @@ class FilePath
         $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
         try {
-            return Finder::create()->files()->name('*.php')->in($path)->getIterator();
+            $finder = Finder::create()->files()->name(self::$fileName.'.php')->in($path);
+            self::$directory && $finder->path(self::$directory);
+
+            return $finder;
         } catch (Exception $e) {
             return [];
         }
@@ -96,20 +103,17 @@ class FilePath
     }
 
     /**
-     * @param $paths
-     * @param $includeFile
-     * @param $includeFolder
-     * @return string[]
+     * @param  $paths
+     * @param  $includeFile
+     * @param  $includeFolder
+     * @return \Generator
      */
     public static function removeExtraPaths($paths, $includeFile, $includeFolder)
     {
-        $results = [];
         foreach ($paths as $absFilePath) {
             if (self::contains($absFilePath, $includeFile, $includeFolder)) {
-                $results[] = $absFilePath;
+                yield $absFilePath;
             }
         }
-
-        return $results;
     }
 }

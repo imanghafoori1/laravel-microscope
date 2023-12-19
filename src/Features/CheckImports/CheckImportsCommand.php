@@ -5,20 +5,21 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 use DateInterval;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -49,6 +50,15 @@ class CheckImportsCommand extends Command
         2 => CheckClassReferencesAreValid::class,
         3 => FacadeAliasesCheck::class,
     ];
+
+    protected function flushErrors(ErrorPrinter $errorPrinter)
+    {
+        if ($errorPrinter->hasErrors()) {
+            $errorPrinter->logErrors();
+            $errorPrinter->errorsList = [];
+            $errorPrinter->count = 0;
+        }
+    }
 
     public function handle()
     {
@@ -83,48 +93,57 @@ class CheckImportsCommand extends Command
         $folder = rtrim($folder, '/\\');
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
-        $classMapFiles = FilePath::removeExtraPaths(ComposerJson::getClassMaps(base_path()), $fileName, $folder);
+        $classMapFiles = ComposerJson::getClassMaps(base_path());
         $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
 
-        $paths = array_merge($classMapFiles, $autoloadedFiles, $routeFiles);
-
         $paramProvider = $this->getParamProvider();
-        $this->checkFilePaths($paths, $paramProvider);
 
-        $foldersStats = $this->checkFolders(
-            $this->getLaravelFolders(),
+        $checks = $this->checks;
+        unset($checks[1]);
+
+        $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
+        $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
+        $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
+
+        $foldersStats = FileIterators::checkFolders(
+            FileIterators::getLaravelFolders(),
             $paramProvider,
             $fileName,
-            $folder
+            $folder,
+            $checks
         );
 
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-        $bladeCount = BladeFiles::$checkedFilesCount;
         $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
-        $this->finishCommand($errorPrinter);
-        ErrorCounter::$errors = $errorPrinter->errorsList;
 
         $messages = [];
-        $messages[] = CheckImportReporter::totalImportsMsg($refCount);
-        $messages[] = CheckImportReporter::printPsr4($psr4Stats);
+        $messages[] = Reporters\CheckImportReporter::totalImportsMsg($refCount);
+
+        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
+            $this->flushErrors($errorPrinter);
+        };
+        $messages[] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[] = CheckImportReporter::header();
-        $filesCount && $messages[] = CheckImportReporter::getFilesStats($filesCount);
-        $bladeCount && $messages[] = CheckImportReporter::getBladeStats($bladeStats, $bladeCount);
-        $messages[] = CheckImportReporter::foldersStats($foldersStats);
-        count($routeFiles) && $messages[] = CheckImportReporter::getRouteStats(count($routeFiles));
-        $messages[] = CheckImportReporter::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
-        $messages[] = CheckImportReporter::format('unused import', ErrorCounter::getExtraImportsCount());
-        $messages[] = CheckImportReporter::format('wrong import', ErrorCounter::getExtraWrongCount());
-        $messages[] = CheckImportReporter::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
+        $filesCount && $messages[] = Reporters\CheckImportReporter::getFilesStats($filesCount);
+        $messages[] = Reporters\BladeReport::getBladeStats($bladeStats);
+        $messages[] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
+
+        $routeFiles && $messages[] = CheckImportReporter::getRouteStats($routeFiles);
+
+        $count = iterator_to_array($autoloadedFiles);
+        $count && $messages[] = CheckImportReporter::getAutoloadedFiles($count);
+
+        $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
 
         if (! $refCount) {
-            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'. ($fileName ?: $folder).'"</>'];
+            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];
         }
 
+        $this->finishCommand($errorPrinter);
         $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));
 
         $errorPrinter->printTime();
@@ -136,48 +155,6 @@ class CheckImportsCommand extends Command
         $this->line('');
 
         return $errorPrinter->hasErrors() ? 1 : 0;
-    }
-
-    /**
-     * @param string[] $paths
-     * @param \Closure $paramProvider
-     * @return void
-     */
-    private function checkFilePaths($paths, $paramProvider)
-    {
-        $checks = $this->checks;
-        unset($checks[1]);
-
-        foreach ($paths as $dir => $absFilePaths) {
-            foreach ((array) $absFilePaths as $absFilePath) {
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                foreach ($checks as $check) {
-                    $check::check($tokens, $absFilePath, $paramProvider($tokens));
-                }
-            }
-        }
-    }
-
-    /**
-     * @param array<string, string[]> $dirsList
-     * @param $paramProvider
-     * @param string $file
-     * @param string $folder
-     * @return array<string, array<string, array<string, string[]>>>
-     */
-    private function checkFolders($dirsList, $paramProvider, $file, $folder)
-    {
-        $files = [];
-        foreach ($dirsList as $listName => $dirs) {
-            $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
-            $this->checkFilePaths($filePaths, $paramProvider);
-
-            foreach ($filePaths as $dir => $filePathList) {
-                $files[$listName][$dir] = $filePathList;
-            }
-        }
-
-        return $files;
     }
 
     private function shouldRequestThanks(): bool
@@ -205,16 +182,5 @@ class CheckImportsCommand extends Command
 
             return $imports[0] ?: [$imports[1]];
         };
-    }
-
-    /**
-     * @return array<string, string[]>
-     */
-    private function getLaravelFolders()
-    {
-        return [
-            'config' => LaravelPaths::configDirs(),
-            'migrations' => LaravelPaths::migrationDirs(),
-        ];
     }
 }

@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Checks\ExtractBladePartial;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckExtractBladeIncludes extends Command
@@ -26,7 +26,7 @@ class CheckExtractBladeIncludes extends Command
 
         $errorPrinter->printer = $this->output;
 
-        BladeFiles::check([ExtractBladePartial::class]);
+        iterator_to_array(BladeFiles::check([ExtractBladePartial::class]));
 
         $this->info('Blade files extracted.');
     }

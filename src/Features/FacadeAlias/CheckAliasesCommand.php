@@ -38,7 +38,8 @@ class CheckAliasesCommand extends Command
 
             return $imports[0] ?: [$imports[1]];
         };
-        ForPsr4LoadedClasses::check([FacadeAliasesCheck::class], $paramProvider, $fileName, $folder);
+        $results = ForPsr4LoadedClasses::check([FacadeAliasesCheck::class], $paramProvider, $fileName, $folder);
+        iterator_to_array($results);
 
         $this->info(PHP_EOL.' '.$this->finishMsg);
 

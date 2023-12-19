@@ -1,9 +1,10 @@
 <?php
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -55,6 +56,6 @@ $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], 
 $output = new ConsoleOutput();
 ErrorPrinter::singleton($output)->logErrors();
 
-$output->writeln(CheckImportReporter::totalImportsMsg());
-$output->writeln(CheckImportReporter::printPsr4($psr4Stats));
-$output->writeln(CheckImportReporter::printErrorsCount());
+$output->writeln(CheckImportReporter::totalImportsMsg(1));
+$output->writeln(Psr4Report::printPsr4($psr4Stats));
+//$output->writeln(CheckImportReporter::printErrorsCount());

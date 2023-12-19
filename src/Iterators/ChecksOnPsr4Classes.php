@@ -8,6 +8,8 @@ use Throwable;
 
 class ChecksOnPsr4Classes
 {
+    use FiltersFiles;
+
     /**
      * @var \Throwable[]
      */
@@ -19,25 +21,17 @@ class ChecksOnPsr4Classes
     public static $checkedFilesCount = 0;
 
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param $params
-     * @param $includeFile
-     * @param $includeFolder
-     *
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  $params
      * @return array
      */
     public static function apply($checks, $params, $includeFile, $includeFolder)
     {
+        $includeFile && FilePath::$fileName = $includeFile;
+        $includeFolder && FilePath::$directory = $includeFolder;
         $stats = [];
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
-            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-                foreach ((array) $psr4Paths as $psr4Path) {
-                    $filesCount = self::applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params);
-
-                    self::$checkedFilesCount += $filesCount;
-                    $stats[$composerPath][$psr4Namespace][$psr4Path] = $filesCount;
-                }
-            }
+            $stats[$composerPath] = self::processGetStats($psr4, $checks, $params);
         }
 
         try {
@@ -53,43 +47,60 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param string $psr4Namespace
-     * @param string $psr4Path
-     * @param string $includeFile
-     * @param string $includeFolder
-     * @param array $params
-     *
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  string  $psr4Namespace
+     * @param  string  $psr4Path
+     * @param  array  $params
      * @return int
      */
-    private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params): int
+    private static function applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params): int
     {
         $filesCount = 0;
-        foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {
-            $absFilePath = $phpFilePath->getRealPath();
-            if (! FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
-                continue;
-            }
+        $phpFiles = FilePath::getAllPhpFiles($psr4Path);
+        foreach ($phpFiles as $phpFilePath) {
             $filesCount++;
-            $tokens = token_get_all(file_get_contents($absFilePath));
-
-            $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
-            foreach ($checks as $check) {
-                try {
-                    /**
-                     * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
-                     */
-                    $newTokens = $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
-                    if ($newTokens) {
-                        $tokens = $newTokens;
-                        $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
-                    }
-                } catch (Throwable $exception) {
-                    self::$exceptions[] = $exception;
-                }
-            }
+            self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
         }
 
         return $filesCount;
+    }
+
+    private static function applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks)
+    {
+        $absFilePath = $phpFilePath->getRealPath();
+        $tokens = token_get_all(file_get_contents($absFilePath));
+
+        $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+        foreach ($checks as $check) {
+            try {
+                /**
+                 * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
+                 */
+                $newTokens = $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
+                if ($newTokens) {
+                    $tokens = $newTokens;
+                    $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+                }
+            } catch (Throwable $exception) {
+                self::$exceptions[] = $exception;
+            }
+        }
+    }
+
+    private static function processGetStats($psr4, array $checks, $params)
+    {
+        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+            yield $psr4Namespace => self::processPaths($psr4Namespace, $psr4Paths, $checks, $params);
+        }
+    }
+
+    private static function processPaths($psr4Namespace, $psr4Paths, $checks, $params)
+    {
+        foreach ((array) $psr4Paths as $psr4Path) {
+            $filesCount = self::applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params);
+            self::$checkedFilesCount += $filesCount;
+
+            yield $psr4Path => $filesCount;
+        }
     }
 }

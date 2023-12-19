@@ -34,7 +34,8 @@ class CheckFacadeDocblocks extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        ForPsr4LoadedClasses::check([FacadeDocblocks::class], [], $fileName, $folder);
+        $results = ForPsr4LoadedClasses::check([FacadeDocblocks::class], [], $fileName, $folder);
+        iterator_to_array($results);
 
         $errorPrinter->printTime();
         $errorPrinter->logErrors();
