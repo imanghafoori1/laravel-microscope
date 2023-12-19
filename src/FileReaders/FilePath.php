@@ -49,7 +49,7 @@ class FilePath
      * get all ".php" files in directory by giving a path.
      *
      * @param  string  $path  Directory path
-     * @return \Symfony\Component\Finder\Finder
+     * @return array|\Iterator
      */
     public static function getAllPhpFiles($path, $basePath = '')
     {
