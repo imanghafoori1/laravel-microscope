@@ -9,7 +9,7 @@ use Symfony\Component\Finder\Finder;
 
 class BladeFiles
 {
-    public static $checkedFilesCount = 0;
+    public static $scanned = [];
 
     /**
      * @param  $checkers
@@ -60,6 +60,13 @@ class BladeFiles
             if (strpos($path, base_path('vendor')) !== false) {
                 continue;
             }
+            // Avoid duplicate scans
+            if (in_array($path, self::$scanned)) {
+                continue;
+            }
+
+            self::$scanned[] = $path;
+
             $files = (new Finder)->name('*.blade.php')->files()->in($path);
             $count = 0;
 
@@ -74,7 +81,6 @@ class BladeFiles
                 }
 
                 $count++;
-                self::$checkedFilesCount++;
                 $tokens = ViewsData::getBladeTokens($absPath);
                 $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
 

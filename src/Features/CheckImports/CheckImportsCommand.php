@@ -107,7 +107,7 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-        $bladeCount = BladeFiles::$checkedFilesCount;
+        $bladeCount = array_sum($bladeStats);
         $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
