@@ -7,8 +7,8 @@ class BladeReport
     use Reporting;
 
     /**
-     * @param array<string, int> $stats
-     * @param int $filesCount
+     * @param  array<string, int>  $stats
+     * @param  int  $filesCount
      * @return string
      */
     public static function getBladeStats($stats, $filesCount): string

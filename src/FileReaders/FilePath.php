@@ -96,9 +96,9 @@ class FilePath
     }
 
     /**
-     * @param $paths
-     * @param $includeFile
-     * @param $includeFolder
+     * @param  $paths
+     * @param  $includeFile
+     * @param  $includeFolder
      * @return string[]
      */
     public static function removeExtraPaths($paths, $includeFile, $includeFolder)

@@ -40,4 +40,3 @@ class CheckImportReporterTest extends TestCase
         $this->assertEquals(' <fg=blue>./path/to/composer/composer.json</>', $result);
     }
 }
-

@@ -8,8 +8,8 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 class FileIterators
 {
     /**
-     * @param string[] $paths
-     * @param \Closure $paramProvider
+     * @param  string[]  $paths
+     * @param  \Closure  $paramProvider
      * @return void
      */
     public static function checkFilePaths($paths, $paramProvider, $checks)
@@ -36,11 +36,11 @@ class FileIterators
     }
 
     /**
-     * @param array<string, string[]> $dirsList
-     * @param $paramProvider
-     * @param string $file
-     * @param string $folder
-     * @param array $checks
+     * @param  array<string, string[]>  $dirsList
+     * @param  $paramProvider
+     * @param  string  $file
+     * @param  string  $folder
+     * @param  array  $checks
      * @return array<string, array<string, array<string, string[]>>>
      */
     public static function checkFolders($dirsList, $paramProvider, $file, $folder, $checks)

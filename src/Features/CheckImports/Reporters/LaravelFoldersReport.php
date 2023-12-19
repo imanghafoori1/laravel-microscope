@@ -7,7 +7,7 @@ class LaravelFoldersReport
     use Reporting;
 
     /**
-     * @param array<string, array<string, array<string, array<int, string>>>> $foldersStats
+     * @param  array<string, array<string, array<string, array<int, string>>>>  $foldersStats
      * @return string
      */
     public static function foldersStats($foldersStats)

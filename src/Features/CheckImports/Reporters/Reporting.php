@@ -39,5 +39,4 @@ trait Reporting
     {
         return FilePath::normalize(str_replace(base_path(), '.', $dirPath));
     }
-
 }

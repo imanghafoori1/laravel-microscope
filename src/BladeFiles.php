@@ -12,10 +12,10 @@ class BladeFiles
     public static $checkedFilesCount = 0;
 
     /**
-     * @param $checkers
-     * @param $params
-     * @param $fileName
-     * @param $folder
+     * @param  $checkers
+     * @param  $params
+     * @param  $fileName
+     * @param  $folder
      * @return array<string, int>
      */
     public static function check($checkers, $params = [], $fileName = '', $folder = '')
@@ -43,12 +43,11 @@ class BladeFiles
     }
 
     /**
-     * @param string[] $paths
-     * @param $checkers
-     * @param $fileName
-     * @param $folder
-     * @param $params
-     *
+     * @param  string[]  $paths
+     * @param  $checkers
+     * @param  $fileName
+     * @param  $folder
+     * @param  $params
      * @return array<string, int>
      */
     public static function checkPaths($paths, $checkers, $fileName, $folder, $params)

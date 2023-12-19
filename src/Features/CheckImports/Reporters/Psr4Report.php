@@ -31,7 +31,7 @@ class Psr4Report
     }
 
     /**
-     * @param array<string, array<string, int>>  $psr4
+     * @param  array<string, array<string, int>>  $psr4
      * @return string
      */
     public static function formatPsr4Stats($psr4)
@@ -42,7 +42,7 @@ class Psr4Report
             foreach ($psr4Paths as $path => $countClasses) {
                 if ($countClasses) {
                     $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
-                    $result .= PHP_EOL.'    '.self::blue($countClasses).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).")".PHP_EOL;
+                    $result .= PHP_EOL.'    '.self::blue($countClasses).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).')'.PHP_EOL;
                 }
             }
         }
@@ -58,7 +58,7 @@ class Psr4Report
     }
 
     /**
-     * @param array<string, array<string, int>> $psr4
+     * @param  array<string, array<string, int>>  $psr4
      * @return int
      */
     public static function getMaxLength(array $psr4)

@@ -123,7 +123,7 @@ class CheckImportsCommand extends Command
         $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
 
         if (! $refCount) {
-            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'. ($fileName ?: $folder).'"</>'];
+            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];
         }
 
         $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));

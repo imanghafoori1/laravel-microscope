@@ -9,11 +9,10 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 class ForPsr4LoadedClasses
 {
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param $params
-     * @param $includeFile
-     * @param $includeFolder
-     *
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  $params
+     * @param  $includeFile
+     * @param  $includeFolder
      * @return array<string, array<string, array<string, int>>>
      */
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')

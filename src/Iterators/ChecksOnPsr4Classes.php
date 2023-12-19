@@ -19,11 +19,10 @@ class ChecksOnPsr4Classes
     public static $checkedFilesCount = 0;
 
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param $params
-     * @param $includeFile
-     * @param $includeFolder
-     *
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  $params
+     * @param  $includeFile
+     * @param  $includeFolder
      * @return array
      */
     public static function apply($checks, $params, $includeFile, $includeFolder)
@@ -53,13 +52,12 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @param array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
-     * @param string $psr4Namespace
-     * @param string $psr4Path
-     * @param string $includeFile
-     * @param string $includeFolder
-     * @param array $params
-     *
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  string  $psr4Namespace
+     * @param  string  $psr4Path
+     * @param  string  $includeFile
+     * @param  string  $includeFolder
+     * @param  array  $params
      * @return int
      */
     private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params): int

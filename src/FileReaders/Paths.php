@@ -8,9 +8,9 @@ use Symfony\Component\Finder\Finder;
 class Paths
 {
     /**
-     * @param $dirs
-     * @param $file
-     * @param $folder
+     * @param  $dirs
+     * @param  $file
+     * @param  $folder
      * @return array<string, array<int, string>>
      */
     public static function getAbsFilePaths($dirs, $file = null, $folder = null)
@@ -29,9 +29,9 @@ class Paths
     }
 
     /**
-     * @param $dir
-     * @param $file
-     * @param $folder
+     * @param  $dir
+     * @param  $file
+     * @param  $folder
      * @return string[]
      */
     private static function getPathsInDir($dir, $file, $folder)
