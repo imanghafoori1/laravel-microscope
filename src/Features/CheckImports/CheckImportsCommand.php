@@ -56,37 +56,9 @@ class CheckImportsCommand extends Command
         $this->line('');
         $this->info('Checking imports and class references...');
 
-        FacadeAliasesCheck::$command = $this->getOutput();
+        $this->handleOptions();
 
-        if ($this->option('nofix')) {
-            ClassAtMethodHandler::$fix = false;
-            FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
-            CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
-        }
-
-        if ($this->option('force')) {
-            FacadeAliasReplacer::$forceReplace = true;
-        }
-
-        if ($this->option('wrong')) {
-            CheckClassReferencesAreValid::$checkExtra = false;
-            unset($this->checks[3]); // avoid checking facades
-        }
-
-        if ($this->option('extra')) {
-            CheckClassReferencesAreValid::$checkWrong = false;
-            unset($this->checks[3]); // avoid checking facades
-        }
-
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
-        $folder = rtrim($folder, '/\\');
-
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
-        $classMapFiles = FilePath::removeExtraPaths(ComposerJson::getClassMaps(base_path()), $fileName, $folder);
-        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
-
-        $paths = array_merge($classMapFiles, $autoloadedFiles, $routeFiles);
+        list($fileName, $folder, $routeFiles, $paths) = $this->aggregateFilePaths();
 
         $paramProvider = $this->getParamProvider();
 
@@ -164,5 +136,63 @@ class CheckImportsCommand extends Command
 
             return $imports[0] ?: [$imports[1]];
         };
+    }
+
+    /**
+     *  Handles command options and sets corresponding flags and handlers.
+     *  This method processes the input options provided to the command and sets up necessary handlers and flags
+     *  based on these options.
+     *
+     * @return void
+     */
+    private function handleOptions(): void
+    {
+        FacadeAliasesCheck::$command = $this->getOutput();
+
+        if ($this->option('nofix')) {
+            ClassAtMethodHandler::$fix = false;
+            FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
+            CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
+        }
+
+        if ($this->option('force')) {
+            FacadeAliasReplacer::$forceReplace = true;
+        }
+
+        if ($this->option('wrong')) {
+            CheckClassReferencesAreValid::$checkExtra = false;
+            unset($this->checks[3]); // avoid checking facades
+        }
+
+        if ($this->option('extra')) {
+            CheckClassReferencesAreValid::$checkWrong = false;
+            unset($this->checks[3]); // avoid checking facades
+        }
+    }
+
+    /**
+     *  Aggregates file paths and related information based on command options.
+     *
+     *  This method prepares and returns essential data for file path processing. It handles the extraction and formatting
+     *  of file names and folders from the command options, and compiles a list of file paths to be checked.
+     *
+     * @return array An array containing:
+     *                - string $fileName: The file name pattern provided in the command options.
+     *                - string $folder: The folder pattern provided in the command options.
+     *                - array $routeFiles: List of route file paths after applying filters.
+     *                - array $paths: The aggregated list of file paths including class maps, autoloaded files, and route files.
+     */
+    private function aggregateFilePaths(): array
+    {
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+        $folder = rtrim($folder, '/\\');
+
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
+        $classMapFiles = FilePath::removeExtraPaths(ComposerJson::getClassMaps(base_path()), $fileName, $folder);
+        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
+
+        $paths = array_merge($classMapFiles, $autoloadedFiles, $routeFiles);
+        return array($fileName, $folder, $routeFiles, $paths);
     }
 }
