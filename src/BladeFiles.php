@@ -54,18 +54,9 @@ class BladeFiles
     {
         $stats = [];
         foreach ($paths as $path) {
-            if (! is_dir($path)) {
+            if (self::shouldSkip($path)) {
                 continue;
             }
-            if (strpos($path, base_path('vendor')) !== false) {
-                continue;
-            }
-            // Avoid duplicate scans
-            if (in_array($path, self::$scanned)) {
-                continue;
-            }
-
-            self::$scanned[] = $path;
 
             $files = (new Finder)->name('*.blade.php')->files()->in($path);
             $count = 0;
@@ -93,6 +84,30 @@ class BladeFiles
         }
 
         return $stats;
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function shouldSkip(string $path)
+    {
+        if (! is_dir($path)) {
+            return true;
+        }
+
+        if (strpos($path, base_path('vendor')) !== false) {
+            return true;
+        }
+
+        // Avoid duplicate scans
+        if (in_array($path, self::$scanned)) {
+            return true;
+        }
+
+        self::$scanned[] = $path;
+
+        return false;
     }
 
     /**
