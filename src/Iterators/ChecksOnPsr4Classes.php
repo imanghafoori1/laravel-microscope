@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Generator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Throwable;
@@ -63,31 +64,42 @@ class ChecksOnPsr4Classes
     private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params): int
     {
         $filesCount = 0;
-        foreach (FilePath::getAllPhpFiles($psr4Path) as $phpFilePath) {
-            $absFilePath = $phpFilePath->getRealPath();
-            if (! FilePath::contains($absFilePath, $includeFile, $includeFolder)) {
-                continue;
-            }
+        foreach (self::filterPaths(FilePath::getAllPhpFiles($psr4Path), $includeFile, $includeFolder) as $phpFilePath) {
             $filesCount++;
-            $tokens = token_get_all(file_get_contents($absFilePath));
-
-            $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
-            foreach ($checks as $check) {
-                try {
-                    /**
-                     * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
-                     */
-                    $newTokens = $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
-                    if ($newTokens) {
-                        $tokens = $newTokens;
-                        $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
-                    }
-                } catch (Throwable $exception) {
-                    self::$exceptions[] = $exception;
-                }
-            }
+            self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
         }
 
         return $filesCount;
+    }
+
+    private static function filterPaths($phpFilePaths, $includeFile, $includeFolder): Generator
+    {
+        foreach ($phpFilePaths as $phpFilePath) {
+            if (FilePath::contains($phpFilePath->getRealPath(), $includeFile, $includeFolder)) {
+                yield $phpFilePath;
+            }
+        }
+    }
+
+    private static function applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks)
+    {
+        $absFilePath = $phpFilePath->getRealPath();
+        $tokens = token_get_all(file_get_contents($absFilePath));
+
+        $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+        foreach ($checks as $check) {
+            try {
+                /**
+                 * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
+                 */
+                $newTokens = $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
+                if ($newTokens) {
+                    $tokens = $newTokens;
+                    $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+                }
+            } catch (Throwable $exception) {
+                self::$exceptions[] = $exception;
+            }
+        }
     }
 }

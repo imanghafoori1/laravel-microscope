@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Generator;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
@@ -20,8 +21,7 @@ class BladeFiles
      */
     public static function check($checkers, $params = [], $fileName = '', $folder = '')
     {
-        $compiler = app('microscope.blade.compiler');
-        method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
+        self::withoutComponentTags();
 
         $stats = [];
         foreach (self::getViews() as $paths) {
@@ -50,35 +50,14 @@ class BladeFiles
      * @param  $params
      * @return array<string, int>
      */
-    public static function checkPaths($paths, $checkers, $fileName, $folder, $params)
+    private static function checkPaths($paths, $checkers, $fileName, $folder, $params)
     {
         $stats = [];
-        foreach ($paths as $path) {
-            if (self::shouldSkip($path)) {
-                continue;
-            }
 
-            $files = (new Finder)->name('*.blade.php')->files()->in($path);
-            $count = 0;
-
-            foreach ($files as $blade) {
-                /**
-                 * @var \Symfony\Component\Finder\SplFileInfo $blade
-                 */
-                $absPath = $blade->getPathname();
-
-                if (! FilePath::contains($absPath, $fileName, $folder)) {
-                    continue;
-                }
-
-                $count++;
-                $tokens = ViewsData::getBladeTokens($absPath);
-                $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
-
-                foreach ($checkers as $checkerClass) {
-                    call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath, $params1]);
-                }
-            }
+        foreach (self::filterPaths($paths) as $path) {
+            $files = self::findBladeFiles($path);
+            $files = self::filterFiles($files, $fileName, $folder);
+            $count = self::applyChecks($files, $params, $checkers);
 
             $stats[$path] = $count;
         }
@@ -90,7 +69,7 @@ class BladeFiles
      * @param string $path
      * @return bool
      */
-    public static function shouldSkip(string $path)
+    private static function shouldSkip(string $path)
     {
         if (! is_dir($path)) {
             return true;
@@ -119,5 +98,69 @@ class BladeFiles
         $hints['random_key_69471'] = View::getFinder()->getPaths();
 
         return $hints;
+    }
+
+    private static function filterItems(array $items, \Closure $condition)
+    {
+        foreach ($items as $item) {
+            if ($condition($item)) {
+                yield $item;
+            }
+        }
+    }
+
+    /**
+     * @param \Symfony\Component\Finder\Finder $files
+     * @param string $fileName
+     * @param string $folder
+     * @return \Generator
+     */
+    private static function filterFiles(Finder $files, $fileName, $folder)
+    {
+        return self::filterItems($files, function ($file) use ($fileName, $folder) {
+            return FilePath::contains($file->getPathname(), $fileName, $folder);
+        });
+    }
+
+    /**
+     * @param array $paths
+     * @return \Generator
+     */
+    private static function filterPaths(array $paths)
+    {
+        return self::filterItems($paths, function ($path) {
+            return ! self::shouldSkip($path);
+        });
+    }
+
+    private static function applyChecks(Generator $files, $params, $checkers): int
+    {
+        $count = 0;
+        foreach ($files as $blade) {
+            $count++;
+            /**
+             * @var \Symfony\Component\Finder\SplFileInfo $blade
+             */
+            $absPath = $blade->getPathname();
+            $tokens = ViewsData::getBladeTokens($absPath);
+            $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
+
+            foreach ($checkers as $checkerClass) {
+                call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath, $params1]);
+            }
+        }
+
+        return $count;
+    }
+
+    private static function findBladeFiles($path): Finder
+    {
+        return (new Finder)->name('*.blade.php')->files()->in($path);
+    }
+
+    private static function withoutComponentTags()
+    {
+        $compiler = app('microscope.blade.compiler');
+        method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
     }
 }
