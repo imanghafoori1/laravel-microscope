@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Closure;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Symfony\Component\Finder\Finder;
 
@@ -20,7 +21,7 @@ trait FiltersFiles
         });
     }
 
-    private static function filterItems(array $items, \Closure $condition)
+    private static function filterItems($items, Closure $condition)
     {
         foreach ($items as $item) {
             if ($condition($item)) {

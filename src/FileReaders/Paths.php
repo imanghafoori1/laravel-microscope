@@ -21,7 +21,8 @@ class Paths
 
         $folder && ($folder = str_replace('\\', '/', $folder));
         $paths = [];
-        foreach ((array) $dirs as $dir) {
+        is_string($dirs) && ($dirs = [$dirs]);
+        foreach ($dirs as $dir) {
             $paths[$dir] = self::getPathsInDir($dir, $file, $folder);
         }
 

@@ -17,12 +17,9 @@ class BladeFiles
     {
         self::withoutComponentTags();
 
-        $stats = [];
         foreach (self::getViews() as $paths) {
-            $stats = array_merge($stats, BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $fileName, $folder, $params));
+            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $fileName, $folder, $params);
         }
-
-        return $stats;
     }
 
     /**

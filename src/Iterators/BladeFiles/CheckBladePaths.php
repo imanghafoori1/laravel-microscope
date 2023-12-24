@@ -19,21 +19,17 @@ class CheckBladePaths
      * @param  string  $fileName
      * @param  string  $folder
      * @param  array|callable  $params
-     * @return array<string, int>
+     * @return \Generator
      */
     public static function checkPaths($paths, $checkers, $fileName, $folder, $params)
     {
-        $stats = [];
-
         foreach (self::filterPaths($paths) as $path) {
             $files = self::findFiles($path);
             $files = self::filterFiles($files, $fileName, $folder);
             $count = self::applyChecks($files, $params, $checkers);
 
-            $stats[$path] = $count;
+            yield $path => $count;
         }
-
-        return $stats;
     }
 
     /**

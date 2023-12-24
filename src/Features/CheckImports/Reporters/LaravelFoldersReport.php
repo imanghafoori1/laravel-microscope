@@ -13,22 +13,27 @@ class LaravelFoldersReport
     public static function foldersStats($foldersStats)
     {
         $output = '';
+
         foreach ($foldersStats as $fileType => $stats) {
-            $total = 0;
-            foreach ($stats as $dir => $files) {
-                $total += count($files);
-            }
+            [$total, $sub] = self::subDirs($stats);
 
-            $total && ($output .= self::blue($total).$fileType);
-
-            foreach ($stats as $dir => $files) {
-                $count = count($files);
-                $count && ($output .= self::addLine($dir, $count));
-            }
+            $total && ($output .= self::blue($total).$fileType.$sub);
 
             $output .= PHP_EOL;
         }
 
         return trim($output, PHP_EOL);
+    }
+
+    private static function subDirs($stats)
+    {
+        $total = 0;
+        $sub = '';
+        foreach ($stats as $dir => $filesCount) {
+            $total += $filesCount;
+            $filesCount && ($sub .= self::addLine($dir, $filesCount));
+        }
+
+        return [$total, $sub];
     }
 }
