@@ -9,9 +9,9 @@ use Symfony\Component\Finder\Finder;
 trait FiltersFiles
 {
     /**
-     * @param \Symfony\Component\Finder\Finder $files
-     * @param string $fileName
-     * @param string $folder
+     * @param  \Symfony\Component\Finder\Finder  $files
+     * @param  string  $fileName
+     * @param  string  $folder
      * @return \Generator
      */
     private static function filterFiles(Finder $files, $fileName, $folder)
@@ -21,6 +21,11 @@ trait FiltersFiles
         });
     }
 
+    /**
+     * @param  $items
+     * @param  \Closure  $condition
+     * @return \Generator
+     */
     private static function filterItems($items, Closure $condition)
     {
         foreach ($items as $item) {

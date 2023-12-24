@@ -23,17 +23,17 @@ class ChecksOnPsr4Classes
     /**
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  $params
-     * @param  $includeFile
-     * @param  $includeFolder
      * @return array
      */
     public static function apply($checks, $params, $includeFile, $includeFolder)
     {
+        $includeFile && FilePath::$fileName = $includeFile;
+        $includeFolder && FilePath::$directory = $includeFolder;
         $stats = [];
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
-                    $filesCount = self::applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params);
+                    $filesCount = self::applyChecksInPath($checks, $psr4Namespace, $psr4Path, $params);
 
                     self::$checkedFilesCount += $filesCount;
                     $stats[$composerPath][$psr4Namespace][$psr4Path] = $filesCount;
@@ -57,15 +57,13 @@ class ChecksOnPsr4Classes
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  string  $psr4Namespace
      * @param  string  $psr4Path
-     * @param  string  $includeFile
-     * @param  string  $includeFolder
      * @param  array  $params
      * @return int
      */
-    private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params): int
+    private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $params): int
     {
         $filesCount = 0;
-        $phpFiles = self::filterFiles(FilePath::getAllPhpFiles($psr4Path), $includeFile, $includeFolder);
+        $phpFiles = FilePath::getAllPhpFiles($psr4Path);
         foreach ($phpFiles as $phpFilePath) {
             $filesCount++;
             self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);

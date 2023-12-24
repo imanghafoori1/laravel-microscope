@@ -23,7 +23,7 @@ class FilePathsForReferenceFix
         $paths['autoload_files'] = ComposerJson::autoloadedFilesList(base_path());
         $paths['class_map'] = ComposerJson::getClassMaps(base_path());
         $paths['routes'] = RoutePaths::get();
-        $paths['blades'] = LaravelPaths::bladeFilePaths();
+        $paths['blades'] = LaravelPaths::allBladeFiles();
 
         $dirs = [
             LaravelPaths::migrationDirs(),
@@ -41,10 +41,8 @@ class FilePathsForReferenceFix
     private static function collectFilesInNonPsr4Paths($paths, $dirs)
     {
         foreach ($dirs as $dir) {
-            $paths = array_merge(Paths::getAbsFilePaths($dir), $paths);
+            yield from Paths::getAbsFilePaths($dir);
         }
-
-        return $paths;
     }
 
     private static function getPsr4()

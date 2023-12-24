@@ -10,9 +10,6 @@ class CheckPsr4Printer extends ErrorPrinter
 {
     public static function warnIncorrectNamespace($relativePath, $currentNamespace, $class)
     {
-        /**
-         * @var $p ErrorPrinter
-         */
         $p = ErrorPrinter::singleton();
         $msg = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
@@ -96,9 +93,6 @@ class CheckPsr4Printer extends ErrorPrinter
 
     public static function fixedNamespace($path, $wrong, $correct, $lineNumber = 4)
     {
-        /**
-         * @var $p ErrorPrinter
-         */
         $p = ErrorPrinter::singleton();
         $key = 'badNamespace';
         $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
@@ -109,9 +103,6 @@ class CheckPsr4Printer extends ErrorPrinter
 
     public static function wrongFileName($path, $class, $file)
     {
-        /**
-         * @var $p ErrorPrinter
-         */
         $p = ErrorPrinter::singleton();
         $key = 'badFileName';
         $header = 'The file name and the class name are different.';

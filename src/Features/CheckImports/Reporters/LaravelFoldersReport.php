@@ -25,7 +25,7 @@ class LaravelFoldersReport
         return trim($output, PHP_EOL);
     }
 
-    private static function subDirs($stats)
+    private static function subDirs($stats): array
     {
         $total = 0;
         $sub = '';

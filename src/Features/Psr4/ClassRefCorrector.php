@@ -53,14 +53,11 @@ class ClassRefCorrector
     {
         $keywords = ['(', '::', ';', '|', ')', "\r\n", "\n", "\r", '$', '?', ',', '&'];
 
-        $occurrences = [];
         foreach ($olds as $old) {
             foreach ($keywords as $keyword) {
-                $occurrences[] = $old.$keyword;
+                yield $old.$keyword;
             }
         }
-
-        return $occurrences;
     }
 
     private static function hasReference($lineContent, array $olds)

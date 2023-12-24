@@ -79,6 +79,7 @@ class CheckBadPractice extends Command
             LaravelPaths::configDirs()
         );
 
+        $configs = iterator_to_array($configs);
         foreach (ComposerJson::readAutoload() as $psr4) {
             foreach ($psr4 as $dirPath) {
                 foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {

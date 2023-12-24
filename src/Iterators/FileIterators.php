@@ -8,17 +8,17 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 class FileIterators
 {
     /**
-     * @param  string[]  $paths
+     * @param  \Generator  $paths
      * @param  \Closure  $paramProvider
-     * @return void
+     * @return \Generator
      */
     public static function checkFilePaths($paths, $paramProvider, $checks)
     {
         foreach ($paths as $dir => $absFilePaths) {
+            $c = 0;
             if (is_string($absFilePaths)) {
                 $absFilePaths = [$absFilePaths];
             }
-            $c = 0;
             foreach ($absFilePaths as $absFilePath) {
                 $c++;
                 $tokens = token_get_all(file_get_contents($absFilePath));
@@ -47,7 +47,7 @@ class FileIterators
      * @param  string  $file
      * @param  string  $folder
      * @param  array  $checks
-     * @return \Generator
+     * @return \Generator<string, array<string, array<string, string[]>>>
      */
     public static function checkFolders($dirsList, $paramProvider, $file, $folder, $checks)
     {

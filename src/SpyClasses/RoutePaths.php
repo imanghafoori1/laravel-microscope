@@ -71,13 +71,10 @@ class RoutePaths
     {
         $tokens = token_get_all(file_get_contents(base_path($path).'.php'));
 
-        $methodCalls = [];
         foreach ($tokens as $i => $routeFileToken) {
             if (FunctionCall::isMethodCallOnThis('loadRoutesFrom', $tokens, $i)) {
-                $methodCalls[] = FunctionCall::readParameters($tokens, $i);
+                yield FunctionCall::readParameters($tokens, $i);
             }
         }
-
-        return $methodCalls;
     }
 }

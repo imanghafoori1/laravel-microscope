@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
-use Generator;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Symfony\Component\Finder\Finder;
@@ -14,18 +13,17 @@ class CheckBladePaths
     public static $scanned = [];
 
     /**
-     * @param  string[]  $paths
+     * @param  \Generator  $paths
      * @param  array  $checkers
-     * @param  string  $fileName
-     * @param  string  $folder
+     * @param  string  $includeFile
+     * @param  string  $includeFolder
      * @param  array|callable  $params
      * @return \Generator
      */
-    public static function checkPaths($paths, $checkers, $fileName, $folder, $params)
+    public static function checkPaths($paths, $checkers, $includeFile, $includeFolder, $params)
     {
-        foreach (self::filterPaths($paths) as $path) {
-            $files = self::findFiles($path);
-            $files = self::filterFiles($files, $fileName, $folder);
+        foreach (self::filterUnwantedBlades($paths) as $path) {
+            $files = self::findFiles($path, $includeFile, $includeFolder);
             $count = self::applyChecks($files, $params, $checkers);
 
             yield $path => $count;
@@ -34,15 +32,23 @@ class CheckBladePaths
 
     /**
      * @param  string  $path
-     * @return \Symfony\Component\Finder\Finder
+     * @return \IteratorAggregate
      */
-    public static function findFiles($path): Finder
+    public static function findFiles($path, $fileName = '*', $folderName = null): Finder
     {
-        return Finder::create()->name('*.blade.php')->files()->in($path);
+        $finder = Finder::create()
+            ->name($fileName.'.blade.php')
+            ->path($folderName)
+            ->files()
+            ->in($path);
+
+        $folderName && $finder->path($folderName);
+
+        return $finder;
     }
 
     /**
-     * @param string $path
+     * @param  string  $path
      * @return bool
      */
     private static function shouldSkip(string $path)
@@ -66,12 +72,12 @@ class CheckBladePaths
     }
 
     /**
-     * @param  \Generator  $files
+     * @param  \Iterator  $files
      * @param  callable|array  $params
      * @param  $checkers
      * @return int
      */
-    private static function applyChecks(Generator $files, $params, $checkers): int
+    private static function applyChecks($files, $params, $checkers): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -92,10 +98,10 @@ class CheckBladePaths
     }
 
     /**
-     * @param array $paths
+     * @param  array  $paths
      * @return \Generator
      */
-    private static function filterPaths(array $paths)
+    private static function filterUnwantedBlades($paths)
     {
         return self::filterItems($paths, function ($path) {
             return ! self::shouldSkip($path);

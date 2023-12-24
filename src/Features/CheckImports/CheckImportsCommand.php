@@ -18,6 +18,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -83,17 +84,17 @@ class CheckImportsCommand extends Command
         $folder = rtrim($folder, '/\\');
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
-        $classMapFiles = FilePath::removeExtraPaths(ComposerJson::getClassMaps(base_path()), $fileName, $folder);
+        $classMapFiles = ComposerJson::getClassMaps(base_path());
         $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
-
-        $paths = array_merge($classMapFiles, $autoloadedFiles, $routeFiles);
 
         $paramProvider = $this->getParamProvider();
 
         $checks = $this->checks;
         unset($checks[1]);
 
-        FileIterators::checkFilePaths($paths, $paramProvider, $checks);
+        $routeFiles = FileIterators::checkFilePaths($routeFiles, $paramProvider, $checks);
+        $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
+        $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
             FileIterators::getLaravelFolders(),
@@ -110,22 +111,28 @@ class CheckImportsCommand extends Command
         $bladeCount = 1;
         $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
-        $this->finishCommand($errorPrinter);
 
         $messages = [];
         $messages[] = Reporters\CheckImportReporter::totalImportsMsg($refCount);
-        $messages[] = Reporters\Psr4Report::printPsr4($psr4Stats);
+        $messages[] = Reporters\Psr4Report::printPsr4($psr4Stats, $classMapStats);
         $messages[] = CheckImportReporter::header();
         $filesCount && $messages[] = Reporters\CheckImportReporter::getFilesStats($filesCount);
-        $bladeCount && $messages[] = Reporters\BladeReport::getBladeStats($bladeStats, $bladeCount);
+        $messages[] = Reporters\BladeReport::getBladeStats($bladeStats, $bladeCount);
         $messages[] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
-        count($routeFiles) && $messages[] = CheckImportReporter::getRouteStats(count($routeFiles));
+
+        $count = iterator_to_array($routeFiles);
+        $count && $messages[] = CheckImportReporter::getRouteStats($count);
+
+        $count = iterator_to_array($autoloadedFiles);
+        $count && $messages[] = CheckImportReporter::getAutoloadedFiles($count);
+
         $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
 
         if (! $refCount) {
             $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];
         }
 
+        $this->finishCommand($errorPrinter);
         $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));
 
         $errorPrinter->printTime();

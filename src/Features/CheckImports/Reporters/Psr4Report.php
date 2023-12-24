@@ -10,13 +10,16 @@ class Psr4Report
      * @param  array<string, array<string, array<string, int>>>  $psr4Stats
      * @return string
      */
-    public static function printPsr4(array $psr4Stats)
+    public static function printPsr4($psr4Stats, $classMapStats)
     {
         $output = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
             $output .= self::formatComposerPath($composerPath);
             $output .= PHP_EOL;
             $output .= self::formatPsr4Stats($psr4);
+            if (isset($classMapStats[$composerPath])) {
+                $output .= PHP_EOL.CheckImportReporter::getClassMapStats($classMapStats[$composerPath]);
+            }
         }
 
         return $output;
@@ -38,11 +41,13 @@ class Psr4Report
     {
         $maxLen = self::getMaxLength($psr4);
         $result = '';
+        $result .= self::hyphen().'<fg=red>'.'PSR-4'.' </>';
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             foreach ($psr4Paths as $path => $countClasses) {
                 if ($countClasses) {
-                    $result .= self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen, $psr4Namespace).' </>';
-                    $result .= PHP_EOL.'    '.self::blue($countClasses).'file'.($countClasses == 1 ? '' : 's').' found ('.self::green('./'.$path).')'.PHP_EOL;
+                    $result .= PHP_EOL.'    '.self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen + 2, $psr4Namespace.':').' </>';
+                    $result .= '    '.self::green('./'.$path);
+                    $result .= '    '.'  '.$countClasses.'(file'.($countClasses == 1 ? '' : 's').' found)';
                 }
             }
         }

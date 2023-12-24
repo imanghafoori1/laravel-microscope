@@ -9,21 +9,21 @@ class BladeFiles
     /**
      * @param  $checkers
      * @param  $params
-     * @param  string  $fileName
-     * @param  string  $folder
-     * @return array<string, int>
+     * @param  string  $includeFileName
+     * @param  string  $includeFolder
+     * @return \Generator<string, int>
      */
-    public static function check($checkers, $params = [], $fileName = '', $folder = '')
+    public static function check($checkers, $params = [], $includeFileName = '', $includeFolder = '')
     {
         self::withoutComponentTags();
 
         foreach (self::getViews() as $paths) {
-            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $fileName, $folder, $params);
+            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $includeFileName, $includeFolder, $params);
         }
     }
 
     /**
-     * @return array<string, string>
+     * @return \Generator<string, string>
      */
     public static function getViews()
     {
@@ -34,9 +34,12 @@ class BladeFiles
             $hints['pagination']
         );
 
-        return $hints;
+        yield from $hints;
     }
 
+    /**
+     * @return void
+     */
     private static function withoutComponentTags()
     {
         $compiler = app('microscope.blade.compiler');

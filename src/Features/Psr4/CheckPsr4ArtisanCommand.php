@@ -126,7 +126,7 @@ class CheckPsr4ArtisanCommand extends Command
         return $composer->getClasslists($filter, $pathFilter);
     }
 
-    private function getErrorsLists(Comp $composer, array $classLists)
+    private function getErrorsLists(Comp $composer, $classLists)
     {
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];

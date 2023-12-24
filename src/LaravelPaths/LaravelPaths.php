@@ -10,11 +10,11 @@ use Throwable;
 class LaravelPaths
 {
     /**
-     * @return string[]
+     * @return \Generator
      */
     public static function configDirs()
     {
-        return array_merge([config_path()], config('microscope.additional_config_paths', []));
+        yield from array_merge([config_path()], config('microscope.additional_config_paths', []));
     }
 
     public static function seedersDir()
@@ -49,7 +49,7 @@ class LaravelPaths
         yield app()->databasePath('migrations');
     }
 
-    public static function bladeFilePaths()
+    public static function allBladeFiles()
     {
         foreach (BladeFiles::getViews() as $paths) {
             foreach ($paths as $path) {

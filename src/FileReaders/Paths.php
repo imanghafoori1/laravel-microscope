@@ -9,38 +9,35 @@ class Paths
 {
     /**
      * @param  $dirs
-     * @param  $file
-     * @param  $folder
-     * @return array<string, array<int, string>>
+     * @param  null|string  $includeFileName
+     * @param  null|string  $includeFolder
+     * @return \iterable
      */
-    public static function getAbsFilePaths($dirs, $file = null, $folder = null)
+    public static function getAbsFilePaths($dirs, $includeFileName = null, $includeFolder = null)
     {
         if (! $dirs) {
             return [];
         }
 
-        $folder && ($folder = str_replace('\\', '/', $folder));
-        $paths = [];
+        $includeFolder && ($includeFolder = str_replace('\\', '/', $includeFolder));
         is_string($dirs) && ($dirs = [$dirs]);
         foreach ($dirs as $dir) {
-            $paths[$dir] = self::getPathsInDir($dir, $file, $folder);
+            yield $dir => self::getPathsInDir($dir, $includeFileName, $includeFolder);
         }
-
-        return $paths;
     }
 
     /**
      * @param  $dir
-     * @param  $file
+     * @param  $fileName
      * @param  $folder
-     * @return string[]
+     * @return \iterable
      */
-    private static function getPathsInDir($dir, $file, $folder)
+    private static function getPathsInDir($dir, $fileName, $folder)
     {
         try {
-            $files = Finder::create()->files()->name('*.php')->in($dir);
+            $files = Finder::create()->files()->name(($fileName ?: '*').'.php')->in($dir);
             foreach ($files as $absFilePath => $f) {
-                if (FilePath::contains($absFilePath, $file, $folder)) {
+                if (FilePath::contains($absFilePath, $fileName, $folder)) {
                     yield $absFilePath;
                 }
             }
