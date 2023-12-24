@@ -12,10 +12,8 @@ class RoutePaths
 {
     public static function get()
     {
-        $routePaths = [];
-
         foreach (app('router')->routePaths as $path) {
-            $routePaths[] = FilePath::normalize($path);
+            yield FilePath::normalize($path);
         }
         $autoloads = ComposerJson::readAutoload();
         foreach (config('app.providers') as $providerClass) {
@@ -37,15 +35,17 @@ class RoutePaths
 
             foreach ($methodCalls as $calls) {
                 $routeFilePath = self::fullPath($calls, $providerClass, $path);
-                is_file($routeFilePath) && $routePaths[] = $routeFilePath;
+                if (is_file($routeFilePath)) {
+                    yield $routeFilePath;
+                }
             }
         }
 
         foreach (config('microscope.additional_route_files', []) as $routeFilePath) {
-            is_file($routeFilePath) && $routePaths[] = $routeFilePath;
+            if (is_file($routeFilePath)) {
+                yield $routeFilePath;
+            }
         }
-
-        return $routePaths;
     }
 
     private static function fullPath($calls, $providerClass, $path)

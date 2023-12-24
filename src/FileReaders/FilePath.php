@@ -49,7 +49,7 @@ class FilePath
      * get all ".php" files in directory by giving a path.
      *
      * @param  string  $path  Directory path
-     * @return array|\Iterator
+     * @return \Symfony\Component\Finder\Finder
      */
     public static function getAllPhpFiles($path, $basePath = '')
     {
@@ -62,7 +62,7 @@ class FilePath
         $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
         try {
-            return Finder::create()->files()->name('*.php')->in($path)->getIterator();
+            return Finder::create()->files()->name('*.php')->in($path);
         } catch (Exception $e) {
             return [];
         }

@@ -38,14 +38,11 @@ class Paths
     {
         try {
             $files = Finder::create()->files()->name('*.php')->in($dir);
-            $paths = [];
             foreach ($files as $absFilePath => $f) {
                 if (FilePath::contains($absFilePath, $file, $folder)) {
-                    $paths[] = $absFilePath;
+                    yield $absFilePath;
                 }
             }
-
-            return $paths;
         } catch (Exception $e) {
             return [];
         }

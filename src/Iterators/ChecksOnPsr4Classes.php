@@ -2,13 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Generator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Throwable;
 
 class ChecksOnPsr4Classes
 {
+    use FiltersFiles;
+
     /**
      * @var \Throwable[]
      */
@@ -64,21 +65,13 @@ class ChecksOnPsr4Classes
     private static function applyChecksInPath($checks, $psr4Namespace, $psr4Path, $includeFile, $includeFolder, $params): int
     {
         $filesCount = 0;
-        foreach (self::filterPaths(FilePath::getAllPhpFiles($psr4Path), $includeFile, $includeFolder) as $phpFilePath) {
+        $phpFiles = self::filterFiles(FilePath::getAllPhpFiles($psr4Path), $includeFile, $includeFolder);
+        foreach ($phpFiles as $phpFilePath) {
             $filesCount++;
             self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
         }
 
         return $filesCount;
-    }
-
-    private static function filterPaths($phpFilePaths, $includeFile, $includeFolder): Generator
-    {
-        foreach ($phpFilePaths as $phpFilePath) {
-            if (FilePath::contains($phpFilePath->getRealPath(), $includeFile, $includeFolder)) {
-                yield $phpFilePath;
-            }
-        }
     }
 
     private static function applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks)

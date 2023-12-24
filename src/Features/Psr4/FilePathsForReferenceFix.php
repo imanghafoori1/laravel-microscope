@@ -28,8 +28,8 @@ class FilePathsForReferenceFix
         $dirs = [
             LaravelPaths::migrationDirs(),
             LaravelPaths::configDirs(),
-            LaravelPaths::factoryDirs(),
-            LaravelPaths::seedersDir(),
+            //LaravelPaths::factoryDirs(),
+            //LaravelPaths::seedersDir(),
         ];
         $paths = self::collectFilesInNonPsr4Paths($paths, $dirs);
 
@@ -49,15 +49,12 @@ class FilePathsForReferenceFix
 
     private static function getPsr4()
     {
-        $psr4 = [];
         foreach (ComposerJson::readAutoload() as $autoload) {
             foreach ($autoload as $psr4Path) {
                 foreach (FilePath::getAllPhpFiles($psr4Path) as $file) {
-                    $psr4[] = $file->getRealPath();
+                    yield $file->getRealPath();
                 }
             }
         }
-
-        return $psr4;
     }
 }
