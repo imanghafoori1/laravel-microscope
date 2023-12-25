@@ -18,15 +18,13 @@ class CheckImportReporter
         return self::blue($value).' route'.($value <= 1 ? '' : 's');
     }
 
-    use Reporting;
-
     public static function getClassMapStats($stat)
     {
         $output = '';
         $total = array_sum($stat);
         $output .= self::blue($total).' classmap:';
         foreach ($stat as $key => $count) {
-            $output .= self::addLine($key, $count);
+            ($count > 0) && $output .= self::addLine($key, $count);
         }
 
         return $output;

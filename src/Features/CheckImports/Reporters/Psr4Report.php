@@ -14,6 +14,7 @@ class Psr4Report
     {
         $output = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
+            $output .= PHP_EOL;
             $output .= self::formatComposerPath($composerPath);
             $output .= PHP_EOL;
             $output .= self::formatPsr4Stats($psr4);
@@ -22,7 +23,7 @@ class Psr4Report
             }
         }
 
-        return $output;
+        return trim($output);
     }
 
     public static function formatComposerPath($composerPath): string
@@ -43,12 +44,17 @@ class Psr4Report
         $result = '';
         $result .= self::hyphen().'<fg=red>'.'PSR-4'.' </>';
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+            if (array_sum($psr4Paths) === 0) {
+                continue;
+            }
+            $result .= PHP_EOL.'    '.self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen + 2, $psr4Namespace.':').' </>';
             foreach ($psr4Paths as $path => $countClasses) {
-                if ($countClasses) {
-                    $result .= PHP_EOL.'    '.self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen + 2, $psr4Namespace.':').' </>';
-                    $result .= '    '.self::green('./'.$path);
-                    $result .= '    '.'  '.$countClasses.'(file'.($countClasses == 1 ? '' : 's').' found)';
+                if (! $countClasses) {
+                    continue;
                 }
+                $result .= count($psr4Paths) > 1 ? PHP_EOL.'            - ' : '      ';
+                $result .= self::green('./'.$path);
+                $result .= '      ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
             }
         }
 
