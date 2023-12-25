@@ -15,18 +15,8 @@ class FileIterators
     public static function checkFilePaths($paths, $paramProvider, $checks)
     {
         foreach ($paths as $dir => $absFilePaths) {
-            $c = 0;
-            if (is_string($absFilePaths)) {
-                $absFilePaths = [$absFilePaths];
-            }
-            foreach ($absFilePaths as $absFilePath) {
-                $c++;
-                $tokens = token_get_all(file_get_contents($absFilePath));
-                foreach ($checks as $check) {
-                    $check::check($tokens, $absFilePath, $paramProvider($tokens));
-                }
-            }
-            yield $dir => $c;
+            $count = self::checkFiles($absFilePaths, $paramProvider, $checks);
+            yield $dir => $count;
         }
     }
 
@@ -55,5 +45,19 @@ class FileIterators
             $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
             yield $listName => self::checkFilePaths($filePaths, $paramProvider, $checks);
         }
+    }
+
+    public static function checkFiles($absFilePaths, $checks, $paramProvider): int
+    {
+        $c = 0;
+        foreach ($absFilePaths as $absFilePath) {
+            $c++;
+            $tokens = token_get_all(file_get_contents($absFilePath));
+            foreach ($checks as $check) {
+                $check::check($tokens, $absFilePath, $paramProvider($tokens));
+            }
+        }
+
+        return $c;
     }
 }

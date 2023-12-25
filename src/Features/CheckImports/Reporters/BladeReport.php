@@ -7,17 +7,21 @@ class BladeReport
     use Reporting;
 
     /**
-     * @param  array<string, int>  $stats
-     * @param  int  $filesCount
+     * @param  \Generator  $stats
      * @return string
      */
-    public static function getBladeStats($stats, $filesCount): string
+    public static function getBladeStats($stats): string
     {
-        $output = self::blue($filesCount).'blade'.($filesCount === 0 ? '' : 's');
+        $total = 0;
+        $output = '';
         foreach ($stats as $path => $count) {
+            $total += $count;
             $count && ($output .= self::addLine($path, $count));
         }
+        if (! $total) {
+            return '';
+        }
 
-        return $output;
+        return self::blue($total).'blade'.($total ? 's' : '').$output;
     }
 }

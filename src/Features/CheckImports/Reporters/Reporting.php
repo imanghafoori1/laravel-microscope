@@ -11,9 +11,9 @@ trait Reporting
         return '<fg=green>'.$string.'</>';
     }
 
-    public static function hyphen()
+    public static function hyphen($string = '')
     {
-        return '   ➖  ';
+        return '   ➖  '.$string;
     }
 
     public static function files($count)

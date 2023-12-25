@@ -13,7 +13,7 @@ class BladeFiles
      * @param  string  $includeFolder
      * @return \Generator<string, int>
      */
-    public static function check($checkers, $params = [], $includeFileName = '', $includeFolder = '')
+    public static function check($checkers, $params = [], $includeFileName = null, $includeFolder = null)
     {
         self::withoutComponentTags();
 

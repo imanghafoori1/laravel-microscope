@@ -11,11 +11,9 @@ class CheckImportReporter
         return '<options=bold;fg=yellow>'.$refCount.' imports were checked under:</>';
     }
 
-    public static function getRouteStats($value)
+    public static function getRouteStats($count)
     {
-        $value = array_values($value)[0];
-
-        return self::blue($value).' route'.($value <= 1 ? '' : 's');
+        return self::blue($count).' route'.($count <= 1 ? '' : 's');
     }
 
     public static function getClassMapStats($stat)

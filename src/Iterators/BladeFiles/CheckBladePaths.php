@@ -34,11 +34,10 @@ class CheckBladePaths
      * @param  string  $path
      * @return \IteratorAggregate
      */
-    public static function findFiles($path, $fileName = '*', $folderName = null): Finder
+    public static function findFiles($path, $fileName = null, $folderName = null): Finder
     {
         $finder = Finder::create()
-            ->name($fileName.'.blade.php')
-            ->path($folderName)
+            ->name(($fileName ?: '*').'.blade.php')
             ->files()
             ->in($path);
 

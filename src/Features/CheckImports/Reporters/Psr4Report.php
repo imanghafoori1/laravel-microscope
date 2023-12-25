@@ -10,7 +10,7 @@ class Psr4Report
      * @param  array<string, array<string, array<string, int>>>  $psr4Stats
      * @return string
      */
-    public static function printPsr4($psr4Stats, $classMapStats)
+    public static function printAutoload($psr4Stats, $classMapStats)
     {
         $output = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
@@ -41,21 +41,13 @@ class Psr4Report
     public static function formatPsr4Stats($psr4)
     {
         $maxLen = self::getMaxLength($psr4);
-        $result = '';
-        $result .= self::hyphen().'<fg=red>'.'PSR-4'.' </>';
+        $result = self::hyphen('<fg=red>PSR-4 </>');
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             if (array_sum($psr4Paths) === 0) {
                 continue;
             }
-            $result .= PHP_EOL.'    '.self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen + 2, $psr4Namespace.':').' </>';
-            foreach ($psr4Paths as $path => $countClasses) {
-                if (! $countClasses) {
-                    continue;
-                }
-                $result .= count($psr4Paths) > 1 ? PHP_EOL.'            - ' : '      ';
-                $result .= self::green('./'.$path);
-                $result .= '      ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
-            }
+            $result .= self::getPsr4($maxLen, $psr4Namespace);
+            $result .= self::getFolders($psr4Paths);
         }
 
         return $result;
@@ -80,5 +72,26 @@ class Psr4Report
         }
 
         return max($lengths);
+    }
+
+    private static function getPsr4(int $maxLen, string $namespace)
+    {
+        return PHP_EOL.'    '.self::hyphen().'<fg=red>'.self::paddedNamespace($maxLen + 2, $namespace.':').' </>';
+    }
+
+    private static function getFolders(array $psr4Paths): string
+    {
+        $result = '';
+        foreach ($psr4Paths as $path => $countClasses) {
+            // skip if no file was found
+            if (! $countClasses) {
+                continue;
+            }
+            $result .= count($psr4Paths) > 1 ? PHP_EOL.str_repeat(' ', 12).'- ' : str_repeat(' ', 6);
+            $result .= self::green('./'.$path);
+            $result .= '      ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
+        }
+
+        return $result;
     }
 }

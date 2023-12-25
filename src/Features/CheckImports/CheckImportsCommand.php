@@ -92,7 +92,7 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $routeFiles = FileIterators::checkFilePaths($routeFiles, $paramProvider, $checks);
+        $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
         $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
         $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
 
@@ -108,20 +108,18 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-        $bladeCount = 1;
         $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
         $messages = [];
         $messages[] = Reporters\CheckImportReporter::totalImportsMsg($refCount);
-        $messages[] = Reporters\Psr4Report::printPsr4($psr4Stats, $classMapStats);
+        $messages[] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[] = CheckImportReporter::header();
         $filesCount && $messages[] = Reporters\CheckImportReporter::getFilesStats($filesCount);
-        $messages[] = Reporters\BladeReport::getBladeStats($bladeStats, $bladeCount);
+        $messages[] = Reporters\BladeReport::getBladeStats($bladeStats);
         $messages[] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
 
-        $count = iterator_to_array($routeFiles);
-        $count && $messages[] = CheckImportReporter::getRouteStats($count);
+        $routeFiles && $messages[] = CheckImportReporter::getRouteStats($routeFiles);
 
         $count = iterator_to_array($autoloadedFiles);
         $count && $messages[] = CheckImportReporter::getAutoloadedFiles($count);
