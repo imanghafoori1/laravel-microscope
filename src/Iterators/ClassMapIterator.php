@@ -13,7 +13,7 @@ class ClassMapIterator
                 self::applyChecks($files, $checks, $paramProvider);
             }
         }
-        
+
         return $stats;
     }
 
