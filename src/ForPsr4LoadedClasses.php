@@ -29,7 +29,7 @@ class ForPsr4LoadedClasses
     {
         foreach (self::check($checks, $params, $includeFile, $includeFolder) as $result) {
             iterator_to_array($result);
-        };
+        }
     }
 
     private static function warnDumping($msg)
