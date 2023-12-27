@@ -13,37 +13,35 @@ class CheckBladePaths
     public static $scanned = [];
 
     /**
-     * @param  \Generator  $paths
+     * @param  \Generator  $dirs
      * @param  array  $checkers
      * @param  string  $includeFile
      * @param  string  $includeFolder
      * @param  array|callable  $params
      * @return \Generator
      */
-    public static function checkPaths($paths, $checkers, $includeFile, $includeFolder, $params)
+    public static function checkPaths($dirs, $checkers, $includeFile, $includeFolder, $params)
     {
-        foreach (self::filterUnwantedBlades($paths) as $path) {
-            $files = self::findFiles($path, $includeFile, $includeFolder);
-            $count = self::applyChecks($files, $params, $checkers);
+        foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
+            $finder = self::findFiles($dirPath, $includeFile);
+            $filteredFiles = self::filterFiles($finder, $includeFolder);
+            $count = self::applyChecks($filteredFiles, $params, $checkers);
 
-            yield $path => $count;
+            yield $dirPath => $count;
         }
     }
 
     /**
-     * @param  string  $path
-     * @return \IteratorAggregate
+     * @param string $path
+     * @param null $fileName
+     * @return \Symfony\Component\Finder\Finder
      */
-    public static function findFiles($path, $fileName = null, $folderName = null): Finder
+    public static function findFiles($path, $fileName = null): Finder
     {
-        $finder = Finder::create()
+        return Finder::create()
             ->name(($fileName ?: '*').'.blade.php')
             ->files()
             ->in($path);
-
-        $folderName && $finder->path($folderName);
-
-        return $finder;
     }
 
     /**

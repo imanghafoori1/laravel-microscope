@@ -27,7 +27,7 @@ class CheckViewsCommand extends Command
 
         $errorPrinter->printer = $this->output;
         $this->checkRoutePaths(
-            FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder)
+            FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName)
         );
         $this->checkPsr4($fileName, $folder);
         $this->checkBladeFiles();

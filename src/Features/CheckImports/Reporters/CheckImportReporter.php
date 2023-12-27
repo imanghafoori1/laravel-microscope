@@ -6,9 +6,9 @@ class CheckImportReporter
 {
     use Reporting;
 
-    public static function totalImportsMsg($refCount)
+    public static function totalImportsMsg()
     {
-        return '<options=bold;fg=yellow>'.$refCount.' imports were checked under:</>';
+        return '<options=bold;fg=yellow>Imports were checked under:</>';
     }
 
     public static function getRouteStats($count)

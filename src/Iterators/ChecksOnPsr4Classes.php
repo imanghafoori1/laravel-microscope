@@ -31,7 +31,7 @@ class ChecksOnPsr4Classes
         $includeFolder && FilePath::$directory = $includeFolder;
         $stats = [];
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
-            $stats[$composerPath] = self::processGetStats($psr4, $checks, $params);
+            $stats[$composerPath] = self::processGetStats($psr4, $checks, $params, $includeFolder);
         }
 
         try {
@@ -53,10 +53,10 @@ class ChecksOnPsr4Classes
      * @param  array  $params
      * @return int
      */
-    private static function applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params): int
+    private static function applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params, $includeFolder): int
     {
         $filesCount = 0;
-        $phpFiles = FilePath::getAllPhpFiles($psr4Path);
+        $phpFiles = self::filterFiles(FilePath::getAllPhpFiles($psr4Path), $includeFolder);
         foreach ($phpFiles as $phpFilePath) {
             $filesCount++;
             self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
@@ -87,17 +87,17 @@ class ChecksOnPsr4Classes
         }
     }
 
-    private static function processGetStats($psr4, array $checks, $params)
+    private static function processGetStats($psr4, array $checks, $params, $includeFolder)
     {
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            yield $psr4Namespace => self::processPaths($psr4Namespace, $psr4Paths, $checks, $params);
+            yield $psr4Namespace => self::processPaths($psr4Namespace, $psr4Paths, $checks, $params, $includeFolder);
         }
     }
 
-    private static function processPaths($psr4Namespace, $psr4Paths, $checks, $params)
+    private static function processPaths($psr4Namespace, $psr4Paths, $checks, $params, $includeFolder)
     {
         foreach ((array) $psr4Paths as $psr4Path) {
-            $filesCount = self::applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params);
+            $filesCount = self::applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params, $includeFolder);
             self::$checkedFilesCount += $filesCount;
 
             yield $psr4Path => $filesCount;

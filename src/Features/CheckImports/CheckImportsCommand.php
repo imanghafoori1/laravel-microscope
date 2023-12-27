@@ -83,9 +83,9 @@ class CheckImportsCommand extends Command
         $folder = ltrim($this->option('folder'), '=');
         $folder = rtrim($folder, '/\\');
 
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $fileName, $folder);
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
         $classMapFiles = ComposerJson::getClassMaps(base_path());
-        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $fileName, $folder);
+        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $folder, $fileName);
 
         $paramProvider = $this->getParamProvider();
 
@@ -110,27 +110,26 @@ class CheckImportsCommand extends Command
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
         $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
-
-        $messages = [];
-        $messages[] = Reporters\CheckImportReporter::totalImportsMsg($refCount);
-
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
             $errorPrinter->flushErrors();
         };
-        $messages[] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
-        $messages[] = CheckImportReporter::header();
-        $filesCount && $messages[] = Reporters\CheckImportReporter::getFilesStats($filesCount);
-        $messages[] = Reporters\BladeReport::getBladeStats($bladeStats);
-        $messages[] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
 
-        $routeFiles && $messages[] = CheckImportReporter::getRouteStats($routeFiles);
+        $messages = [];
+        $messages[0] = Reporters\CheckImportReporter::totalImportsMsg();
+        $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
+        $messages[2] = CheckImportReporter::header();
+        $filesCount && $messages[3] = Reporters\CheckImportReporter::getFilesStats($filesCount);
+        $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
+        $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
+
+        $routeFiles && $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
 
         $count = iterator_to_array($autoloadedFiles);
-        $count && $messages[] = CheckImportReporter::getAutoloadedFiles($count);
+        $count && $messages[7] = CheckImportReporter::getAutoloadedFiles($count);
 
-        $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
+        $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
-        if (! $refCount) {
+        if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];
         }
 

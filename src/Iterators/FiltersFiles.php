@@ -14,10 +14,10 @@ trait FiltersFiles
      * @param  string  $folder
      * @return \Generator
      */
-    private static function filterFiles(Finder $files, $fileName, $folder)
+    private static function filterFiles(Finder $files, $folder, $fileName = null)
     {
-        return self::filterItems($files, function ($file) use ($fileName, $folder) {
-            return FilePath::contains($file->getPathname(), $fileName, $folder);
+        return self::filterItems($files, function ($file) use ($folder, $fileName) {
+            return FilePath::contains($file->getPathname(), $folder, $fileName);
         });
     }
 

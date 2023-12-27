@@ -3,10 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Exception;
+use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Symfony\Component\Finder\Finder;
 
 class Paths
 {
+    use FiltersFiles;
     /**
      * @param  $dirs
      * @param  null|string  $includeFileName
@@ -22,27 +24,21 @@ class Paths
         $includeFolder && ($includeFolder = str_replace('\\', '/', $includeFolder));
         is_string($dirs) && ($dirs = [$dirs]);
         foreach ($dirs as $dir) {
-            yield $dir => self::getPathsInDir($dir, $includeFileName, $includeFolder);
+            yield $dir => self::filterFiles(self::getPathsInDir($dir, $includeFileName), $includeFolder);
         }
     }
 
     /**
      * @param  $dir
      * @param  $fileName
-     * @param  $folder
-     * @return \iterable
+     * @return \Symfony\Component\Finder\Finder
      */
-    private static function getPathsInDir($dir, $fileName, $folder)
+    private static function getPathsInDir($dir, $fileName)
     {
         try {
-            $files = Finder::create()->files()->name(($fileName ?: '*').'.php')->in($dir);
-            foreach ($files as $absFilePath => $f) {
-                if (FilePath::contains($absFilePath, $fileName, $folder)) {
-                    yield $absFilePath;
-                }
-            }
+            return Finder::create()->files()->name(($fileName ?: '*').'.php')->in($dir);
         } catch (Exception $e) {
-            return [];
+            return Finder::create();
         }
     }
 }

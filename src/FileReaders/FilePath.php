@@ -66,10 +66,7 @@ class FilePath
         $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
         try {
-            $finder = Finder::create()->files()->name(self::$fileName.'.php')->in($path);
-            self::$directory && $finder->path(self::$directory);
-
-            return $finder;
+            return Finder::create()->files()->name(self::$fileName.'.php')->in($path);
         } catch (Exception $e) {
             return [];
         }
@@ -83,19 +80,19 @@ class FilePath
         return [$fileName, implode('/', $segments)];
     }
 
-    public static function contains($absFilePath, $excludeFile, $excludeFolder)
+    public static function contains($filePath, $folder, $file)
     {
-        if (! $excludeFile && ! $excludeFolder) {
+        if (! $file && ! $folder) {
             return true;
         }
 
-        [$fileName, $folderPath] = self::getFolderFile($absFilePath);
+        [$fileName, $folderPath] = self::getFolderFile($filePath);
 
-        if ($excludeFile && mb_strpos($fileName, $excludeFile) !== false) {
+        if ($file && mb_strpos($fileName, $file) !== false) {
             return true;
         }
 
-        if ($excludeFolder && mb_strpos($folderPath, $excludeFolder) !== false) {
+        if ($folder && mb_strpos($folderPath, $folder) !== false) {
             return true;
         }
 
@@ -104,14 +101,14 @@ class FilePath
 
     /**
      * @param  $paths
-     * @param  $includeFile
-     * @param  $includeFolder
+     * @param  $file
+     * @param  $folder
      * @return \Generator
      */
-    public static function removeExtraPaths($paths, $includeFile, $includeFolder)
+    public static function removeExtraPaths($paths, $folder, $file)
     {
         foreach ($paths as $absFilePath) {
-            if (self::contains($absFilePath, $includeFile, $includeFolder)) {
+            if (self::contains($absFilePath, $folder, $file)) {
                 yield $absFilePath;
             }
         }
