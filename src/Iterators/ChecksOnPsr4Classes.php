@@ -57,8 +57,8 @@ class ChecksOnPsr4Classes
     {
         $filesCount = 0;
         $finder = FilePath::getAllPhpFiles($psr4Path);
-        $includeFolder && $phpFiles = self::filterFiles($finder, $includeFolder);
-        foreach ($phpFiles as $phpFilePath) {
+        $includeFolder && $finder = self::filterFiles($finder, $includeFolder);
+        foreach ($finder as $phpFilePath) {
             $filesCount++;
             self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
         }
