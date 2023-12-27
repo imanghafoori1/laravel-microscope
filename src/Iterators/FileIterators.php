@@ -54,6 +54,8 @@ class FileIterators
     public static function checkFiles($absFilePaths, $paramProvider, $checks): int
     {
         $c = 0;
+        is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
+
         foreach ($absFilePaths as $absFilePath) {
             $c++;
             $tokens = token_get_all(file_get_contents($absFilePath));

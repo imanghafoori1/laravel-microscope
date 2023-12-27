@@ -28,16 +28,12 @@ class CheckIsQuery
         return is_subclass_of($class, Model::class) || \in_array($class, $queryBuilder);
     }
 
-    private function queryInBlade($absPath, $class, $lineNumber)
+    private static function queryInBlade($absPath, $class, $lineNumber)
     {
         $key = 'queryInBlade';
         $header = 'Query in blade file: ';
-        $errorData = $this->color($class).'  <=== DB query in blade file';
-
-        /**
-         * @var $p ErrorPrinter
-         */
         $p = ErrorPrinter::singleton();
+        $errorData = $p->color($class).'  <=== DB query in blade file';
         $p->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 }
