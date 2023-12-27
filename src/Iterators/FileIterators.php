@@ -15,7 +15,11 @@ class FileIterators
     public static function checkFilePaths($paths, $paramProvider, $checks)
     {
         foreach ($paths as $dir => $absFilePaths) {
-            $count = self::checkFiles((array) $absFilePaths, $paramProvider, $checks);
+            if (is_string($absFilePaths)) {
+                $absFilePaths = [$absFilePaths];
+            }
+            
+            $count = self::checkFiles($absFilePaths, $paramProvider, $checks);
             yield $dir => $count;
         }
     }

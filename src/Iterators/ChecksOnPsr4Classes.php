@@ -56,7 +56,8 @@ class ChecksOnPsr4Classes
     private static function applyChecksInPath($psr4Namespace, $psr4Path, $checks, $params, $includeFolder): int
     {
         $filesCount = 0;
-        $phpFiles = self::filterFiles(FilePath::getAllPhpFiles($psr4Path), $includeFolder);
+        $finder = FilePath::getAllPhpFiles($psr4Path);
+        $includeFolder && $phpFiles = self::filterFiles($finder, $includeFolder);
         foreach ($phpFiles as $phpFilePath) {
             $filesCount++;
             self::applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks);
