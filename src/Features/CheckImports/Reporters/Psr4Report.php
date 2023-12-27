@@ -69,25 +69,11 @@ class Psr4Report
         return implode('', $lines);
     }
 
-    public static function paddedNamespace($longest, $namespace)
+    private static function paddedNamespace($longest, $namespace)
     {
         $padLength = $longest - strlen($namespace);
 
         return $namespace.str_repeat(' ', $padLength);
-    }
-
-    /**
-     * @param  array<string, array<string, int>>  $psr4
-     * @return int
-     */
-    public static function getMaxLength($psr4)
-    {
-        $lengths = [1];
-        foreach ($psr4 as $psr4Namespace => $_) {
-            $lengths[] = strlen($psr4Namespace);
-        }
-
-        return max($lengths);
     }
 
     private static function getPsr4Head()
@@ -113,12 +99,18 @@ class Psr4Report
             $result[$i] = [];
             $result[$i][0] = str_repeat(' ', 6);
             $result[$i][1] = self::green('./'.$path);
-            $result[$i][2] = '      ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
+            $result[$i][2] = ' ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
             if ($i > 1) {
                 $result[$i - 1][0] = PHP_EOL.str_repeat(' ', 12).'- ';
                 $result[$i][0] = PHP_EOL.str_repeat(' ', 12).'- ';
             }
         }
+
+        return self::implode($result);
+    }
+
+    private static function implode(array $result)
+    {
         $output = '';
         foreach ($result as $res) {
             $output .= implode('', $res);

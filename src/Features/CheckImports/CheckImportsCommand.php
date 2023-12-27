@@ -51,15 +51,6 @@ class CheckImportsCommand extends Command
         3 => FacadeAliasesCheck::class,
     ];
 
-    protected function flushErrors(ErrorPrinter $errorPrinter)
-    {
-        if ($errorPrinter->hasErrors()) {
-            $errorPrinter->logErrors();
-            $errorPrinter->errorsList = [];
-            $errorPrinter->count = 0;
-        }
-    }
-
     public function handle()
     {
         event('microscope.start.command');
@@ -124,7 +115,7 @@ class CheckImportsCommand extends Command
         $messages[] = Reporters\CheckImportReporter::totalImportsMsg($refCount);
 
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
-            $this->flushErrors($errorPrinter);
+            $errorPrinter->flushErrors();
         };
         $messages[] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[] = CheckImportReporter::header();
@@ -137,7 +128,7 @@ class CheckImportsCommand extends Command
         $count = iterator_to_array($autoloadedFiles);
         $count && $messages[] = CheckImportReporter::getAutoloadedFiles($count);
 
-        $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
+        $messages[] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
         if (! $refCount) {
             $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];

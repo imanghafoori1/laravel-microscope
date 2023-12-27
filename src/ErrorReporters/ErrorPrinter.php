@@ -16,6 +16,15 @@ class ErrorPrinter
     public $errorsList = [];
 
     /**
+     * @var array
+     */
+    public $errorsCounts = [
+        'extraWrongImport' => 0,
+        'wrongClassRef' => 0,
+        'extraCorrectImport' => 0,
+    ];
+
+    /**
      * @var int
      */
     public $total = 0;
@@ -63,6 +72,18 @@ class ErrorPrinter
         $output && (self::$instance->printer = $output);
 
         return self::$instance;
+    }
+
+    public function flushErrors()
+    {
+        if ($this->hasErrors()) {
+            $this->logErrors();
+            foreach (['extraWrongImport', 'wrongClassRef', 'extraCorrectImport'] as $item) {
+                $this->errorsCounts[$item] += count($this->errorsList[$item] ?? []);
+            }
+            $this->errorsList = [];
+            $this->count = 0;
+        }
     }
 
     public function addPendingError($path, $lineNumber, $key, $header, $errorData)

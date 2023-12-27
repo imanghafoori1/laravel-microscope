@@ -31,6 +31,6 @@ class ErrorCounter
 
     private static function getCount(string $key)
     {
-        return count(self::$errors[$key] ?? []);
+        return self::$errors[$key] ?? [];
     }
 }
