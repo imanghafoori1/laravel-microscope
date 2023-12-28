@@ -6,15 +6,9 @@ class ClassMapIterator
 {
     public static function iterate($classMapFiles, $paramProvider, $checks)
     {
-        $stats = [];
         foreach ($classMapFiles as $composerPath => $classMap) {
-            foreach ($classMap as $dir => $files) {
-                $stats[$composerPath][$dir] = count($files);
-                self::applyChecks($files, $checks, $paramProvider);
-            }
+            yield $composerPath => self::getDirStats($classMap, $checks, $paramProvider);
         }
-
-        return $stats;
     }
 
     private static function applyChecks($files, $checks, $paramProvider): void
@@ -24,6 +18,14 @@ class ClassMapIterator
             foreach ($checks as $check) {
                 $check::check($tokens, $absFilePath, $paramProvider($tokens));
             }
+        }
+    }
+
+    private static function getDirStats($classMap, $checks, $paramProvider)
+    {
+        foreach ($classMap as $dir => $files) {
+            self::applyChecks($files, $checks, $paramProvider);
+            yield $dir => count($files);
         }
     }
 }

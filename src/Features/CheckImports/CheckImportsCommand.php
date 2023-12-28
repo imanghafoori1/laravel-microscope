@@ -93,7 +93,6 @@ class CheckImportsCommand extends Command
         unset($checks[1]);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
-        $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
         $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
@@ -108,12 +107,12 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-        $refCount = ImportsAnalyzer::$checkedRefCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
             $errorPrinter->flushErrors();
         };
 
+        $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
         $messages = [];
         $messages[0] = Reporters\CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);

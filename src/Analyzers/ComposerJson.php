@@ -36,13 +36,7 @@ class ComposerJson
     {
         foreach ($classMapPaths as $classmapPath) {
             $classes = self::getClasses($compPath, $basePath, $classmapPath);
-            foreach ($classes as $i => $class) {
-                if (FilePath::contains(str_replace($basePath, '', $class), $folder, $fileName)) {
-                    unset($classes[$i]);
-                }
-            }
-
-            yield $classmapPath => $classes;
+            yield $classmapPath => self::filterClasses($classes, $basePath, $folder, $fileName);
         }
     }
 
@@ -53,5 +47,16 @@ class ComposerJson
         $classmapFullPath = $basePath.DIRECTORY_SEPARATOR.$compPath1.$classmapPath;
 
         return array_values(ClassMapGenerator::createMap($classmapFullPath));
+    }
+
+    private static function filterClasses(array $classes, $basePath, $folder, $fileName)
+    {
+        foreach ($classes as $i => $class) {
+            if (! FilePath::contains(str_replace($basePath, '', $class), $folder, $fileName)) {
+                unset($classes[$i]);
+            }
+        }
+
+        return $classes;
     }
 }
