@@ -11,10 +11,10 @@ class Paths
     use FiltersFiles;
 
     /**
-     * @param  $dirs
+     * @param  string|string[]|\Generator  $dirs
      * @param  null|string  $fileName
      * @param  null|string  $folder
-     * @return \iterable
+     * @return \Traversable
      */
     public static function getAbsFilePaths($dirs, $fileName = null, $folder = null)
     {

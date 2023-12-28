@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMeth
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\AutoloadFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
@@ -83,8 +84,17 @@ class CheckImportsCommand extends Command
         $folder = ltrim($this->option('folder'), '=');
         $folder = rtrim($folder, '/\\');
 
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
-        $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $folder, $fileName);
+        $routeFiles = FilePath::removeExtraPaths(
+            RoutePaths::get(),
+            $folder,
+            $fileName
+        );
+
+        $autoloadedFilesGen = FilePath::removeExtraPaths(
+            ComposerJson::autoloadedFilesList(base_path()),
+            $folder,
+            $fileName
+        );
 
         $paramProvider = $this->getParamProvider();
 
@@ -94,7 +104,7 @@ class CheckImportsCommand extends Command
         $classMapStats = ClassMapIterator::iterate(base_path(), $paramProvider, $checks, $folder, $fileName);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
-        $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
+        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
             FileIterators::getLaravelFolders(),
@@ -107,25 +117,20 @@ class CheckImportsCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
-        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
         $errorPrinter = ErrorPrinter::singleton($this->output);
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
             $errorPrinter->flushErrors();
         };
 
         $messages = [];
-        $messages[0] = Reporters\CheckImportReporter::totalImportsMsg();
+        $messages[0] = CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[2] = CheckImportReporter::header();
-        $filesCount && $messages[3] = Reporters\CheckImportReporter::getFilesStats($filesCount);
+        $messages[3] = $this->getFilesStats();
         $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
-
-        $routeFiles && $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
-
-        $count = iterator_to_array($autoloadedFiles);
-        $count && $messages[7] = CheckImportReporter::getAutoloadedFiles($count);
-
+        $messages[6] = CheckImportReporter::getRouteStats(base_path(), $routeFiles);
+        $messages[7] = AutoloadFiles::getLines(base_path(), $autoloadedFilesGen);
         $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
@@ -171,5 +176,12 @@ class CheckImportsCommand extends Command
 
             return $imports[0] ?: [$imports[1]];
         };
+    }
+
+    private function getFilesStats()
+    {
+        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+
+        return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
     }
 }

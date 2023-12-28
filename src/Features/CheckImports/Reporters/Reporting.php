@@ -18,7 +18,7 @@ trait Reporting
 
     public static function files($count)
     {
-        return ' ( '.$count.' files )';
+        return '<fg=white> ( '.$count.' file'.($count == 1 ? '' : 's').' )</>';
     }
 
     public static function addLine($path, $count)
@@ -37,6 +37,8 @@ trait Reporting
 
     public static function normalize($dirPath)
     {
-        return FilePath::normalize(str_replace(base_path(), '.', $dirPath));
+        $path = trim(FilePath::normalize(str_replace(base_path(), '', $dirPath)), DIRECTORY_SEPARATOR);
+
+        return str_replace(DIRECTORY_SEPARATOR, '/', $path).'/';
     }
 }

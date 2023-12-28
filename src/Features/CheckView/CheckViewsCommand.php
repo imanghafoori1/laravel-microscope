@@ -30,10 +30,13 @@ class CheckViewsCommand extends Command
             FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName)
         );
         $this->checkPsr4($fileName, $folder);
-        $this->checkBladeFiles();
+        $this->checkBladeFiles($fileName, $folder);
 
         $this->logErrors($errorPrinter);
-        $this->getOutput()->writeln($this->stats());
+        $this->getOutput()->writeln($this->stats(
+            CheckView::$checkedCallsCount,
+            CheckView::$skippedCallsCount
+        ));
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
@@ -55,14 +58,14 @@ class CheckViewsCommand extends Command
         }
     }
 
-    private function checkBladeFiles()
+    private function checkBladeFiles($fileName, $folder)
     {
-        iterator_to_array(BladeFiles::check([CheckViewFilesExistence::class]));
+        iterator_to_array(BladeFiles::check([CheckViewFilesExistence::class], null, $fileName, $folder));
     }
 
-    private function stats(): string
+    private function stats($checkedCallsCount, $skippedCallsCount): string
     {
-        return ' - '.CheckView::$checkedCallsCount.' view references were checked to exist. ('.CheckView::$skippedCallsCount.' skipped)';
+        return ' - '.$checkedCallsCount.' view references were checked to exist. ('.$skippedCallsCount.' skipped)';
     }
 
     private function logErrors(ErrorPrinter $errorPrinter)

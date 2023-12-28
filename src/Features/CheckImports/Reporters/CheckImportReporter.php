@@ -11,30 +11,20 @@ class CheckImportReporter
         return '<options=bold;fg=yellow>Imports were checked under:</>';
     }
 
-    public static function getRouteStats($count)
-    {
-        return self::blue($count).' route'.($count <= 1 ? '' : 's');
-    }
-
-    public static function getClassMapStats($stat, $callback)
+    public static function getRouteStats($basePath, $routeFiles)
     {
         $lines = '';
-        $total = 0;
-        foreach ($stat as $key => $count) {
-            $total += $count;
-            ($count > 0) && $lines .= self::addLine($key, $count);
-            $callback();
+
+        $count = 0;
+        foreach ($routeFiles as $routePath) {
+            $count++;
+            $relPath = str_replace($basePath, '', $routePath);
+            $relPath = ltrim($relPath, DIRECTORY_SEPARATOR);
+            $relPath = str_replace(DIRECTORY_SEPARATOR, '/', $relPath);
+            $lines .= PHP_EOL.'    '.self::hyphen('<fg=green>'.ltrim($relPath, DIRECTORY_SEPARATOR).'</>');
         }
-        $header = self::blue($total).'classmap:';
 
-        return $header.$lines;
-    }
-
-    public static function getAutoloadedFiles($count)
-    {
-        $count = array_values($count)[0];
-
-        return self::blue($count).' autoloaded file'.($count <= 1 ? '' : 's');
+        return self::blue($count).' route'.($count <= 1 ? '' : 's').$lines;
     }
 
     public static function getFilesStats($count)

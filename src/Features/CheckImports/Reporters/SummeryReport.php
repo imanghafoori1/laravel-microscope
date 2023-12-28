@@ -11,11 +11,12 @@ class SummeryReport
     {
         ErrorCounter::$errors = $errors;
 
-        $messages = [];
-        $messages[] = self::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount);
-        $messages[] = self::format('unused import', ErrorCounter::getExtraImportsCount());
-        $messages[] = self::format('wrong import', ErrorCounter::getExtraWrongCount());
-        $messages[] = self::format('wrong class reference', ErrorCounter::getWrongUsedClassCount());
+        $messages = [
+            self::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount),
+            self::format('unused import', ErrorCounter::getExtraImportsCount()),
+            self::format('wrong import', ErrorCounter::getExtraWrongCount()),
+            self::format('wrong class reference', ErrorCounter::getWrongUsedClassCount()),
+        ];
 
         return implode(PHP_EOL, $messages);
     }

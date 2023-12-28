@@ -22,7 +22,7 @@ class ClassMapIterator
         foreach ($classMapFiles as $composerPath => $classMap) {
             $results[$composerPath] = self::getDirStats($classMap, $checks, $paramProvider);
         }
-        
+
         return $results;
     }
 

@@ -12,16 +12,22 @@ class BladeReport
      */
     public static function getBladeStats($stats): string
     {
-        $total = 0;
+        $c = $total = 0;
         $output = '';
         foreach ($stats as $path => $count) {
+            if (! $count) {
+                continue;
+            }
+            $c++;
             $total += $count;
-            $count && ($output .= self::addLine($path, $count));
+            $output .= self::addLine($path, $count);
         }
         if (! $total) {
             return '';
         }
 
-        return self::blue($total).'blade'.($total ? 's' : '').$output;
+        $c === 1 && $total = '';
+
+        return self::blue($total).'blade'.($total > 1 ? 's' : '').$output;
     }
 }

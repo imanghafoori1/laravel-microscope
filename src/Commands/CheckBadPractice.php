@@ -31,15 +31,15 @@ class CheckBadPractice extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $paths = [
+        $pathsList = [
             Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $fileName, $folder),
             Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $fileName, $folder),
             Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $fileName, $folder),
         ];
 
-        foreach ($paths as $path) {
-            foreach ($path as $p) {
-                $this->checkPaths($p);
+        foreach ($pathsList as $paths) {
+            foreach ($paths as $path) {
+                $this->checkPaths($path);
             }
         }
 

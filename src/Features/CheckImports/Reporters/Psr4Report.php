@@ -22,16 +22,15 @@ class Psr4Report
             $output .= self::hyphen('<options=bold;fg=white>PSR-4 </>');
             $output .= self::formatPsr4Stats($psr4);
             if (isset($classMapStats[$composerPath])) {
-                $output .= PHP_EOL.CheckImportReporter::getClassMapStats(
-                    $classMapStats[$composerPath], self::$callback
-                );
+                $lines = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
+                $lines && ($output .= PHP_EOL.$lines);
             }
         }
 
         return trim($output);
     }
 
-    public static function formatComposerPath($composerPath): string
+    public static function formatComposerPath($composerPath)
     {
         $composerPath = trim($composerPath, '/');
         $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
@@ -56,7 +55,7 @@ class Psr4Report
             (self::$callback)();
             $i++;
             $lengths[] = strlen($psr4Namespace);
-            $lines[$i][0] = self::getPsr4Head();
+            $lines[$i][0] = PHP_EOL.self::getPsr4Head();
             $lines[$i][1] = $psr4Namespace;
             $lines[$i][2] = $folders;
         }
@@ -80,7 +79,7 @@ class Psr4Report
 
     private static function getPsr4Head()
     {
-        return PHP_EOL.'    '.self::hyphen().'<fg=red>';
+        return '    '.self::hyphen().'<fg=red>';
     }
 
     private static function getPsr4(int $maxLen, string $namespace)
@@ -88,6 +87,10 @@ class Psr4Report
         return self::paddedNamespace($maxLen + 1, $namespace.':').' </>';
     }
 
+    /**
+     * @param  $psr4Paths
+     * @return string
+     */
     private static function getFolders($psr4Paths): string
     {
         $result = [];
@@ -101,7 +104,7 @@ class Psr4Report
             $result[$i] = [];
             $result[$i][0] = str_repeat(' ', 6);
             $result[$i][1] = self::green('./'.$path);
-            $result[$i][2] = ' ( '.$countClasses.' file'.($countClasses == 1 ? '' : 's').' )';
+            $result[$i][2] = self::files($countClasses);
             if ($i > 1) {
                 $result[$i - 1][0] = PHP_EOL.str_repeat(' ', 12).'- ';
                 $result[$i][0] = PHP_EOL.str_repeat(' ', 12).'- ';
@@ -111,11 +114,11 @@ class Psr4Report
         return self::implode($result);
     }
 
-    private static function implode(array $result)
+    private static function implode($lines)
     {
         $output = '';
-        foreach ($result as $res) {
-            $output .= implode('', $res);
+        foreach ($lines as $segments) {
+            $output .= implode('', $segments);
         }
 
         return $output;

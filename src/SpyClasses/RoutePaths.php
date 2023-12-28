@@ -10,6 +10,9 @@ use Throwable;
 
 class RoutePaths
 {
+    /**
+     * @return \Generator
+     */
     public static function get()
     {
         foreach (app('router')->routePaths as $path) {

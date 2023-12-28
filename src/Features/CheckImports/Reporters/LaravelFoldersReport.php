@@ -7,7 +7,7 @@ class LaravelFoldersReport
     use Reporting;
 
     /**
-     * @param  array<string, array<string, array<string, array<int, string>>>>  $foldersStats
+     * @param  \Generator  $foldersStats
      * @return string
      */
     public static function foldersStats($foldersStats)
@@ -15,25 +15,37 @@ class LaravelFoldersReport
         $output = '';
 
         foreach ($foldersStats as $fileType => $stats) {
-            [$total, $sub] = self::subDirs($stats);
+            [$total, $sub, $c] = self::subDirs($stats);
+            if ($total) {
+                $c === 1 && $total = '';
 
-            $total && ($output .= self::blue($total).$fileType.$sub);
-
-            $output .= PHP_EOL;
+                $output .= self::blue($total).$fileType.$sub;
+                $output .= PHP_EOL;
+            }
         }
 
         return trim($output, PHP_EOL);
     }
 
-    private static function subDirs($stats): array
+    /**
+     * @param  \Generator  $stats
+     * @return array
+     */
+    private static function subDirs($stats)
     {
-        $total = 0;
+        $c = $total = 0;
         $sub = '';
-        foreach ($stats as $dir => $filesCount) {
+        foreach ($stats as $dir => $files) {
+            $c++;
+            $filesCount = 0;
+            foreach ($files as $_file) {
+                $filesCount++;
+            }
+
             $total += $filesCount;
             $filesCount && ($sub .= self::addLine($dir, $filesCount));
         }
 
-        return [$total, $sub];
+        return [$total, $sub, $c];
     }
 }

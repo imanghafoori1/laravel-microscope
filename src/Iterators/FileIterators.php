@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Generator;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
@@ -25,7 +26,7 @@ class FileIterators
     }
 
     /**
-     * @return array<string, string[]>
+     * @return array<string, \Generator>
      */
     public static function getLaravelFolders()
     {
@@ -36,34 +37,38 @@ class FileIterators
     }
 
     /**
-     * @param  array<string, string[]>  $dirsList
+     * @param  array<string, \Generator>  $dirsList
      * @param  $paramProvider
      * @param  string  $file
      * @param  string  $folder
      * @param  array  $checks
-     * @return \Generator<string, array<string, array<string, string[]>>>
+     * @return \Generator
      */
     public static function checkFolders($dirsList, $paramProvider, $file, $folder, $checks)
     {
         foreach ($dirsList as $listName => $dirs) {
-            $filePaths = Paths::getAbsFilePaths($dirs, $file, $folder);
-            yield $listName => self::checkFilePaths($filePaths, $paramProvider, $checks);
+            $filePathsGen = Paths::getAbsFilePaths($dirs, $file, $folder);
+            yield $listName => self::checkFilePaths($filePathsGen, $paramProvider, $checks);
         }
     }
 
-    public static function checkFiles($absFilePaths, $paramProvider, $checks): int
+    /**
+     * @param  $absFilePaths
+     * @param  $paramProvider
+     * @param  $checks
+     * @return \Generator
+     */
+    public static function checkFiles($absFilePaths, $paramProvider, $checks): Generator
     {
-        $c = 0;
         is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 
         foreach ($absFilePaths as $absFilePath) {
-            $c++;
             $tokens = token_get_all(file_get_contents($absFilePath));
+            $params = $paramProvider($tokens);
             foreach ($checks as $check) {
-                $check::check($tokens, $absFilePath, $paramProvider($tokens));
+                $check::check($tokens, $absFilePath, $params);
             }
+            yield $absFilePath;
         }
-
-        return $c;
     }
 }

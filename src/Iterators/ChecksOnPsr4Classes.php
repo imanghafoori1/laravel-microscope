@@ -23,7 +23,7 @@ class ChecksOnPsr4Classes
     /**
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  $params
-     * @return array
+     * @return array<string, \Generator>
      */
     public static function apply($checks, $params, $includeFile, $includeFolder)
     {
@@ -88,6 +88,13 @@ class ChecksOnPsr4Classes
         }
     }
 
+    /**
+     * @param  $psr4
+     * @param  array  $checks
+     * @param  $params
+     * @param  $includeFolder
+     * @return \Generator
+     */
     private static function processGetStats($psr4, array $checks, $params, $includeFolder)
     {
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {

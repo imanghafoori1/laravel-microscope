@@ -17,6 +17,9 @@ class LaravelPaths
         yield from array_merge([config_path()], config('microscope.additional_config_paths', []));
     }
 
+    /**
+     * @return string|null
+     */
     public static function seedersDir()
     {
         $dir = app()->databasePath('seeds');
@@ -36,6 +39,9 @@ class LaravelPaths
         }
     }
 
+    /**
+     * @return \Generator
+     */
     public static function migrationDirs()
     {
         // normalize the migration paths
@@ -52,6 +58,9 @@ class LaravelPaths
         yield app()->databasePath('migrations');
     }
 
+    /**
+     * @return \Generator
+     */
     public static function allBladeFiles()
     {
         foreach (BladeFiles::getViews() as $paths) {
