@@ -18,7 +18,7 @@ class FileIterators
             if (is_string($absFilePaths)) {
                 $absFilePaths = [$absFilePaths];
             }
-            
+
             $count = self::checkFiles($absFilePaths, $paramProvider, $checks);
             yield $dir => $count;
         }

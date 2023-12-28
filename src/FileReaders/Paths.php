@@ -9,6 +9,7 @@ use Symfony\Component\Finder\Finder;
 class Paths
 {
     use FiltersFiles;
+
     /**
      * @param  $dirs
      * @param  null|string  $fileName
