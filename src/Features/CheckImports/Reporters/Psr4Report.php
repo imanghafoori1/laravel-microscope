@@ -22,7 +22,9 @@ class Psr4Report
             $output .= self::hyphen('<options=bold;fg=white>PSR-4 </>');
             $output .= self::formatPsr4Stats($psr4);
             if (isset($classMapStats[$composerPath])) {
-                $output .= PHP_EOL.CheckImportReporter::getClassMapStats($classMapStats[$composerPath]);
+                $output .= PHP_EOL.CheckImportReporter::getClassMapStats(
+                    $classMapStats[$composerPath], self::$callback
+                );
             }
         }
 

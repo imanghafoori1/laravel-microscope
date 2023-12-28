@@ -16,16 +16,18 @@ class CheckImportReporter
         return self::blue($count).' route'.($count <= 1 ? '' : 's');
     }
 
-    public static function getClassMapStats($stat)
+    public static function getClassMapStats($stat, $callback)
     {
-        $output = '';
-        $total = array_sum($stat);
-        $output .= self::blue($total).'classmap:';
+        $lines = '';
+        $total = 0;
         foreach ($stat as $key => $count) {
-            ($count > 0) && $output .= self::addLine($key, $count);
+            $total += $count;
+            ($count > 0) && $lines .= self::addLine($key, $count);
+            $callback();
         }
+        $header = self::blue($total).'classmap:';
 
-        return $output;
+        return $header.$lines;
     }
 
     public static function getAutoloadedFiles($count)

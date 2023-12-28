@@ -84,13 +84,14 @@ class CheckImportsCommand extends Command
         $folder = rtrim($folder, '/\\');
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
-        $classMapFiles = ComposerJson::getClassMaps(base_path(), $folder, $fileName);
         $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $folder, $fileName);
 
         $paramProvider = $this->getParamProvider();
 
         $checks = $this->checks;
         unset($checks[1]);
+
+        $classMapStats = ClassMapIterator::iterate(base_path(), $paramProvider, $checks, $folder, $fileName);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
         $autoloadedFiles = FileIterators::checkFilePaths($autoloadedFiles, $paramProvider, $checks);
@@ -112,7 +113,6 @@ class CheckImportsCommand extends Command
             $errorPrinter->flushErrors();
         };
 
-        $classMapStats = ClassMapIterator::iterate($classMapFiles, $paramProvider, $checks);
         $messages = [];
         $messages[0] = Reporters\CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);

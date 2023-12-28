@@ -2,13 +2,28 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+
 class ClassMapIterator
 {
-    public static function iterate($classMapFiles, $paramProvider, $checks)
+    /**
+     * @param  string  $basePath
+     * @param  \Closure  $paramProvider
+     * @param  array  $checks
+     * @param  string  $folder
+     * @param  string  $fileName
+     * @return array<string, \Generator>
+     */
+    public static function iterate($basePath, $paramProvider, $checks, $folder, $fileName)
     {
+        $classMapFiles = ComposerJson::getClassMaps($basePath, $folder, $fileName);
+
+        $results = [];
         foreach ($classMapFiles as $composerPath => $classMap) {
-            yield $composerPath => self::getDirStats($classMap, $checks, $paramProvider);
+            $results[$composerPath] = self::getDirStats($classMap, $checks, $paramProvider);
         }
+        
+        return $results;
     }
 
     private static function applyChecks($files, $checks, $paramProvider): void
