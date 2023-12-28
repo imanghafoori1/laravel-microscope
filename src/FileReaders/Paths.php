@@ -11,20 +11,22 @@ class Paths
     use FiltersFiles;
     /**
      * @param  $dirs
-     * @param  null|string  $includeFileName
-     * @param  null|string  $includeFolder
+     * @param  null|string  $fileName
+     * @param  null|string  $folder
      * @return \iterable
      */
-    public static function getAbsFilePaths($dirs, $includeFileName = null, $includeFolder = null)
+    public static function getAbsFilePaths($dirs, $fileName = null, $folder = null)
     {
         if (! $dirs) {
             return [];
         }
 
-        $includeFolder && ($includeFolder = str_replace('\\', '/', $includeFolder));
+        $folder && ($folder = str_replace('\\', '/', $folder));
         is_string($dirs) && ($dirs = [$dirs]);
         foreach ($dirs as $dir) {
-            yield $dir => self::filterFiles(self::getPathsInDir($dir, $includeFileName), $includeFolder);
+            if (is_dir($dir)) {
+                yield $dir => self::filterFiles(self::getPathsInDir($dir, $fileName), $folder);
+            }
         }
     }
 
@@ -38,7 +40,7 @@ class Paths
         try {
             return Finder::create()->files()->name(($fileName ?: '*').'.php')->in($dir);
         } catch (Exception $e) {
-            return Finder::create();
+            dump($e);
         }
     }
 }

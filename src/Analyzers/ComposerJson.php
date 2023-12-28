@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class ComposerJson
 {
@@ -24,19 +25,33 @@ class ComposerJson
         return self::make()->autoloadedFilesList($basePath);
     }
 
-    public static function getClassMaps($basePath)
+    public static function getClassMaps($basePath, $folder = '', $fileName = '')
     {
-        $result = [];
         foreach (self::make()->readAutoloadClassMap() as $compPath => $classMaps) {
-            foreach ($classMaps as $classmap) {
-                $compPath1 = trim($compPath, '/');
-                $compPath1 = $compPath1 ? $compPath1.DIRECTORY_SEPARATOR : '';
-                $classmapFullPath = $basePath.DIRECTORY_SEPARATOR.$compPath1.$classmap;
-                $classes = array_values(ClassMapGenerator::createMap($classmapFullPath));
-                $result[$compPath][$classmap] = $classes;
-            }
+            yield $compPath => self::getFilteredClasses($compPath, $classMaps, $basePath, $folder, $fileName);
         }
+    }
 
-        return $result;
+    private static function getFilteredClasses($compPath, $classMapPaths, $basePath, $folder, $fileName)
+    {
+        foreach ($classMapPaths as $classmapPath) {
+            $classes = self::getClasses($compPath, $basePath, $classmapPath);
+            foreach ($classes as $i => $class) {
+                if (FilePath::contains(str_replace($basePath, '', $class), $folder, $fileName)) {
+                    unset($classes[$i]);
+                }
+            }
+
+            yield $classmapPath => $classes;
+        }
+    }
+
+    private static function getClasses($compPath, $basePath, $classmapPath)
+    {
+        $compPath1 = trim($compPath, '/');
+        $compPath1 = $compPath1 ? $compPath1.DIRECTORY_SEPARATOR : '';
+        $classmapFullPath = $basePath.DIRECTORY_SEPARATOR.$compPath1.$classmapPath;
+
+        return array_values(ClassMapGenerator::createMap($classmapFullPath));
     }
 }

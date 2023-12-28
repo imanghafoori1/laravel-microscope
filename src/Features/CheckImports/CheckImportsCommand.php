@@ -84,7 +84,7 @@ class CheckImportsCommand extends Command
         $folder = rtrim($folder, '/\\');
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
-        $classMapFiles = ComposerJson::getClassMaps(base_path());
+        $classMapFiles = ComposerJson::getClassMaps(base_path(), $folder, $fileName);
         $autoloadedFiles = FilePath::removeExtraPaths(ComposerJson::autoloadedFilesList(base_path()), $folder, $fileName);
 
         $paramProvider = $this->getParamProvider();

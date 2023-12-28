@@ -40,6 +40,9 @@ class LaravelPaths
     {
         // normalize the migration paths
         foreach (app('migrator')->paths() as $path) {
+            if (! is_dir($path)) {
+                continue;
+            }
             // Excludes the migrations within "vendor" folder:
             if (! Str::startsWith($path, [base_path('vendor')])) {
                 yield FilePath::normalize($path);
