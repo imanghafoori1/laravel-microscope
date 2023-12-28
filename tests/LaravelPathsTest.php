@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class LaravelPathsTest extends BaseTestClass
@@ -19,12 +18,13 @@ class LaravelPathsTest extends BaseTestClass
         $result = LaravelPaths::migrationDirs();
 
         $expected = [
-            FilePath::normalize($customPath),
             app()->databasePath('migrations'),
         ];
 
+        $this->assertTrue(is_a($result, 'Generator'));
+        $result = iterator_to_array($result);
         $this->assertTrue(is_array($result));
         $this->assertEquals($expected, $result);
-        $this->assertCount(2, $result);
+        $this->assertCount(1, $result);
     }
 }
