@@ -32,8 +32,8 @@ class CheckBladePaths
     }
 
     /**
-     * @param string $path
-     * @param null $fileName
+     * @param  string  $path
+     * @param  null  $fileName
      * @return \Symfony\Component\Finder\Finder
      */
     public static function findFiles($path, $fileName = null): Finder
