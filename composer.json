@@ -21,7 +21,7 @@
         "composer/class-map-generator": "^1.0.0",
         "imanghafoori/php-abstract-filesystem": "^0.1.4",
         "imanghafoori/php-search-replace": "^1.1.12",
-        "imanghafoori/php-token-analyzer": "^0.1.61",
+        "imanghafoori/php-token-analyzer": "^0.1.62",
         "imanghafoori/php-imports-analyzer": "^1.0.4",
         "imanghafoori/smart-realtime-facades": "^1.1.8",
         "jetbrains/phpstorm-attributes": "1.*",
