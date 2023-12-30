@@ -6,7 +6,7 @@ use Generator;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
-class FileIterators
+class FileIterators extends BaseIterator
 {
     /**
      * @param  \Generator  $paths
@@ -20,8 +20,7 @@ class FileIterators
                 $absFilePaths = [$absFilePaths];
             }
 
-            $count = self::checkFiles($absFilePaths, $paramProvider, $checks);
-            yield $dir => $count;
+            yield $dir => self::checkFiles($absFilePaths, $paramProvider, $checks);
         }
     }
 
@@ -62,13 +61,6 @@ class FileIterators
     {
         is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 
-        foreach ($absFilePaths as $absFilePath) {
-            $tokens = token_get_all(file_get_contents($absFilePath));
-            $params = $paramProvider($tokens);
-            foreach ($checks as $check) {
-                $check::check($tokens, $absFilePath, $params);
-            }
-            yield $absFilePath;
-        }
+        yield from self::applyChecks($absFilePaths, $checks, $paramProvider);
     }
 }

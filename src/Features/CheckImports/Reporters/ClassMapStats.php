@@ -16,7 +16,8 @@ class ClassMapStats
         $lines = '';
         $c = $total = 0;
 
-        foreach ($stat as $path => $count) {
+        foreach ($stat as $path => $filePathsGen) {
+            $count = count(iterator_to_array($filePathsGen));
             if (! $count) {
                 continue;
             }

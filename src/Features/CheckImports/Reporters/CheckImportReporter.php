@@ -13,16 +13,9 @@ class CheckImportReporter
 
     public static function getRouteStats($basePath, $routeFiles)
     {
-        $lines = '';
-
-        $count = 0;
-        foreach ($routeFiles as $routePath) {
-            $count++;
-            $relPath = str_replace($basePath, '', $routePath);
-            $relPath = ltrim($relPath, DIRECTORY_SEPARATOR);
-            $relPath = str_replace(DIRECTORY_SEPARATOR, '/', $relPath);
-            $lines .= PHP_EOL.'    '.self::hyphen('<fg=green>'.ltrim($relPath, DIRECTORY_SEPARATOR).'</>');
-        }
+        $linesArr = self::formatFiles($routeFiles, $basePath);
+        $count = count($linesArr);
+        $lines = implode('', $linesArr);
 
         return self::blue($count).' route'.($count <= 1 ? '' : 's').$lines;
     }

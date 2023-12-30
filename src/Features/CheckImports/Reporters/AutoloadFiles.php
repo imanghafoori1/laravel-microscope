@@ -8,24 +8,20 @@ class AutoloadFiles
 
     /**
      * @param  string  $basePath
-     * @param  \Generator  $filesList
+     * @param  \Generator  $filesListGen
      * @return string
      */
-    public static function getLines($basePath, $filesList)
+    public static function getLines($basePath, $filesListGen)
     {
-        $count = 0;
         $lines = '';
-
-        foreach (iterator_to_array($filesList) as $files) {
-            foreach ($files as $file) {
-                $count++;
-                $file = str_replace($basePath, '', $file);
-                $file = str_replace(DIRECTORY_SEPARATOR, '/', $file);
-                $lines .= PHP_EOL.'    '.self::hyphen('<fg=green>'.ltrim($file, '/').'</>');
-            }
+        $total = 0;
+        foreach ($filesListGen as $files) {
+            $linesArr = self::formatFiles($files, $basePath);
+            $total += count($linesArr);
+            $lines .= implode('', $linesArr);
         }
 
-        return $count ? self::autoloadFilesHeader($count, $lines) : '';
+        return $total ? self::autoloadFilesHeader($total, $lines) : '';
     }
 
     private static function autoloadFilesHeader(int $count, string $lines): string

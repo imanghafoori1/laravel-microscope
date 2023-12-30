@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 
-class ClassMapIterator
+class ClassMapIterator extends BaseIterator
 {
     /**
      * @param  string  $basePath
@@ -26,21 +26,10 @@ class ClassMapIterator
         return $results;
     }
 
-    private static function applyChecks($files, $checks, $paramProvider): void
-    {
-        foreach ($files as $absFilePath) {
-            $tokens = token_get_all(file_get_contents($absFilePath));
-            foreach ($checks as $check) {
-                $check::check($tokens, $absFilePath, $paramProvider($tokens));
-            }
-        }
-    }
-
     private static function getDirStats($classMap, $checks, $paramProvider)
     {
         foreach ($classMap as $dir => $files) {
-            self::applyChecks($files, $checks, $paramProvider);
-            yield $dir => count($files);
+            yield $dir => self::applyChecks($files, $checks, $paramProvider);
         }
     }
 }
