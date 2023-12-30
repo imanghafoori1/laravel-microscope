@@ -101,7 +101,7 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $classMapStats = ClassMapIterator::iterate(base_path(), $paramProvider, $checks, $folder, $fileName);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $folder, $fileName);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);

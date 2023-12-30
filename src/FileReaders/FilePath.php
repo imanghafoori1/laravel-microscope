@@ -11,8 +11,6 @@ class FilePath
 
     public static $fileName = '*';
 
-    public static $directory;
-
     /**
      * Normalize file path to standard formal
      * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
@@ -22,20 +20,20 @@ class FilePath
      */
     public static function normalize($path)
     {
-        $dir = \str_replace(['\\', '/', '//', '\\\\'], DIRECTORY_SEPARATOR, $path);
+        $dir = str_replace(['\\', '/', '//', '\\\\'], DIRECTORY_SEPARATOR, $path);
 
-        $sections = \explode(DIRECTORY_SEPARATOR, $dir);
+        $sections = explode(DIRECTORY_SEPARATOR, $dir);
 
         $result = [];
         foreach ($sections as $section) {
             if ($section == '..') {
-                \array_pop($result);
+                array_pop($result);
             } else {
                 $result[] = $section;
             }
         }
 
-        return \implode(DIRECTORY_SEPARATOR, $result);
+        return implode(DIRECTORY_SEPARATOR, $result);
     }
 
     /**
@@ -46,7 +44,7 @@ class FilePath
      */
     public static function getRelativePath($absFilePath)
     {
-        return \trim(str_replace(self::$basePath, '', $absFilePath), '/\\');
+        return trim(str_replace(self::$basePath, '', $absFilePath), '/\\');
     }
 
     /**

@@ -28,7 +28,6 @@ class ChecksOnPsr4Classes
     public static function apply($checks, $params, $includeFile, $includeFolder)
     {
         $includeFile && FilePath::$fileName = $includeFile;
-        $includeFolder && FilePath::$directory = $includeFolder;
         $stats = [];
         foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
             $stats[$composerPath] = self::processGetStats($psr4, $checks, $params, $includeFolder);
