@@ -15,5 +15,4 @@ abstract class BaseIterator
             yield $absFilePath;
         }
     }
-
 }
