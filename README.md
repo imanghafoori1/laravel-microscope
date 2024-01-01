@@ -4,7 +4,7 @@
 
 
 <p align="center">
-    <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="widgetize_header"></img>
+    <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="microscope_header"></img>
 </p>
 
 <h4 align="center">
@@ -28,8 +28,8 @@ Give your eyes a rest, we will detect and fix them for you.
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Today Downloads][ico-today-downloads]][link-downloads]
-[![tests](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/tests.yml)
-[![Imports](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/imports.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-widgetize/actions/workflows/imports.yml)
+[![tests](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/tests.yml)
+[![Imports](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/imports.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/imports.yml)
 
 <!--
 <p align="center">
