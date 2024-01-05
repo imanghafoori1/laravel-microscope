@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Finder\Finder;
 
 class FilePath
@@ -18,6 +19,7 @@ class FilePath
      * @param  string  $path  directory path
      * @return string
      */
+    #[Pure]
     public static function normalize($path)
     {
         $dir = str_replace(['\\', '/', '//', '\\\\'], DIRECTORY_SEPARATOR, $path);
@@ -42,6 +44,7 @@ class FilePath
      * @param  string  $absFilePath  Absolute directory path
      * @return string
      */
+    #[Pure]
     public static function getRelativePath($absFilePath)
     {
         return trim(str_replace(self::$basePath, '', $absFilePath), '/\\');
@@ -53,6 +56,7 @@ class FilePath
      * @param  string  $path  Directory path
      * @return \Symfony\Component\Finder\Finder
      */
+    #[Pure]
     public static function getAllPhpFiles($path, $basePath = '')
     {
         if ($basePath === '') {
@@ -70,6 +74,7 @@ class FilePath
         }
     }
 
+    #[Pure]
     public static function getFolderFile($absFilePath): array
     {
         $segments = explode('/', str_replace('\\', '/', self::getRelativePath($absFilePath)));
@@ -78,6 +83,7 @@ class FilePath
         return [$fileName, implode('/', $segments)];
     }
 
+    #[Pure]
     public static function contains($filePath, $folder, $file)
     {
         if (! $file && ! $folder) {

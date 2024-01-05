@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use JetBrains\PhpStorm\Pure;
+
 class CheckImportReporter
 {
     use Reporting;
@@ -20,11 +22,13 @@ class CheckImportReporter
         return self::blue($count).' route'.($count <= 1 ? '' : 's').$lines;
     }
 
+    #[Pure]
     public static function getFilesStats($count)
     {
         return self::blue($count).'class'.($count <= 1 ? '' : 'es');
     }
 
+    #[Pure]
     public static function header(): string
     {
         return ' ⬛️ <fg=blue>Overall:</>';

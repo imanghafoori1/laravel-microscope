@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use JetBrains\PhpStorm\Pure;
+
 class Psr4Report
 {
     use Reporting;
@@ -70,6 +72,7 @@ class Psr4Report
         return implode('', $lines);
     }
 
+    #[Pure]
     private static function paddedNamespace($longest, $namespace)
     {
         $padLength = $longest - strlen($namespace);
@@ -77,11 +80,13 @@ class Psr4Report
         return $namespace.str_repeat(' ', $padLength);
     }
 
+    #[Pure]
     private static function getPsr4Head()
     {
         return '    '.self::hyphen().'<fg=red>';
     }
 
+    #[Pure]
     private static function getPsr4(int $maxLen, string $namespace)
     {
         return self::paddedNamespace($maxLen + 1, $namespace.':').' </>';
