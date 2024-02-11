@@ -32,7 +32,7 @@ return [
     ],
 
     /**
-     * By default, we only process the first 2000 characters of a file to find the "class" keyword.
+     * By default, we only process the first 2500 characters of a file to find the "class" keyword.
      * So, if you have a lot of use statements or very big docblocks for your classes so that
      * the "class" falls deep down, you may increase this value, so that it searches deeper.
      */
