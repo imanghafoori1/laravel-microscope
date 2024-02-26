@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Finder\Finder as SymfonyFinder;
 
