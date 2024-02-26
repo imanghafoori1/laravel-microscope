@@ -23,7 +23,7 @@ class ChecksOnPsr4Classes
     public static $checkedFilesCount = 0;
 
     /**
-     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>> $checks
+     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  $params
      * @param  $includeFile
      * @param  $includeFolder
