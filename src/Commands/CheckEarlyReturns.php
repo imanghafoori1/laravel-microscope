@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Symfony\Component\Console\Terminal;
 
