@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Symfony\Component\Console\Terminal;
@@ -30,7 +31,7 @@ class CheckEarlyReturns extends Command
         foreach (ComposerJson::readAutoload() as $autoload) {
             foreach ($autoload as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
-                    $files = FilePath::getAllPhpFiles($psr4Path);
+                    $files = PhpFinder::getAllPhpFiles($psr4Path);
                     foreach ($files as $file) {
                         $path = $file->getRealPath();
                         $tokens = token_get_all(file_get_contents($path));

@@ -21,6 +21,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -107,7 +108,7 @@ class CheckImportsCommand extends Command
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
-            FileIterators::getLaravelFolders(),
+            self::getLaravelFolders(),
             $paramProvider,
             $fileName,
             $folder,
@@ -183,5 +184,16 @@ class CheckImportsCommand extends Command
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
+    }
+
+    /**
+     * @return array<string, \Generator>
+     */
+    private static function getLaravelFolders()
+    {
+        return [
+            'config' => LaravelPaths::configDirs(),
+            'migrations' => LaravelPaths::migrationDirs(),
+        ];
     }
 }

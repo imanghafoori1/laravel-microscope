@@ -2,16 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
-use Exception;
 use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Finder\Finder;
 
 class FilePath
 {
-    public static $basePath = '';
-
-    public static $fileName = '*';
-
     /**
      * Normalize file path to standard formal
      * For a path like: "/usr/laravel/app\Http\..\..\database" returns "/usr/laravel/database".
@@ -47,11 +41,11 @@ class FilePath
     #[Pure]
     public static function getRelativePath($absFilePath)
     {
-        return trim(str_replace(self::$basePath, '', $absFilePath), '/\\');
+        return trim(str_replace(PhpFinder::$basePath, '', $absFilePath), '/\\');
     }
 
     /**
-     * get all ".php" files in directory by giving a path.
+     * Get all ".php" files in directory by giving a path.
      *
      * @param  string  $path  Directory path
      * @return \Symfony\Component\Finder\Finder
@@ -59,19 +53,7 @@ class FilePath
     #[Pure]
     public static function getAllPhpFiles($path, $basePath = '')
     {
-        if ($basePath === '') {
-            $basePath = self::$basePath;
-        }
-
-        $basePath = rtrim($basePath, '/\\');
-        $path = ltrim($path, '/\\');
-        $path = $basePath.DIRECTORY_SEPARATOR.$path;
-
-        try {
-            return Finder::create()->files()->name(self::$fileName.'.php')->in($path);
-        } catch (Exception $e) {
-            return [];
-        }
+        return PhpFinder::getAllPhpFiles($path, $basePath);
     }
 
     #[Pure]

@@ -16,6 +16,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\ListModels\ListModelsArtisanCommand;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
@@ -101,7 +102,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             );
         };
 
-        FilePath::$basePath = base_path();
+        PhpFinder::$basePath = base_path();
 
         [$major] = explode('.', app()->version());
 

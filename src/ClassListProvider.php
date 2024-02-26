@@ -3,11 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use ImanGhafoori\ComposerJson\ComposerJson;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\TokenAnalyzer\Str;
-
-use function str_replace;
-use function trim;
 
 class ClassListProvider
 {
@@ -37,7 +34,7 @@ class ClassListProvider
 
     private static function calculate($psr4Path, $baseComposerPath, $namespace): void
     {
-        foreach (FilePath::getAllPhpFiles($psr4Path, $baseComposerPath) as $classFilePath) {
+        foreach (PhpFinder::getAllPhpFiles($psr4Path, $baseComposerPath) as $classFilePath) {
             $fileName = $classFilePath->getFilename();
             if (substr_count($fileName, '.') > 1) {
                 continue;

@@ -28,8 +28,8 @@ class ClassMapIterator extends BaseIterator
 
     private static function getDirStats($classMap, $checks, $paramProvider)
     {
-        foreach ($classMap as $dir => $files) {
-            yield $dir => self::applyChecks($files, $checks, $paramProvider);
+        foreach ($classMap as $dir => $absFilePaths) {
+            yield $dir => self::applyChecks($absFilePaths, $checks, $paramProvider);
         }
     }
 }

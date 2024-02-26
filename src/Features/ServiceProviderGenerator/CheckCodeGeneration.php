@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 
 class CheckCodeGeneration extends Command
 {
@@ -20,7 +20,7 @@ class CheckCodeGeneration extends Command
 
         foreach (ComposerJson::readAutoload() as $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Path) {
-                $files = FilePath::getAllPhpFiles($psr4Path);
+                $files = PhpFinder::getAllPhpFiles($psr4Path);
                 GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);
             }
         }

@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
@@ -83,7 +83,7 @@ class CheckBadPractice extends Command
         foreach (ComposerJson::readAutoload() as $psr4) {
             foreach ($psr4 as $dirPaths) {
                 foreach ((array) $dirPaths as $dirPath) {
-                    foreach (FilePath::getAllPhpFiles($dirPath) as $filePath) {
+                    foreach (PhpFinder::getAllPhpFiles($dirPath) as $filePath) {
                         if (! in_array($path = $filePath->getRealPath(), $configs)) {
                             $this->checkForEnv($path);
                         }

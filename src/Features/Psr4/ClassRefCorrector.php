@@ -14,7 +14,7 @@ class ClassRefCorrector
         self::$beforeFix = $beforeFix;
         foreach ($paths as $path) {
             foreach ($path as $p) {
-                self::fix($p, $changes);
+                self::applyFix($p, $changes);
             }
         }
     }
@@ -77,5 +77,18 @@ class ClassRefCorrector
         }
 
         return false;
+    }
+
+    private static function applyFix($path, $changes)
+    {
+        if (! is_string($path)) {
+            foreach (iterator_to_array($path) as $_p) {
+                foreach ($_p as $t) {
+                    self::fix($t, $changes);
+                }
+            }
+        } else {
+            self::fix($path, $changes);
+        }
     }
 }
