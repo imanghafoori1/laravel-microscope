@@ -28,7 +28,7 @@ Give your eyes a rest, we will detect and fix them for you.
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Today Downloads][ico-today-downloads]][link-downloads]
-[![tests](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/tests.yml)
+[![tests](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/run-tests.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/run-tests.yml)
 [![Imports](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/imports.yml/badge.svg?branch=master)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/imports.yml)
 
 <!--
