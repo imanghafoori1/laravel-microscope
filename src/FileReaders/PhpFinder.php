@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Finder\Finder as SymfonyFinder;
+use Symfony\Component\Finder\Finder;
 
 class PhpFinder
 {
@@ -21,18 +21,41 @@ class PhpFinder
     #[Pure]
     public static function getAllPhpFiles($path, $basePath = '')
     {
+        $dir = self::getDir($basePath, $path);
+
+        return self::getPathsInDir($dir, self::$fileName);
+    }
+
+    /**
+     * @param  $dir
+     * @param  $fileName
+     * @return \Symfony\Component\Finder\Finder|array
+     */
+    #[Pure]
+    public static function getPathsInDir($dir, $fileName)
+    {
+        try {
+            return Finder::create()->files()->name(($fileName ?: '*').'.php')->in($dir);
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param  string  $basePath
+     * @param  string  $path
+     * @return string
+     */
+    #[Pure]
+    private static function getDir($basePath, $path)
+    {
         if ($basePath === '') {
             $basePath = self::$basePath;
         }
 
         $basePath = rtrim($basePath, '/\\');
         $path = ltrim($path, '/\\');
-        $path = $basePath.DIRECTORY_SEPARATOR.$path;
 
-        try {
-            return SymfonyFinder::create()->files()->name(self::$fileName.'.php')->in($path);
-        } catch (Exception $e) {
-            return [];
-        }
+        return $basePath.DIRECTORY_SEPARATOR.$path;
     }
 }

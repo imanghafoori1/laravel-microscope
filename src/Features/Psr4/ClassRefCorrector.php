@@ -82,8 +82,8 @@ class ClassRefCorrector
     private static function applyFix($path, $changes)
     {
         if (! is_string($path)) {
-            foreach (iterator_to_array($path) as $_p) {
-                foreach ($_p as $t) {
+            foreach (iterator_to_array($path) as $p_p) {
+                foreach ($p_p as $t) {
                     self::fix($t, $changes);
                 }
             }
