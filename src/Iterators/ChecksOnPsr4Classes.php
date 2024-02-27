@@ -10,6 +10,9 @@ class ChecksOnPsr4Classes
 {
     use FiltersFiles;
 
+    /**
+     * @var class-string
+     */
     public static $errorExceptionHandler;
 
     /**
@@ -24,24 +27,18 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
-     * @param  $params
-     * @param  $includeFile
-     * @param  $includeFolder
+     * @param  array  $params
+     * @param  string  $includeFile
+     * @param  string  $includeFolder
      * @return array<string, \Generator>
      */
     public static function apply($checks, $params, $includeFile, $includeFolder)
     {
         $includeFile && PhpFinder::$fileName = $includeFile;
-        $stats = [];
-        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
-            $stats[$composerPath] = self::processGetStats($psr4, $checks, $params, $includeFolder);
-        }
 
-        foreach (self::$exceptions as $e) {
-            self::$errorExceptionHandler::handle($e);
-        }
+        $stats = self::processAll($checks, $params, $includeFolder);
 
-        self::$exceptions = [];
+        self::handleExceptions();
 
         return $stats;
     }
@@ -116,5 +113,24 @@ class ChecksOnPsr4Classes
 
             yield $psr4Path => $filesCount;
         }
+    }
+
+    private static function handleExceptions()
+    {
+        foreach (self::$exceptions as $e) {
+            self::$errorExceptionHandler::handle($e);
+        }
+
+        self::$exceptions = [];
+    }
+
+    private static function processAll(array $checks, $params, $includeFolder)
+    {
+        $stats = [];
+        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
+            $stats[$composerPath] = self::processGetStats($psr4, $checks, $params, $includeFolder);
+        }
+
+        return $stats;
     }
 }
