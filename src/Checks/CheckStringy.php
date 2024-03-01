@@ -19,7 +19,7 @@ class CheckStringy
     public function checkStringy($tokens, $absFilePath)
     {
         $errorPrinter = resolve(ErrorPrinter::class);
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (ComposerJson::readPsr4() as $psr4) {
             $namespaces = array_keys($psr4);
             foreach ($tokens as $token) {
                 if ($token[0] !== T_CONSTANT_ENCAPSED_STRING) {

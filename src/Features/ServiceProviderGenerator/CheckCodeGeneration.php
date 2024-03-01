@@ -18,7 +18,7 @@ class CheckCodeGeneration extends Command
         $this->info('Scanning for Empty Provider Files');
         ErrorPrinter::singleton($this->output);
 
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (ComposerJson::readPsr4() as $psr4) {
             foreach ($psr4 as $psr4Namespace => $psr4Path) {
                 $files = PhpFinder::getAllPhpFiles($psr4Path);
                 GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);

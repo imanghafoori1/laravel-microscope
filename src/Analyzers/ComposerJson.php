@@ -15,7 +15,7 @@ class ComposerJson
         return (self::$composer)();
     }
 
-    public static function readAutoload($purgeAutoload = false)
+    public static function readPsr4($purgeAutoload = false)
     {
         return self::make()->readAutoload($purgeAutoload);
     }

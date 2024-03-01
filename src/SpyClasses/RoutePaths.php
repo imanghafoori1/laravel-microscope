@@ -18,7 +18,7 @@ class RoutePaths
         foreach (app('router')->routePaths as $path) {
             yield FilePath::normalize($path);
         }
-        $autoloads = ComposerJson::readAutoload();
+        $autoloads = ComposerJson::readPsr4();
         foreach (config('app.providers') as $providerClass) {
             // we exclude the core or package service providers here.
             foreach ($autoloads as $autoload) {

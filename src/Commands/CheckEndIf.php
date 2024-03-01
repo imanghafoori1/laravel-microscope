@@ -24,7 +24,7 @@ class CheckEndIf extends Command
         }
 
         $fixedFilesCount = 0;
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (ComposerJson::readPsr4() as $psr4) {
             foreach ($psr4 as $psr4Path) {
                 $files = PhpFinder::getAllPhpFiles($psr4Path);
                 foreach ($files as $file) {

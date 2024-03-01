@@ -26,7 +26,7 @@ class Fixer
 
     private static function compare($class)
     {
-        foreach (ComposerJson::readAutoload() as $autoload) {
+        foreach (ComposerJson::readPsr4() as $autoload) {
             if (self::startsWith($class, array_keys($autoload))) {
                 return true;
             }

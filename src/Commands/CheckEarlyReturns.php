@@ -28,7 +28,7 @@ class CheckEarlyReturns extends Command
         }
 
         $fixingFilesCount = $totalNumberOfFixes = $fixedFilesCount = 0;
-        foreach (ComposerJson::readAutoload() as $autoload) {
+        foreach (ComposerJson::readPsr4() as $autoload) {
             foreach ($autoload as $psr4Namespace => $psr4Paths) {
                 foreach ((array) $psr4Paths as $psr4Path) {
                     $files = PhpFinder::getAllPhpFiles($psr4Path);

@@ -45,7 +45,7 @@ class FilePathsForReferenceFix
 
     private static function getPsr4()
     {
-        foreach (ComposerJson::readAutoload() as $autoload) {
+        foreach (ComposerJson::readPsr4() as $autoload) {
             foreach ($autoload as $psr4Path) {
                 foreach (PhpFinder::getAllPhpFiles($psr4Path) as $file) {
                     yield $file->getRealPath();

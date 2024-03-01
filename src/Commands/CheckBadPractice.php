@@ -80,7 +80,7 @@ class CheckBadPractice extends Command
         );
 
         $configs = iterator_to_array($configs);
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (ComposerJson::readPsr4() as $psr4) {
             foreach ($psr4 as $dirPaths) {
                 foreach ((array) $dirPaths as $dirPath) {
                     foreach (PhpFinder::getAllPhpFiles($dirPath) as $filePath) {

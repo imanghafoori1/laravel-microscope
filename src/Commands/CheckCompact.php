@@ -61,7 +61,7 @@ class CheckCompact extends Command
 
     private function checkPsr4Classes()
     {
-        foreach (ComposerJson::readAutoload() as $psr4) {
+        foreach (ComposerJson::readPsr4() as $psr4) {
             foreach ($psr4 as $_namespace => $dirPath) {
                 foreach (PhpFinder::getAllPhpFiles($dirPath) as $filePath) {
                     $this->checkPathForCompact($filePath->getRealPath());

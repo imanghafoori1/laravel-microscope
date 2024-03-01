@@ -127,7 +127,7 @@ class ChecksOnPsr4Classes
     private static function processAll(array $checks, $params, $includeFolder)
     {
         $stats = [];
-        foreach (ComposerJson::readAutoload() as $composerPath => $psr4) {
+        foreach (ComposerJson::readPsr4() as $composerPath => $psr4) {
             $stats[$composerPath] = self::processGetStats($psr4, $checks, $params, $includeFolder);
         }
 

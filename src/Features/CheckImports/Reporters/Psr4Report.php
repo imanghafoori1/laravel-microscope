@@ -11,7 +11,7 @@ class Psr4Report
     public static $callback;
 
     /**
-     * @param  array<string, array<string, array<string, int>>>  $psr4Stats
+     * @param  \Generator<string, array<string, array<string, int>>>  $psr4Stats
      * @return string
      */
     public static function printAutoload($psr4Stats, $classMapStats)
