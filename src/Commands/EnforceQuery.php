@@ -41,7 +41,6 @@ class EnforceQuery extends Command
 
         $patterns = $this->getPatterns();
         $parsedPatterns = PatternParser::parsePatterns($patterns);
-
         $this->checkPsr4($parsedPatterns, $patterns, $fileName, $folder);
 
         // Checks the blade files for class references.
@@ -103,6 +102,6 @@ class EnforceQuery extends Command
 
     private function checkPsr4($parsedPatterns, $patterns, $fileName, $folder)
     {
-        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
+        return ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
     }
 }

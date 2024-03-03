@@ -21,10 +21,14 @@ class ForPsr4LoadedClasses
         return ChecksOnPsr4Classes::apply($checks, $params, $includeFile, $includeFolder);
     }
 
-    public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '')
+    public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '', $callback = null)
     {
-        foreach (self::check($checks, $params, $includeFile, $includeFolder) as $result) {
-            iterator_to_array($result);
+        foreach (self::check($checks, $params, $includeFile, $includeFolder) as $results) {
+            foreach (iterator_to_array($results) as $result) {
+                foreach ($result as $folder => $count) {
+                    $callback && $callback($folder, $count);
+                }
+            }
         }
     }
 }
