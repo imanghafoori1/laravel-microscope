@@ -86,8 +86,8 @@ class CheckBladePaths
             $tokens = ViewsData::getBladeTokens($absPath);
             $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
 
-            foreach ($checkers as $checkerClass) {
-                call_user_func_array([$checkerClass, 'check'], [$tokens, $absPath, $params1]);
+            foreach ($checkers as $check) {
+                $check::check($tokens, $absPath, $params1);
             }
         }
 

@@ -7,17 +7,18 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\Finder\SplFileInfo;
 
-class FacadeDocblocks
+class FacadeDocblocks implements Psr4Check
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath, $params, SplFileInfo $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {
         $facade = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
 

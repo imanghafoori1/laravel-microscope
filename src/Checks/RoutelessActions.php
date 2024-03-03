@@ -5,15 +5,30 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Routing\Controller;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Str;
+use ReflectionClass;
 use Throwable;
 
-class RoutelessActions
+class RoutelessActions implements Psr4Check
 {
     public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {
-        self::checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath);
+        $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+
+        if (! self::isLaravelController($fullNamespace)) {
+            return;
+        }
+
+        // exclude abstract class
+        if ((new ReflectionClass($fullNamespace))->isAbstract()) {
+            return;
+        }
+
+        $actions = self::findOrphanActions($tokens, $fullNamespace);
+
+        self::printErrors($actions, $absFilePath);
     }
 
     public static function getControllerActions($methods)
@@ -89,24 +104,6 @@ class RoutelessActions
         }
 
         return $actions;
-    }
-
-    public static function checkControllerActionsForRoutes($classFilePath, $psr4Path, $psr4Namespace, $tokens, $absFilePath)
-    {
-        $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
-
-        if (! self::isLaravelController($fullNamespace)) {
-            return;
-        }
-
-        // exclude abstract class
-        if ((new \ReflectionClass($fullNamespace))->isAbstract()) {
-            return;
-        }
-
-        $actions = self::findOrphanActions($tokens, $fullNamespace);
-
-        self::printErrors($actions, $absFilePath);
     }
 
     public static function classAtMethod($fullNamespace, $methodName)
