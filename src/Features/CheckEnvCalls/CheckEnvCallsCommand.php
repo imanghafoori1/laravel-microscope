@@ -1,11 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -13,7 +12,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 
-class CheckBadPractice extends Command
+class CheckEnvCallsCommand extends Command
 {
     protected $signature = 'check:bad_practices
         {--f|file= : Pattern for file names to scan}
@@ -24,23 +23,17 @@ class CheckBadPractice extends Command
     public function handle()
     {
         event('microscope.start.command');
-        $this->info('Checking bad practices...');
+        $this->info('Checking for env() calls outside config files...');
 
         $this->checkPaths(RoutePaths::get());
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $pathsList = [
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $fileName, $folder),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $fileName, $folder),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $fileName, $folder),
-        ];
+        $paths = LaravelPaths::getMigrationsFiles($fileName, $folder);
 
-        foreach ($pathsList as $paths) {
-            foreach ($paths as $path) {
-                $this->checkPaths($path);
-            }
+        foreach ($paths as $path) {
+            $this->checkPaths($path);
         }
 
         $this->checkPsr4Classes();

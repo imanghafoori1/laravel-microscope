@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\ExtractsBladePartials;
 
 use Exception;
 use Illuminate\Support\Facades\View;

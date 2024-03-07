@@ -1,14 +1,13 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\ExtractsBladePartials;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\ExtractBladePartial;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
-class CheckExtractBladeIncludes extends Command
+class CheckExtractBladeIncludesCommand extends Command
 {
     use LogsErrors;
 

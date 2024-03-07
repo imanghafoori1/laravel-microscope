@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
@@ -88,8 +87,22 @@ class CheckCompact extends Command
 
             unset($vars['$this']);
             $missingVars = array_diff_key($compactVars, $vars);
-            $missingVars && CompactCall::warn($absPath, $methodBody[$pp][2], $missingVars);
+
+            self::compactError(
+                $absPath,
+                $methodBody[$pp][2],
+                $missingVars,
+                'CompactCall',
+                'compact() function call has problems man!');
         }
+    }
+
+    private static function compactError($path, $lineNumber, $absent, $key, $header)
+    {
+        $p = ErrorPrinter::singleton();
+        $errorData = $p->color(\implode(', ', array_keys($absent))).' does not exist';
+
+        $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }
 
     private function collectSignatureVars($tokens, $i)

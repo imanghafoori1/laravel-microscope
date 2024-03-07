@@ -167,9 +167,7 @@ class ErrorPrinter
 
     public function logErrors()
     {
-        $errList = $this->errorsList;
-
-        foreach ($errList as $list) {
+        foreach ($this->errorsList as $list) {
             foreach ($list as $error) {
                 $this->printHeader($error->getHeader());
                 $this->print($error->getErrorData());
@@ -194,19 +192,7 @@ class ErrorPrinter
 
     public function printTime()
     {
-        $this->logErrors && $this->printer->writeln('time: '.round(microtime(true) - microscope_start, 3).' (sec)', 2);
-    }
-
-    public static function thanks($command)
-    {
-        $command->line(PHP_EOL.'<fg=blue>|-------------------------------------------------|</>');
-        $command->line('<fg=blue>|-----------     Star Me On Github     -----------|</>');
-        $command->line('<fg=blue>|-------------------------------------------------|</>');
-        $command->line('<fg=blue>|  Hey man, if you have found microscope useful   |</>');
-        $command->line('<fg=blue>|  Please consider giving it an star on github.   |</>');
-        $command->line('<fg=blue>|  \(^_^)/    Regards, Iman Ghafoori    \(^_^)/   |</>');
-        $command->line('<fg=blue>|-------------------------------------------------|</>');
-        $command->line('https://github.com/imanghafoori1/microscope');
+        $this->logErrors && $this->printer->writeln($this->getTimeMessage(), 2);
     }
 
     /**
@@ -256,5 +242,13 @@ class ErrorPrinter
         }
 
         return false;
+    }
+
+    private function getTimeMessage()
+    {
+        $duration = microtime(true) - microscope_start;
+        $duration = round($duration, 3);
+
+        return "time: {$duration} (sec)";
     }
 }

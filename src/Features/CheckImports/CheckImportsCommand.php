@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
-use DateInterval;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -15,6 +14,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
+use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
@@ -108,7 +108,7 @@ class CheckImportsCommand extends Command
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
-            self::getLaravelFolders(),
+            $this->getLaravelFolders(),
             $paramProvider,
             $fileName,
             $folder,
@@ -143,8 +143,8 @@ class CheckImportsCommand extends Command
 
         $errorPrinter->printTime();
 
-        if ($this->shouldRequestThanks()) {
-            ErrorPrinter::thanks($this);
+        if (Thanks::shouldShow()) {
+            $this->printThanks($this);
         }
 
         $this->line('');
@@ -152,19 +152,12 @@ class CheckImportsCommand extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private function shouldRequestThanks(): bool
+    private function printThanks($command)
     {
-        $key = 'microscope_thanks_throttle';
-
-        if (cache()->get($key)) {
-            return false;
+        $command->line(PHP_EOL);
+        foreach (Thanks::messages() as $msg) {
+            $command->line($msg);
         }
-
-        // $currentCommandName = request()->server('argv')[1] ?? '';
-        $show = random_int(1, 5) === 2;
-        $show && cache()->set($key, '_', DateInterval::createFromDateString('3 days'));
-
-        return $show;
     }
 
     /**
@@ -189,7 +182,7 @@ class CheckImportsCommand extends Command
     /**
      * @return array<string, \Generator>
      */
-    private static function getLaravelFolders()
+    private function getLaravelFolders()
     {
         return [
             'config' => LaravelPaths::configDirs(),

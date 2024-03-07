@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Throwable;
 
@@ -56,6 +57,11 @@ class LaravelPaths
         }
 
         yield app()->databasePath('migrations');
+    }
+
+    public static function getMigrationsFiles($fileName, $folder)
+    {
+        return Paths::getAbsFilePaths(self::migrationDirs(), $fileName, $folder);
     }
 
     /**

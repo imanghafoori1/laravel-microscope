@@ -1,25 +1,25 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
 use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorTypes\MicroEvent;
 
-class ddFound
+class EnvFound
 {
     use MicroEvent;
 
     public static function listen()
     {
-        Event::listen(self::class, function (ddFound $event) {
+        Event::listen(self::class, function (EnvFound $event) {
             $data = $event->data;
             ErrorPrinter::singleton()->simplePendError(
                 $data['name'],
                 $data['absPath'],
                 $data['lineNumber'],
-                'ddFound',
-                'Debug function found: '
+                'envFound',
+                'env() function found: '
             );
         });
     }

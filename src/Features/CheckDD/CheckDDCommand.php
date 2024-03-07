@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
@@ -29,17 +28,7 @@ class CheckDDCommand extends Command
 
         $this->checkPaths(RoutePaths::get());
 
-        $paths = [
-            Paths::getAbsFilePaths(LaravelPaths::migrationDirs(), $file, $folder),
-            Paths::getAbsFilePaths(LaravelPaths::seedersDir(), $file, $folder),
-            Paths::getAbsFilePaths(LaravelPaths::factoryDirs(), $file, $folder),
-        ];
-
-        foreach ($paths as $path) {
-            foreach ($path as $p) {
-                $this->checkPaths($p);
-            }
-        }
+        $this->checkMigrations($file, $folder);
 
         $this->checkPsr4Classes();
 
@@ -87,6 +76,15 @@ class CheckDDCommand extends Command
                     }
                 }
             }
+        }
+    }
+
+    private function checkMigrations(string $fileName, string $folderName)
+    {
+        $paths = LaravelPaths::getMigrationsFiles($fileName, $folderName);
+
+        foreach ($paths as $path) {
+            $this->checkPaths($path);
         }
     }
 }

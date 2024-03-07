@@ -17,12 +17,7 @@ class NamespaceFixer
         $tokens = token_get_all(file_get_contents($absPath));
         if ($oldLine !== '<?php') {
             // replacement
-            [$newVersion, $lines] = Searcher::searchReplace([
-                'fix' => [
-                    'search' => 'namespace '.$oldLine.';',
-                    'replace' => 'namespace '.$newline.';',
-                ],
-            ], $tokens);
+            [$newVersion, $lines] = Searcher::searchReplace(self::getPattern($oldLine, $newline), $tokens);
             Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
         } elseif ($tokens[2][0] !== T_DECLARE) {
             // insertion
@@ -44,5 +39,15 @@ class NamespaceFixer
 
         // In case there is no namespace specified in the file:
         return ['<?php', 'namespace '.$correctNamespace.';'.PHP_EOL];
+    }
+
+    private static function getPattern(string $oldLine, $newline): array
+    {
+        return [
+            'fix' => [
+                'search' => 'namespace '.$oldLine.';',
+                'replace' => 'namespace '.$newline.';',
+            ],
+        ];
     }
 }

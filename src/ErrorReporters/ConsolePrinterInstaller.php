@@ -4,9 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\CompactCall;
-use Imanghafoori\LaravelMicroscope\ErrorTypes\EnvFound;
 use Imanghafoori\LaravelMicroscope\Features\CheckDD\ddFound;
+use Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls\EnvFound;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\ViewsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 
@@ -49,59 +48,17 @@ class ConsolePrinterInstaller
 
     public static function boot()
     {
-        Event::listen(ddFound::class, function (ddFound $event) {
-            $data = $event->data;
-            ErrorPrinter::singleton()->simplePendError(
-                $data['name'],
-                $data['absPath'],
-                $data['lineNumber'],
-                'ddFound',
-                'Debug function found: '
-            );
-        });
+        ddFound::listen();
 
         ViewsInstaller::boot();
 
-        self::compactCall();
-
         RouteOverrideInstaller::install();
 
-        Event::listen(EnvFound::class, function (EnvFound $event) {
-            $data = $event->data;
-            ErrorPrinter::singleton()->simplePendError(
-                $data['name'],
-                $data['absPath'],
-                $data['lineNumber'],
-                'envFound',
-                'env() function found: '
-            );
-        });
+        EnvFound::listen();
 
         Event::listen('microscope.finished.checks', function ($command) {
             self::finishCommand($command);
         });
-    }
-
-    private static function compactCall()
-    {
-        Event::listen(CompactCall::class, function ($event) {
-            $data = $event->data;
-
-            self::compactError(
-                $data['absPath'],
-                $data['lineNumber'],
-                $data['name'],
-                'CompactCall',
-                'compact() function call has problems man!');
-        });
-    }
-
-    private static function compactError($path, $lineNumber, $absent, $key, $header)
-    {
-        $p = ErrorPrinter::singleton();
-        $errorData = $p->color(\implode(', ', array_keys($absent))).' does not exist';
-
-        $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }
 
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)
