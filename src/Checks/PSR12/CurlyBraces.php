@@ -22,14 +22,14 @@ class CurlyBraces
         while ($i < $ct - 1) {
             $i++;
             $token = $tokens[$i];
-            \in_array($token[0], [T_CURLY_OPEN, '{'], true) && $level++;
+            in_array($token[0], [T_CURLY_OPEN, '{'], true) && $level++;
             if ($token[0] === '}') {
                 $level--;
                 ($isInSideClass === true && $level === 0) && ($isInSideClass = false);
             }
             if ($level === 0) {
-                if (\in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
-                    if ($tokens[$i - 1] !== T_DOUBLE_COLON) {
+                if (in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
+                    if ($tokens[$i - 1][0] !== T_DOUBLE_COLON) {
                         $isInSideClass = true;
                     }
                 }
@@ -42,7 +42,7 @@ class CurlyBraces
 
     private static function openCurly($token, $level, $tokens, $i, $classFilePath)
     {
-        if ($token == '{' && ! \in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
+        if ($token == '{' && ! in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
             $sp = str_repeat('    ', $level);
             if ($tokens[$i + 1][0] === T_WHITESPACE) {
                 if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
@@ -65,11 +65,11 @@ class CurlyBraces
         }
 
         $t = $i;
-        if (\in_array($tokens[$t - 2][0], [T_STATIC])) {
+        if (in_array($tokens[$t - 2][0], [T_STATIC])) {
             $t = $t - 2;
         }
 
-        if (! \in_array($tokens[$t - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+        if (! in_array($tokens[$t - 2][0], [T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
             array_splice($tokens, $t, 0, [[T_WHITESPACE, ' ']]);
             array_splice($tokens, $t, 0, [[T_PUBLIC, 'public']]);
             $i++;
