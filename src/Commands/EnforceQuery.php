@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -19,6 +20,8 @@ class EnforceQuery extends Command
     protected $signature = 'enforce:query {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Enforces the ::query() method call on models.';
+
+    protected $customMsg = 'No case was found to add ::query()-> to it.  \(^_^)/';
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -44,7 +47,7 @@ class EnforceQuery extends Command
         $this->checkPsr4($parsedPatterns, $patterns, $fileName, $folder);
 
         // Checks the blade files for class references.
-        // BladeFiles::check([PatternRefactorings::class], $fileName, $folder);
+        $statistics = iterator_to_array(BladeFiles::check([PatternRefactorings::class], [$parsedPatterns], $fileName, $folder));
 
         $this->finishCommand($errorPrinter);
 

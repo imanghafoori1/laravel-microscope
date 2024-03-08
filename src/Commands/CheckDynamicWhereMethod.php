@@ -8,6 +8,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -21,6 +22,8 @@ class CheckDynamicWhereMethod extends Command
     protected $signature = 'check:dynamic_wheres {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Enforces the non-dynamic where clauses.';
+
+    protected $customMsg = 'No dynamic where clause was found!   \(^_^)/';
 
     protected $excludeMethods = [
         'whereHas',
@@ -88,7 +91,7 @@ class CheckDynamicWhereMethod extends Command
         ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
 
         // Checks the blade files for class references.
-        // BladeFiles::check([PatternRefactorings::class], $fileName, $folder);
+        $statistics = iterator_to_array(BladeFiles::check([PatternRefactorings::class], [$parsedPatterns], $fileName, $folder));
 
         $this->finishCommand($errorPrinter);
 

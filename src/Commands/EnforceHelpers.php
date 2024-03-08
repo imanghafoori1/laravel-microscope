@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
@@ -20,6 +21,8 @@ class EnforceHelpers extends Command
     protected $signature = 'enforce:helper_functions {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Enforces helper functions over laravel internal facades.';
+
+    protected $customMsg = 'No facade was found to be replaced by helper functions.  \(^_^)/';
 
     public function handle(ErrorPrinter $errorPrinter)
     {
@@ -46,7 +49,7 @@ class EnforceHelpers extends Command
 
         ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
         // Checks the blade files for class references.
-        // BladeFiles::check([PatternRefactorings::class], $fileName, $folder);
+        $statistics = iterator_to_array(BladeFiles::check([PatternRefactorings::class], [$parsedPatterns], $fileName, $folder));
 
         $this->finishCommand($errorPrinter);
 
