@@ -5,21 +5,19 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
-use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
-use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 class EnforceHelpers extends Command
 {
     use LogsErrors;
+    use PatternApply;
 
-    protected $signature = 'enforce:helper_functions {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'enforce:helper_functions {--f|file=} {--d|folder=}';
 
     protected $description = 'Enforces helper functions over laravel internal facades.';
 
@@ -29,8 +27,6 @@ class EnforceHelpers extends Command
     {
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
-
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $errorPrinter->printer = $this->output;
 
@@ -46,12 +42,12 @@ class EnforceHelpers extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $patterns = $this->getPatterns();
-        $parsedPatterns = PatternParser::parsePatterns($patterns);
+        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
+            $errorPrinter->flushErrors();
+        };
 
-        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
-        // Checks the blade files for class references.
-        $statistics = iterator_to_array(BladeFiles::check([PatternRefactorings::class], [$parsedPatterns], $fileName, $folder));
+        $patterns = $this->getPatterns();
+        $this->appliesPatterns($patterns, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
 

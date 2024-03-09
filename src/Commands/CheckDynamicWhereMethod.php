@@ -7,19 +7,17 @@ use Illuminate\Database\Eloquent\Concerns\QueriesRelationships;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
-use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
-use Imanghafoori\SearchReplace\PatternParser;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 class CheckDynamicWhereMethod extends Command
 {
     use LogsErrors;
+    use PatternApply;
 
-    protected $signature = 'check:dynamic_wheres {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:dynamic_wheres {--f|file=} {--d|folder=}';
 
     protected $description = 'Enforces the non-dynamic where clauses.';
 
@@ -64,14 +62,13 @@ class CheckDynamicWhereMethod extends Command
         'whereStrict',
         'whereInStrict',
         'whereNotInStrict',
+        'whereAny',
     ];
 
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
-
-        $this->option('nofix') && config(['microscope.no_fix' => true]);
 
         $errorPrinter->printer = $this->output;
 
@@ -85,13 +82,12 @@ class CheckDynamicWhereMethod extends Command
 
         $errorPrinter->printer = $this->output;
 
+        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
+            $errorPrinter->flushErrors();
+        };
+
         $patterns = $this->getPatterns();
-        $parsedPatterns = PatternParser::parsePatterns($patterns);
-
-        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $fileName, $folder);
-
-        // Checks the blade files for class references.
-        $statistics = iterator_to_array(BladeFiles::check([PatternRefactorings::class], [$parsedPatterns], $fileName, $folder));
+        $this->appliesPatterns($patterns, $fileName, $folder);
 
         $this->finishCommand($errorPrinter);
 
