@@ -33,5 +33,4 @@ class Thanks
             'https://github.com/imanghafoori1/microscope',
         ];
     }
-
 }
