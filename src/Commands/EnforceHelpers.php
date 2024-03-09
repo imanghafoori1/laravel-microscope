@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
+use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -37,6 +38,7 @@ class EnforceHelpers extends Command
         $folder = ltrim($this->option('folder'), '=');
         Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
         Filters::$filters['full_namespace_pattern'] = FullNamespaceIs::class;
+        Filters::$filters['namespace_pattern'] = NamespaceIs::class;
 
         app()->singleton('current.command', function () {
             return $this;
@@ -60,8 +62,14 @@ class EnforceHelpers extends Command
 
     private function getPatterns(): array
     {
+        $mutator = function ($matches) {
+            $matches[0][1] = strtolower($matches[0][1]);
+
+            return $matches;
+        };
+
         return [
-            'pattern_name' => [
+            'full_facade_paths' => [
                 'search' => '<class_ref>::',
                 'replace' => '<1>()->',
                 'filters' => [
@@ -71,11 +79,18 @@ class EnforceHelpers extends Command
                         'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
                     ],
                 ],
-                'mutator' => function ($matches) {
-                    $matches[0][1] = strtolower($matches[0][1]);
-
-                    return $matches;
-                },
+                'mutator' => $mutator,
+            ],
+            'facade_aliases' => [
+                'search' => '<class_ref>::',
+                'replace' => '<1>()->',
+                'filters' => [
+                    1 => [
+                        'namespace_pattern' => '',
+                        'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
+                    ],
+                ],
+                'mutator' => $mutator,
             ],
         ];
     }
