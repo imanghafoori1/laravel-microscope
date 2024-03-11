@@ -32,10 +32,6 @@ class EnforceQuery extends Command
         $folder = ltrim($this->option('folder'), '=');
         Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
 
-        app()->singleton('current.command', function () {
-            return $this;
-        });
-
         $errorPrinter->printer = $this->output;
 
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {

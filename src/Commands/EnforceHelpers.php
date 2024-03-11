@@ -36,10 +36,6 @@ class EnforceHelpers extends Command
         Filters::$filters['full_namespace_pattern'] = FullNamespaceIs::class;
         Filters::$filters['namespace_pattern'] = NamespaceIs::class;
 
-        app()->singleton('current.command', function () {
-            return $this;
-        });
-
         $errorPrinter->printer = $this->output;
 
         Reporters\Psr4Report::$callback = function () use ($errorPrinter) {

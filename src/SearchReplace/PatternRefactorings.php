@@ -89,7 +89,7 @@ class PatternRefactorings
     {
         $text = 'Do you want to replace '.basename($absFilePath).' with new version of it?';
 
-        return app('current.command')->getOutput()->confirm($text, true);
+        return ErrorPrinter::singleton()->printer->confirm($text);
     }
 
     private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)

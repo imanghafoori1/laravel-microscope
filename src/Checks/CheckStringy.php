@@ -43,7 +43,7 @@ class CheckStringy
                 $errorPrinter->printLink($absFilePath, $token[2]);
                 $command = app('current.command');
 
-                if (! self::ask($command, $token, $absFilePath)) {
+                if (! self::ask($errorPrinter->printer, $token, $absFilePath)) {
                     continue;
                 }
 
@@ -81,12 +81,12 @@ class CheckStringy
             ! Str::endsWith($classPath, '\\');
     }
 
-    private static function ask($command, $token, $absFilePath)
+    private static function ask($printer, $token, $absFilePath)
     {
-        $command->getOutput()->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
+        $printer->text($token[2].' |'.file($absFilePath)[$token[2] - 1]);
         $text = 'Replace: <fg=blue>'.$token[1].'</> with <fg=blue>::class</> version of it?';
 
-        return $command->getOutput()->confirm($text, true);
+        return $printer->confirm($text, true);
     }
 
     private static function refersToDir(string $classPath)

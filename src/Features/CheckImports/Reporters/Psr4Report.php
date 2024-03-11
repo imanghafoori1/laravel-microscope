@@ -54,7 +54,7 @@ class Psr4Report
             if (! $folders) {
                 continue;
             }
-            (self::$callback)();
+            self::$callback && ((self::$callback)());
             $i++;
             $lengths[] = strlen($psr4Namespace);
             $lines[$i][0] = PHP_EOL.self::getPsr4Head();
@@ -62,14 +62,7 @@ class Psr4Report
             $lines[$i][2] = $folders;
         }
 
-        $longest = max($lengths);
-
-        foreach ($lines as $i => $line) {
-            $line[1] = self::getPsr4($longest, $line[1]);
-            $lines[$i] = $line[0].$line[1].$line[2];
-        }
-
-        return implode('', $lines);
+        return self::concatinate(max($lengths), $lines);
     }
 
     #[Pure]
@@ -127,5 +120,15 @@ class Psr4Report
         }
 
         return $output;
+    }
+
+    private static function concatinate($longest, array $lines)
+    {
+        foreach ($lines as $i => $line) {
+            $line[1] = self::getPsr4($longest, $line[1]);
+            $lines[$i] = implode('', $line);
+        }
+
+        return implode('', $lines);
     }
 }
