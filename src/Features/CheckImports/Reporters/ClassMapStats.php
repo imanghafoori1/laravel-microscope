@@ -24,7 +24,7 @@ class ClassMapStats
             $total += $count;
             $c++;
             $lines .= self::addLine($path, $count);
-            $callback($path, $count);
+            $callback && $callback($path, $count);
         }
 
         if ($total) {

@@ -8,9 +8,9 @@ abstract class BaseIterator
     {
         foreach ($absFilePaths as $absFilePath) {
             $tokens = token_get_all(file_get_contents($absFilePath));
-            $params = $paramProvider($tokens);
+            $params = $paramProvider ? $paramProvider($tokens) : [];
             foreach ($checks as $check) {
-                $check::check($tokens, $absFilePath, $params);
+                $check::check($tokens, $absFilePath, $params, $absFilePath);
             }
             yield $absFilePath;
         }

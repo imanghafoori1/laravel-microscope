@@ -14,7 +14,7 @@ class ClassMapIterator extends BaseIterator
      * @param  string  $fileName
      * @return array<string, \Generator>
      */
-    public static function iterate($basePath, $checks, $paramProvider, $folder, $fileName)
+    public static function iterate($basePath, $checks, $paramProvider = null, $folder = '', $fileName = '')
     {
         $classMapFiles = ComposerJson::getClassMaps($basePath, $folder, $fileName);
 
