@@ -6,7 +6,6 @@ use Illuminate\Routing\Controller;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Str;
 use ReflectionClass;

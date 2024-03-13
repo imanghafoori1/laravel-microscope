@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
-use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
-class ActionsComments implements Psr4Check
+class ActionsComments implements Check
 {
     public static $command;
 
