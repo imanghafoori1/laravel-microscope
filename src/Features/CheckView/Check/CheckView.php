@@ -3,11 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\BladeFile;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
-class CheckView
+class CheckView implements Check
 {
     public static $checkedCallsCount = 0;
 

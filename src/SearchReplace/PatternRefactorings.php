@@ -4,13 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\Filesystem\Filesystem;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
 use Imanghafoori\SearchReplace\Stringify;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
-class PatternRefactorings
+class PatternRefactorings implements Check
 {
     public static $patternFound = false;
 

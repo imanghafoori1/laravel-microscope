@@ -2,10 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
-class CheckClassReferencesAreValid
+class CheckClassReferencesAreValid implements Check
 {
     public static $checkWrong = true;
 

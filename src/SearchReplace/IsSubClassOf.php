@@ -2,10 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class IsSubClassOf
+class IsSubClassOf implements Check
 {
     public static function check($placeholderVal, $parameter, $tokens)
     {

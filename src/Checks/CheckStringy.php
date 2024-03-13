@@ -5,11 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Symfony\Component\Console\Terminal;
 
-class CheckStringy
+class CheckStringy implements Check
 {
     public static function check($tokens, $absFilePath)
     {

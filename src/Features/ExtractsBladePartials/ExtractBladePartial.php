@@ -5,10 +5,11 @@ namespace Imanghafoori\LaravelMicroscope\Features\ExtractsBladePartials;
 use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use InvalidArgumentException;
 
-class ExtractBladePartial
+class ExtractBladePartial implements Check
 {
     public static function check($tokens, $absPath)
     {

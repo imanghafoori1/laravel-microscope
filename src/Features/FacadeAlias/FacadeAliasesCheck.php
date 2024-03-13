@@ -3,8 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Foundation\AliasLoader;
+use Imanghafoori\LaravelMicroscope\Check;
 
-class FacadeAliasesCheck
+class FacadeAliasesCheck implements Check
 {
     /**
      * @var class-string

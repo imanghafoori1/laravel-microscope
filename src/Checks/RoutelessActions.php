@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Routing\Controller;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
@@ -11,7 +12,7 @@ use Imanghafoori\TokenAnalyzer\Str;
 use ReflectionClass;
 use Throwable;
 
-class RoutelessActions implements Psr4Check
+class RoutelessActions implements Check
 {
     public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
     {

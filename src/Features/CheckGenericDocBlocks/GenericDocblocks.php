@@ -2,12 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\LaravelMicroscope\Psr4Check;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\Str;
 
-class GenericDocblocks implements Psr4Check
+class GenericDocblocks implements Check
 {
     const statements = [
         '* Display a listing of the resource.',

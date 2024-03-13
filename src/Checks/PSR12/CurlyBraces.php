@@ -2,9 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Checks\PSR12;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
-class CurlyBraces
+class CurlyBraces implements Check
 {
     public static $command;
 

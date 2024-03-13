@@ -2,9 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 
-class CheckClassAtMethod
+class CheckClassAtMethod implements Check
 {
     public static $handler = ClassAtMethodHandler::class;
 

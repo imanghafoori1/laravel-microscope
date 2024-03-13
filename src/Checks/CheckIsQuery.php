@@ -4,10 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class CheckIsQuery
+class CheckIsQuery implements Check
 {
     public static function check($tokens, $absPath)
     {

@@ -3,8 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\Check;
 
-class BladeFiles
+class BladeFiles implements Check
 {
     /**
      * @param  $checkers

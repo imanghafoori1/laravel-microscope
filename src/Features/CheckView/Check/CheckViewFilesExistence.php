@@ -3,9 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Illuminate\Support\Facades\View;
+use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\BladeFile;
 
-class CheckViewFilesExistence
+class CheckViewFilesExistence implements Check
 {
     public static function check($tokens, $absPath)
     {
