@@ -9,12 +9,12 @@ class CurlyBraces implements Check
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check($tokens, $absFilePath)
     {
-        self::addPublicKeyword($tokens, $classFilePath->getRealpath());
+        self::addPublicKeyword($tokens, $absFilePath);
     }
 
-    private static function addPublicKeyword($tokens, $classFilePath)
+    private static function addPublicKeyword($tokens, $absolutePath)
     {
         $level = 0;
         $isInSideClass = false;
@@ -28,16 +28,12 @@ class CurlyBraces implements Check
                 $level--;
                 ($isInSideClass === true && $level === 0) && ($isInSideClass = false);
             }
-            if ($level === 0) {
-                if (in_array($token[0], [T_CLASS, T_TRAIT, T_INTERFACE])) {
-                    if ($tokens[$i - 1][0] !== T_DOUBLE_COLON) {
-                        $isInSideClass = true;
-                    }
-                }
+            if (self::isGoingInsideClass($level, $token[0], $tokens[$i - 1][0])) {
+                $isInSideClass = true;
             }
-            self::openCurly($token, $level, $tokens, $i, $classFilePath);
+            self::openCurly($token, $level, $tokens, $i, $absolutePath);
 
-            [$tokens, $i] = self::writePublic($level, $token, $isInSideClass, $i, $tokens, $classFilePath);
+            [$tokens, $i] = self::writePublic($level, $token, $isInSideClass, $i, $tokens, $absolutePath);
         }
     }
 
@@ -79,5 +75,10 @@ class CurlyBraces implements Check
         }
 
         return [$tokens, $i];
+    }
+
+    private static function isGoingInsideClass($level, $token, $previousToken): bool
+    {
+        return $level === 0 && in_array($token, [T_CLASS, T_TRAIT, T_INTERFACE]) && $previousToken !== T_DOUBLE_COLON;
     }
 }

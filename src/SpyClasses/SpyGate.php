@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Exception;
 use Illuminate\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -11,6 +12,15 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 class SpyGate extends Gate
 {
     public static $definedGatesNum = 0;
+
+    public static function start()
+    {
+        app()->singleton(GateContract::class, function ($app) {
+            return new self($app, function () use ($app) {
+                return call_user_func($app['auth']->userResolver());
+            });
+        });
+    }
 
     public function define($ability, $callback)
     {

@@ -43,7 +43,7 @@ class CheckAliasesCommand extends Command
 
         $check = [FacadeAliasesCheck::class];
         $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $folder, $fileName);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),

@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
-use Imanghafoori\LaravelMicroscope\SpyClasses\ViewsData;
 use Symfony\Component\Finder\Finder;
 
 class CheckBladePaths
@@ -70,11 +70,11 @@ class CheckBladePaths
 
     /**
      * @param  \Iterator  $files
-     * @param  callable|array  $params
+     * @param  callable|array  $paramsProvider
      * @param  $checkers
      * @return int
      */
-    private static function applyChecks($files, $params, $checkers): int
+    private static function applyChecks($files, $paramsProvider, $checkers): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -84,7 +84,7 @@ class CheckBladePaths
              */
             $absPath = $blade->getPathname();
             $tokens = ViewsData::getBladeTokens($absPath);
-            $params1 = (! is_array($params) && is_callable($params)) ? $params($tokens, $absPath) : $params;
+            $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($tokens, $absPath) : $paramsProvider;
 
             foreach ($checkers as $check) {
                 $check::check($tokens, $absPath, $params1);

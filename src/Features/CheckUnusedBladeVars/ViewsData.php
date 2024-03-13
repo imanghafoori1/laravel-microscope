@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SpyClasses;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars;
 
 use Imanghafoori\TokenAnalyzer\TokenManager;
 

@@ -15,14 +15,14 @@ trait PatternApply
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $cb = function () use ($parsedPatterns) {
+        $paramProvider = function () use ($parsedPatterns) {
             return [$parsedPatterns];
         };
 
         $check = [PatternRefactorings::class];
 
-        $psr4Stats = ForPsr4LoadedClasses::check($check, $cb, $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $cb, $folder, $fileName);
+        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [$parsedPatterns], $fileName, $folder);
         $bladeStats = BladeFiles::check($check, [$parsedPatterns], $fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [

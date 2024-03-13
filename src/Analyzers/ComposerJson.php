@@ -25,18 +25,18 @@ class ComposerJson
         return self::make()->autoloadedFilesList($basePath);
     }
 
-    public static function getClassMaps($basePath, $folder = '', $fileName = '')
+    public static function getClassMaps($basePath, $fileName = '', $folder = '')
     {
-        foreach (self::make()->readAutoloadClassMap() as $compPath => $classMaps) {
-            yield $compPath => self::getFilteredClasses($compPath, $classMaps, $basePath, $folder, $fileName);
+        foreach (self::make()->readAutoloadClassMap() as $composerPath => $classMapPaths) {
+            yield $composerPath => self::getFilteredClasses($composerPath, $classMapPaths, $basePath, $fileName, $folder);
         }
     }
 
-    private static function getFilteredClasses($compPath, $classMapPaths, $basePath, $folder, $fileName)
+    private static function getFilteredClasses($composerPath, $classMapPaths, $basePath, $fileName, $folder)
     {
         foreach ($classMapPaths as $classmapPath) {
-            $classes = self::getClasses($compPath, $basePath, $classmapPath);
-            yield $classmapPath => self::filterClasses($classes, $basePath, $folder, $fileName);
+            $classes = self::getClasses($composerPath, $basePath, $classmapPath);
+            yield $classmapPath => self::filterClasses($classes, $basePath, $fileName, $folder);
         }
     }
 
@@ -49,7 +49,7 @@ class ComposerJson
         return array_values(ClassMapGenerator::createMap($classmapFullPath));
     }
 
-    private static function filterClasses(array $classes, $basePath, $folder, $fileName)
+    private static function filterClasses(array $classes, $basePath, $fileName, $folder)
     {
         foreach ($classes as $i => $class) {
             if (! FilePath::contains(str_replace($basePath, '', $class), $folder, $fileName)) {

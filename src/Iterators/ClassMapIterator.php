@@ -8,15 +8,15 @@ class ClassMapIterator extends BaseIterator
 {
     /**
      * @param  string  $basePath
-     * @param  \Closure  $paramProvider
      * @param  array  $checks
+     * @param  \Closure| null  $paramProvider
      * @param  string  $folder
      * @param  string  $fileName
      * @return array<string, \Generator>
      */
-    public static function iterate($basePath, $checks, $paramProvider = null, $folder = '', $fileName = '')
+    public static function iterate($basePath, $checks, $paramProvider = null, $fileName = '', $folder = '')
     {
-        $classMapFiles = ComposerJson::getClassMaps($basePath, $folder, $fileName);
+        $classMapFiles = ComposerJson::getClassMaps($basePath, $fileName, $folder);
 
         $results = [];
         foreach ($classMapFiles as $composerPath => $classMap) {
