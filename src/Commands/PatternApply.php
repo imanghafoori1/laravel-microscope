@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
@@ -11,6 +12,29 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 trait PatternApply
 {
+    abstract function getPatterns();
+
+    private function patternCommand(ErrorPrinter $errorPrinter): int
+    {
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        $errorPrinter->printer = $this->output;
+
+        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
+            $errorPrinter->flushErrors();
+        };
+
+        $patterns = $this->getPatterns();
+        $this->appliesPatterns($patterns, $fileName, $folder);
+
+        $this->finishCommand($errorPrinter);
+
+        $errorPrinter->printTime();
+
+        return $errorPrinter->hasErrors() ? 1 : 0;
+    }
+
     private function appliesPatterns(array $patterns, string $fileName, string $folder): void
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);

@@ -8,7 +8,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 class EnforceQuery extends Command
 {
@@ -26,26 +25,9 @@ class EnforceQuery extends Command
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
 
-        $errorPrinter->printer = $this->output;
-
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
         Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
 
-        $errorPrinter->printer = $this->output;
-
-        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
-            $errorPrinter->flushErrors();
-        };
-
-        $patterns = $this->getPatterns();
-        $this->appliesPatterns($patterns, $fileName, $folder);
-
-        $this->finishCommand($errorPrinter);
-
-        $errorPrinter->printTime();
-
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return $this->patternCommand($errorPrinter);
     }
 
     private function getPatterns(): array
