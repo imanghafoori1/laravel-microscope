@@ -3,16 +3,16 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 trait PatternApply
 {
-    abstract function getPatterns();
+    abstract public function getPatterns();
 
     private function patternCommand(ErrorPrinter $errorPrinter): int
     {

@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckIsQuery;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckBladeQueries extends Command

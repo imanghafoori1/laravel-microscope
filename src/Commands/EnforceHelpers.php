@@ -6,8 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
-use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
+use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
 

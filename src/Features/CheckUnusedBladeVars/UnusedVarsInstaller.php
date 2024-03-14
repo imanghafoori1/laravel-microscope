@@ -22,7 +22,7 @@ class UnusedVarsInstaller
 
         app()->terminating(function () {
             /**
-             * @var  $spy  ViewsData
+             * @var $spy  ViewsData
              */
             $spy = resolve('microscope.views');
             if (! $spy->main || Str::startsWith($spy->main->getName(), ['errors::'])) {

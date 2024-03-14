@@ -54,7 +54,7 @@ class Psr4Report
             if (! $folders) {
                 continue;
             }
-            self::$callback && ((self::$callback)());
+            self::$callback && (self::$callback)();
             $i++;
             $lengths[] = strlen($psr4Namespace);
             $lines[$i][0] = PHP_EOL.self::getPsr4Head();
