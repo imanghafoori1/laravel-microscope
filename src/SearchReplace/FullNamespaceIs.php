@@ -3,11 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class FullNamespaceIs implements Check
+class FullNamespaceIs
 {
     public static function check($placeholderVal, $parameter, $tokens)
     {

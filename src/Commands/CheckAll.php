@@ -28,12 +28,12 @@ class CheckAll extends Command
         $this->call('check:imports', ['--nofix' => $this->option('nofix')]);
         $this->call('check:events');
         $this->call('check:gates');
-        $this->call('check:views', ['--detailed' => $this->option('detailed')]);
+        $this->call('check:views');
         $this->call('check:routes');
         $this->call('check:stringy_classes');
         $this->call('check:dd');
         $this->call('check:dead_controllers');
-        $this->call('check:early_returns', ['--nofix' => true]);
+        CheckEarlyReturns::applyCheckEarly('', '', true);
         $this->call('check:bad_practices');
 
         // turns on error logging.

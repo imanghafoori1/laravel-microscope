@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\PSR12\CurlyBraces;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -13,7 +14,7 @@ class CheckPsr12 extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:psr12';
+    protected $signature = 'check:psr12 {--f|file=} {--d|folder=}';
 
     protected $description = 'Applies psr-12 rules';
 
@@ -30,7 +31,14 @@ class CheckPsr12 extends Command
 
         ActionsComments::$command = $this;
 
-        ForPsr4LoadedClasses::checkNow([CurlyBraces::class]);
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        $psr4Stats = ForPsr4LoadedClasses::check([CurlyBraces::class], [], $fileName, $folder);
+
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
 
         $this->finishCommand($errorPrinter);
 

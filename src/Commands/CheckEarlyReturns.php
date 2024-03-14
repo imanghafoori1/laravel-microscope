@@ -2,111 +2,39 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
-use Imanghafoori\TokenAnalyzer\Refactor;
-use Symfony\Component\Console\Terminal;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckEarlyReturns extends Command
 {
-    protected $signature = 'check:early_returns {--t|test : backup the changed files} {--s|nofix}';
+    protected $signature = 'check:early_returns {--s|nofix} {--f|file=} {--d|folder=}';
 
     protected $description = 'Applies the early return on the classes';
 
     public function handle()
     {
+        ErrorPrinter::singleton($this->output);
+
         if ($this->option('nofix')) {
             $this->info(PHP_EOL.' Checking for possible code flattenings...'.PHP_EOL);
         }
 
         if (! $this->option('nofix') && ! $this->startWarning()) {
-            return;
+            return 0;
         }
 
-        $fixingFilesCount = $totalNumberOfFixes = $fixedFilesCount = 0;
-        foreach (ComposerJson::readPsr4() as $autoload) {
-            foreach ($autoload as $psr4Namespace => $psr4Paths) {
-                foreach ((array) $psr4Paths as $psr4Path) {
-                    $files = PhpFinder::getAllPhpFiles($psr4Path);
-                    foreach ($files as $file) {
-                        $path = $file->getRealPath();
-                        $tokens = token_get_all(file_get_contents($path));
-                        if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
-                            continue;
-                        }
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+        $psr4Stats = self::applyCheckEarly($fileName, $folder, $this->option('nofix'));
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
 
-                        try {
-                            [$fixes, $tokens] = $this->refactor($tokens);
-                        } catch (Exception $e) {
-                            dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
-                            dump('Skipping : '.$path);
-                            continue;
-                        }
-
-                        $fixes !== 0 && $fixingFilesCount++;
-
-                        if ($this->option('nofix') && $fixes !== 0) {
-                            $this->line('<fg=red>    - '.FilePath::getRelativePath($path).'</fg=red>');
-                            continue;
-                        }
-
-                        if ($fixes == 0 || ! $this->getConfirm($path)) {
-                            continue;
-                        }
-
-                        $this->fix($path, $tokens, $fixes);
-                        $fixedFilesCount++;
-                        $totalNumberOfFixes += $fixes;
-                    }
-                }
-            }
-        }
-
-        $this->printFinalMsg($fixedFilesCount, $fixingFilesCount);
-
-        return ErrorPrinter::singleton($this->getOutput())->hasErrors() ? 1 : 0;
-    }
-
-    private function fix($filePath, $tokens, $tries)
-    {
-        Refactor::saveTokens($filePath, $tokens, $this->option('test'));
-
-        $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
-    }
-
-    private function refactor($tokens)
-    {
-        $fixes = 0;
-        do {
-            [$tokens, $refactored] = Refactor::flatten($tokens);
-        } while ($refactored > 0 && $fixes++);
-
-        return [$fixes, $tokens];
-    }
-
-    private function printFinalMsg($fixed, $fixingFilesCount)
-    {
-        if ($fixed > 0) {
-            $msg = ' Hooraay!!!, '.$fixed.' files were flattened by laravel-microscope!';
-        } elseif ($fixingFilesCount == 0) {
-            $msg = ' Congratulations, your code base does not seems to need any flattening. <fg=red> \(^_^)/ </fg=red>';
-        } elseif ($fixingFilesCount !== 0 && $this->option('nofix')) {
-            $msg = ' The files above can be flattened by: <fg=cyan>php artisan check:early</fg=cyan>';
-        }
-
-        isset($msg) && $this->info(PHP_EOL.$msg);
-        $this->info(' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>');
-    }
-
-    private function getConfirm($filePath)
-    {
-        $filePath = FilePath::getRelativePath($filePath);
-
-        return $this->output->confirm(' Do you want to flatten: <fg=yellow>'.$filePath.'</>', true);
+        return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }
 
     private function startWarning()
@@ -114,6 +42,26 @@ class CheckEarlyReturns extends Command
         $this->info(PHP_EOL.' Checking for Early Returns...');
         $this->warn(' Warning: This command is going to make "CHANGES" to your files!');
 
-        return $this->output->confirm(' Do you have committed everything in git?', false);
+        return $this->output->confirm(' Do you have committed everything in git?');
+    }
+
+    private static function getParams($nofix): array
+    {
+        $params = [
+            'nofix' => $nofix,
+            'nofixCallback' => function ($absPath) {
+                $this->line('<fg=red>    - '.FilePath::getRelativePath($absPath).'</fg=red>');
+            },
+            'fixCallback' => function ($filePath, $tries) {
+                $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
+            }
+        ];
+
+        return $params;
+    }
+
+    public static function applyCheckEarly(string $fileName, string $folder, $nofix): array
+    {
+        return ForPsr4LoadedClasses::check([CheckEarlyReturn::class], self::getParams($nofix), $fileName, $folder);
     }
 }

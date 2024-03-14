@@ -7,44 +7,59 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Refactor;
-use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 
 class CheckEarlyReturn implements Check
 {
-    public static function check($tokens, $absFilePath, $isTest)
+    public static function check(array $tokens, $absFilePath, $params)
     {
+        $nofix = $params['nofix'];
+        $nofixCallback = $params['nofixCallback'];
+        $fixCallback = $params['fixCallback'];
+
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
-            return false;
+            return;
         }
 
         try {
-            $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
+            [$fixes, $tokens] = self::refactor($tokens);
         } catch (Exception $e) {
-            self::requestIssue($absFilePath);
+            dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
+            dump('Skipping : '.$absFilePath);
 
-            return false;
+            return;
         }
 
-        if (SyntaxNormalizer::$hasChange && self::getConfirm($absFilePath)) {
-            Refactor::saveTokens($absFilePath, $tokens, $isTest);
-
-            return true;
+        if ($fixes === 0) {
+            return;
         }
 
-        return false;
+        if ($nofix) {
+            $nofixCallback($absFilePath);
+        } elseif (self::getConfirm($absFilePath)) {
+            self::fix($absFilePath, $tokens, $fixes, $fixCallback);
+        }
     }
 
-    private static function getConfirm($filePath)
+    private static function getConfirm($absFilePath)
     {
-        $filePath = FilePath::getRelativePath($filePath);
+        $relFilePath = FilePath::getRelativePath($absFilePath);
 
-        return ErrorPrinter::singleton()->printer->confirm('Replacing endif in: '.$filePath);
+        return ErrorPrinter::singleton()->printer->confirm(' Do you want to flatten: <fg=yellow>'.$relFilePath.'</>');
     }
 
-    private static function requestIssue(string $path)
+    private static function refactor($tokens)
     {
-        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
-        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
-        dump('Send us the contents of: '.$path);
+        $fixes = 0;
+        do {
+            [$tokens, $refactored] = Refactor::flatten($tokens);
+        } while ($refactored > 0 && $fixes++);
+
+        return [$fixes, $tokens];
+    }
+
+    private static function fix($absFilePath, $tokens, $fixes, $fixCallback)
+    {
+        Refactor::saveTokens($absFilePath, $tokens);
+        $fixCallback($absFilePath, $fixes);
     }
 }

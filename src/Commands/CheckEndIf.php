@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -25,12 +25,7 @@ class CheckEndIf extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $psr4Stats = ForPsr4LoadedClasses::check(
-            [CheckEarlyReturn::class],
-            $this->option('test'),
-            $fileName,
-            $folder
-        );
+        $psr4Stats = self::applyRubySyntaxCheck($fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, []),
@@ -45,5 +40,10 @@ class CheckEndIf extends Command
         $this->warn('This command is going to make changes to your files!');
 
         return $this->output->confirm('Do you have committed everything in git?');
+    }
+
+    public static function applyRubySyntaxCheck(string $fileName, string $folder)
+    {
+        return ForPsr4LoadedClasses::check([CheckRubySyntax::class], [], $fileName, $folder);
     }
 }

@@ -3,11 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class NamespaceIs implements Check
+class NamespaceIs
 {
     public static function check($placeholderVal, $parameter, $tokens)
     {
