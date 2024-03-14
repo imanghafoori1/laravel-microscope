@@ -54,7 +54,7 @@ class CheckEarlyReturns extends Command
             },
             'fixCallback' => function ($filePath, $tries) {
                 $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
-            }
+            },
         ];
 
         return $params;
