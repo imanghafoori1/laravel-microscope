@@ -108,11 +108,11 @@ class CheckImportsCommand extends Command
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);
 
         $foldersStats = FileIterators::checkFolders(
+            $checks,
             $this->getLaravelFolders(),
             $paramProvider,
             $fileName,
-            $folder,
-            $checks
+            $folder
         );
 
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);

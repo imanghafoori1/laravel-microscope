@@ -30,7 +30,7 @@ class FileIterators extends BaseIterator
      * @param  array  $checks
      * @return \Generator
      */
-    public static function checkFolders($dirsList, $paramProvider, $file, $folder, $checks)
+    public static function checkFolders($checks, $dirsList, $paramProvider, $file, $folder)
     {
         foreach ($dirsList as $listName => $dirs) {
             $filePathsGen = Paths::getAbsFilePaths($dirs, $file, $folder);
