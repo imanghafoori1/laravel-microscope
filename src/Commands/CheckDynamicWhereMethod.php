@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Concerns\QueriesRelationships;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -69,7 +70,7 @@ class CheckDynamicWhereMethod extends Command
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
 
-        Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
+        Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
 
         return $this->patternCommand($errorPrinter);
     }
@@ -92,16 +93,19 @@ class CheckDynamicWhereMethod extends Command
 
         return [
             'pattern_name_1' => [
-                'search' => '::<name>(',
-                'replace' => '::query()->where(<1>, ',
+                'search' => '<class_ref>::<name>(',
+                'replace' => '<1>::query()->where(<2>, ',
                 'filters' => [
                     1 => [
+                        'is_subclass_of' => Model::class,
+                    ],
+                    2 => [
                         [$dynamicWhere, null],
                     ],
                 ],
                 'mutator' => $mutator,
             ],
-            'pattern_name_3' => [
+            'pattern_name_2' => [
                 'search' => ')-><name>(<in_between>)',
                 'replace' => ')->where(<1>, <2>)',
                 'filters' => [

@@ -27,7 +27,7 @@ class EnforceHelpers extends Command
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
 
-        Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
+        Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
         Filters::$filters['full_namespace_pattern'] = FullNamespaceIs::class;
         Filters::$filters['namespace_pattern'] = NamespaceIs::class;
 
@@ -49,7 +49,7 @@ class EnforceHelpers extends Command
                 'filters' => [
                     1 => [
                         'full_namespace_pattern' => 'Illuminate\\Support\\*',
-                        'is_sub_class_of' => Facade::class,
+                        'is_subclass_of' => Facade::class,
                         'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
                     ],
                 ],

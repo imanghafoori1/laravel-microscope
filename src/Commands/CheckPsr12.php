@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckPsr12 extends Command
@@ -34,10 +35,12 @@ class CheckPsr12 extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $psr4Stats = ForPsr4LoadedClasses::check([CurlyBraces::class], [], $fileName, $folder);
+        $check = [CurlyBraces::class];
+        $psr4Stats = ForPsr4LoadedClasses::check($check, [], $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
+            Psr4Report::printAutoload($psr4Stats, $classMapStats),
         ]));
 
         $this->finishCommand($errorPrinter);

@@ -25,7 +25,7 @@ class EnforceQuery extends Command
         event('microscope.start.command');
         $this->info('Soaring like an eagle...');
 
-        Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
+        Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
 
         return $this->patternCommand($errorPrinter);
     }
@@ -38,7 +38,7 @@ class EnforceQuery extends Command
                 'replace' => '<1>::query()-><2>',
                 'filters' => [
                     1 => [
-                        'is_sub_class_of' => Model::class,
+                        'is_subclass_of' => Model::class,
                     ],
                     2 => [
                         'in_array' => $this->getMethods(),

@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 
 class CheckEarlyReturns extends Command
 {
@@ -29,9 +30,9 @@ class CheckEarlyReturns extends Command
 
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
-        $psr4Stats = self::applyCheckEarly($fileName, $folder, $this->option('nofix'));
+        [$psr4Stats, $classMapStats] = self::applyCheckEarly($fileName, $folder, $this->option('nofix'));
         $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
+            Psr4Report::printAutoload($psr4Stats, $classMapStats),
         ]));
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
@@ -47,7 +48,7 @@ class CheckEarlyReturns extends Command
 
     private static function getParams($nofix): array
     {
-        $params = [
+        return [
             'nofix' => $nofix,
             'nofixCallback' => function ($absPath) {
                 $this->line('<fg=red>    - '.FilePath::getRelativePath($absPath).'</fg=red>');
@@ -56,12 +57,15 @@ class CheckEarlyReturns extends Command
                 $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
             },
         ];
-
-        return $params;
     }
 
     public static function applyCheckEarly(string $fileName, string $folder, $nofix): array
     {
-        return ForPsr4LoadedClasses::check([CheckEarlyReturn::class], self::getParams($nofix), $fileName, $folder);
+        $check = [CheckEarlyReturn::class];
+        $params = self::getParams($nofix);
+        $psr4stats = ForPsr4LoadedClasses::check($check, $params, $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $params, $fileName, $folder);
+
+        return [$psr4stats, $classMapStats];
     }
 }

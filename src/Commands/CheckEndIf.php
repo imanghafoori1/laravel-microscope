@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 
 class CheckEndIf extends Command
 {
@@ -25,10 +26,10 @@ class CheckEndIf extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $psr4Stats = self::applyRubySyntaxCheck($fileName, $folder);
+        [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
+            Psr4Report::printAutoload($psr4Stats, $classMapStats),
         ]));
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
@@ -44,6 +45,10 @@ class CheckEndIf extends Command
 
     public static function applyRubySyntaxCheck(string $fileName, string $folder)
     {
-        return ForPsr4LoadedClasses::check([CheckRubySyntax::class], [], $fileName, $folder);
+        $check = [CheckRubySyntax::class];
+        $psr4stats = ForPsr4LoadedClasses::check($check, [], $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $fileName, $folder);
+
+        return [$psr4stats, $classMapStats];
     }
 }
