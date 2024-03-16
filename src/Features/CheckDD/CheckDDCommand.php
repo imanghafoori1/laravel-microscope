@@ -42,7 +42,7 @@ class CheckDDCommand extends Command
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),
-            LaravelFoldersReport::foldersStats($foldersStats)
+            LaravelFoldersReport::foldersStats($foldersStats),
         ]));
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');
