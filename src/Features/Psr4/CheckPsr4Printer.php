@@ -45,11 +45,7 @@ class CheckPsr4Printer extends ErrorPrinter
             return ' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>';
         };
 
-        try {
-            $messages[] = $separator('gray');
-        } catch (\Exception $e) {
-            $messages[] = $separator('blue');
-        }
+        $messages[] = $separator(config('microscope.colors.line_separator'));
 
         $header = '<options=bold;fg=yellow> '.array_sum($stats).' entities are checked in:</>';
         $types = self::presentTypes($typesStats);
