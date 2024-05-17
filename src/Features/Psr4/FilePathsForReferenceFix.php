@@ -45,10 +45,13 @@ class FilePathsForReferenceFix
 
     private static function getPsr4()
     {
+        // @todo: this should get refactored into the ComposerJson class using the iterator pattern.
         foreach (ComposerJson::readPsr4() as $autoload) {
             foreach ($autoload as $psr4Path) {
-                foreach (PhpFinder::getAllPhpFiles($psr4Path) as $file) {
-                    yield $file->getRealPath();
+                foreach ((array) $psr4Path as $path) {
+                    foreach (PhpFinder::getAllPhpFiles($path) as $file) {
+                        yield $file->getRealPath();
+                    }
                 }
             }
         }

@@ -19,9 +19,11 @@ class CheckCodeGeneration extends Command
         ErrorPrinter::singleton($this->output);
 
         foreach (ComposerJson::readPsr4() as $psr4) {
-            foreach ($psr4 as $psr4Namespace => $psr4Path) {
-                $files = PhpFinder::getAllPhpFiles($psr4Path);
-                GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);
+            foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+                foreach ((array) $psr4Paths as $psr4Path) {
+                    $files = PhpFinder::getAllPhpFiles($psr4Path);
+                    GenerateCode::serviceProvider($files, $psr4Path, $psr4Namespace, $this);
+                }
             }
         }
     }
