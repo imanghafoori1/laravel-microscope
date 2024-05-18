@@ -116,6 +116,8 @@ class CheckImportsCommand extends Command
         );
 
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
+
+        unset($this->checks[3]); // avoid checking facades aliases in blade files.
         $bladeStats = BladeFiles::check($this->checks, $paramProvider, $fileName, $folder);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
