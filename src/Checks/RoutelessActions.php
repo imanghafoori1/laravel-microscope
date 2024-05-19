@@ -95,9 +95,8 @@ class RoutelessActions implements Check
             // For __invoke, we will also check to see if the route is defined like this:
             // Route::get('/', [Controller::class, '__invoke']);
             // Route::get('/', Controller::class);
-            if (
-                ! self::getByAction($classAtMethod) || ($method['name'][1] === '__invoke' && ! self::getByAction($classAtMethod.'@__invoke'))
-            ) {
+            if (! self::getByAction($classAtMethod)) {
+                ! strpos($classAtMethod, '@') && $classAtMethod .= '@__invoke';
                 $line = $method['name'][2];
                 $actions[] = [$line, $classAtMethod];
             }
@@ -125,5 +124,10 @@ class RoutelessActions implements Check
         foreach ($actions as $action) {
             $errorPrinter->simplePendError($action[1], $absFilePath, $action[0], 'routelessCtrl', 'No route is defined for controller action:');
         }
+    }
+
+    private static function invoke($method, string $classAtMethod): bool
+    {
+        return $method === '__invoke' && ! self::getByAction($classAtMethod) && ! self::getByAction($classAtMethod.'@__invoke');
     }
 }
