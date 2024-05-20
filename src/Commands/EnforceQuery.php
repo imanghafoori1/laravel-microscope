@@ -71,9 +71,13 @@ class EnforceQuery extends Command
             'pluck',
             'firstOrNew',
             'select',
+            'selectRaw',
             'create',
             'insert',
+            'limit',
+            'orderBy',
             'findMany',
+            'get',
         ];
     }
 }
