@@ -79,6 +79,12 @@ class CheckRoutes extends Command
             try {
                 $ctrlObj = app()->make($ctrlClass);
             } catch (Exception $e) {
+                // Starts with: "SQLSTATE"
+                if (substr($e->getMessage(), 0, strlen('SQLSTATE')) === 'SQLSTATE') {
+                    dump($ctrlClass.'  -  '.$e->getMessage());
+                    continue;
+                }
+
                 $msg1 = $this->getRouteId($route);
                 $msg2 = 'The controller can not be resolved: ('.$msg1.')';
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
