@@ -4,19 +4,22 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Features\CheckView\BladeFile;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckViewFilesExistence implements Check
 {
-    public static function check($tokens, $absPath)
+    public static function check(PhpFileDescriptor $file)
     {
-        $tCount = \count($tokens);
+        $tokens = $file->getTokens();
+        $absPath = $file->getAbsolutePath();
+
+        $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
             if (! self::isEnvMake($tokens, $i)) {
                 continue;
             }
 
-            $viewName = \trim($tokens[$i + 4][1], '\'\"');
+            $viewName = trim($tokens[$i + 4][1], '\'\"');
             CheckView::$checkedCallsCount++;
             if (! View::exists($viewName)) {
                 self::error($tokens, $absPath, $i);
@@ -44,7 +47,7 @@ class CheckViewFilesExistence implements Check
     {
         $viewName = $tokens[$i + 4][1];
         $viewName = str_replace('.', '/', trim($viewName, '\'\"'));
-        BladeFile::warn($absPath, $tokens[$i + 4][2], $viewName);
+        CheckView::viewError($absPath, $tokens[$i + 4][2], $viewName);
     }
 
     private static function isVariable($token, string $varName)

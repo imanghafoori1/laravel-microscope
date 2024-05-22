@@ -13,9 +13,9 @@ class CheckImportReporter
         return '<options=bold;fg=yellow>Imports were checked under:</>';
     }
 
-    public static function getRouteStats($basePath, $routeFiles)
+    public static function getRouteStats($routeFiles)
     {
-        $linesArr = self::formatFiles($routeFiles, $basePath);
+        $linesArr = self::formatFiles($routeFiles);
         $count = count($linesArr);
         $lines = implode('', $linesArr);
 

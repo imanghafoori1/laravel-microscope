@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
@@ -29,7 +30,13 @@ class CheckViewsCommand extends Command
         $this->checkRoutePaths(
             FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName)
         );
-        $this->checkPsr4($fileName, $folder);
+
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
+
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
+
         $this->checkBladeFiles($fileName, $folder);
 
         $this->logErrors($errorPrinter);
@@ -77,10 +84,5 @@ class CheckViewsCommand extends Command
         }
 
         $errorPrinter->printTime();
-    }
-
-    private function checkPsr4(string $fileName, string $folder)
-    {
-        ForPsr4LoadedClasses::checkNow([CheckView::class], [], $fileName, $folder);
     }
 }

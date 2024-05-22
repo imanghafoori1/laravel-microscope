@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
 use ReflectionClass;
@@ -16,9 +16,11 @@ class FacadeDocblocks
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath)
+    public static function check(PhpFileDescriptor $file)
     {
-        $facade = ComposerJson::make()->getNamespacedClassFromPath($absFilePath);
+        $absFilePath = $file->getAbsolutePath();
+
+        $facade = $file->getNamespace();
 
         if (! self::isFacade($facade)) {
             return null;
@@ -41,7 +43,7 @@ class FacadeDocblocks
             }
         }
 
-        self::addDocBlocks($accessor, $facade, $tokens, $absFilePath);
+        self::addDocBlocks($accessor, $facade, $file->getTokens(), $absFilePath);
     }
 
     private static function addDocBlocks(string $accessor, $facade, $tokens, $absFilePath)

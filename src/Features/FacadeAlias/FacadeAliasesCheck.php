@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class FacadeAliasesCheck implements Check
 {
@@ -17,8 +18,11 @@ class FacadeAliasesCheck implements Check
      */
     public static $command;
 
-    public static function check($tokens, $absFilePath, $imports)
+    public static function check(PhpFileDescriptor $file, $imports)
     {
+        $tokens = $file->getTokens();
+        $absFilePath = $file->getAbsolutePath();
+
         $aliases = AliasLoader::getInstance()->getAliases();
         self::$handler::$command = self::$command;
 

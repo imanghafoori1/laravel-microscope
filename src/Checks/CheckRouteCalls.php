@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckRouteCalls implements Check
@@ -12,11 +13,14 @@ class CheckRouteCalls implements Check
 
     public static $skippedRouteCallsNum = 0;
 
-    public static function check($tokens, $absFilePath)
+    public static function check(PhpFileDescriptor $file)
     {
         // we skip the very first tokens: '<?php '
         $i = 4;
         // we skip the very end of the file.
+        $tokens = $file->getTokens();
+        $absFilePath = $file->getAbsolutePath();
+
         $total = \count($tokens) - 3;
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('route', $tokens, $i);

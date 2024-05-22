@@ -10,11 +10,12 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class FilePathsForReferenceFix
 {
-    private static $pathsForReferenceFix = [];
+    public static $pathsForReferenceFix = [];
 
     public static function getFiles()
     {
         if (self::$pathsForReferenceFix) {
+            // Used for testing and memoization:
             return self::$pathsForReferenceFix;
         }
 

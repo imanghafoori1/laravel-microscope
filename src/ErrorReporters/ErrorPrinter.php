@@ -105,9 +105,9 @@ class ErrorPrinter
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }
 
-    public function color($msg)
+    public function color($msg, $color = 'blue')
     {
-        return "<fg=blue>$msg</>";
+        return "<fg=$color>$msg</>";
     }
 
     public function print($msg, $path = '   ')
@@ -120,13 +120,13 @@ class ErrorPrinter
         $number = ++$this->total;
         ($number < 10) && $number = " $number";
 
-        $number = '<fg=cyan>'.$number.' </>';
-        $path = "  $number";
+        $number = $this->color($number, 'cyan');
+        $path = "  $number ";
 
         $width = (new Terminal)->getWidth() - 6;
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);
         PendingError::$maxLength = min(PendingError::$maxLength, $width);
-        $this->print('<fg=red>'.$msg.'</>', $path);
+        $this->print($this->color($msg, 'red'), $path);
     }
 
     public function end()
@@ -250,5 +250,10 @@ class ErrorPrinter
         $duration = round($duration, 3);
 
         return "time: {$duration} (sec)";
+    }
+
+    public static function lineSeparator(): string
+    {
+        return ' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 3).'</>';
     }
 }

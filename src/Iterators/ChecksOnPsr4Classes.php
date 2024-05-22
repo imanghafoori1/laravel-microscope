@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Throwable;
 
 class ChecksOnPsr4Classes
@@ -43,9 +44,9 @@ class ChecksOnPsr4Classes
         return $stats;
     }
 
-    private static function getParams($params, array $tokens, $absFilePath, $psr4Path, $psr4Namespace)
+    private static function getParams($params, PhpFileDescriptor $file, $psr4Path, $psr4Namespace)
     {
-        return (! is_array($params) && is_callable($params)) ? $params($tokens, $absFilePath, $psr4Path, $psr4Namespace) : $params;
+        return (! is_array($params) && is_callable($params)) ? $params($file, $psr4Path, $psr4Namespace) : $params;
     }
 
     /**
@@ -69,21 +70,22 @@ class ChecksOnPsr4Classes
         return $filesCount;
     }
 
-    private static function applyChecks($phpFilePath, $params, $psr4Path, $psr4Namespace, $checks)
+    private static function applyChecks($phpFileObj, $params, $psr4Path, $psr4Namespace, $checks)
     {
-        $absFilePath = $phpFilePath->getRealPath();
-        $tokens = token_get_all(file_get_contents($absFilePath));
+        $absFilePath = $phpFileObj->getRealPath();
 
-        $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+        $file = PhpFileDescriptor::make($absFilePath);
+
+        $processedParams = self::getParams($params, $file, $psr4Path, $psr4Namespace);
         foreach ($checks as $check) {
             try {
                 /**
                  * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
                  */
-                $newTokens = $check::check($tokens, $absFilePath, $processedParams, $phpFilePath, $psr4Path, $psr4Namespace);
+                $newTokens = $check::check($file, $processedParams, $psr4Path, $psr4Namespace);
                 if ($newTokens) {
-                    $tokens = $newTokens;
-                    $processedParams = self::getParams($params, $tokens, $absFilePath, $psr4Path, $psr4Namespace);
+                    $file->setTokens($newTokens);
+                    $processedParams = self::getParams($params, $file, $psr4Path, $psr4Namespace);
                 }
             } catch (Throwable $exception) {
                 self::$exceptions[] = $exception;

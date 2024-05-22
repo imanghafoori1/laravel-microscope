@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\Ifs;
 use Imanghafoori\TokenAnalyzer\TokenManager;
+use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckCompact extends Command
 {
@@ -18,6 +19,7 @@ class CheckCompact extends Command
 
     protected $description = 'Checks that compact() function calls are correct';
 
+    #[ExpectedValues(values: [0, 1])]
     public function handle()
     {
         event('microscope.start.command');

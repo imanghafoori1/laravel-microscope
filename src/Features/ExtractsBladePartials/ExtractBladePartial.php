@@ -6,13 +6,17 @@ use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use InvalidArgumentException;
 
 class ExtractBladePartial implements Check
 {
-    public static function check($tokens, $absPath)
+    public static function check(PhpFileDescriptor $file)
     {
+        $tokens = $file->getTokens();
+        $absPath = $file->getAbsolutePath();
+
         // we skip the very first tokens: '<?php '
         $i = 4;
         // we skip the very end of the file.

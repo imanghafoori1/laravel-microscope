@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
+use JetBrains\PhpStorm\ExpectedValues;
 
 class EnforceQuery extends Command
 {
@@ -20,6 +21,7 @@ class EnforceQuery extends Command
 
     protected $customMsg = 'No case was found to add ::query()-> to it.  \(^_^)/';
 
+    #[ExpectedValues(values: [0, 1])]
     public function handle(ErrorPrinter $errorPrinter)
     {
         event('microscope.start.command');

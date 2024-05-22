@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls\EnvFound;
-use Imanghafoori\LaravelMicroscope\Features\CheckView\ViewsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 
 class ConsolePrinterInstaller
@@ -47,8 +46,6 @@ class ConsolePrinterInstaller
 
     public static function boot()
     {
-        ViewsInstaller::boot();
-
         RouteOverrideInstaller::install();
 
         EnvFound::listen();

@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use Generator;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Report
@@ -16,20 +17,17 @@ class Psr4Report
      */
     public static function printAutoload($psr4Stats, $classMapStats)
     {
-        $output = '';
+        $callback = function ($composerPath, $psr4, $classMapStats) {
+            return self::present($composerPath, $psr4, $classMapStats);
+        };
+
+        $outputAll = '';
         foreach ($psr4Stats as $composerPath => $psr4) {
-            $output .= PHP_EOL;
-            $output .= self::formatComposerPath($composerPath);
-            $output .= PHP_EOL;
-            $output .= self::hyphen('<options=bold;fg=white>PSR-4 </>');
-            $output .= self::formatPsr4Stats($psr4);
-            if (isset($classMapStats[$composerPath])) {
-                $lines = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
-                $lines && ($output .= PHP_EOL.$lines);
-            }
+            $output = $callback($composerPath, $psr4, $classMapStats);
+            $outputAll .= $output;
         }
 
-        return trim($output);
+        return trim($outputAll);
     }
 
     public static function formatComposerPath($composerPath)
@@ -130,5 +128,21 @@ class Psr4Report
         }
 
         return implode('', $lines);
+    }
+
+    private static function present(string $composerPath, Generator $psr4, $classMapStats)
+    {
+        $output = '';
+        $output .= PHP_EOL;
+        $output .= self::formatComposerPath($composerPath);
+        $output .= PHP_EOL;
+        $output .= self::hyphen('<options=bold;fg=white>PSR-4 </>');
+        $output .= self::formatPsr4Stats($psr4);
+        if (isset($classMapStats[$composerPath])) {
+            $lines = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
+            $lines && ($output .= PHP_EOL.$lines);
+        }
+
+        return $output;
     }
 }

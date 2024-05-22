@@ -3,14 +3,18 @@
 namespace Imanghafoori\LaravelMicroscope\Checks\PSR12;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CurlyBraces implements Check
 {
     public static $command;
 
-    public static function check($tokens, $absFilePath)
+    public static function check(PhpFileDescriptor $file)
     {
+        $tokens = $file->getTokens();
+        $absFilePath = $file->getAbsolutePath();
+
         self::addPublicKeyword($tokens, $absFilePath);
     }
 
@@ -37,20 +41,20 @@ class CurlyBraces implements Check
         }
     }
 
-    private static function openCurly($token, $level, $tokens, $i, $classFilePath)
+    private static function openCurly($token, $level, $tokens, $i, $absFilePath)
     {
         if ($token == '{' && ! in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
             $sp = str_repeat('    ', $level);
             if ($tokens[$i + 1][0] === T_WHITESPACE) {
                 if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
                     $tokens[$i + 1][1] = PHP_EOL.$sp;
-                    Refactor::saveTokens($classFilePath, $tokens);
+                    Refactor::saveTokens($absFilePath, $tokens);
                 } else {
                     //
                 }
             } else {
                 array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
-                Refactor::saveTokens($classFilePath, $tokens);
+                Refactor::saveTokens($absFilePath, $tokens);
             }
         }
     }

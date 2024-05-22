@@ -3,7 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
+use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -20,7 +21,7 @@ class GenericDocblocks implements Check
         '* Handle the incoming request.',
     ];
 
-    public static $confirmer;
+    public static $conformer;
 
     public static $foundCount = 0;
 
@@ -28,28 +29,20 @@ class GenericDocblocks implements Check
 
     public static $controllers = [];
 
-    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check(PhpFileDescriptor $file)
     {
-        $fullNamespace = RoutelessActions::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+        $tokens = $file->getTokens();
 
-        if (! RoutelessActions::isLaravelController($fullNamespace)) {
+        $fullNamespace = $file->getNamespace();
+
+        if (! RoutelessControllerActions::isLaravelController($fullNamespace)) {
             return null;
         }
 
-        $hasReplacement = false;
-        foreach ($tokens as $i => $token) {
-            if ($token[0] !== T_DOC_COMMENT) {
-                continue;
-            }
+        [$hasReplacement, $tokens] = self::removeDocBlocks($tokens);
 
-            if (self::shouldBeRemoved($token[1])) {
-                self::$foundCount++;
-                $hasReplacement = true;
-                $tokens = self::removeDocblock($tokens, $i);
-            }
-        }
-
-        if ($hasReplacement && (self::$confirmer)($absFilePath)) {
+        $absFilePath = $file->getAbsolutePath();
+        if ($hasReplacement && (self::$conformer)($absFilePath)) {
             Refactor::saveTokens($absFilePath, $tokens);
         }
     }
@@ -72,5 +65,23 @@ class GenericDocblocks implements Check
     private static function shouldBeRemoved($docblock)
     {
         return Str::contains($docblock, self::statements);
+    }
+
+    private static function removeDocBlocks(array $tokens): array
+    {
+        $hasReplacement = false;
+        foreach ($tokens as $i => $token) {
+            if ($token[0] !== T_DOC_COMMENT) {
+                continue;
+            }
+
+            if (self::shouldBeRemoved($token[1])) {
+                self::$foundCount++;
+                $hasReplacement = true;
+                $tokens = self::removeDocblock($tokens, $i);
+            }
+        }
+
+        return [$hasReplacement, $tokens];
     }
 }

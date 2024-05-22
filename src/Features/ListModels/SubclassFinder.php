@@ -25,7 +25,7 @@ class SubclassFinder
         return ComposerJson::make()->getClasslists($filter, $pathFilter);
     }
 
-    protected function getPathFilter(string $folder)
+    protected function getPathFilter($folder)
     {
         return function ($absFilePath, $fileName) use ($folder) {
             return strpos(str_replace(base_path(), '', $absFilePath), $folder);

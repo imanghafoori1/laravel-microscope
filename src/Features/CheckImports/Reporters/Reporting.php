@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 trait Reporting
@@ -48,21 +49,19 @@ trait Reporting
         return str_replace(DIRECTORY_SEPARATOR, '/', $path).'/';
     }
 
-    private static function formatLine($basePath, $absFilePath): string
+    private static function formatLine(PhpFileDescriptor $file): string
     {
-        $relPath = str_replace($basePath, '', $absFilePath);
-        $relPath = ltrim($relPath, DIRECTORY_SEPARATOR);
-        $relPath = str_replace(DIRECTORY_SEPARATOR, '/', $relPath);
+        $relPath = $file->path()->relativePath()->getWithUnixDirectorySeprator();
 
         return PHP_EOL.'    '.self::hyphen('<fg=green>'.$relPath.'</>');
     }
 
     #[Pure]
-    private static function formatFiles($files, string $basePath): array
+    private static function formatFiles($files)
     {
         $lines = [];
-        foreach ($files as $absFilePath) {
-            $lines[] = self::formatLine($basePath, $absFilePath);
+        foreach ($files as $file) {
+            $lines[] = self::formatLine($file);
         }
 
         return $lines;

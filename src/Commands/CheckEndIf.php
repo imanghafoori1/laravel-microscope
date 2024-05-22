@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEndIf extends Command
 {
@@ -15,6 +16,7 @@ class CheckEndIf extends Command
 
     protected $description = 'replaces ruby like syntax of php (endif) with curly brackets.';
 
+    #[ExpectedValues(values: [0, 1])]
     public function handle(ErrorPrinter $errorPrinter)
     {
         if (! $this->startWarning()) {

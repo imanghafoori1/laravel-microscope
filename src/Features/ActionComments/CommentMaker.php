@@ -4,14 +4,15 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 class CommentMaker
 {
-    public static function getComment(array $actions)
+    private const separator = "\n         *";
+
+    public static function getComment(array $routes)
     {
         $msg = '/**';
-        $separator = "\n         *";
 
-        foreach ($actions as $i => $action) {
-            $i === count($actions) - 1 && $separator = '';
-            $msg .= "\n         ".rtrim(self::getMsg($action)).$separator;
+        foreach ($routes as $i => $route) {
+            $sep = self::getSeparator(isset($routes[$i + 1]));
+            $msg .= "\n         ".rtrim(self::getMsg($route)).$sep;
         }
 
         $msg .= "\n         */";
@@ -77,5 +78,10 @@ class CommentMaker
         }
 
         return $url;
+    }
+
+    private static function getSeparator($isFinal)
+    {
+        return $isFinal ? '' : self::separator;
     }
 }

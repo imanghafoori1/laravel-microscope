@@ -3,8 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Illuminate\Console\Command;
-use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors
 {
@@ -13,80 +12,59 @@ class Psr4Errors
      */
     private static $command;
 
-    public static function handle(array $errorsLists, Command $command)
+    public static $refCorrector = ClassRefCorrector::class;
+
+    public static $confirm = Confirm::class;
+
+    public static function handle(array $errorsLists, $command)
     {
         self::$command = $command;
-        $before = self::beforeReferenceFix();
-        $after = self::afterReferenceFix();
 
         foreach ($errorsLists as $errors) {
-            foreach ($errors as $wrong) {
-                self::handleError($wrong, $before, $after);
+            foreach ($errors as $error) {
+                self::handleError($error);
             }
         }
     }
 
-    private static function handleError($wrong, $beforeFix, $afterFix)
+    private static function handleError($error)
     {
-        if ($wrong['type'] === 'namespace') {
-            $absPath = $wrong['absFilePath'];
-            $from = $wrong['currentNamespace'];
-            $to = $wrong['correctNamespace'];
-            $class = $wrong['class'];
-            $relativePath = str_replace(base_path(), '', $absPath);
-
-            CheckPsr4Printer::warnIncorrectNamespace($relativePath, $from, $class);
-
-            if (CheckPsr4Printer::ask(self::$command, $to)) {
-                self::updateOldRefs($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath);
-            }
-        } elseif ($wrong['type'] === 'filename') {
-            CheckPsr4Printer::wrongFileName($wrong['relativePath'], $wrong['class'], $wrong['fileName']);
+        if ($error['type'] === 'namespace') {
+            self::askAndFixNamespace($error);
+        } elseif ($error['type'] === 'filename') {
+            CheckPsr4Printer::wrongFileName(
+                $error['relativePath'],
+                $error['class'],
+                $error['fileName']
+            );
         }
     }
 
-    private static function afterReferenceFix()
+    private static function updateOldRefs($from, $to, $class)
     {
-        return function ($path, $changedLineNums, $content) {
-            Filesystem::$fileSystem::file_put_contents($path, $content);
-
-            $p = ErrorPrinter::singleton();
-            foreach ($changedLineNums as $line) {
-                $p->simplePendError('', $path, $line, 'ns_replacement', 'Namespace replacement:');
-            }
-        };
+        if ($from && ! self::$command->option('no-ref-fix')) {
+            self::$refCorrector::fixOldRefs($from, $class, $to, FilePathsForReferenceFix::getFiles());
+        }
     }
 
-    private static function beforeReferenceFix()
+    private static function applyFixProcess(PhpFileDescriptor $file, $from, $class, $to)
     {
-        $command = self::$command;
-        if ($command->option('force-ref-fix')) {
-            return function () {
-                return true;
-            };
+        CheckPsr4Printer::warnIncorrectNamespace($file->relativePath(), $from, $class);
+
+        if (self::$confirm::ask(self::$command, $to)) {
+            NamespaceFixer::fix($file, $from, $to);
+            self::updateOldRefs($from, $to, $class);
+            CheckPsr4Printer::fixedNamespace($file, $from, $to, $class);
         }
-
-        return function ($path, $lineIndex, $lineContent) use ($command) {
-            $command->getOutput()->writeln(ErrorPrinter::getLink($path, $lineIndex));
-            $command->warn($lineContent);
-            $msg = 'Do you want to update reference to the old namespace?';
-
-            return $command->confirm($msg, true);
-        };
     }
 
-    private static function updateOldRefs($absPath, $from, $to, $class, $beforeFix, $afterFix, $relativePath)
+    private static function askAndFixNamespace($error)
     {
-        NamespaceFixer::fix($absPath, $from, $to);
-        $command = self::$command;
-
-        if ($from && ! $command->option('no-ref-fix')) {
-            $changes = [
-                $from.'\\'.$class => $to.'\\'.$class,
-            ];
-
-            ClassRefCorrector::fixAllRefs($changes, FilePathsForReferenceFix::getFiles(), $beforeFix, $afterFix);
-        }
-        CheckPsr4Printer::fixedNamespace($relativePath, $from, $to);
+        self::applyFixProcess(
+            PhpFileDescriptor::make($error['absFilePath']),
+            $error['currentNamespace'],
+            $error['class'],
+            $error['correctNamespace']
+        );
     }
 }

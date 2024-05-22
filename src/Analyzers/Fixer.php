@@ -4,9 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
-use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ClassListProvider;
-use Imanghafoori\SearchReplace\Searcher;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class Fixer
@@ -62,10 +61,11 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $contextClassNamespace = ComposerJson::make()->getNamespacedClassFromPath($absPath);
+        $file = PhpFileDescriptor::make($absPath);
+        $contextClassNamespace = $file->getNamespace();
 
         if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
-            return [self::doReplacement($absPath, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
+            return [self::doReplacement($file, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
         }
 
         $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
@@ -80,11 +80,11 @@ class Fixer
                 $fullClassPath = $classBaseName;
             }
 
-            return [self::doReplacement($absPath, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
+            return [self::doReplacement($file, $inlinedClassRef, $fullClassPath, $lineNum), $correct];
         }
 
         // Replace in the class reference
-        self::doReplacement($absPath, $inlinedClassRef, $classBaseName, $lineNum);
+        self::doReplacement($file, $inlinedClassRef, $classBaseName, $lineNum);
 
         // Insert a new import at the top
         $lineNum = array_values($uses)[0][1]; // first use statement
@@ -105,49 +105,35 @@ class Fixer
     {
         $correct = self::guessCorrect(class_basename($import));
 
-        if (\count($correct) !== 1) {
+        if (count($correct) !== 1) {
             return [false, $correct];
         }
 
-        $tokens = token_get_all(file_get_contents($absPath));
-        $hostNamespacedClass = ComposerJson::make()->getNamespacedClassFromPath($absPath);
+        $file = PhpFileDescriptor::make($absPath);
+        $hostNamespacedClass = $file->getNamespace();
         // We just remove the wrong import if it is not needed.
         if (! $isAliased && NamespaceCalculator::haveSameNamespace($hostNamespacedClass, $correct[0])) {
-            return [self::replaceSave("use $import;", '', $tokens, $absPath), [' Deleted!']];
+            $lines = $file->searchReplacePatterns("use $import;", '');
+
+            return [$lines, [' Deleted!']];
         }
 
-        return [self::replaceSave("use $import;", 'use '.$correct[0].';'.PHP_EOL, $tokens, $absPath), $correct];
+        $lines = $file->searchReplacePatterns("use $import;", 'use '.$correct[0].';'.PHP_EOL);
+
+        return [$lines, $correct];
     }
 
-    private static function replaceSave($old, $new, array $tokens, $absPath)
+    private static function doReplacement(PhpFileDescriptor $file, $wrongRef, $correctRef, $lineNum)
     {
-        [$newVersion, $lines] = Searcher::searchReplace([
-            'fix' => [
-                'search' => $old,
-                'replace' => $new,
-            ],
-        ], $tokens);
-
-        Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
-
-        return $lines;
-    }
-
-    private static function doReplacement($absPath, $wrongRef, $correctRef, $lineNum)
-    {
-        if (version_compare(PHP_VERSION, '8.0.0') === 1) {
-            return FileManipulator::replaceFirst($absPath, $wrongRef, $correctRef, $lineNum);
+        if (self::phpVersionIsMoreOrEqualTo('8.0.0')) {
+            return $file->replaceAtLine($wrongRef, $correctRef, $lineNum);
         }
 
-        $tokens = token_get_all(file_get_contents($absPath));
-        [$newVersion, $lines] = Searcher::searchReplace([
-            'fix' => [
-                'search' => $wrongRef,
-                'replace' => $correctRef,
-            ],
-        ], $tokens);
-        Filesystem::$fileSystem::file_put_contents($absPath, $newVersion);
+        return (bool) $file->searchReplacePatterns($wrongRef, $correctRef);
+    }
 
-        return (bool) $lines;
+    private static function phpVersionIsMoreOrEqualTo($version): bool
+    {
+        return version_compare(PHP_VERSION, $version) !== -1;
     }
 }

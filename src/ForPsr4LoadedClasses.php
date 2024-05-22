@@ -23,10 +23,18 @@ class ForPsr4LoadedClasses
 
     public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '', $callback = null)
     {
-        foreach (self::check($checks, $params, $includeFile, $includeFolder) as $results) {
-            foreach (iterator_to_array($results) as $result) {
+        self::applyOnStats(
+            self::check($checks, $params, $includeFile, $includeFolder),
+            $callback
+        );
+    }
+
+    public static function applyOnStats(array $allStats, $callback = null)
+    {
+        foreach ($allStats as $path => $results) {
+            foreach (iterator_to_array($results) as $namespace => $result) {
                 foreach ($result as $folder => $count) {
-                    $callback && $callback($folder, $count);
+                    $callback && $callback($folder, $count, $path, $namespace);
                 }
             }
         }

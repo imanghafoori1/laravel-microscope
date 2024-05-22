@@ -45,7 +45,7 @@ class PrettyPrintRoutes extends Command
 
             $action = $this->getAction($route->getActionName());
 
-            if (\count($methods) == 1) {
+            if (count($methods) == 1) {
                 $definition = PHP_EOL.$this->getMovableRoute($route, $methods, $action, $middlewares);
 
                 file_put_contents($filename, $definition, FILE_APPEND);
@@ -112,7 +112,7 @@ class PrettyPrintRoutes extends Command
     private function getMiddlewares($route)
     {
         $middlewares = $route->gatherMiddleware();
-        $middlewares && $middlewares = "'".\implode("', '", $route->gatherMiddleware())."'";
+        $middlewares && $middlewares = "'".implode("', '", $route->gatherMiddleware())."'";
 
         return $middlewares ? '->middleware(['.$middlewares.'])' : '';
     }

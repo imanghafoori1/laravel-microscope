@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -47,11 +48,12 @@ trait PatternApply
 
         $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $fileName, $folder);
         $classMapStats = ClassMapIterator::iterate(base_path(), $check, [$parsedPatterns], $fileName, $folder);
-        //$bladeStats = BladeFiles::check($check, [$parsedPatterns], $fileName, $folder);
+        CheckBladePaths::$readOnly = false;
+        $bladeStats = BladeFiles::check($check, [$parsedPatterns], $fileName, $folder);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats),
-            //Reporters\BladeReport::getBladeStats($bladeStats),
+            Reporters\BladeReport::getBladeStats($bladeStats),
         ]));
     }
 }

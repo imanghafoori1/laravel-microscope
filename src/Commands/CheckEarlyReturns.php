@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEarlyReturns extends Command
 {
@@ -16,6 +17,7 @@ class CheckEarlyReturns extends Command
 
     protected $description = 'Applies the early return on the classes';
 
+    #[ExpectedValues(values: [0, 1])]
     public function handle()
     {
         ErrorPrinter::singleton($this->output);

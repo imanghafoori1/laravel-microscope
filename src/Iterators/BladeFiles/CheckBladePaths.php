@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Symfony\Component\Finder\Finder;
 
@@ -11,6 +12,8 @@ class CheckBladePaths
     use FiltersFiles;
 
     public static $scanned = [];
+
+    public static $readOnly = true;
 
     /**
      * @param  \Generator  $dirs
@@ -48,7 +51,7 @@ class CheckBladePaths
      * @param  string  $path
      * @return bool
      */
-    private static function shouldSkip(string $path)
+    private static function shouldSkip($path)
     {
         if (! is_dir($path)) {
             return true;
@@ -82,12 +85,19 @@ class CheckBladePaths
             /**
              * @var \Symfony\Component\Finder\SplFileInfo $blade
              */
-            $absPath = $blade->getPathname();
-            $tokens = ViewsData::getBladeTokens($absPath);
-            $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($tokens, $absPath) : $paramsProvider;
+            $absFilePath = $blade->getPathname();
+
+            $file = PhpFileDescriptor::make($absFilePath);
+            if (self::$readOnly) {
+                $file->setTokenizer(function ($absPath) {
+                    return ViewsData::getBladeTokens($absPath);
+                });
+            }
+
+            $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($file) : $paramsProvider;
 
             foreach ($checkers as $check) {
-                $check::check($tokens, $absPath, $params1);
+                $check::check($file, $params1);
             }
         }
 

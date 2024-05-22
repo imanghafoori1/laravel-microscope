@@ -6,12 +6,16 @@ use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CheckEarlyReturn implements Check
 {
-    public static function check(array $tokens, $absFilePath, $params)
+    public static function check(PhpFileDescriptor $file, $params)
     {
+        $tokens = $file->getTokens();
+        $absFilePath = $file->getAbsolutePath();
+
         $nofix = $params['nofix'];
         $nofixCallback = $params['nofixCallback'];
         $fixCallback = $params['fixCallback'];

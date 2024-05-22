@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -35,8 +36,8 @@ class CheckAliasesCommand extends Command
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
-        $paramProvider = function ($tokens) {
-            $imports = ParseUseStatement::parseUseStatements($tokens);
+        $paramProvider = function (PhpFileDescriptor $file) {
+            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
             return $imports[0] ?: [$imports[1]];
         };

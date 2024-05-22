@@ -4,108 +4,88 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
-use Symfony\Component\Console\Terminal;
 
 class CheckPsr4Printer extends ErrorPrinter
 {
-    public static function warnIncorrectNamespace($relativePath, $currentNamespace, $class)
+    public static function warnIncorrectNamespace($path, $currentNamespace, $className)
     {
-        $p = ErrorPrinter::singleton();
-        $msg = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
-        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg));
-        $p->end();
+        $printer = ErrorPrinter::singleton();
+        $msg = self::getHeader($currentNamespace, $className);
 
+        PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg) - 12);
+        $printer->end();
+
+        $printer->printHeader($msg);
+        $printer->printLink($path, 3);
+    }
+
+    private static function getHeader($currentNamespace, $className): string
+    {
         if ($currentNamespace) {
-            $header = 'Incorrect namespace: '.$p->color("namespace $currentNamespace;");
+            $namespace = self::colorizer("$currentNamespace", 'blue');
+            $header = "Incorrect namespace: '$namespace'";
         } else {
-            $header = 'Namespace Not Found: '.$class;
+            $header = 'Namespace Not Found for class: "'.self::colorizer($className, 'blue').'"';
         }
 
-        $p->printHeader($header);
-        $p->printLink($relativePath, 3);
+        return $header;
     }
 
-    public static function ask($command, $correctNamespace)
-    {
-        if ($command->option('nofix')) {
-            return false;
-        }
-
-        if ($command->option('force')) {
-            return true;
-        }
-
-        return $command->getOutput()->confirm('Do you want to change it to: <fg=blue>'.$correctNamespace.'</>', true);
-    }
-
-    public static function reportResult($autoload, $stats, $time, $typesStats)
+    public static function reportResult($autoload, $time, TypeStatistics $typesStats)
     {
         $messages = [];
-        $separator = function ($color) {
-            return ' <fg='.$color.'>'.str_repeat('_', (new Terminal)->getWidth() - 2).'</>';
-        };
 
-        $messages[] = $separator(config('microscope.colors.line_separator'));
-
-        $header = '<options=bold;fg=yellow> '.array_sum($stats).' entities are checked in:</>';
-        $types = self::presentTypes($typesStats);
-
-        $max = self::getMaxNamespaceLength($autoload);
-        $messages[] = $header.'  '.$types;
+        $messages[] = ErrorPrinter::lineSeparator();
+        $messages[] = self::getHeaderLine($typesStats);
         $messages[] = '';
 
+        $max = self::getMaxNamespaceLength($autoload);
+
         foreach ($autoload as $composerPath => $psr4) {
-            $output = '';
-            $messages[] = ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json </>';
-            foreach ($psr4 as $namespace => $path) {
-                $count = $stats[$namespace] ?? 0;
-                $path = implode(', ', (array) $path);
-                $output .= '  '.str_pad($count, 4).' - <fg=red>'.$namespace.str_repeat(' ', $max - strlen($namespace)).' </> (<fg=green>./'.$path."</>)\n";
-            }
-            $messages[] = $output;
+            $messages[] = self::getComposerFileAddress($composerPath);
+            $messages[] = self::getNamespaces($psr4, $typesStats, $max);
         }
 
-        $messages[] = 'Finished In: <fg=blue>'.$time.'(s)</>';
+        $messages[] = self::getFinishMsg($time);
 
         return $messages;
     }
 
-    public static function noErrorFound($time)
+    public static function noErrorFound()
     {
         return [
             [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'],
-            ['<fg=red;options=bold>'.$time.'(s)</>', 'line'],
             ['', 'line'],
         ];
     }
 
-    public static function getErrorsCount($errorCount, $time)
+    public static function getErrorsCount($errorCount)
     {
         if ($errorCount) {
             return [[PHP_EOL.$errorCount.' error(s) found.', 'warn']];
         } else {
-            return CheckPsr4Printer::noErrorFound($time);
+            return CheckPsr4Printer::noErrorFound();
         }
     }
 
-    public static function fixedNamespace($path, $wrong, $correct, $lineNumber = 4)
+    public static function fixedNamespace($file, $wrong, $correct, $class, $lineNumber = 4)
     {
-        $p = ErrorPrinter::singleton();
+        $path = $file->relativePath();
         $key = 'badNamespace';
-        $header = 'Incorrect namespace: '.$p->color("namespace $wrong;");
-        $errorData = '  namespace fixed to:  '.$p->color("namespace $correct;");
+        $printer = ErrorPrinter::singleton();
 
-        $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
+        $errorData = '  Namespace of class "'.$class.'" fixed to: '.$printer->color("$correct");
+
+        $printer->addPendingError($path, $lineNumber, $key, $errorData, '');
     }
 
     public static function wrongFileName($path, $class, $file)
     {
-        $p = ErrorPrinter::singleton();
         $key = 'badFileName';
         $header = 'The file name and the class name are different.';
         $errorData = 'Class name: <fg=blue>'.$class.'</>'.PHP_EOL.'   File name:  <fg=blue>'.$file.'</>';
 
-        $p->addPendingError($path, 1, $key, $header, $errorData);
+        ErrorPrinter::singleton()->addPendingError($path, 1, $key, $header, $errorData);
     }
 
     private static function getMaxNamespaceLength($autoload): int
@@ -121,14 +101,67 @@ class CheckPsr4Printer extends ErrorPrinter
         return $max;
     }
 
-    private static function presentTypes($typesStats)
+    private static function presentTypes(TypeStatistics $typesStats)
     {
-        $types = '';
-        foreach ($typesStats as $type => $count) {
-            $types .= ' / '.$count.' <fg=blue>'.$type.'</>';
-        }
-        $types .= ' /';
+        $results = $typesStats->iterate(function ($type, $count) {
+            return " | $count <fg=blue>$type</>";
+        });
 
-        return $types;
+        return implode('', $results).' |';
+    }
+
+    private static function header($stats): string
+    {
+        return "<options=bold;fg=yellow> $stats entities are checked in:</>";
+    }
+
+    private static function detailLine(int $count, string $namespace, int $max, string $path): string
+    {
+        $spacing = str_repeat(' ', $max - strlen($namespace));
+        $paddedCount = str_pad($count, 4);
+
+        $path = self::colorizer("./$path", 'green');
+        // Since the namespace ends with a back-slash
+        // we have to include a space char so that
+        // the '</>' does not get scaped out.
+        $namespace = self::colorizer($namespace.' ', 'red');
+
+        return "  $paddedCount - $namespace $spacing ($path)\n";
+    }
+
+    private static function colorizer($str, $color)
+    {
+        return '<fg='.$color.'>'.$str.'</>';
+    }
+
+    private static function getNamespaces($psr4, TypeStatistics $typesStats, int $max): string
+    {
+        $output = '';
+
+        foreach ($psr4 as $namespace => $path) {
+            $count = $typesStats->namespaceCount[$namespace] ?? 0;
+            $path = implode(', ', (array) $path);
+            $output .= self::detailLine($count, $namespace, $max, $path);
+        }
+
+        return $output;
+    }
+
+    private static function getComposerFileAddress($composerPath): string
+    {
+        return ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json </>';
+    }
+
+    private static function getHeaderLine(TypeStatistics $typesStats): string
+    {
+        $header = self::header($typesStats->getTotalCount());
+        $types = self::presentTypes($typesStats);
+
+        return $header.'  '.PHP_EOL.$types;
+    }
+
+    private static function getFinishMsg($time): string
+    {
+        return 'Finished In: <fg=blue>'.$time.'(s)</>';
     }
 }

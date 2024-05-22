@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Illuminate\Console\Command;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 
 class CheckGenericDocBlocksCommand extends Command
@@ -15,10 +16,18 @@ class CheckGenericDocBlocksCommand extends Command
     {
         $this->info('Removing generic doc-blocks...');
 
-        GenericDocblocks::$confirmer = $this->getConformer();
+        GenericDocblocks::$conformer = $this->getConformer();
 
-        $results = ForPsr4LoadedClasses::check([GenericDocblocks::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
-        iterator_to_array($results);
+        $psr4Stats = ForPsr4LoadedClasses::check(
+            [GenericDocblocks::class],
+            [],
+            ltrim($this->option('file'), '='),
+            ltrim($this->option('folder'), '=')
+        );
+
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
         $this->info(GenericDocblocks::$removedCount.' of them were removed.');

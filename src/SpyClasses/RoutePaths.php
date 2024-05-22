@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Throwable;
 
@@ -72,7 +73,7 @@ class RoutePaths
 
     private static function readLoadedRouteFiles($path)
     {
-        $tokens = token_get_all(file_get_contents(base_path($path).'.php'));
+        $tokens = PhpFileDescriptor::make(base_path($path).'.php')->getTokens();
 
         foreach ($tokens as $i => $routeFileToken) {
             if (FunctionCall::isMethodCallOnThis('loadRoutesFrom', $tokens, $i)) {

@@ -3,12 +3,16 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckDD implements Check
 {
-    public static function check($tokens, $absPath, $params)
+    public static function check(PhpFileDescriptor $file, $params)
     {
+        $tokens = $file->getTokens();
+        $absPath = $file->getAbsolutePath();
+
         $callback = $params[0];
         foreach ($tokens as $i => $token) {
             if (

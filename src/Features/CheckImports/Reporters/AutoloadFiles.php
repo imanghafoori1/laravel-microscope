@@ -7,16 +7,15 @@ class AutoloadFiles
     use Reporting;
 
     /**
-     * @param  string  $basePath
      * @param  \Generator  $filesListGen
      * @return string
      */
-    public static function getLines($basePath, $filesListGen)
+    public static function getLines($filesListGen)
     {
         $lines = '';
         $total = 0;
         foreach ($filesListGen as $files) {
-            $linesArr = self::formatFiles($files, $basePath);
+            $linesArr = self::formatFiles($files);
             $total += count($linesArr);
             $lines .= implode('', $linesArr);
         }

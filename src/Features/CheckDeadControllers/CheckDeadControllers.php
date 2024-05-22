@@ -1,10 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Checks\RoutelessActions;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -12,7 +12,7 @@ class CheckDeadControllers extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:dead_controllers';
+    protected $signature = 'check:dead_controllers {--f|file=} {--d|folder=}';
 
     protected $customMsg = 'No dead Controller Action was found!   \(^_^)/';
 
@@ -25,7 +25,14 @@ class CheckDeadControllers extends Command
 
         $errorPrinter->printer = $this->output;
 
-        ForPsr4LoadedClasses::checkNow([RoutelessActions::class]);
+        $fileName = ltrim($this->option('file'), '=');
+        $folder = ltrim($this->option('folder'), '=');
+
+        $psr4Stats = ForPsr4LoadedClasses::check([RoutelessControllerActions::class], [], $fileName, $folder);
+
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();

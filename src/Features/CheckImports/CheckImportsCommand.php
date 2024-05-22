@@ -17,6 +17,7 @@ use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
@@ -133,8 +134,8 @@ class CheckImportsCommand extends Command
         $messages[3] = $this->getFilesStats();
         $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
-        $messages[6] = CheckImportReporter::getRouteStats(base_path(), $routeFiles);
-        $messages[7] = AutoloadFiles::getLines(base_path(), $autoloadedFilesGen);
+        $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
+        $messages[7] = AutoloadFiles::getLines($autoloadedFilesGen);
         $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
@@ -168,8 +169,8 @@ class CheckImportsCommand extends Command
      */
     private function getParamProvider()
     {
-        return function ($tokens) {
-            $imports = ParseUseStatement::parseUseStatements($tokens);
+        return function (PhpFileDescriptor $file) {
+            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
             return $imports[0] ?: [$imports[1]];
         };

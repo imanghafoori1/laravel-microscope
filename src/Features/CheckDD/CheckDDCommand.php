@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -27,22 +28,22 @@ class CheckDDCommand extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
 
-        $callback = function ($tokens, $absPath, $token) {
+        $paramProvider = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
-                $token[1], $absPath, $token[2], 'ddFound', 'Debug function found: '
+                $token[1], $file->getTokens(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
 
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$callback], $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$callback], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$paramProvider], $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$paramProvider], $fileName, $folder);
 
         $foldersStats = FileIterators::checkFolders(
-            [CheckDD::class], $this->getLaravelFolders(), [$callback], $fileName, $folder
+            [CheckDD::class], $this->getLaravelFolders(), [$paramProvider], $fileName, $folder
         );
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),
-            LaravelFoldersReport::foldersStats($foldersStats)
+            LaravelFoldersReport::foldersStats($foldersStats),
         ]));
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');

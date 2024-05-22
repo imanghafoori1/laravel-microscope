@@ -4,13 +4,17 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckClassAtMethod implements Check
 {
     public static $handler = ClassAtMethodHandler::class;
 
-    public static function check($tokens, $absFilePath)
+    public static function check(PhpFileDescriptor $file)
     {
+        $tokens = $file->getTokens();
+        $absFilePath = $file->getAbsolutePath();
+
         $replaced = self::$handler::handle(
             $absFilePath,
             self::getAtSignTokens($tokens, $absFilePath)

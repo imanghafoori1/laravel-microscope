@@ -1,21 +1,20 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
 use Illuminate\Routing\Controller;
-use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
-use Imanghafoori\TokenAnalyzer\Str;
 use ReflectionClass;
 use Throwable;
 
-class RoutelessActions implements Check
+class RoutelessControllerActions implements Check
 {
-    public static function check($tokens, $absFilePath, $params, $classFilePath, $psr4Path, $psr4Namespace)
+    public static function check(PhpFileDescriptor $file)
     {
-        $fullNamespace = self::getFullNamespace($classFilePath, $psr4Path, $psr4Namespace);
+        $fullNamespace = $file->getNamespace();
 
         if (! self::isLaravelController($fullNamespace)) {
             return;
@@ -26,9 +25,9 @@ class RoutelessActions implements Check
             return;
         }
 
-        $actions = self::findOrphanActions($tokens, $fullNamespace);
+        $actions = self::findOrphanActions($file->getTokens(), $fullNamespace);
 
-        self::printErrors($actions, $absFilePath);
+        self::printErrors($actions, $file->getAbsolutePath());
     }
 
     public static function getControllerActions($methods)
@@ -57,16 +56,6 @@ class RoutelessActions implements Check
         return $orphanMethods;
     }
 
-    public static function getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace)
-    {
-        $absFilePath = $classFilePath->getRealPath();
-        $className = $classFilePath->getFilename();
-        $relativePath = \str_replace(base_path(), '', $absFilePath);
-        $namespace = NamespaceCalculator::calculateCorrectNamespace($relativePath, $psr4Path, $psr4Namespace);
-
-        return $namespace.'\\'.$className;
-    }
-
     public static function isLaravelController($fullNamespace)
     {
         try {
@@ -75,13 +64,6 @@ class RoutelessActions implements Check
             // it means the file does not contain a class or interface.
             return false;
         }
-    }
-
-    public static function getFullNamespace($classFilePath, $psr4Path, $psr4Namespace)
-    {
-        $fullNamespace = self::getNamespacedClassName($classFilePath, $psr4Path, $psr4Namespace);
-
-        return Str::replaceFirst('.php', '', $fullNamespace);
     }
 
     protected static function findOrphanActions($tokens, $fullNamespace)
@@ -107,9 +89,9 @@ class RoutelessActions implements Check
 
     public static function classAtMethod($fullNamespace, $methodName)
     {
-        ($methodName == '__invoke') ? ($methodName = '') : ($methodName = '@'.$methodName);
+        $methodName = $methodName === '__invoke' ? '' : '@'.$methodName;
 
-        return \trim($fullNamespace, '\\').$methodName;
+        return trim($fullNamespace, '\\').$methodName;
     }
 
     protected static function getByAction($classAtMethod)
@@ -117,17 +99,12 @@ class RoutelessActions implements Check
         return app('router')->getRoutes()->getByAction($classAtMethod);
     }
 
-    private static function printErrors(array $actions, $absFilePath): void
+    private static function printErrors(array $actions, $absFilePath)
     {
         $errorPrinter = ErrorPrinter::singleton();
 
         foreach ($actions as $action) {
             $errorPrinter->simplePendError($action[1], $absFilePath, $action[0], 'routelessCtrl', 'No route is defined for controller action:');
         }
-    }
-
-    private static function invoke($method, string $classAtMethod): bool
-    {
-        return $method === '__invoke' && ! self::getByAction($classAtMethod) && ! self::getByAction($classAtMethod.'@__invoke');
     }
 }

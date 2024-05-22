@@ -27,31 +27,27 @@ class CheckPsr4ArtisanCommand extends Command
         $this->line('');
         $this->info('Started checking PSR-4 namespaces...');
         $time = microtime(true);
-
-        $errorPrinter = ErrorPrinter::singleton($this->output);
+        $printer = ErrorPrinter::singleton($this->output);
 
         $composer = ComposerJson::make();
         start:
         $classLists = $this->getClassLists($composer);
-
         $errorsLists = $this->getErrorsLists($composer, $classLists);
-
-        $time = round(microtime(true) - $time, 5);
-
         Psr4Errors::handle($errorsLists, $this);
-        $this->printReport($errorPrinter, $time, $composer->readAutoload(), $classLists);
 
-        $this->composerDumpIfNeeded($errorPrinter);
-        if ($this->option('watch')) {
-            sleep(8);
+        $duration = round(microtime(true) - $time, 5);
+        $this->printReport($printer, $duration, $composer->readAutoload(), $classLists);
+        $this->composerDumpIfNeeded($printer);
 
-            $errorPrinter->errorsList = [];
-            $errorPrinter->total = 0;
-
-            goto start;
-        } else {
-            return $errorPrinter->total > 0 ? 1 : 0;
+        if (! $this->option('watch')) {
+            return $printer->total > 0 ? 1 : 0;
         }
+        sleep(8);
+
+        $printer->errorsList = [];
+        $printer->total = 0;
+
+        goto start;
     }
 
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
@@ -65,14 +61,14 @@ class CheckPsr4ArtisanCommand extends Command
 
     private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, $classLists)
     {
-        [$stats, $typesStats] = $this->countClasses($classLists);
+        $classListStatistics = self::countClasses($classLists);
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->getOutput()->writeln(CheckPsr4Printer::reportResult($autoload, $stats, $time, $typesStats));
-            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->total, $time));
+            $this->write(CheckPsr4Printer::reportResult($autoload, $time, $classListStatistics));
+            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->total));
         } else {
-            $this->getOutput()->writeln(' - '.array_sum($stats).' namespaces were checked.');
+            $this->write($this->getTotalCheckedMessage($classListStatistics->getTotalCount()));
         }
     }
 
@@ -83,32 +79,23 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function countClasses($classLists)
+    private static function countClasses($classLists)
     {
-        $stats = [];
-        $typesStats = [
-            'enum' => 0,
-            'interface' => 0,
-            'class' => 0,
-            'trait' => 0,
-        ];
+        $type = new TypeStatistics();
 
         foreach ($classLists as $composerPath => $classList) {
-            foreach ($classList as $namespace => $classes) {
-                $stats[$namespace] = count($classes);
-                foreach ($classes as $class) {
-                    $class['type'] === T_INTERFACE && $typesStats['interface']++;
-                    $class['type'] === T_CLASS && $typesStats['class']++;
-                    $class['type'] === T_TRAIT && $typesStats['trait']++;
-                    $class['type'] === T_ENUM && $typesStats['enum']++;
+            foreach ($classList as $namespace => $entities) {
+                $type->namespaceFiles($namespace, count($entities));
+                foreach ($entities as $entity) {
+                    $type->increment($entity['type']);
                 }
             }
         }
 
-        return [$stats, $typesStats];
+        return $type;
     }
 
-    private function getPathFilter(string $folder)
+    private function getPathFilter($folder)
     {
         return function ($absFilePath, $fileName) use ($folder) {
             return strpos($absFilePath, $folder);
@@ -136,5 +123,15 @@ class CheckPsr4ArtisanCommand extends Command
         : null;
 
         return $composer->getErrorsLists($classLists, $onCheck);
+    }
+
+    private function getTotalCheckedMessage($total): string
+    {
+        return ' - '.$total.' namespaces were checked.';
+    }
+
+    private function write($text): void
+    {
+        $this->getOutput()->writeln($text);
     }
 }
