@@ -15,6 +15,7 @@ class Psr4Report
      * @param  array<string, \Generator>  $psr4Stats
      * @return string
      */
+    #[Pure]
     public static function printAutoload($psr4Stats, $classMapStats)
     {
         $callback = function ($composerPath, $psr4, $classMapStats) {
@@ -30,6 +31,7 @@ class Psr4Report
         return trim($outputAll);
     }
 
+    #[Pure]
     public static function formatComposerPath($composerPath)
     {
         $composerPath = trim($composerPath, '/');
@@ -42,6 +44,7 @@ class Psr4Report
      * @param  array<string, array<string, int>>  $psr4
      * @return string
      */
+    #[Pure]
     public static function formatPsr4Stats($psr4)
     {
         $lengths = [1];
@@ -87,6 +90,7 @@ class Psr4Report
      * @param  $psr4Paths
      * @return string
      */
+    #[Pure]
     private static function getFolders($psr4Paths): string
     {
         $result = [];
@@ -110,6 +114,7 @@ class Psr4Report
         return self::implode($result);
     }
 
+    #[Pure]
     private static function implode($lines)
     {
         $output = '';
@@ -120,6 +125,7 @@ class Psr4Report
         return $output;
     }
 
+    #[Pure]
     private static function concatinate($longest, array $lines)
     {
         foreach ($lines as $i => $line) {
@@ -130,6 +136,7 @@ class Psr4Report
         return implode('', $lines);
     }
 
+    #[Pure]
     private static function present(string $composerPath, Generator $psr4, $classMapStats)
     {
         $output = '';

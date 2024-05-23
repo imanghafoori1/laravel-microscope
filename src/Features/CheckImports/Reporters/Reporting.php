@@ -26,6 +26,7 @@ trait Reporting
         return '<fg=white> ( '.$count.' file'.($count == 1 ? '' : 's').' )</>';
     }
 
+    #[Pure]
     public static function addLine($path, $count)
     {
         $output = PHP_EOL.'    '.self::hyphen();
@@ -49,6 +50,7 @@ trait Reporting
         return str_replace(DIRECTORY_SEPARATOR, '/', $path).'/';
     }
 
+    #[Pure]
     private static function formatLine(PhpFileDescriptor $file): string
     {
         $relPath = $file->path()->relativePath()->getWithUnixDirectorySeprator();

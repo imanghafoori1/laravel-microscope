@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use JetBrains\PhpStorm\Pure;
+
 class BladeReport
 {
     use Reporting;
@@ -10,6 +12,7 @@ class BladeReport
      * @param  \Generator  $stats
      * @return string
      */
+    #[Pure]
     public static function getBladeStats($stats): string
     {
         $c = $total = 0;
