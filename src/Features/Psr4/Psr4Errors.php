@@ -32,11 +32,7 @@ class Psr4Errors
         if ($error['type'] === 'namespace') {
             self::askAndFixNamespace($error);
         } elseif ($error['type'] === 'filename') {
-            CheckPsr4Printer::wrongFileName(
-                $error['relativePath'],
-                $error['class'],
-                $error['fileName']
-            );
+            self::wrongFileName($error);
         }
     }
 
@@ -65,6 +61,15 @@ class Psr4Errors
             $error['currentNamespace'],
             $error['class'],
             $error['correctNamespace']
+        );
+    }
+
+    private static function wrongFileName($error)
+    {
+        CheckPsr4Printer::wrongFileName(
+            $error['relativePath'],
+            $error['class'],
+            $error['fileName']
         );
     }
 }

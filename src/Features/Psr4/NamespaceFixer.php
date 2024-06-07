@@ -27,6 +27,9 @@ class NamespaceFixer
             while ($tokens[$i] !== ';') {
                 $i++;
             }
+            while (! isset($tokens[$i][2])) {
+                $i++;
+            }
             $file->insertNewLine(PHP_EOL.$newline, $tokens[$i][2] + 1);
         }
     }

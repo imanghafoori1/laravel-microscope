@@ -74,7 +74,7 @@ class CheckPsr4Printer extends ErrorPrinter
         $key = 'badNamespace';
         $printer = ErrorPrinter::singleton();
 
-        $errorData = '  Namespace of class "'.$class.'" fixed to: '.$printer->color("$correct");
+        $errorData = '  Namespace of class "'.$class.'" fixed to: '.$printer->color($correct);
 
         $printer->addPendingError($path, $lineNumber, $key, $errorData, '');
     }
