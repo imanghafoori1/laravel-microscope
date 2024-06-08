@@ -86,7 +86,7 @@ class PhpFileDescriptor
     {
         $this->tokens = [];
 
-        return Filesystem::$fileSystem::file_put_contents($this->path, $newVersion);
+        return Filesystem::$fileSystem::file_put_contents((string) $this->path, $newVersion);
     }
 
     public function replaceFirst($search, $replace)
@@ -96,7 +96,7 @@ class PhpFileDescriptor
 
     public function replaceFirstAtLine($search, $replace, $line)
     {
-        return FileManipulator::replaceFirst($this->path, $search, $replace, $line);
+        return FileManipulator::replaceFirst((string) $this->path, $search, $replace, $line);
     }
 
     public function replaceAtLine($search, $replace, $lineNum)
@@ -132,6 +132,6 @@ class PhpFileDescriptor
 
     public function insertNewLine($newLine, $atLine)
     {
-        return FileManipulator::insertNewLine($this->path, $newLine, $atLine);
+        return FileManipulator::insertNewLine((string) $this->path, $newLine, $atLine);
     }
 }
