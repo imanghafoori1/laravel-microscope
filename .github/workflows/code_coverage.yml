@@ -1,0 +1,58 @@
+name: Code Coverage
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.3]
+    name: PHP ${{ matrix.php }} - OS ${{ matrix.os }}
+
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 3
+        - name: Setup PHP v${{ matrix.php }}
+          uses: shivammathur/setup-php@v2
+          with:
+              php-version: ${{ matrix.php }}
+              extensions: mbstring, exif, iconv, tokenizer, fileinfo, xdebug
+              coverage: xdebug
+
+        - name: Install dependencies
+          run: |
+              composer update --prefer-dist --no-interaction --no-progress
+
+        - name: PHPUnit
+          run: |
+            ./vendor/bin/phpunit --stop-on-failure --coverage-clover ./clover.xml
+          env:
+            XDEBUG_MODE: coverage
+
+        #- name: Make code coverage badge
+        #  uses: timkrase/phpunit-coverage-badge@v1.2.1
+        #  with:
+        #    coverage_badge_path: output/coverage.svg
+        #    repo_token: ${{ secrets.GITHUB_TOKEN }}
+        #    push_badge: true
+        - name: Upload coverage results to Coveralls
+          env:
+            COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            composer global require php-coveralls/php-coveralls
+            php-coveralls --coverage_clover=./clover.xml --json_path=./coverall.xml -v 
