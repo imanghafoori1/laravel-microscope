@@ -37,7 +37,7 @@ trait CommandsRegistry
         SearchReplace\CheckRefactorsCommand::class,
         Commands\CheckDynamicWhereMethod::class,
         Features\ListModels\ListModelsArtisanCommand::class,
-        Commands\CheckEmptyComments::class
+        Commands\CheckEmptyComments::class,
     ];
 
     private function registerCommands()
