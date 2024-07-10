@@ -13,7 +13,7 @@ class CheckRefactorsCommand extends Command
 {
     protected $signature = 'search_replace {--N|name=} {--t|tag=} {--f|file=} {--d|folder=} {--s|nofix}';
 
-    protected $description = 'Does refactoring.';
+    protected $description = 'Searches for the code patterns and replaces them accordingly.';
 
     public function handle(ErrorPrinter $errorPrinter)
     {

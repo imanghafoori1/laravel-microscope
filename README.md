@@ -80,6 +80,8 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:aliases`](#aliases)
         1. [`php artisan check:dead_controllers`](#dead_controllers)
         1. [`php artisan check:generic_docblocks`](#generic_docblocks)
+        1. [`php artisan check:migrations`](#migrations)
+        1. [`php artisan check:empty_comment`](#empty_comment)
         1. [`php artisan enforce:helper_functions`](#helper_functions)
         1. [`php artisan list:models`](#models)
     
