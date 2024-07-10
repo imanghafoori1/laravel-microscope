@@ -75,10 +75,10 @@ class AnonymizeMigrations extends Command
                 'replace' => 'return new class extends <2>'.PHP_EOL.'{<3>};',
                 'filters' => [
                     2 => [
-                        'is_sub_class_of' => \Illuminate\Database\Migrations\Migration::class
-                    ]
-                ]
-            ]
+                        'is_sub_class_of' => \Illuminate\Database\Migrations\Migration::class,
+                    ],
+                ],
+            ],
         ];
     }
 
