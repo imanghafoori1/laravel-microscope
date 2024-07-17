@@ -15,7 +15,7 @@ class EnforceQuery extends Command
     use LogsErrors;
     use PatternApply;
 
-    protected $signature = 'enforce:query {--f|file=} {--d|folder=} {--detailed : Show files being checked}';
+    protected $signature = 'enforce:query {--f|file=} {--d|folder=} {--m|methods=} {--detailed : Show files being checked}';
 
     protected $description = 'Enforces the ::query() method call on models.';
 
@@ -35,7 +35,7 @@ class EnforceQuery extends Command
     private function getPatterns(): array
     {
         return [
-            'pattern_name' => [
+            'enforce_query' => [
                 'search' => '<class_ref>::<name>',
                 'replace' => '<1>::query()-><2>',
                 'filters' => [
@@ -52,11 +52,18 @@ class EnforceQuery extends Command
 
     private function getMethods(): array
     {
+        $methods = explode(',', ltrim($this->option('methods'), '='));
+
+        if ($methods) {
+            return $methods;
+        }
+
         return [
+            'has',
             'where',
             'whereIn',
-            'whereNotIn',
             'whereNull',
+            'whereNotIn',
             'whereNotNull',
             'whereHas',
             'whereRaw',
@@ -64,22 +71,22 @@ class EnforceQuery extends Command
             'find',
             'findOr',
             'firstOr',
-            'firstOrCreate',
             'findOrFail',
             'firstOrFail',
-            'paginate',
-            'findOrNew',
-            'first',
-            'pluck',
+            'firstOrCreate',
             'firstOrNew',
-            'select',
             'selectRaw',
+            'findOrNew',
+            'paginate',
+            'first',
+            'get',
+            'pluck',
+            'select',
             'create',
             'insert',
             'limit',
             'orderBy',
             'findMany',
-            'get',
         ];
     }
 }
