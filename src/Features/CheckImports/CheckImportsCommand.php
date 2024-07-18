@@ -153,7 +153,7 @@ class CheckImportsCommand extends Command
 
         $this->line('');
 
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
     }
 
     private function printThanks($command)
