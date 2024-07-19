@@ -65,6 +65,7 @@ class FilePath
         return [$fileName, implode('/', $segments)];
     }
 
+
     #[Pure]
     public static function contains($filePath, $folder, $file)
     {
@@ -78,8 +79,13 @@ class FilePath
             return true;
         }
 
-        if ($folder && mb_strpos($folderPath, $folder) !== false) {
-            return true;
+        if ($folder) {
+            $folders = explode(',', $folder);
+            foreach ($folders as $folder) {
+                if (mb_strpos($folderPath, $folder) !== false) {
+                    return true;
+                }
+            }
         }
 
         return false;
