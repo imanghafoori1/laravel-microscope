@@ -15,7 +15,12 @@ class CheckAliasesCommand extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:aliases {--f|file=} {--d|folder=} {--detailed : Show files being checked} {--s|nofix : avoids the automatic fixes}';
+    protected $signature = 'check:aliases
+    {--f|file= : Comma separated list of file names to search in}
+    {--d|folder= : Comma separated list of folders to search in}
+    {--a|alias= : Comma separated list of aliases to look for}
+    {--s|nofix : avoids the automatic fixes}
+    ';
 
     protected $description = 'Replaces facade aliases with full namespace';
 
@@ -36,6 +41,7 @@ class CheckAliasesCommand extends Command
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
+        $this->handleAliasOption();
         $paramProvider = function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
@@ -55,5 +61,13 @@ class CheckAliasesCommand extends Command
         $errorPrinter->printTime();
 
         return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
+    }
+
+    private function handleAliasOption(): void
+    {
+        $alias = ltrim($this->option('alias'), '=');
+        if ($alias) {
+            FacadeAliasesCheck::$alias = explode(',', strtolower($alias));
+        }
     }
 }

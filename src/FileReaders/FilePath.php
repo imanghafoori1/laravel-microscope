@@ -75,14 +75,17 @@ class FilePath
 
         [$fileName, $folderPath] = self::getFolderFile($filePath);
 
-        if ($file && mb_strpos($fileName, $file) !== false) {
-            return true;
+        if ($file) {
+            foreach (explode(',', $file) as $_file) {
+                if (mb_strpos($fileName, $_file) !== false) {
+                    return true;
+                }
+            }
         }
 
         if ($folder) {
-            $folders = explode(',', $folder);
-            foreach ($folders as $folder) {
-                if (mb_strpos($folderPath, $folder) !== false) {
+            foreach (explode(',', $folder) as $_folder) {
+                if (mb_strpos($folderPath, $_folder) !== false) {
                     return true;
                 }
             }

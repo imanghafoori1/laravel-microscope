@@ -8,6 +8,8 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class FacadeAliasesCheck implements Check
 {
+    public static $alias = '-all-';
+
     /**
      * @var class-string
      */
@@ -28,12 +30,16 @@ class FacadeAliasesCheck implements Check
 
         foreach ($imports as $import) {
             foreach ($import as $base => $usageInfo) {
-                if (! isset($aliases[$usageInfo[0]])) {
+                $shortAlias = $usageInfo[0];
+                if (! isset($aliases[$shortAlias])) {
                     continue;
                 }
-                $alias = $aliases[$usageInfo[0]];
+                if (self::$alias !== '-all-' && ! in_array(strtolower($shortAlias), self::$alias)) {
+                    continue;
+                }
+                $expandedAlias = $aliases[$shortAlias];
 
-                $tokens = self::$handler::handle($absFilePath, $usageInfo, $base, $alias, $tokens, $import);
+                $tokens = self::$handler::handle($absFilePath, $usageInfo, $base, $expandedAlias, $tokens, $import);
             }
         }
 
