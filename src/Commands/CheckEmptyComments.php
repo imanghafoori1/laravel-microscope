@@ -12,9 +12,12 @@ class CheckEmptyComments extends Command
     use LogsErrors;
     use PatternApply;
 
-    protected $signature = 'check:empty_comments {--f|file=} {--d|folder=} {--t|test : backup the changed files}';
+    protected $signature = 'check:empty_comments
+     {--f|file=}
+     {--d|folder=}
+     {--nofix}';
 
-    protected $description = 'removes empty comments.';
+    protected $description = 'Removes empty comments.';
 
     protected $customMsg = 'No empty comments were found.  \(^_^)/';
 
@@ -30,27 +33,45 @@ class CheckEmptyComments extends Command
     public function getPatterns()
     {
         return [
-            'empty_comments' => [
+            'delete_empty_comments' => [
                 'search' => '<comment>',
-                'replace' => '',
-                'predicate' => function ($matches, $tokens) {
-                    if (($matches['values'][0][1] ?? '') !== '//') {
-                        return false;
-                    }
-                    $end = $matches['end'];
-
-                    $isBetweenSpace = (($tokens[$end - 1][0] ?? '') === T_WHITESPACE && ($tokens[$end + 1][0] ?? '') === T_WHITESPACE);
-
-                    $p2Type = ($tokens[$end - 2][0] ?? '');
-                    $n2Type = ($tokens[$end + 2][0] ?? '');
-
-                    if ($p2Type === T_COMMENT && $isBetweenSpace && $n2Type === T_COMMENT) {
-                        return false;
-                    }
-
-                    return ! in_array($p2Type, ['{', '[']) || ! $isBetweenSpace || ! in_array($n2Type, ['}', ']']);
-                },
+                'replace' => $this->option('nofix') ? null : '',
+                'predicate' => $this->getPredicate(),
             ],
         ];
+    }
+
+    private function getPredicate()
+    {
+        return function ($matches, $tokens) {
+            if (($matches['values'][0][1] ?? '') !== '//') {
+                return false;
+            }
+            $end = $matches['end'];
+
+            $isBetweenSpace = (($tokens[$end - 1][0] ?? '') === T_WHITESPACE && ($tokens[$end + 1][0] ?? '') === T_WHITESPACE);
+
+            $p2Type = ($tokens[$end - 2][0] ?? '');
+            $n2Type = ($tokens[$end + 2][0] ?? '');
+
+            if ($p2Type === T_COMMENT && $isBetweenSpace && $n2Type === T_COMMENT) {
+                return false;
+            }
+
+            /*
+             * Cases like these are not affected:
+             *
+             * $a = [
+             *   //
+             * ];
+             *
+             * public function __construct()
+             * {
+             *   //
+             * }
+             *
+             */
+            return ! in_array($p2Type, ['{', '[']) || ! $isBetweenSpace || ! in_array($n2Type, ['}', ']']);
+        };
     }
 }
