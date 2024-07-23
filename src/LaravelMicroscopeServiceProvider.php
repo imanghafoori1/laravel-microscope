@@ -31,6 +31,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->addCacheStore();
+
         $this->loadViewsFrom(__DIR__.'/../templates', 'microscope_package');
 
         Event::listen('microscope.start.command', function () {
@@ -136,5 +138,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         PhpFinder::$basePath = base_path();
         Path::setBasePath(base_path());
+    }
+
+    private function addCacheStore()
+    {
+        config()->set('cache.stores.|-microscope-|', [
+            'driver' => 'file',
+            'path' => storage_path('framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'microscope'),
+        ]);
     }
 }

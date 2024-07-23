@@ -18,10 +18,17 @@ class PatternRefactorings implements Check
 
     public static function check(PhpFileDescriptor $file, $patterns)
     {
-        $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
 
         foreach ($patterns[0] as $pattern) {
+            $cacheKey = $pattern['cacheKey'] ?? null;
+
+            if ($cacheKey && CachedFiles::isCheckedBefore($cacheKey, $file)) {
+                continue;
+            }
+
+            $tokens = $file->getTokens();
+
             if (isset($pattern['file']) && ! Str::endsWith($absFilePath, $pattern['file'])) {
                 continue;
             }
@@ -36,8 +43,10 @@ class PatternRefactorings implements Check
             $matchedValues = Finder::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i);
 
             if (! $matchedValues) {
+                $cacheKey && CachedFiles::addToCache($cacheKey, $file);
                 continue;
             }
+
             $postReplaces = $pattern['post_replace'] ?? [];
             if (! isset($pattern['replace'])) {
                 foreach ($matchedValues as $matchedValue) {
@@ -67,9 +76,9 @@ class PatternRefactorings implements Check
 
                 $tokens = token_get_all(Stringify::fromTokens($tokens));
                 $diff = count($tokens) - $countOldTokens;
-                $min_count = self::minimumMatchLength($pattern['search']);
+                $minCount = self::minimumMatchLength($pattern['search']);
 
-                $i = $matchedValue['end'] + $diff + 1 - $min_count + 1;
+                $i = $matchedValue['end'] + $diff + 1 - $minCount + 1;
 
                 goto start;
             }
@@ -122,6 +131,13 @@ class PatternRefactorings implements Check
 
     private static function show($matchedValue, $tokens, $absFilePath)
     {
+        [$message, $lineNum] = self::getShowMessage($matchedValue, $tokens);
+
+        self::printShow($message, $absFilePath, $lineNum);
+    }
+
+    private static function getShowMessage($matchedValue, $tokens): array
+    {
         $start = $matchedValue['start'] + 1;
         $end = $matchedValue['end'] + 1;
 
@@ -131,19 +147,18 @@ class PatternRefactorings implements Check
             ! $lineNum && $lineNum = ($tokens[$i][2] ?? 0);
             $from .= $tokens[$i][1] ?? $tokens[$i][0];
         }
-
+        $message = 'Detected:
+<fg=yellow>'.Str::limit($from, 150).'</>
+<fg=red>Found at:</>';
         self::$patternFound = true;
 
-        /**
-         * @var $printer ErrorPrinter::class
-         */
+        return [$message, $lineNum];
+    }
+
+    public static function printShow(string $message, $absFilePath, $lineNum): void
+    {
         $printer = ErrorPrinter::singleton();
-        // Print Replacement Links
-        $printer->print('Detected:
-<fg=yellow>'.Str::limit($from, 150).'</>', '', 0);
-
-        $printer->print('<fg=red>Found at:</>', '', 0);
-
+        $printer->print($message, '', 0);
         $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
     }
 }

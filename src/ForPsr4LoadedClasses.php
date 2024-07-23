@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Imanghafoori\LaravelMicroscope\Handlers\ErrorExceptionHandler;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
 class ForPsr4LoadedClasses
@@ -18,7 +19,9 @@ class ForPsr4LoadedClasses
     {
         ChecksOnPsr4Classes::$errorExceptionHandler = ErrorExceptionHandler::class;
 
-        return ChecksOnPsr4Classes::apply($checks, $params, $includeFile, $includeFolder);
+        $checker = CheckSingleMapping::init($checks, $params, $includeFile, $includeFolder);
+
+        return ChecksOnPsr4Classes::apply($checker);
     }
 
     public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '', $callback = null)

@@ -44,6 +44,7 @@ class EnforceHelpers extends Command
 
         return [
             'full_facade_paths' => [
+                'cache_key' => 'full_facade_paths-v1',
                 'search' => '<class_ref>::',
                 'replace' => '<1>()->',
                 'filters' => [
@@ -56,6 +57,7 @@ class EnforceHelpers extends Command
                 'mutator' => $mutator,
             ],
             'facade_aliases' => [
+                'cache_key' => 'facade_aliases-v1',
                 'search' => '<class_ref>::',
                 'replace' => '<1>()->',
                 'filters' => [

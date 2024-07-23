@@ -33,6 +33,11 @@ class PhpFileDescriptor
         return $obj;
     }
 
+    public function getMd5()
+    {
+        return md5_file($this->path->getWithUnixDirectorySeprator());
+    }
+
     public function setTokenizer($tokenizer)
     {
         $this->tokenizer = $tokenizer;
@@ -133,5 +138,10 @@ class PhpFileDescriptor
     public function insertNewLine($newLine, $atLine)
     {
         return FileManipulator::insertNewLine((string) $this->path, $newLine, $atLine);
+    }
+
+    public function getFileName()
+    {
+        return basename($this->path->__toString());
     }
 }

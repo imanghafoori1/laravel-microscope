@@ -2,12 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Generator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
 
@@ -27,16 +29,19 @@ trait PatternApply
         };
 
         $patterns = $this->getPatterns();
-        $this->appliesPatterns($patterns, $fileName, $folder);
+
+        $report = $this->appliesPatterns($patterns, $fileName, $folder);
+
+        $this->getOutput()->writeln($report);
 
         $this->finishCommand($errorPrinter);
 
         $errorPrinter->printTime();
 
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        return $this->hasFoundPatterns() ? 1 : 0;
     }
 
-    private function appliesPatterns(array $patterns, string $fileName, string $folder): void
+    private function appliesPatterns(array $patterns, string $fileName, string $folder)
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
@@ -51,9 +56,23 @@ trait PatternApply
         CheckBladePaths::$readOnly = false;
         $bladeStats = BladeFiles::check($check, [$parsedPatterns], $fileName, $folder);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats),
-            Reporters\BladeReport::getBladeStats($bladeStats),
-        ]));
+        return self::getFinalMessage($psr4Stats, $classMapStats, $bladeStats);
+    }
+
+    private static function getFinalMessage(array $psr4Stats, array $classMapStats, Generator $bladeStats): string
+    {
+        try {
+            return implode(PHP_EOL, [
+                Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats),
+                Reporters\BladeReport::getBladeStats($bladeStats),
+            ]);
+        } finally {
+            CachedFiles::writeCacheFiles();
+        }
+    }
+
+    private function hasFoundPatterns(): bool
+    {
+        return PatternRefactorings::$patternFound;
     }
 }

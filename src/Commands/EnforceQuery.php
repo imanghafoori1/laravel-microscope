@@ -42,6 +42,7 @@ class EnforceQuery extends Command
     {
         return [
             'enforce_query' => [
+                'cache_key' => 'enforce_query-v1',
                 'search' => '<class_ref>::<name>',
                 'replace' => '<1>::query()-><2>',
                 'filters' => [

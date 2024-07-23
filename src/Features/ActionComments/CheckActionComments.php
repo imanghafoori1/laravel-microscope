@@ -26,8 +26,8 @@ class CheckActionComments extends Command
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
 
-        $results = ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
-        iterator_to_array($results);
+        $psr4Stats = ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
+        iterator_to_array($psr4Stats);
 
         return 0;
     }

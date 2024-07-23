@@ -65,7 +65,6 @@ class FilePath
         return [$fileName, implode('/', $segments)];
     }
 
-
     #[Pure]
     public static function contains($filePath, $folder, $file)
     {
