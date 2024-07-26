@@ -8,6 +8,8 @@ class CachedFiles
 {
     private static $cache = [];
 
+    private static $cacheChange = [];
+
     private function __construct()
     {
         //
@@ -56,17 +58,24 @@ class CachedFiles
 
     public static function addToCache($patternKey, PhpFileDescriptor $file)
     {
+        self::$cacheChange[$patternKey] = true;
         self::$cache[$patternKey][$file->getMd5()] = $file->getFileName();
     }
 
     public static function writeCacheFiles()
     {
-        if (! is_dir(self::getPathForPattern())) {
-            mkdir(self::getPathForPattern(), 0777);
+        $folder = self::getPathForPattern();
+
+        if (! is_dir($folder)) {
+            mkdir($folder, 0777);
         }
 
         foreach (self::$cache as $patternKey => $fileMd5) {
-            file_put_contents(self::getPathForPattern().$patternKey.'.php', self::getCacheFileContents($fileMd5));
+            // Here we avoid writing the exact same content to the file.
+            if (self::$cacheChange[$patternKey] ?? '') {
+                chmod($folder.$patternKey.'.php', 0777);
+                file_put_contents($folder.$patternKey.'.php', self::getCacheFileContents($fileMd5));
+            }
         }
     }
 
