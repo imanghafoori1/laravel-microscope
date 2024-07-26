@@ -73,8 +73,9 @@ class CachedFiles
         foreach (self::$cache as $patternKey => $fileMd5) {
             // Here we avoid writing the exact same content to the file.
             if (self::$cacheChange[$patternKey] ?? '') {
-                chmod($folder.$patternKey.'.php', 0777);
-                file_put_contents($folder.$patternKey.'.php', self::getCacheFileContents($fileMd5));
+                $path = $folder.$patternKey.'.php';
+                file_exists($path) && chmod($path, 0777);
+                file_put_contents($path, self::getCacheFileContents($fileMd5));
             }
         }
     }
