@@ -62,7 +62,7 @@ class CachedFiles
     public static function writeCacheFiles()
     {
         if (! is_dir(self::getPathForPattern())) {
-            mkdir(self::getPathForPattern(), 775);
+            mkdir(self::getPathForPattern(), 0777);
         }
 
         foreach (self::$cache as $patternKey => $fileMd5) {
