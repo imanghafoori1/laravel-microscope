@@ -18,7 +18,7 @@ class CachedFiles
     public static function isCheckedBefore($patternKey, PhpFileDescriptor $file): bool
     {
         if (self::cacheIsLoaded($patternKey)) {
-            return self::checkFile($patternKey, $file);
+            return self::check($patternKey, $file);
         }
 
         $path = self::getPathForPattern().$patternKey.'.php';
@@ -28,10 +28,10 @@ class CachedFiles
             return false;
         }
 
-        // If is not loaded but exists:
-        self::loadFile($patternKey, $path);
+        // If there is a cache file but not loaded yet:
+        self::load($patternKey, $path);
 
-        return self::checkFile($patternKey, $file);
+        return self::check($patternKey, $file);
     }
 
     private static function cacheIsLoaded($patternKey): bool
@@ -46,17 +46,29 @@ class CachedFiles
         return storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
     }
 
-    private static function checkFile($PatternKey, PhpFileDescriptor $file)
+    /**
+     * Checks to see if the pattern is checked on the given file or not.
+     *
+     * @param  string  $patternKey
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
+     * @return bool
+     */
+    private static function check($patternKey, PhpFileDescriptor $file)
     {
-        return $file->getFileName() === self::readFromCache($PatternKey, $file->getMd5());
+        return $file->getFileName() === self::readFromCache($patternKey, $file->getMd5());
     }
 
-    private static function loadFile($patternKey, string $path): void
+    /**
+     * @param  string  $patternKey
+     * @param  string  $path
+     * @return void
+     */
+    private static function load($patternKey, $path): void
     {
         self::$cache[$patternKey] = require $path;
     }
 
-    public static function addToCache($patternKey, PhpFileDescriptor $file)
+    public static function put($patternKey, PhpFileDescriptor $file)
     {
         self::$cacheChange[$patternKey] = true;
         self::$cache[$patternKey][$file->getMd5()] = $file->getFileName();
@@ -74,7 +86,7 @@ class CachedFiles
             // Here we avoid writing the exact same content to the file.
             if (self::$cacheChange[$patternKey] ?? '') {
                 $path = $folder.$patternKey.'.php';
-                file_exists($path) && chmod($path, 0777);
+                is_file($path) && chmod($path, 0777);
                 file_put_contents($path, self::getCacheFileContents($fileMd5));
             }
         }
