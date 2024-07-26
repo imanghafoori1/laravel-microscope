@@ -34,6 +34,7 @@ class CheckEmptyComments extends Command
     {
         return [
             'delete_empty_comments' => [
+                'cacheKey' => 'delete_empty_comments-v1',
                 'search' => '<comment>',
                 'replace' => $this->option('nofix') ? null : '',
                 'predicate' => $this->getPredicate(),

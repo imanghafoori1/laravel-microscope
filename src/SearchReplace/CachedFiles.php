@@ -19,7 +19,7 @@ class CachedFiles
             return self::checkFile($patternKey, $file);
         }
 
-        $path = self::getPathForPattern($patternKey);
+        $path = self::getPathForPattern().$patternKey.'.php';
 
         // If there is no cache file:
         if (! file_exists($path)) {
@@ -37,11 +37,11 @@ class CachedFiles
         return isset(self::$cache[$patternKey]);
     }
 
-    private static function getPathForPattern(string $patternKey): string
+    private static function getPathForPattern(): string
     {
         $ds = DIRECTORY_SEPARATOR;
 
-        return storage_path('framework'.$ds.'cache'.$ds.$patternKey.'_cache.php');
+        return storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
     }
 
     private static function checkFile($PatternKey, PhpFileDescriptor $file)
@@ -61,8 +61,12 @@ class CachedFiles
 
     public static function writeCacheFiles()
     {
-        foreach (self::$cache as $cacheKey => $fileMd5) {
-            file_put_contents(self::getPathForPattern($cacheKey), self::getCacheFileContents($fileMd5));
+        if (! is_dir(self::getPathForPattern())) {
+            mkdir(self::getPathForPattern(), 775);
+        }
+
+        foreach (self::$cache as $patternKey => $fileMd5) {
+            file_put_contents(self::getPathForPattern().$patternKey.'.php', self::getCacheFileContents($fileMd5));
         }
     }
 
