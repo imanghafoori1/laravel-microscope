@@ -238,7 +238,7 @@ Here is a comprehensive list of placeholders you can use:
 |8|`<statement>`|to capture a whole php statement.|
 |9|`<name:nam1,nam2>` or `<name>`|for method or function names. `->where` or `::where`|
 |10|`<white_space>`|for whitespace blocks|
-|11|`<bool>` or `<boolean>`|for true or false (acts case-insensetive)|
+|11|`<bool>` or `<boolean>`|for true or false (acts case-insensitive)|
 |12|`<number>`|for numeric values|
 |13|`<cast>`|for type-casts like: `(array) $a;`|
 |14|`<int>` or `"<integer>"`|for integer values|
@@ -250,12 +250,12 @@ Here is a comprehensive list of placeholders you can use:
 
 >You can also define your own keywords if needed!
 >
->You just define a class for your new keyword and append the class path to the end of the `Finder::$keywords[] = MyKeyword::class` property.
+>You just define a class for your new keyword and append the classpath to the end of the `Finder::$keywords[] = MyKeyword::class` property.
 Just like the default keywords.
 
 **Example:**
 
-:one:  Let's say you want to find only the "comments" which contain the word "todo:" in them.
+:one:  Let's say you want to find only the "comments" that contain the word "todo:" in them.
 ```php
  'todo_comments' => [
         'search' => '<comment>',
@@ -384,32 +384,27 @@ User::query()->where(...)->get();
 \App\Models\User::query()->find(...);
 ```
 
-- The filters here ensure that the captured class reference is a laravel Model and the method name is one of the names mentioned in the list.
+- The filters here ensure that the captured class reference is a Laravel Model and the method name is one of the names mentioned in the list.
 
 So it does not tamper with something like this:
 ```php
-User::all();            // The `all` method can not be preceded with `query`
+User::all();            // The `all` method can not be preceded by `query`
 
 UserRepo::where(...);   /// UserRepo is not a model
 ```
 
-- This is something which you can never do by regex.
+- This is something that you can never do by regex.
 
 <a name="capturing-php-statements" ></a>
 :five: **Capturing php "statements":**
 
-Let's say we want to opt into php 7.4 arrow functions:
+Let's say we want to opt into PHP v7.4 arrow functions:
 
 ```php
 'fn' => [
-    'search' => 'function (<in_between>)<until>{ <statement> }',
+    'search' => 'function (<in_between>)<until>{ return <statement>; }',
     'replace' => 'fn (<1>) => <3>',
     'tags' => 'php74,refactor',
-    'mutator' => function ($matches) {
-      $matches[2][1] = str_replace(['return ', ';'], '', $matches[2][1]);
-
-      return $matches;
-    }
 ]
 
 ```
@@ -452,14 +447,14 @@ If we define our pattern like this:
 
 ```php
 return [
-    'staty' => [
+    'pattern_name' => [
         'search' => '<var> = <until>;',   
     ]
 ];
 ```
 For `$c = $a + $b;` they act the same way, but for the second one `"<until>";` will not capture the whole closure and will stop as soon as it reaches `$a++;` and that is a problem.
 
-But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semicolon at the end of closure definition and whole close would be captured.
+But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semicolon at the end of the closure definition and the whole close would be captured.
 
 <a name="capturing-global" ></a>
 :seven: **Capturing global function calls:**
