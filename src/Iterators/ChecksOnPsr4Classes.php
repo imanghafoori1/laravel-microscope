@@ -22,7 +22,7 @@ class ChecksOnPsr4Classes
     private static $checker;
 
     /**
-     * @param $checker
+     * @param  $checker
      * @return array<string, \Generator>
      */
     public static function apply($checker)
@@ -55,7 +55,7 @@ class ChecksOnPsr4Classes
     private static function processPaths($psr4Namespace, $psr4Paths)
     {
         foreach ((array) $psr4Paths as $psr4Path) {
-            $filesCount = (self::$checker)->applyChecksInPath($psr4Namespace, $psr4Path);
+            $filesCount = self::$checker->applyChecksInPath($psr4Namespace, $psr4Path);
             self::$checkedFilesCount += $filesCount;
 
             yield $psr4Path => $filesCount;

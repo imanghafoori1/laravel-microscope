@@ -49,13 +49,13 @@ class CachedFiles
     /**
      * Checks to see if the pattern is checked on the given file or not.
      *
-     * @param  string  $PatternKey
+     * @param  string  $patternKey
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return bool
      */
-    private static function check($PatternKey, PhpFileDescriptor $file)
+    private static function check($patternKey, PhpFileDescriptor $file)
     {
-        return $file->getFileName() === self::readFromCache($PatternKey, $file->getMd5());
+        return $file->getFileName() === self::readFromCache($patternKey, $file->getMd5());
     }
 
     /**

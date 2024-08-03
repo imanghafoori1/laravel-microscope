@@ -70,5 +70,4 @@ class PostReplaceAndSave
 
         return ErrorPrinter::singleton()->printer->confirm($text);
     }
-
 }
