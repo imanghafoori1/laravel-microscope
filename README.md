@@ -398,18 +398,13 @@ UserRepo::where(...);   /// UserRepo is not a model
 <a name="capturing-php-statements" ></a>
 :five: **Capturing php "statements":**
 
-Let's say we want to opt into PHP 7.4 arrow functions:
+Let's say we want to opt into PHP v7.4 arrow functions:
 
 ```php
 'fn' => [
-    'search' => 'function (<in_between>)<until>{ <statement>; }',
+    'search' => 'function (<in_between>)<until>{ return <statement>; }',
     'replace' => 'fn (<1>) => <3>',
     'tags' => 'php74,refactor',
-    'mutator' => function ($matches) {
-      $matches[2][1] = str_replace(['return '], '', $matches[2][1]);
-
-      return $matches;
-    }
 ]
 
 ```
