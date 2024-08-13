@@ -32,8 +32,6 @@ class FilePathsForReferenceFix
         // ];
         // $paths['others'] = self::collectFilesInNonPsr4Paths($dirs);
 
-        self::$pathsForReferenceFix = $paths;
-
         return $paths;
     }
 
