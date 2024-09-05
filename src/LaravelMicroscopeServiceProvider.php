@@ -25,11 +25,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        UnusedVarsInstaller::spyView();
-
         if (! $this->canRun()) {
             return;
         }
+
+        UnusedVarsInstaller::spyView();
 
         $this->addCacheStore();
 
