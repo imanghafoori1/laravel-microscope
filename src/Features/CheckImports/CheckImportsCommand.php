@@ -68,6 +68,8 @@ class CheckImportsCommand extends Command
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
+        CheckClassReferencesAreValid::$cache = cache()->get('micro_imports__223r') ?: [];
+
         if ($this->option('force')) {
             FacadeAliasReplacer::$forceReplace = true;
         }
@@ -86,11 +88,7 @@ class CheckImportsCommand extends Command
         $folder = ltrim($this->option('folder'), '=');
         $folder = rtrim($folder, '/\\');
 
-        $routeFiles = FilePath::removeExtraPaths(
-            RoutePaths::get(),
-            $folder,
-            $fileName
-        );
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
 
         $autoloadedFilesGen = FilePath::removeExtraPaths(
             ComposerJson::autoloadedFilesList(base_path()),
@@ -98,7 +96,7 @@ class CheckImportsCommand extends Command
             $fileName
         );
 
-        $paramProvider = $this->getParamProvider();
+        $paramProvider = self::getParamProvider();
 
         $checks = $this->checks;
         unset($checks[1]);
@@ -110,7 +108,7 @@ class CheckImportsCommand extends Command
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
-            $this->getLaravelFolders(),
+            self::getLaravelFolders(),
             $paramProvider,
             $fileName,
             $folder
@@ -131,7 +129,7 @@ class CheckImportsCommand extends Command
         $messages[0] = CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[2] = CheckImportReporter::header();
-        $messages[3] = $this->getFilesStats();
+        $messages[3] = self::getFilesStats();
         $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
         $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
@@ -148,15 +146,19 @@ class CheckImportsCommand extends Command
         $errorPrinter->printTime();
 
         if (Thanks::shouldShow()) {
-            $this->printThanks($this);
+            self::printThanks($this);
         }
+
+        cache()->rememberForever('microscope_imports_252r', function () {
+            return CheckClassReferencesAreValid::$cache;
+        });
 
         $this->line('');
 
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
     }
 
-    private function printThanks($command)
+    private static function printThanks($command)
     {
         $command->line(PHP_EOL);
         foreach (Thanks::messages() as $msg) {
@@ -167,7 +169,7 @@ class CheckImportsCommand extends Command
     /**
      * @return \Closure
      */
-    private function getParamProvider()
+    private static function getParamProvider()
     {
         return function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
@@ -176,7 +178,7 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private function getFilesStats()
+    private static function getFilesStats()
     {
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
@@ -186,7 +188,7 @@ class CheckImportsCommand extends Command
     /**
      * @return array<string, \Generator>
      */
-    private function getLaravelFolders()
+    private static function getLaravelFolders()
     {
         return [
             'config' => LaravelPaths::configDirs(),
