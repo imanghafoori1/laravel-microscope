@@ -68,12 +68,13 @@ class ActionsComments implements Check
     public static function getCallsiteInfo($methods, $route)
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
-        $file = $callsite[0]['file'] ?? '';
-        $line = $callsite[0]['line'] ?? '';
-        $file = \trim(str_replace(base_path(), '', $file), '\\/');
-        $file = str_replace('\\', '/', $file);
+        $absPath = $callsite[0]['file'] ?? '';
+        $relativePath = trim(str_replace(base_path(), '', $absPath), '\\/');
+        $relativePath = str_replace('\\', '/', $relativePath);
 
-        return [$file, $line];
+        $line = $callsite[0]['line'] ?? '';
+
+        return [$relativePath, $line];
     }
 
     private static function getActionRoutes($allRoutes, $method)

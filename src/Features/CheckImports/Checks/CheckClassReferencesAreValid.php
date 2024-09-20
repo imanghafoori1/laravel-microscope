@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
+use Closure;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -13,6 +14,8 @@ class CheckClassReferencesAreValid implements Check
 
     public static $checkExtra = true;
 
+    public static $cache = [];
+
     public static $extraCorrectImportsHandler = Handlers\ExtraCorrectImports::class;
 
     public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
@@ -21,17 +24,34 @@ class CheckClassReferencesAreValid implements Check
 
     public static function check(PhpFileDescriptor $file, $imports = [])
     {
-        $tokens = $file->getTokens();
+        loopStart:
+        $md5 = $file->getMd5();
         $absFilePath = $file->getAbsolutePath();
 
-        loopStart:
+        $tokens = $file->getTokens();
+        $refFinder = function () use ($file, $tokens, $imports) {
+            $absFilePath = $file->getAbsolutePath();
+
+            return ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
+        };
+
+        if (count($tokens) > 100) {
+            $refFinder = function () use ($md5, $refFinder) {
+                return self::getForever($md5, $refFinder);
+            };
+        }
+
         [
+            $classReferences,
             $hostNamespace,
-            $extraWrongImports,
-            $extraCorrectImports,
-            $wrongClassRefs,
-            $wrongDocblockRefs,
-        ] = ImportsAnalyzer::getWrongRefs($tokens, $absFilePath, $imports);
+            $extraImports,
+            $docblockRefs,
+            $attributeReferences,
+        ] = $refFinder();
+
+        [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);
+        [$wrongDocblockRefs] = ImportsAnalyzer::filterWrongClassRefs($docblockRefs, $absFilePath);
+        [$extraWrongImports, $extraCorrectImports] = ImportsAnalyzer::filterWrongClassRefs($extraImports, $absFilePath);
 
         if (self::$checkWrong && self::$wrongClassRefsHandler) {
             [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
@@ -62,5 +82,10 @@ class CheckClassReferencesAreValid implements Check
         if (self::$checkExtra && self::$extraCorrectImportsHandler) {
             self::$extraCorrectImportsHandler::handle($extraCorrectImports, $absFilePath);
         }
+    }
+
+    public static function getForever($md5, Closure $refFinder)
+    {
+        return self::$cache[$md5] ?? (self::$cache[$md5] = $refFinder());
     }
 }

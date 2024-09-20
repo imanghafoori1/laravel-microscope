@@ -23,6 +23,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -68,6 +69,10 @@ class CheckImportsCommand extends Command
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
+        if (file_exists($path = CachedFiles::getPathForPattern().'check_imports.php')) {
+            CheckClassReferencesAreValid::$cache = (require $path) ?: [];
+        }
+
         if ($this->option('force')) {
             FacadeAliasReplacer::$forceReplace = true;
         }
@@ -86,11 +91,7 @@ class CheckImportsCommand extends Command
         $folder = ltrim($this->option('folder'), '=');
         $folder = rtrim($folder, '/\\');
 
-        $routeFiles = FilePath::removeExtraPaths(
-            RoutePaths::get(),
-            $folder,
-            $fileName
-        );
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
 
         $autoloadedFilesGen = FilePath::removeExtraPaths(
             ComposerJson::autoloadedFilesList(base_path()),
@@ -98,7 +99,7 @@ class CheckImportsCommand extends Command
             $fileName
         );
 
-        $paramProvider = $this->getParamProvider();
+        $paramProvider = self::getParamProvider();
 
         $checks = $this->checks;
         unset($checks[1]);
@@ -110,7 +111,7 @@ class CheckImportsCommand extends Command
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
-            $this->getLaravelFolders(),
+            self::getLaravelFolders(),
             $paramProvider,
             $fileName,
             $folder
@@ -131,7 +132,7 @@ class CheckImportsCommand extends Command
         $messages[0] = CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
         $messages[2] = CheckImportReporter::header();
-        $messages[3] = $this->getFilesStats();
+        $messages[3] = self::getFilesStats();
         $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
         $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
@@ -148,7 +149,12 @@ class CheckImportsCommand extends Command
         $errorPrinter->printTime();
 
         if (Thanks::shouldShow()) {
-            $this->printThanks($this);
+            self::printThanks($this);
+        }
+
+        if ($cache = CheckClassReferencesAreValid::$cache) {
+            self::writeCacheContent($cache);
+            self::printThanks($this);
         }
 
         $this->line('');
@@ -156,7 +162,7 @@ class CheckImportsCommand extends Command
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
     }
 
-    private function printThanks($command)
+    private static function printThanks($command)
     {
         $command->line(PHP_EOL);
         foreach (Thanks::messages() as $msg) {
@@ -167,7 +173,7 @@ class CheckImportsCommand extends Command
     /**
      * @return \Closure
      */
-    private function getParamProvider()
+    private static function getParamProvider()
     {
         return function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
@@ -176,7 +182,7 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private function getFilesStats()
+    private static function getFilesStats()
     {
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
@@ -186,11 +192,21 @@ class CheckImportsCommand extends Command
     /**
      * @return array<string, \Generator>
      */
-    private function getLaravelFolders()
+    private static function getLaravelFolders()
     {
         return [
             'config' => LaravelPaths::configDirs(),
             'migrations' => LaravelPaths::migrationDirs(),
         ];
+    }
+
+    private static function writeCacheContent(array $cache): void
+    {
+        $folder = CachedFiles::getPathForPattern();
+        ! is_dir($folder) && mkdir($folder);
+        $content = CachedFiles::getCacheFileContents($cache);
+        $path = $folder.'check_imports.php';
+        file_exists($path) && chmod($path, 0777);
+        file_put_contents($path, $content);
     }
 }
