@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class BeforeRefFix
 {
-
     public static function getCallback($command)
     {
         if ($command->option('force-ref-fix')) {
