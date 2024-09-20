@@ -2,14 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-
 class ClassRefCorrector
 {
-    private static $afterFix = [self::class, 'afterReferenceFix'];
+    private static $afterFix = [ClassRefCorrector\AfterRefFix::class, 'getCallback'];
 
-    private static $beforeFix = [self::class, 'beforeReferenceFix'];
+    private static $beforeFix = [ClassRefCorrector\BeforeRefFix::class, 'getCallback'];
 
     public static function fixOldRefs($from, $class, $to, $path, $beforeFix = null, $afterFix = null)
     {
@@ -73,45 +70,6 @@ class ClassRefCorrector
         }
 
         return [$changedLineNums, implode('', $lines)];
-    }
-
-    private static function afterReferenceFix()
-    {
-        return function (PhpFileDescriptor $file, $changedLineNums, $content) {
-            $file->putContents($content);
-            $path = $file->getAbsolutePath();
-
-            $printer = ErrorPrinter::singleton();
-            foreach ($changedLineNums as $line) {
-                $printer->simplePendError(
-                    '', $path, $line, 'ns_replacement', 'Namespace replacement:'
-                );
-            }
-        };
-    }
-
-    private static function beforeReferenceFix($command)
-    {
-        if ($command->option('force-ref-fix')) {
-            return function () {
-                return true;
-            };
-        }
-
-        return function (PhpFileDescriptor $file, $lineIndex, $lineContent) use ($command) {
-            $command->getOutput()->writeln(
-                ErrorPrinter::getLink($file->getAbsolutePath(), $lineIndex)
-            );
-
-            $command->warn($lineContent);
-
-            return $command->confirm(self::getQuestion(), true);
-        };
-    }
-
-    private static function getQuestion(): string
-    {
-        return 'Do you want to update reference to the old namespace?';
     }
 
     private static function hasReference($lineContent, array $olds)

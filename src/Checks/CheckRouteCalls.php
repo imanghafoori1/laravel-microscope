@@ -72,7 +72,9 @@ class CheckRouteCalls implements Check
 
     public static function checkRouteExists($line, $routeName, $absPath)
     {
-        $matchedRoute = app('router')->getRoutes()->getByName(\trim($routeName, '\'\"'));
+        $matchedRoute = app('router')->getRoutes()->getByName(
+            trim($routeName, '\'\"')
+        );
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
     }
 
