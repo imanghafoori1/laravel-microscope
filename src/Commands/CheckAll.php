@@ -21,7 +21,7 @@ class CheckAll extends Command
         $t1 = microtime(true);
         $errorPrinter->printer = $this->output;
 
-        // turns off error logging.
+        // Turns off error logging.
         $errorPrinter->logErrors = false;
 
         $this->call('check:psr4', ['--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
@@ -40,8 +40,14 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $this->finishCommand($errorPrinter);
-        $errorPrinter->printer->writeln('time: '.round(microtime(true) - $t1, 2).' (sec)', 2);
+        $duration = microtime(true) - $t1;
+        $errorPrinter->printer->writeln(self::getTimeMsg($duration), 2);
 
         return $errorPrinter->hasErrors() ? 1 : 0;
+    }
+
+    private static function getTimeMsg($time): string
+    {
+        return 'time: '.round($time, 2).' (sec)';
     }
 }
