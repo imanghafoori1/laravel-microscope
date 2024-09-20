@@ -39,7 +39,7 @@ class CachedFiles
         return isset(self::$cache[$patternKey]);
     }
 
-    private static function getPathForPattern(): string
+    public static function getPathForPattern(): string
     {
         $ds = DIRECTORY_SEPARATOR;
 
@@ -85,7 +85,7 @@ class CachedFiles
         return self::$cache[$patternKey][$md5] ?? '';
     }
 
-    private static function getCacheFileContents($fileHashes): string
+    public static function getCacheFileContents($fileHashes): string
     {
         return '<?php '.PHP_EOL.'return '.var_export($fileHashes, true).';';
     }

@@ -23,6 +23,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -68,7 +69,9 @@ class CheckImportsCommand extends Command
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
-        CheckClassReferencesAreValid::$cache = cache()->get('micro_imports__223r') ?: [];
+        if (file_exists($path = CachedFiles::getPathForPattern().'check_imports.php')) {
+            CheckClassReferencesAreValid::$cache = (require $path) ?: [];
+        }
 
         if ($this->option('force')) {
             FacadeAliasReplacer::$forceReplace = true;
@@ -149,9 +152,9 @@ class CheckImportsCommand extends Command
             self::printThanks($this);
         }
 
-        cache()->rememberForever('microscope_imports_252r', function () {
-            return CheckClassReferencesAreValid::$cache;
-        });
+        if ($cache = CheckClassReferencesAreValid::$cache) {
+            $this->writeCacheContent($cache);
+        }
 
         $this->line('');
 
@@ -194,5 +197,15 @@ class CheckImportsCommand extends Command
             'config' => LaravelPaths::configDirs(),
             'migrations' => LaravelPaths::migrationDirs(),
         ];
+    }
+
+    private function writeCacheContent(array $cache): void
+    {
+        $folder = CachedFiles::getPathForPattern();
+        ! is_dir($folder) && mkdir($folder);
+        $content = CachedFiles::getCacheFileContents($cache);
+        $path = $folder.'check_imports.php';
+        file_exists($path) && chmod($path, 0777);
+        file_put_contents($path, $content);
     }
 }
