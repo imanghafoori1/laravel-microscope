@@ -23,7 +23,7 @@ class CheckDD implements Check
                 ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) ||
                 ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))
             ) {
-                $callback($tokens, $absPath, $tokens[$index]);
+                $callback($file, $tokens[$index]);
             }
         }
     }

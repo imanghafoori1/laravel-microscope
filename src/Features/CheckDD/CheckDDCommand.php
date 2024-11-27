@@ -30,7 +30,7 @@ class CheckDDCommand extends Command
 
         $paramProvider = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
-                $token[1], $file->getTokens(), $token[2], 'ddFound', 'Debug function found: '
+                $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
 
