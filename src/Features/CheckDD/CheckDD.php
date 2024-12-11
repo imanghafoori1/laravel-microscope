@@ -11,8 +11,6 @@ class CheckDD implements Check
     public static function check(PhpFileDescriptor $file, $params)
     {
         $tokens = $file->getTokens();
-        $absPath = $file->getAbsolutePath();
-
         $callback = $params[0];
         foreach ($tokens as $i => $token) {
             if (
