@@ -38,7 +38,7 @@ class PatternRefactorings implements Check
             $i = 0;
             start:
             $namedPatterns = $pattern['named_patterns'] ?? [];
-            $matchedValues = Finder::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i);
+            $matchedValues = Finder::getMatches($pattern['search'], $tokens, $pattern['predicate'], $pattern['mutator'], $namedPatterns, $pattern['filters'], $i, null, $pattern['ignore_whitespaces'] ?? true);
 
             if (! $matchedValues) {
                 $cacheKey && CachedFiles::put($cacheKey, $file);
