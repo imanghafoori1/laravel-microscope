@@ -42,6 +42,9 @@ class SpyDispatcher extends Dispatcher
             if ($listener instanceof \Closure) {
                 $listener = $this->stringifyClosure($listener);
             }
+            if ($event instanceof \Closure) {
+                $event = $this->stringifyClosure($event);
+            }
 
             $this->addOriginalListener([$listener, $callSite], $event);
         }
