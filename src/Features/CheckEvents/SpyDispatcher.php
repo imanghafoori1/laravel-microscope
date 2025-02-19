@@ -43,7 +43,7 @@ class SpyDispatcher extends Dispatcher
                 $listener = $this->stringifyClosure($listener);
             }
 
-            $this->addOriginalListener([$listener, $callSite], $event);
+            is_string($event) && $this->addOriginalListener([$listener, $callSite], $event);
         }
     }
 
