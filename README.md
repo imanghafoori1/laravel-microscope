@@ -646,9 +646,9 @@ if ($var1 > 1)
 
 You make an empty file, and we fill it, based on naming conventions.
 
-If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command:
-1 - It will be filled with a boilerplate and correct Psr-4 namespace.
-2 - It will be appended to the `providers` array in the `config/app.php`
+If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command: </br>
+- It will be filled with a boilerplate and correct Psr-4 namespace. </br>
+- It will be appended to the `providers` array in the `config/app.php`
 
 
 <a name="imports"></a>
