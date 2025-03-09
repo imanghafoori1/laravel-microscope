@@ -14,15 +14,15 @@ class TypeStatistics
 
     public $trait = 0;
 
-    public function increment(int $type)
+    public function increment(string $type)
     {
-        if ($type === T_INTERFACE) {
+        if ($type === 'interface') {
             $this->interface++;
-        } elseif ($type === T_CLASS) {
+        } elseif ($type === 'class') {
             $this->class++;
-        } elseif ($type === T_TRAIT) {
+        } elseif ($type === 'trait') {
             $this->trait++;
-        } elseif ($type === T_ENUM) {
+        } elseif ($type === 'enum') {
             $this->enum++;
         }
     }

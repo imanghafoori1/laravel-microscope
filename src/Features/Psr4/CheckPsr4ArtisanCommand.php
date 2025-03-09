@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
+use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -59,7 +60,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, $classLists)
+    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, ClassLists $classLists)
     {
         $classListStatistics = self::countClasses($classLists);
         $errorPrinter->logErrors();
@@ -79,15 +80,15 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private static function countClasses($classLists)
+    private static function countClasses(ClassLists $classLists)
     {
         $type = new TypeStatistics();
 
-        foreach ($classLists as $composerPath => $classList) {
+        foreach ($classLists->getAllLists() as $composerPath => $classList) {
             foreach ($classList as $namespace => $entities) {
                 $type->namespaceFiles($namespace, count($entities));
                 foreach ($entities as $entity) {
-                    $type->increment($entity['type']);
+                    $type->increment($entity->getType());
                 }
             }
         }
@@ -102,7 +103,7 @@ class CheckPsr4ArtisanCommand extends Command
         };
     }
 
-    private function getClassLists(Comp $composer)
+    private function getClassLists(Comp $composer): ClassLists
     {
         $folder = ltrim($this->option('folder'), '=');
         $filter = function ($classFilePath, $currentNamespace, $class, $parent) {
@@ -114,7 +115,7 @@ class CheckPsr4ArtisanCommand extends Command
         return $composer->getClasslists($filter, $pathFilter);
     }
 
-    private function getErrorsLists(Comp $composer, $classLists)
+    private function getErrorsLists(Comp $composer, ClassLists $classLists)
     {
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
@@ -122,7 +123,7 @@ class CheckPsr4ArtisanCommand extends Command
         }
         : null;
 
-        return $composer->getErrorsLists($classLists, $onCheck);
+        return $composer->getErrorsLists($classLists->getAllLists(), $onCheck);
     }
 
     private function getTotalCheckedMessage($total): string

@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Illuminate\Console\Command;
+use ImanGhafoori\ComposerJson\NamespaceErrors\FilenameError;
+use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors
@@ -27,12 +29,12 @@ class Psr4Errors
         }
     }
 
-    private static function handleError($error)
+    private static function handleError(NamespaceError|FilenameError $error)
     {
-        if ($error['type'] === 'namespace') {
+        if ($error->errorType() === 'namespace') {
             self::askAndFixNamespace($error);
-        } elseif ($error['type'] === 'filename') {
-            self::wrongFileName($error);
+        } elseif ($error->errorType() === 'filename') {
+            self::wrongFileName($error->entity);
         }
     }
 
@@ -54,13 +56,13 @@ class Psr4Errors
         }
     }
 
-    private static function askAndFixNamespace($error)
+    private static function askAndFixNamespace(NamespaceError $error)
     {
         self::applyFixProcess(
-            PhpFileDescriptor::make($error['absFilePath']),
-            $error['currentNamespace'],
-            $error['class'],
-            $error['correctNamespace']
+            PhpFileDescriptor::make($error->entity->getAbsolutePath()),
+            $error->entity->getNamespace(),
+            $error->entity->getEntityName(),
+            $error->getShortest()
         );
     }
 
