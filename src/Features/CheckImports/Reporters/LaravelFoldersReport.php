@@ -10,7 +10,7 @@ class LaravelFoldersReport
      * @param  \Generator  $foldersStats
      * @return string
      */
-    public static function foldersStats($foldersStats)
+    public static function foldersStats($foldersStats): string
     {
         $output = '';
 

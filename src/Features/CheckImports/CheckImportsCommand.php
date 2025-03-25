@@ -28,6 +28,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use JetBrains\PhpStorm\Pure;
 
 class CheckImportsCommand extends Command
 {
@@ -106,8 +107,8 @@ class CheckImportsCommand extends Command
 
         $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $fileName, $folder);
 
-        $routeFiles = FileIterators::checkFiles($routeFiles, $paramProvider, $checks);
-        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $paramProvider, $checks);
+        $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
+        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $checks, $paramProvider);
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
@@ -124,10 +125,10 @@ class CheckImportsCommand extends Command
         $bladeStats = BladeFiles::check($checks, $paramProvider, $fileName, $folder);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
-        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
-            $errorPrinter->flushErrors();
-        };
 
+        /**
+         * @var string[] $messages
+         */
         $messages = [];
         $messages[0] = CheckImportReporter::totalImportsMsg();
         $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
@@ -137,6 +138,7 @@ class CheckImportsCommand extends Command
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
         $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
         $messages[7] = AutoloadFiles::getLines($autoloadedFilesGen);
+        $errorPrinter->flushErrors();
         $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
@@ -162,6 +164,7 @@ class CheckImportsCommand extends Command
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
     }
 
+    #[Pure]
     private static function printThanks($command)
     {
         $command->line(PHP_EOL);
@@ -170,9 +173,7 @@ class CheckImportsCommand extends Command
         }
     }
 
-    /**
-     * @return \Closure
-     */
+    #[Pure]
     private static function getParamProvider()
     {
         return function (PhpFileDescriptor $file) {
@@ -182,7 +183,8 @@ class CheckImportsCommand extends Command
         };
     }
 
-    private static function getFilesStats()
+    #[Pure]
+    private static function getFilesStats(): string
     {
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
@@ -192,6 +194,7 @@ class CheckImportsCommand extends Command
     /**
      * @return array<string, \Generator>
      */
+    #[Pure]
     private static function getLaravelFolders()
     {
         return [

@@ -13,12 +13,12 @@ class FileIterators extends BaseIterator
      * @param  array  $checks
      * @return \Generator
      */
-    public static function checkFilePaths($paths, $paramProvider, $checks)
+    public static function checkFilePaths($paths, $checks, $paramProvider)
     {
         foreach ($paths as $dir => $absFilePaths) {
             is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 
-            yield $dir => self::checkFiles($absFilePaths, $paramProvider, $checks);
+            yield $dir => self::checkFiles($absFilePaths, $checks, $paramProvider);
         }
     }
 
@@ -34,7 +34,7 @@ class FileIterators extends BaseIterator
     {
         foreach ($dirsList as $listName => $dirs) {
             $filePathsGen = Paths::getAbsFilePaths($dirs, $file, $folder);
-            yield $listName => self::checkFilePaths($filePathsGen, $paramProvider, $checks);
+            yield $listName => self::checkFilePaths($filePathsGen, $checks, $paramProvider);
         }
     }
 
@@ -44,7 +44,7 @@ class FileIterators extends BaseIterator
      * @param  $checks
      * @return \Generator
      */
-    public static function checkFiles($absFilePaths, $paramProvider, $checks): Generator
+    public static function checkFiles($absFilePaths, $checks, $paramProvider): Generator
     {
         is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 

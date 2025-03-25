@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features;
 
 use DateInterval;
+use JetBrains\PhpStorm\Pure;
 
 class Thanks
 {
@@ -20,6 +21,7 @@ class Thanks
         return $show;
     }
 
+    #[Pure]
     public static function messages()
     {
         return [

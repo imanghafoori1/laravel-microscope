@@ -9,11 +9,11 @@ abstract class BaseIterator
     protected static function applyChecks($absFilePaths, $checks, $params)
     {
         foreach ($absFilePaths as $absFilePath) {
-            $file = PhpFileDescriptor::make($absFilePath);
+            $fileDescriptor = PhpFileDescriptor::make($absFilePath);
             foreach ($checks as $check) {
-                $check::check($file, self::processParams($file, $params));
+                $check::check($fileDescriptor, self::processParams($fileDescriptor, $params));
             }
-            yield $file;
+            yield $fileDescriptor;
         }
     }
 
