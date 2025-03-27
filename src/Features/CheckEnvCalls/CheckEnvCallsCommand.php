@@ -46,6 +46,10 @@ class CheckEnvCallsCommand extends Command
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
+    /**
+     * @param  string  $absPath
+     * @return void
+     */
     private function checkForEnv($absPath)
     {
         $tokens = token_get_all(file_get_contents($absPath));
@@ -59,8 +63,15 @@ class CheckEnvCallsCommand extends Command
         }
     }
 
+    /**
+     * @param  \Generator  $paths
+     * @return void
+     */
     private function checkPaths($paths)
     {
+        /**
+         * @var $filePath string
+         */
         foreach ($paths as $filePath) {
             $this->checkForEnv($filePath);
         }

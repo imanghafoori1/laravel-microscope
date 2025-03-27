@@ -23,11 +23,12 @@ class FileIterators extends BaseIterator
     }
 
     /**
+     * @param  array  $checks
      * @param  array<string, \Generator>  $dirsList
      * @param  $paramProvider
      * @param  string  $file
      * @param  string  $folder
-     * @param  array  $checks
+     *
      * @return \Generator
      */
     public static function checkFolders($checks, $dirsList, $paramProvider, $file, $folder)

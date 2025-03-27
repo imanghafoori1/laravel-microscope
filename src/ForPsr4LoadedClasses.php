@@ -13,7 +13,7 @@ class ForPsr4LoadedClasses
      * @param  array  $params
      * @param  string  $includeFile
      * @param  string  $includeFolder
-     * @return array<string, \Generator>
+     * @return array<string, \Generator<string, \Generator<string, int>>>
      */
     public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
     {
@@ -24,6 +24,9 @@ class ForPsr4LoadedClasses
         return ChecksOnPsr4Classes::apply($checker);
     }
 
+    /**
+     * @return void
+     */
     public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '', $callback = null)
     {
         self::applyOnStats(
@@ -32,6 +35,11 @@ class ForPsr4LoadedClasses
         );
     }
 
+    /**
+     * @param array<string, \Generator<string, \Generator<string, int>>> $allStats
+     * @param \Closure|null $callback
+     * @return void
+     */
     public static function applyOnStats(array $allStats, $callback = null)
     {
         foreach ($allStats as $path => $results) {

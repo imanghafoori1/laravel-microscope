@@ -12,7 +12,7 @@ trait FiltersFiles
      * @param  \Symfony\Component\Finder\Finder  $files
      * @param  string  $fileName
      * @param  string  $folder
-     * @return \Generator
+     * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
     private static function filterFiles(Finder $files, $folder, $fileName = null)
     {
@@ -24,7 +24,7 @@ trait FiltersFiles
     /**
      * @param  $items
      * @param  \Closure  $condition
-     * @return \Generator
+     * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
     private static function filterItems($items, Closure $condition)
     {

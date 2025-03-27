@@ -41,6 +41,9 @@ trait PatternApply
         return $this->hasFoundPatterns() ? 1 : 0;
     }
 
+    /**
+     * @return string
+     */
     private function appliesPatterns(array $patterns, string $fileName, string $folder)
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);

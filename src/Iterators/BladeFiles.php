@@ -24,7 +24,7 @@ class BladeFiles implements Check
     }
 
     /**
-     * @return \Generator<string, string>
+     * @return \Generator<string, array>
      */
     public static function getViews()
     {

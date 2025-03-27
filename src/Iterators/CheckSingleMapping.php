@@ -62,6 +62,10 @@ class CheckSingleMapping
         return $filesCount;
     }
 
+    /**
+     * @param \Symfony\Component\Finder\SplFileInfo $phpFileObj
+     * @return void
+     */
     private function applyChecks($phpFileObj)
     {
         $absFilePath = $phpFileObj->getRealPath();

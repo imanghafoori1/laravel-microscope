@@ -94,9 +94,10 @@ class FilePath
     }
 
     /**
-     * @param  $paths
-     * @param  $file
-     * @param  $folder
+     * @param  string[]  $paths
+     * @param  string|null  $folder
+     * @param  string|null  $file
+     *
      * @return \Generator
      */
     public static function removeExtraPaths($paths, $folder, $file)

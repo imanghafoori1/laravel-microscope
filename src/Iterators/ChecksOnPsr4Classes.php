@@ -22,8 +22,9 @@ class ChecksOnPsr4Classes
     private static $checker;
 
     /**
-     * @param  $checker
-     * @return array<string, \Generator>
+     * @param  CheckSingleMapping  $checker
+     *
+     * @return array<string, \Generator<string, \Generator<string, int>>>
      */
     public static function apply($checker)
     {
@@ -37,22 +38,23 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @param  $psr4
-     * @return \Generator
+     * @param  array<string, string|string[]> $psr4
+     *
+     * @return \Generator<string, \Generator<string, int>>
      */
     private static function processGetStats($psr4)
     {
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            yield $psr4Namespace => self::processPaths($psr4Namespace, $psr4Paths);
+            yield $psr4Namespace => self::applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths);
         }
     }
 
     /**
      * @param  string  $psr4Namespace
      * @param  string[]|string  $psr4Paths
-     * @return \Generator
+     * @return \Generator<string, int>
      */
-    private static function processPaths($psr4Namespace, $psr4Paths)
+    private static function applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths)
     {
         foreach ((array) $psr4Paths as $psr4Path) {
             $filesCount = self::$checker->applyChecksInPath($psr4Namespace, $psr4Path);
@@ -69,6 +71,9 @@ class ChecksOnPsr4Classes
         }
     }
 
+    /**
+     * @return array<string, \Generator<string, \Generator<string, int>>>
+     */
     private static function processAll()
     {
         $stats = [];

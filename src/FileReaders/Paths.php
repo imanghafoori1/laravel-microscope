@@ -12,7 +12,7 @@ class Paths
      * @param  string|string[]|\Generator  $dirs
      * @param  null|string  $fileName
      * @param  null|string  $folder
-     * @return \Traversable
+     * @return array|\Generator
      */
     public static function getAbsFilePaths($dirs, $fileName = null, $folder = null)
     {
