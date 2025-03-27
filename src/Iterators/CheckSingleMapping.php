@@ -63,7 +63,7 @@ class CheckSingleMapping
     }
 
     /**
-     * @param \Symfony\Component\Finder\SplFileInfo $phpFileObj
+     * @param  \Symfony\Component\Finder\SplFileInfo  $phpFileObj
      * @return void
      */
     private function applyChecks($phpFileObj)

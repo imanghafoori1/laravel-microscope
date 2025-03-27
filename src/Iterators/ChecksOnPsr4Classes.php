@@ -23,7 +23,6 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  CheckSingleMapping  $checker
-     *
      * @return array<string, \Generator<string, \Generator<string, int>>>
      */
     public static function apply($checker)
@@ -38,8 +37,7 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @param  array<string, string|string[]> $psr4
-     *
+     * @param  array<string, string|string[]>  $psr4
      * @return \Generator<string, \Generator<string, int>>
      */
     private static function processGetStats($psr4)

@@ -36,8 +36,8 @@ class ForPsr4LoadedClasses
     }
 
     /**
-     * @param array<string, \Generator<string, \Generator<string, int>>> $allStats
-     * @param \Closure|null $callback
+     * @param  array<string, \Generator<string, \Generator<string, int>>>  $allStats
+     * @param  \Closure|null  $callback
      * @return void
      */
     public static function applyOnStats(array $allStats, $callback = null)
