@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use ReflectionClass;
 use Throwable;
@@ -74,12 +75,19 @@ class RoutelessControllerActions implements Check
         $actions = [];
         foreach ($methods as $method) {
             $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
+            if (self::getByAction($classAtMethod)) {
+                continue;
+            }
             // For __invoke, we will also check to see if the route is defined like this:
             // Route::get('/', [Controller::class, '__invoke']);
             // Route::get('/', Controller::class);
-            if (! self::getByAction($classAtMethod)) {
-                ! strpos($classAtMethod, '@') && $classAtMethod .= '@__invoke';
-                $line = $method['name'][2];
+            $line = $method['name'][2];
+            if (! strpos($classAtMethod, '@')) {
+                $classAtMethod .= '@__invoke';
+                if (! self::getByAction($classAtMethod)) {
+                    $actions[] = [$line, $classAtMethod];
+                }
+            } elseif (! self::hasPrivateCall($tokens, $method['name'][1])) {
                 $actions[] = [$line, $classAtMethod];
             }
         }
@@ -106,5 +114,21 @@ class RoutelessControllerActions implements Check
         foreach ($actions as $action) {
             $errorPrinter->simplePendError($action[1], $absFilePath, $action[0], 'routelessCtrl', 'No route is defined for controller action:');
         }
+    }
+
+    private static function hasPrivateCall($tokens, $methodName)
+    {
+        try {
+            $result = Searcher::searchFirst([
+                [
+                    'search' => '$this->'.$methodName,
+                    'replace' => '$this->'.$methodName,
+                ],
+            ], $tokens);
+        } catch (Throwable $e) {
+            return false;
+        }
+
+        return (bool) $result[1];
     }
 }
