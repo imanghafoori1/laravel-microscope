@@ -2,9 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
-use Illuminate\Routing\Controller;
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
@@ -13,6 +11,12 @@ use Throwable;
 
 class RoutelessControllerActions implements Check
 {
+    public static $routes = Dependencies\RouteChecker::class;
+
+    public static $laravelBaseController = 'Illuminate\\Routing\\Controller';
+
+    public static $errors = Dependencies\DeadControllerErrors::class;
+
     public static function check(PhpFileDescriptor $file)
     {
         $fullNamespace = $file->getNamespace();
@@ -28,7 +32,7 @@ class RoutelessControllerActions implements Check
 
         $actions = self::findOrphanActions($file->getTokens(), $fullNamespace);
 
-        self::printErrors($actions, $file->getAbsolutePath());
+        (self::$errors)::printErrors($actions, $file->getAbsolutePath());
     }
 
     public static function getControllerActions($methods)
@@ -60,7 +64,7 @@ class RoutelessControllerActions implements Check
     public static function isLaravelController($fullNamespace)
     {
         try {
-            return is_subclass_of($fullNamespace, Controller::class);
+            return is_subclass_of($fullNamespace, self::$laravelBaseController);
         } catch (Throwable $r) {
             // it means the file does not contain a class or interface.
             return false;
@@ -75,7 +79,7 @@ class RoutelessControllerActions implements Check
         $actions = [];
         foreach ($methods as $method) {
             $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
-            if (self::getByAction($classAtMethod)) {
+            if (self::hasRoute($classAtMethod)) {
                 continue;
             }
             // For __invoke, we will also check to see if the route is defined like this:
@@ -84,7 +88,7 @@ class RoutelessControllerActions implements Check
             $line = $method['name'][2];
             if (! strpos($classAtMethod, '@')) {
                 $classAtMethod .= '@__invoke';
-                if (! self::getByAction($classAtMethod)) {
+                if (! self::hasRoute($classAtMethod)) {
                     $actions[] = [$line, $classAtMethod];
                 }
             } elseif (! self::hasPrivateCall($tokens, $method['name'][1])) {
@@ -102,18 +106,9 @@ class RoutelessControllerActions implements Check
         return trim($fullNamespace, '\\').$methodName;
     }
 
-    protected static function getByAction($classAtMethod)
+    protected static function hasRoute($classAtMethod)
     {
-        return app('router')->getRoutes()->getByAction($classAtMethod);
-    }
-
-    private static function printErrors(array $actions, $absFilePath)
-    {
-        $errorPrinter = ErrorPrinter::singleton();
-
-        foreach ($actions as $action) {
-            $errorPrinter->simplePendError($action[1], $absFilePath, $action[0], 'routelessCtrl', 'No route is defined for controller action:');
-        }
+        return (self::$routes)::hasRoute($classAtMethod);
     }
 
     private static function hasPrivateCall($tokens, $methodName)
