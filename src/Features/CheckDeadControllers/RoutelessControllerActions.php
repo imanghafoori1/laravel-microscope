@@ -13,7 +13,7 @@ class RoutelessControllerActions implements Check
 {
     public static $routes = Dependencies\RouteChecker::class;
 
-    public static $laravelBaseController = 'Illuminate\\Routing\\Controller';
+    public static $baseController = 'Illuminate\\Routing\\Controller';
 
     public static $errors = Dependencies\DeadControllerErrors::class;
 
@@ -26,7 +26,7 @@ class RoutelessControllerActions implements Check
         }
 
         // exclude abstract class
-        if ((new ReflectionClass($fullNamespace))->isAbstract()) {
+        if (self::isAbstract($fullNamespace)) {
             return;
         }
 
@@ -49,9 +49,8 @@ class RoutelessControllerActions implements Check
                 continue;
             }
 
-            $methodName = $method['name'][1];
             // we exclude __construct
-            if ($methodName == '__construct') {
+            if ($method['name'][1] == '__construct') {
                 continue;
             }
 
@@ -64,39 +63,20 @@ class RoutelessControllerActions implements Check
     public static function isLaravelController($fullNamespace)
     {
         try {
-            return is_subclass_of($fullNamespace, self::$laravelBaseController);
+            return is_subclass_of($fullNamespace, self::$baseController);
         } catch (Throwable $r) {
             // it means the file does not contain a class or interface.
             return false;
         }
     }
 
-    protected static function findOrphanActions($tokens, $fullNamespace)
+    public static function findOrphanActions($tokens, $fullNamespace)
     {
         $class = ClassMethods::read($tokens);
 
         $methods = self::getControllerActions($class['methods']);
-        $actions = [];
-        foreach ($methods as $method) {
-            $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
-            if (self::hasRoute($classAtMethod)) {
-                continue;
-            }
-            // For __invoke, we will also check to see if the route is defined like this:
-            // Route::get('/', [Controller::class, '__invoke']);
-            // Route::get('/', Controller::class);
-            $line = $method['name'][2];
-            if (! strpos($classAtMethod, '@')) {
-                $classAtMethod .= '@__invoke';
-                if (! self::hasRoute($classAtMethod)) {
-                    $actions[] = [$line, $classAtMethod];
-                }
-            } elseif (! self::hasPrivateCall($tokens, $method['name'][1])) {
-                $actions[] = [$line, $classAtMethod];
-            }
-        }
 
-        return $actions;
+        return self::filterMethods($methods, $fullNamespace, $tokens);
     }
 
     public static function classAtMethod($fullNamespace, $methodName)
@@ -125,5 +105,35 @@ class RoutelessControllerActions implements Check
         }
 
         return (bool) $result[1];
+    }
+
+    private static function isAbstract($fullNamespace): bool
+    {
+        return (new ReflectionClass($fullNamespace))->isAbstract();
+    }
+
+    private static function filterMethods($methods, $fullNamespace, $tokens): array
+    {
+        $actions = [];
+        foreach ($methods as $method) {
+            $classAtMethod = self::classAtMethod($fullNamespace, $method['name'][1]);
+            if (self::hasRoute($classAtMethod)) {
+                continue;
+            }
+            // For __invoke, we will also check to see if the route is defined like this:
+            // Route::get('/', [Controller::class, '__invoke']);
+            // Route::get('/', Controller::class);
+            $line = $method['name'][2];
+            if (! strpos($classAtMethod, '@')) {
+                $classAtMethod .= '@__invoke';
+                if (! self::hasRoute($classAtMethod)) {
+                    $actions[] = [$line, $classAtMethod];
+                }
+            } elseif (! self::hasPrivateCall($tokens, $method['name'][1])) {
+                $actions[] = [$line, $classAtMethod];
+            }
+        }
+
+        return $actions;
     }
 }
