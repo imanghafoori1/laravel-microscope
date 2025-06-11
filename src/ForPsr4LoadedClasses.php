@@ -11,15 +11,14 @@ class ForPsr4LoadedClasses
     /**
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  array  $params
-     * @param  string  $includeFile
-     * @param  string  $includeFolder
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, \Generator<string, \Generator<string, int>>>
      */
-    public static function check($checks, $params = [], $includeFile = '', $includeFolder = '')
+    public static function check($checks, $params = [], $pathDTO)
     {
         ChecksOnPsr4Classes::$errorExceptionHandler = ErrorExceptionHandler::class;
 
-        $checker = CheckSingleMapping::init($checks, $params, $includeFile, $includeFolder);
+        $checker = CheckSingleMapping::init($checks, $params, $pathDTO);
 
         return ChecksOnPsr4Classes::apply($checker);
     }
@@ -27,10 +26,10 @@ class ForPsr4LoadedClasses
     /**
      * @return void
      */
-    public static function checkNow($checks, $params = [], $includeFile = '', $includeFolder = '', $callback = null)
+    public static function checkNow($checks, $params = [], $pathDTO = null, $callback = null)
     {
         self::applyOnStats(
-            self::check($checks, $params, $includeFile, $includeFolder),
+            self::check($checks, $params, $pathDTO),
             $callback
         );
     }

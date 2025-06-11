@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\Pure;
 
 class FilePath
@@ -66,8 +67,11 @@ class FilePath
     }
 
     #[Pure]
-    public static function contains($filePath, $folder, $file)
+    public static function contains($filePath, PathFilterDTO $pathDTO)
     {
+        $file = $pathDTO->includeFile;
+        $folder = $pathDTO->includeFolder;
+
         if (! $file && ! $folder) {
             return true;
         }
@@ -95,14 +99,13 @@ class FilePath
 
     /**
      * @param  string[]  $paths
-     * @param  string|null  $folder
-     * @param  string|null  $file
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator
      */
-    public static function removeExtraPaths($paths, $folder, $file)
+    public static function removeExtraPaths($paths, $pathDTO)
     {
         foreach ($paths as $absFilePath) {
-            if (self::contains($absFilePath, $folder, $file)) {
+            if (self::contains($absFilePath, $pathDTO)) {
                 yield $absFilePath;
             }
         }

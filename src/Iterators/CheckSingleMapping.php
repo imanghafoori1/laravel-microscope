@@ -4,13 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Throwable;
 
 class CheckSingleMapping
 {
     use FiltersFiles;
 
-    public $includeFolder;
+    public $pathDTO;
 
     public $params;
 
@@ -28,14 +29,14 @@ class CheckSingleMapping
      */
     public $exceptions = [];
 
-    public static function init($checks, $params, $includeFile, $includeFolder): CheckSingleMapping
+    public static function init($checks, $params, PathFilterDTO $pathDTO): CheckSingleMapping
     {
-        $includeFile && PhpFinder::$fileName = $includeFile;
+        $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
         $obj->checks = $checks;
         $obj->params = $params;
-        $obj->includeFolder = $includeFolder;
+        $obj->pathDTO = $pathDTO;
 
         return $obj;
     }
@@ -51,7 +52,7 @@ class CheckSingleMapping
         $this->path = $psr4Path;
 
         $finder = PhpFinder::getAllPhpFiles($psr4Path);
-        $this->includeFolder && $finder = self::filterFiles($finder, $this->includeFolder);
+        $this->pathDTO && $finder = self::filterFiles($finder, $this->pathDTO);
 
         $filesCount = 0;
         foreach ($finder as $phpFilePath) {

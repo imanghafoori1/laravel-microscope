@@ -10,14 +10,13 @@ trait FiltersFiles
 {
     /**
      * @param  \Symfony\Component\Finder\Finder  $files
-     * @param  string  $fileName
-     * @param  string  $folder
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
-    private static function filterFiles(Finder $files, $folder, $fileName = null)
+    private static function filterFiles(Finder $files, $pathDTO)
     {
-        return self::filterItems($files, function ($file) use ($folder, $fileName) {
-            return FilePath::contains($file->getPathname(), $folder, $fileName);
+        return self::filterItems($files, function ($file) use ($pathDTO) {
+            return FilePath::contains($file->getPathname(), $pathDTO);
         });
     }
 

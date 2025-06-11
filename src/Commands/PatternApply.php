@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -19,8 +20,7 @@ trait PatternApply
 
     private function patternCommand(ErrorPrinter $errorPrinter): int
     {
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
 
@@ -30,7 +30,7 @@ trait PatternApply
 
         $patterns = $this->getPatterns();
 
-        $report = $this->appliesPatterns($patterns, $fileName, $folder);
+        $report = $this->appliesPatterns($patterns, $pathDTO);
 
         $this->getOutput()->writeln($report);
 
@@ -44,7 +44,7 @@ trait PatternApply
     /**
      * @return string
      */
-    private function appliesPatterns(array $patterns, string $fileName, string $folder)
+    private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO)
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
@@ -54,10 +54,10 @@ trait PatternApply
 
         $check = [PatternRefactorings::class];
 
-        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [$parsedPatterns], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [$parsedPatterns], $pathDTO);
         CheckBladePaths::$readOnly = false;
-        $bladeStats = BladeFiles::check($check, [$parsedPatterns], $fileName, $folder);
+        $bladeStats = BladeFiles::check($check, [$parsedPatterns], $pathDTO);
 
         return self::getFinalMessage($psr4Stats, $classMapStats, $bladeStats);
     }

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckDeadControllers extends Command
@@ -25,10 +26,8 @@ class CheckDeadControllers extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
-
-        $psr4Stats = ForPsr4LoadedClasses::check([RoutelessControllerActions::class], [], $fileName, $folder);
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $psr4Stats = ForPsr4LoadedClasses::check([RoutelessControllerActions::class], [], $pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, []),

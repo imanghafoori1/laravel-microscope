@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -33,8 +34,7 @@ class CheckAliasesCommand extends Command
 
         $errorPrinter->printer = $this->output;
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
         FacadeAliasesCheck::$command = $this->getOutput();
 
         if ($this->option('nofix')) {
@@ -49,8 +49,8 @@ class CheckAliasesCommand extends Command
         };
 
         $check = [FacadeAliasesCheck::class];
-        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),

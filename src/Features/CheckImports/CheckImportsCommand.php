@@ -23,6 +23,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -91,13 +92,13 @@ class CheckImportsCommand extends Command
         $fileName = ltrim($this->option('file'), '=');
         $folder = ltrim($this->option('folder'), '=');
         $folder = rtrim($folder, '/\\');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName);
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
 
         $autoloadedFilesGen = FilePath::removeExtraPaths(
             ComposerJson::autoloadedFilesList(base_path()),
-            $folder,
-            $fileName
+            $pathDTO
         );
 
         $paramProvider = self::getParamProvider();
@@ -105,7 +106,7 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $fileName, $folder);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $pathDTO);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $checks, $paramProvider);
@@ -114,15 +115,14 @@ class CheckImportsCommand extends Command
             $checks,
             self::getLaravelFolders(),
             $paramProvider,
-            $fileName,
-            $folder
+            $pathDTO
         );
 
-        $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = BladeFiles::check($checks, $paramProvider, $fileName, $folder);
+        $bladeStats = BladeFiles::check($checks, $paramProvider, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

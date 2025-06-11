@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEarlyReturns extends Command
@@ -30,9 +31,8 @@ class CheckEarlyReturns extends Command
             return 0;
         }
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
-        [$psr4Stats, $classMapStats] = self::applyCheckEarly($fileName, $folder, $this->option('nofix'));
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+        [$psr4Stats, $classMapStats] = self::applyCheckEarly($pathDTO, $this->option('nofix'));
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),
         ]));
@@ -61,12 +61,12 @@ class CheckEarlyReturns extends Command
         ];
     }
 
-    public static function applyCheckEarly(string $fileName, string $folder, $nofix): array
+    public static function applyCheckEarly($pathDTO, $nofix): array
     {
         $check = [CheckEarlyReturn::class];
         $params = self::getParams($nofix);
-        $psr4stats = ForPsr4LoadedClasses::check($check, $params, $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $params, $fileName, $folder);
+        $psr4stats = ForPsr4LoadedClasses::check($check, $params, $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $params, $pathDTO);
 
         return [$psr4stats, $classMapStats];
     }

@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEndIf extends Command
@@ -23,12 +24,11 @@ class CheckEndIf extends Command
             return null;
         }
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
-
         $errorPrinter->printer = $this->output;
 
-        [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($fileName, $folder);
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+
+        [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),
@@ -45,11 +45,11 @@ class CheckEndIf extends Command
         return $this->output->confirm('Do you have committed everything in git?');
     }
 
-    public static function applyRubySyntaxCheck(string $fileName, string $folder)
+    public static function applyRubySyntaxCheck($pathDTO)
     {
         $check = [CheckRubySyntax::class];
-        $psr4stats = ForPsr4LoadedClasses::check($check, [], $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $fileName, $folder);
+        $psr4stats = ForPsr4LoadedClasses::check($check, [], $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $pathDTO);
 
         return [$psr4stats, $classMapStats];
     }

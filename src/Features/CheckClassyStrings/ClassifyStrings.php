@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ClassifyStrings extends Command
 {
@@ -22,10 +23,9 @@ class ClassifyStrings extends Command
         });
         $errorPrinter->printer = $this->output;
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        [$psr4Stats, $classMapStats] = self::classifyString($fileName, $folder);
+        [$psr4Stats, $classMapStats] = self::classifyString($pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, $classMapStats),
@@ -36,10 +36,10 @@ class ClassifyStrings extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    public static function classifyString(string $fileName, string $folder): array
+    public static function classifyString(PathFilterDTO $pathFilterDTO): array
     {
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckStringy::class], [], $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckStringy::class], [], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckStringy::class], [], $pathFilterDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckStringy::class], [], $pathFilterDTO);
 
         return [$psr4Stats, $classMapStats];
     }

@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Symfony\Component\Finder\Finder;
 
 class CheckBladePaths
@@ -18,16 +19,17 @@ class CheckBladePaths
     /**
      * @param  \Generator  $dirs
      * @param  array  $checkers
-     * @param  string  $includeFile
-     * @param  string  $includeFolder
+     * @param  PathFilterDTO  $pathDTO
      * @param  array|callable  $params
      * @return \Generator
      */
-    public static function checkPaths($dirs, $checkers, $includeFile, $includeFolder, $params)
+    public static function checkPaths($dirs, $checkers, PathFilterDTO $pathDTO, $params)
     {
+        $includeFile = $pathDTO->includeFile;
+
         foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
             $finder = self::findFiles($dirPath, $includeFile);
-            $filteredFiles = self::filterFiles($finder, $includeFolder);
+            $filteredFiles = self::filterFiles($finder, $pathDTO);
             $count = self::applyChecks($filteredFiles, $params, $checkers);
 
             yield $dirPath => $count;

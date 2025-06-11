@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckRoutes extends Command
@@ -22,7 +23,7 @@ class CheckRoutes extends Command
 
     public static $skippedRoutesNum = 0;
 
-    protected $signature = 'check:routes';
+    protected $signature = 'check:routes {--f|file=} {--d|folder=}';
 
     protected $description = 'Checks the validity of route definitions';
 
@@ -41,9 +42,11 @@ class CheckRoutes extends Command
         $this->getOutput()->writeln(
             $this->getRouteDefinitionStatistics()
         );
+
         $this->info('Checking route names exists...');
-        ForPsr4LoadedClasses::checkNow([CheckRouteCalls::class]);
-        iterator_to_array(BladeFiles::check([CheckRouteCalls::class]));
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+        ForPsr4LoadedClasses::checkNow([CheckRouteCalls::class], [], $pathDTO);
+        iterator_to_array(BladeFiles::check([CheckRouteCalls::class], [], $pathDTO));
 
         $this->getOutput()->writeln(
             $this->getStatisticsMsg()

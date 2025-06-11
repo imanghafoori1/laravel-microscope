@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class CheckGenericDocBlocksCommand extends Command
 {
@@ -17,12 +18,12 @@ class CheckGenericDocBlocksCommand extends Command
         $this->info('Removing generic doc-blocks...');
 
         GenericDocblocks::$conformer = $this->getConformer();
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $psr4Stats = ForPsr4LoadedClasses::check(
             [GenericDocblocks::class],
             [],
-            ltrim($this->option('file'), '='),
-            ltrim($this->option('folder'), '=')
+            $pathDTO
         );
 
         $this->getOutput()->writeln(implode(PHP_EOL, [

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckActionComments extends Command
@@ -26,7 +27,11 @@ class CheckActionComments extends Command
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
 
-        $psr4Stats = ForPsr4LoadedClasses::check([ActionsComments::class], [], ltrim($this->option('file'), '='), ltrim($this->option('folder'), '='));
+        $psr4Stats = ForPsr4LoadedClasses::check(
+            [ActionsComments::class],
+            [],
+            PathFilterDTO::makeFromOption($this)
+        );
         iterator_to_array($psr4Stats);
 
         return 0;

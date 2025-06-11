@@ -3,11 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\TokenManager;
@@ -27,10 +28,9 @@ class CheckEnvCallsCommand extends Command
 
         $this->checkPaths(RoutePaths::get());
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $paths = LaravelPaths::getMigrationsFiles($fileName, $folder);
+        $paths = LaravelPaths::getMigrationsFiles($pathDTO);
 
         foreach ($paths as $path) {
             $this->checkPaths($path);
@@ -83,18 +83,13 @@ class CheckEnvCallsCommand extends Command
             LaravelPaths::configDirs()
         );
 
-        $configs = iterator_to_array($configs);
-        foreach (ComposerJson::readPsr4() as $psr4) {
-            foreach ($psr4 as $dirPaths) {
-                foreach ((array) $dirPaths as $dirPath) {
-                    foreach (PhpFinder::getAllPhpFiles($dirPath) as $filePath) {
-                        if (! in_array($path = $filePath->getRealPath(), $configs)) {
-                            $this->checkForEnv($path);
-                        }
-                    }
-                }
-            }
-        }
+        $configs = implode(',', iterator_to_array($configs));
+        $pathDTO = PathFilterDTO::make();
+        $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
+
+        $this->getOutput()->writeln(implode(PHP_EOL, [
+            Psr4Report::printAutoload($psr4Stats, []),
+        ]));
     }
 
     private function isLikelyConfigFile($absPath, $tokens)

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -41,12 +42,11 @@ class AnonymizeMigrations extends Command
 
     private function patternCommand(ErrorPrinter $errorPrinter): int
     {
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
 
-        $this->appliesPatterns($this->parsePatterns(), $fileName, $folder);
+        $this->appliesPatterns($this->parsePatterns(), $pathDTO);
 
         $this->finishCommand($errorPrinter);
 
@@ -55,10 +55,10 @@ class AnonymizeMigrations extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private function appliesPatterns(array $patterns, string $fileName): void
+    private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO): void
     {
         foreach ($this->filterVendorFolders($this->getMigrationFolders()) as $migrationFolder) {
-            foreach ($this->getMigrationFiles($migrationFolder, $fileName) as $migration) {
+            foreach ($this->getMigrationFiles($migrationFolder, $pathDTO->includeFile) as $migration) {
                 PatternRefactorings::check(
                     PhpFileDescriptor::make($migration->getRealPath()),
                     $patterns

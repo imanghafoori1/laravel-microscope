@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class CheckDDCommand extends Command
 {
@@ -25,8 +26,7 @@ class CheckDDCommand extends Command
         event('microscope.start.command');
         $this->info('Checking dd...');
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $paramProvider = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
@@ -34,11 +34,11 @@ class CheckDDCommand extends Command
             );
         };
 
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$paramProvider], $fileName, $folder);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$paramProvider], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$paramProvider], $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$paramProvider], $pathDTO);
 
         $foldersStats = FileIterators::checkFolders(
-            [CheckDD::class], $this->getLaravelFolders(), [$paramProvider], $fileName, $folder
+            [CheckDD::class], $this->getLaravelFolders(), [$paramProvider], $pathDTO
         );
 
         $this->getOutput()->writeln(implode(PHP_EOL, [

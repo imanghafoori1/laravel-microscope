@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class FilePathsForReferenceFix
@@ -22,7 +23,7 @@ class FilePathsForReferenceFix
         $paths = [];
         $paths['psr4'] = self::getPsr4();
         $paths['autoload_files'] = ComposerJson::autoloadedFilesList(base_path());
-        $paths['class_map'] = ComposerJson::getClassMaps(base_path());
+        $paths['class_map'] = ComposerJson::getClassMaps(base_path() , new PathFilterDTO);
         $paths['routes'] = RoutePaths::get();
         $paths['blades'] = LaravelPaths::allBladeFiles();
 

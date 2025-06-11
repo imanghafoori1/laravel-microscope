@@ -6,6 +6,7 @@ use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
@@ -50,10 +51,9 @@ class CheckRefactorsCommand extends Command
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $file = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $file, $folder);
+        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
 
         $this->getOutput()->writeln(' - Finished search/replace');
 

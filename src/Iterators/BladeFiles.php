@@ -10,16 +10,15 @@ class BladeFiles implements Check
     /**
      * @param  $checkers
      * @param  $params
-     * @param  string  $includeFileName
-     * @param  string  $includeFolder
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<string, int>
      */
-    public static function check($checkers, $params = [], $includeFileName = null, $includeFolder = null)
+    public static function check($checkers, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
 
         foreach (self::getViews() as $paths) {
-            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $includeFileName, $includeFolder, $params);
+            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $pathDTO, $params);
         }
     }
 

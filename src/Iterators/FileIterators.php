@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Generator;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class FileIterators extends BaseIterator
 {
@@ -26,14 +27,12 @@ class FileIterators extends BaseIterator
      * @param  array  $checks
      * @param  array<string, \Generator>  $dirsList
      * @param  $paramProvider
-     * @param  string  $file
-     * @param  string  $folder
      * @return \Generator
      */
-    public static function checkFolders($checks, $dirsList, $paramProvider, $file, $folder)
+    public static function checkFolders($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
     {
         foreach ($dirsList as $listName => $dirs) {
-            $filePathsGen = Paths::getAbsFilePaths($dirs, $file, $folder);
+            $filePathsGen = Paths::getAbsFilePaths($dirs, $pathFilter);
             yield $listName => self::checkFilePaths($filePathsGen, $checks, $paramProvider);
         }
     }

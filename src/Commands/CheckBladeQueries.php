@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckIsQuery;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckBladeQueries extends Command
@@ -21,13 +22,12 @@ class CheckBladeQueries extends Command
     {
         event('microscope.start.command');
         $this->info('Checking blade files for db queries...');
-        $includeFileName = ltrim($this->option('file'), '=');
-        $includeFolderName = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
 
         // checks the blade files for database queries.
-        $bladeStats = BladeFiles::check([CheckIsQuery::class], [], $includeFileName, $includeFolderName);
+        $bladeStats = BladeFiles::check([CheckIsQuery::class], [], $pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             BladeReport::getBladeStats($bladeStats),

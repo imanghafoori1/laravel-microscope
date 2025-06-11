@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExiste
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckViewsCommand extends Command
@@ -23,21 +24,20 @@ class CheckViewsCommand extends Command
         event('microscope.start.command');
         $this->info('Checking views...');
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
         $this->checkRoutePaths(
-            FilePath::removeExtraPaths(RoutePaths::get(), $folder, $fileName)
+            FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO)
         );
 
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckView::class], [], $fileName, $folder);
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckView::class], [], $pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
             Psr4Report::printAutoload($psr4Stats, []),
         ]));
 
-        $this->checkBladeFiles($fileName, $folder);
+        $this->checkBladeFiles($pathDTO);
 
         $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats(
@@ -65,9 +65,9 @@ class CheckViewsCommand extends Command
         }
     }
 
-    private function checkBladeFiles($fileName, $folder)
+    private function checkBladeFiles($pathDTO)
     {
-        iterator_to_array(BladeFiles::check([CheckViewFilesExistence::class], null, $fileName, $folder));
+        iterator_to_array(BladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO));
     }
 
     private function stats($checkedCallsCount, $skippedCallsCount): string

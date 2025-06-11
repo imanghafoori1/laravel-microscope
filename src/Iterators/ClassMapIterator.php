@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ClassMapIterator extends BaseIterator
 {
@@ -10,13 +11,12 @@ class ClassMapIterator extends BaseIterator
      * @param  string  $basePath
      * @param  array  $checks
      * @param  \Closure| null  $paramProvider
-     * @param  string  $folder
-     * @param  string  $fileName
+     * @param  PathFilterDTO  $pathDTO
      * @return array<string, \Generator>
      */
-    public static function iterate($basePath, $checks, $paramProvider = null, $fileName = '', $folder = '')
+    public static function iterate($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
     {
-        $classMapFiles = ComposerJson::getClassMaps($basePath, $fileName, $folder);
+        $classMapFiles = ComposerJson::getClassMaps($basePath, $pathDTO);
 
         $results = [];
         foreach ($classMapFiles as $composerPath => $classMap) {
