@@ -17,7 +17,12 @@ class CheckDDCommand extends Command
 {
     public static $checkedCallsNum = 0;
 
-    protected $signature = 'check:dd {--f|file=} {--d|folder=}';
+    protected $signature = 'check:dd
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Checks the debug functions.';
 

@@ -17,7 +17,12 @@ class AnonymizeMigrations extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:migrations {--s|nofix} {--f|file=} {--d|folder=}';
+    protected $signature = 'check:migrations {--s|nofix}
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Makes migration classes anonymous.';
 

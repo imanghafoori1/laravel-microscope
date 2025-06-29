@@ -14,7 +14,13 @@ use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEarlyReturns extends Command
 {
-    protected $signature = 'check:early_returns {--s|nofix} {--f|file=} {--d|folder=}';
+    protected $signature = 'check:early_returns
+    {--s|nofix}
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Applies the early return on the classes';
 

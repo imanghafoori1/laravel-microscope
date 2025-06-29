@@ -17,7 +17,12 @@ class CheckDynamicWhereMethod extends Command
     use LogsErrors;
     use PatternApply;
 
-    protected $signature = 'check:dynamic_wheres {--f|file=} {--d|folder=}';
+    protected $signature = 'check:dynamic_wheres
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Enforces the non-dynamic where clauses.';
 

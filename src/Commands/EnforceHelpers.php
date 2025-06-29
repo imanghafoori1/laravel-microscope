@@ -16,7 +16,12 @@ class EnforceHelpers extends Command
     use LogsErrors;
     use PatternApply;
 
-    protected $signature = 'enforce:helper_functions {--f|file=} {--d|folder=}';
+    protected $signature = 'enforce:helper_functions
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Enforces helper functions over laravel internal facades.';
 

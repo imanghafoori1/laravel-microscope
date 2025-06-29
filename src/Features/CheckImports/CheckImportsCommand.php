@@ -40,6 +40,8 @@ class CheckImportsCommand extends Command
         {--w|wrong : Only reports wrong imports}
         {--e|extra : Only reports extra imports}
         {--f|file= : Pattern for file names to scan}
+        {--F|except-file= : Pattern for file names to avoid}
+        {--D|except-folder= : Pattern for folder names to avoid}
         {--d|folder= : Pattern for file names to scan}
         {--s|nofix : avoids the automatic fixes}
     ';
@@ -89,9 +91,6 @@ class CheckImportsCommand extends Command
             unset($this->checks[3]); // avoid checking facades
         }
 
-        $fileName = ltrim($this->option('file'), '=');
-        $folder = ltrim($this->option('folder'), '=');
-        $folder = rtrim($folder, '/\\');
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
@@ -142,7 +141,7 @@ class CheckImportsCommand extends Command
         $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
-            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($fileName ?: $folder).'"</>'];
+            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>'];
         }
 
         $this->finishCommand($errorPrinter);

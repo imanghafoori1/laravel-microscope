@@ -23,7 +23,12 @@ class CheckRoutes extends Command
 
     public static $skippedRoutesNum = 0;
 
-    protected $signature = 'check:routes {--f|file=} {--d|folder=}';
+    protected $signature = 'check:routes
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Checks the validity of route definitions';
 

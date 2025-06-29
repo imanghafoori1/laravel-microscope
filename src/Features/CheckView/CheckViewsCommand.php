@@ -15,7 +15,12 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckViewsCommand extends Command
 {
-    protected $signature = 'check:views {--detailed : Show files being checked} {--f|file=} {--d|folder=}';
+    protected $signature = 'check:views {--detailed : Show files being checked}
+        {--f|file=}
+        {--d|folder=}
+        {--F|except-file= : Comma seperated patterns for file names to avoid}
+        {--D|except-folder= : Comma seperated patterns for folder names to avoid}
+     ';
 
     protected $description = 'Checks the validity of blade files';
 

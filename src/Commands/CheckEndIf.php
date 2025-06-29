@@ -13,7 +13,13 @@ use JetBrains\PhpStorm\ExpectedValues;
 
 class CheckEndIf extends Command
 {
-    protected $signature = 'check:endif {--f|file=} {--d|folder=} {--t|test : backup the changed files}';
+    protected $signature = 'check:endif
+    {--f|file=}
+    {--d|folder=}
+    {--t|test : backup the changed files}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'replaces ruby like syntax of php (endif) with curly brackets.';
 

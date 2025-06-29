@@ -45,18 +45,6 @@ class FilePath
         return trim(str_replace(PhpFinder::$basePath, '', $absFilePath), '/\\');
     }
 
-    /**
-     * Get all ".php" files in directory by giving a path.
-     *
-     * @param  string  $path  Directory path
-     * @return \Symfony\Component\Finder\Finder
-     */
-    #[Pure]
-    public static function getAllPhpFiles($path, $basePath = '')
-    {
-        return PhpFinder::getAllPhpFiles($path, $basePath);
-    }
-
     #[Pure]
     public static function getFolderFile($absFilePath): array
     {
@@ -71,30 +59,28 @@ class FilePath
     {
         $file = $pathDTO->includeFile;
         $folder = $pathDTO->includeFolder;
-
-        if (! $file && ! $folder) {
-            return true;
-        }
+        $exceptFolder = $pathDTO->excludeFolder;
+        $exceptFile = $pathDTO->excludeFile;
 
         [$fileName, $folderPath] = self::getFolderFile($filePath);
 
         if ($file) {
-            foreach (explode(',', $file) as $_file) {
-                if (mb_strpos($fileName, $_file) !== false) {
-                    return true;
-                }
-            }
+            return self::has($file, $fileName);
+        }
+
+        if ($exceptFile) {
+            return ! self::has($exceptFile, $fileName);
         }
 
         if ($folder) {
-            foreach (explode(',', $folder) as $_folder) {
-                if (mb_strpos($folderPath, $_folder) !== false) {
-                    return true;
-                }
-            }
+            return self::has($folder, $folderPath);
         }
 
-        return false;
+        if ($exceptFolder) {
+            return ! self::has($exceptFolder, $folderPath);
+        }
+
+        return true;
     }
 
     /**
@@ -109,5 +95,16 @@ class FilePath
                 yield $absFilePath;
             }
         }
+    }
+
+    private static function has($needles, $haystack): bool
+    {
+        foreach (explode(',', $needles) as $needle) {
+            if (strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

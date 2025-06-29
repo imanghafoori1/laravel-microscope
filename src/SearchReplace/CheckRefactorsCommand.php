@@ -12,7 +12,14 @@ use Imanghafoori\SearchReplace\PatternParser;
 
 class CheckRefactorsCommand extends Command
 {
-    protected $signature = 'search_replace {--N|name=} {--t|tag=} {--f|file=} {--d|folder=} {--s|nofix}';
+    protected $signature = 'search_replace
+     {--N|name=}
+     {--t|tag=}
+     {--f|file=}
+     {--d|folder=}
+     {--F|except-file= : Comma seperated patterns for file names to exclude}
+     {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+     {--s|nofix}';
 
     protected $description = 'Searches for the code patterns and replaces them accordingly.';
 

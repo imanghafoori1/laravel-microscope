@@ -19,6 +19,8 @@ class CheckAliasesCommand extends Command
     protected $signature = 'check:aliases
     {--f|file= : Comma separated list of file names to search in}
     {--d|folder= : Comma separated list of folders to search in}
+    {--F|except-file= : Comma separated list of file names to avoid}
+    {--D|except-folder= : Comma separated list of folder names to avoid}
     {--a|alias= : Comma separated list of aliases to look for}
     {--s|nofix : avoids the automatic fixes}
     ';

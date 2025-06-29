@@ -9,7 +9,13 @@ use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class CheckGenericDocBlocksCommand extends Command
 {
-    protected $signature = 'check:generic_docblocks {--f|file=} {--d|folder=} {--nofix}';
+    protected $signature = 'check:generic_docblocks
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    {--nofix}
+    ';
 
     protected $description = 'Removes generic doc-blocks from your controllers.';
 

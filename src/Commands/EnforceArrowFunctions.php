@@ -11,7 +11,12 @@ class EnforceArrowFunctions extends Command
     use LogsErrors;
     use PatternApply;
 
-    protected $signature = 'check:arrow_functions {--f|file=} {--d|folder=} {--nofix}';
+    protected $signature = 'check:arrow_functions
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    {--nofix}';
 
     protected $description = 'Converts anonymous functions into arrow functions.';
 

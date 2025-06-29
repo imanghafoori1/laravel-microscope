@@ -16,7 +16,12 @@ class CheckPsr12 extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:psr12 {--f|file=} {--d|folder=}';
+    protected $signature = 'check:psr12
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $description = 'Applies psr-12 rules';
 

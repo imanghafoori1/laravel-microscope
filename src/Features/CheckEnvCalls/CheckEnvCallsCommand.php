@@ -17,7 +17,10 @@ class CheckEnvCallsCommand extends Command
 {
     protected $signature = 'check:bad_practices
         {--f|file= : Pattern for file names to scan}
-        {--d|folder= : Pattern for file names to scan}';
+        {--d|folder= : Pattern for file names to scan}
+        {--F|except-file= : Comma seperated patterns for file names to exclude}
+        {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+        ';
 
     protected $description = 'Checks for bad practices';
 

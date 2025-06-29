@@ -13,7 +13,12 @@ class CheckDeadControllers extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:dead_controllers {--f|file=} {--d|folder=}';
+    protected $signature = 'check:dead_controllers
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    ';
 
     protected $customMsg = 'No dead Controller Action was found!   \(^_^)/';
 

@@ -99,7 +99,7 @@ class CheckPsr4ArtisanCommand extends Command
     private function getPathFilter($folder)
     {
         return function ($absFilePath, $fileName) use ($folder) {
-            return strpos($absFilePath, $folder);
+            return strpos($absFilePath, $folder) !== false;
         };
     }
 

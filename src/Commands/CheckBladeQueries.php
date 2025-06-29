@@ -14,7 +14,13 @@ class CheckBladeQueries extends Command
 {
     use LogsErrors;
 
-    protected $signature = 'check:blade_queries {--f|file=} {--d|folder=} {--detailed : Show files being checked}';
+    protected $signature = 'check:blade_queries
+    {--f|file=}
+    {--d|folder=}
+    {--F|except-file= : Comma seperated patterns for file names to exclude}
+    {--D|except-folder= : Comma seperated patterns for folder names to exclude}
+    {--detailed : Show files being checked}
+    ';
 
     protected $description = 'Checks db queries in blade files';
 

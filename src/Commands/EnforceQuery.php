@@ -18,6 +18,8 @@ class EnforceQuery extends Command
     protected $signature = 'enforce:query
         {--f|file=}
         {--d|folder=}
+        {--F|except-file= : Comma seperated patterns for file names to exclude}
+        {--D|except-folder= : Comma seperated patterns for folder names to exclude}
         {--m|methods=}
         {--c|classes=}
         {--detailed : Show files being checked}
