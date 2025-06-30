@@ -29,7 +29,7 @@ class Psr4Errors
         }
     }
 
-    private static function handleError(NamespaceError|FilenameError $error)
+    private static function handleError($error)
     {
         if ($error->errorType() === 'namespace') {
             self::askAndFixNamespace($error);
