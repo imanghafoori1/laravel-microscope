@@ -184,15 +184,15 @@ It works like a normal `dd(...);` meaning that the program stops running at that
 Let's start with the:
 
 <a name="search_replace"></a>
-### `php artisan search_replace {--name=pattern_name} {--tag=some_tag} {--file=partial_file_name} {--folder=partial_folder_name}`
+### `php artisan search_replace {--name=pattern_name} {--tag=some_tag} {--file=partial_file_name} {--folder=partial_folder_name} {--except-folder=} {--except-file=}`
 
 This is a smart and very powerful search/replace functionality that can be a real "time saver" for you.
 
 <a name="defining-patterns" ></a>
 #### :one:		Defining patterns:
 
->If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project's root.
-Then, you can define your patterns, within that file.
+> If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project's root.
+> Then, you can define your patterns, within that file.
 
 
 **Examples:**
@@ -248,10 +248,10 @@ Here is a comprehensive list of placeholders you can use:
 |18|`<in_between>`|to capture code within a pair of  `{...}` or `(...)` or `[...]`|
 |19|`<any>`|captures any token.|
 
->You can also define your own keywords if needed!
+> You can also define your own keywords if needed!
 >
 >You just define a class for your new keyword and append the classpath to the end of the `Finder::$keywords[] = MyKeyword::class` property.
-Just like the default keywords.
+> Just like the default keywords.
 
 **Example:**
 
@@ -633,7 +633,7 @@ if ($var1 > 1)
 
 
 <a name="psr4"></a>
-### `php artisan check:psr4`
+### `php artisan check:psr4 {--folder=}`
 
 - It checks for all the psr4 autoload defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
@@ -653,7 +653,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 
 <a name="imports"></a>
 
-### `php artisan check:imports`
+### `php artisan check:imports {--wrong} {--file=} {--folder=} {--except-folder=} {--except-file=}`
 
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
@@ -858,12 +858,10 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 <a name="models"></a>
 
-### `php artisan list:models {--folder=app/Models}`               
-
+### `php artisan list:models {--folder=app/Models}`
 
 - It searches the project and lists the model classes.
 - You can use `--folder=` option to narrow down the scanned folders.
-
 
 And more features will be added soon. ;)
 
@@ -898,25 +896,7 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 
 - https://github.com/imanghafoori1/laravel-heyman
 
-
 --------------
-
-### Laravel Terminator
-
-
- :gem: A minimal yet powerful package which allows you to refactor your controllers.
-
-- https://github.com/imanghafoori1/laravel-terminator
-
-
-
-### Laravel AnyPass
-
-:gem: It allows you to login with any password in the local environment only.
-
-- https://github.com/imanghafoori1/laravel-anypass
-
-
 
 ```
 A man will never fail unless he stops trying.
