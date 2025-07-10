@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Illuminate\Console\Command;
-use ImanGhafoori\ComposerJson\NamespaceErrors\FilenameError;
 use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
