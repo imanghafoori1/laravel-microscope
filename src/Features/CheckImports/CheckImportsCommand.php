@@ -155,7 +155,6 @@ class CheckImportsCommand extends Command
 
         if ($cache = CheckClassReferencesAreValid::$cache) {
             self::writeCacheContent($cache);
-            self::printThanks($this);
         }
 
         $this->line('');
@@ -163,7 +162,6 @@ class CheckImportsCommand extends Command
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
     }
 
-    #[Pure]
     private static function printThanks($command)
     {
         $command->line(PHP_EOL);

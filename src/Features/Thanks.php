@@ -16,7 +16,7 @@ class Thanks
         }
 
         $show = random_int(1, 5) === 2;
-        $show && cache()->set($key, '_', DateInterval::createFromDateString('3 days'));
+        $show && cache()->set($key, '_', DateInterval::createFromDateString('2 days'));
 
         return $show;
     }
