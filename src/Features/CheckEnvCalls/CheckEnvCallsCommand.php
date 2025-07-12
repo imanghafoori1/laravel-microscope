@@ -39,7 +39,7 @@ class CheckEnvCallsCommand extends Command
             $this->checkPaths($path);
         }
 
-        $this->checkPsr4Classes();
+        $this->checkPsr4Classes($pathDTO);
 
         event('microscope.finished.checks', [$this]);
         $this->info('&It is recommended use env() calls, only and only in config files.');
@@ -80,14 +80,17 @@ class CheckEnvCallsCommand extends Command
         }
     }
 
-    private function checkPsr4Classes()
+    private function checkPsr4Classes(PathFilterDTO $pathDTO)
     {
-        $configs = Paths::getAbsFilePaths(
-            LaravelPaths::configDirs()
-        );
+        $configs = Paths::getAbsFilePaths(LaravelPaths::configDirs(), PathFilterDTO::make());
 
-        $configs = implode(',', iterator_to_array($configs));
-        $pathDTO = PathFilterDTO::make();
+        $configs = trim(implode(',', array_keys(iterator_to_array($configs))),',');
+        if ($pathDTO->excludeFolder) {
+            $pathDTO->excludeFolder = $pathDTO->excludeFolder.','.$configs;
+        } else {
+            $pathDTO->excludeFolder = $configs;
+        }
+
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
 
         $this->getOutput()->writeln(implode(PHP_EOL, [
