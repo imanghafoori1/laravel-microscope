@@ -6,10 +6,17 @@ use JetBrains\PhpStorm\Pure;
 
 class ErrorCounter
 {
+    public static function calculateErrors($errorsList)
+    {
+        foreach (['extraWrongImport', 'wrongClassRef', 'extraCorrectImport'] as $item) {
+            self::$errors[$item] = count($errorsList[$item] ?? []);
+        }
+    }
+
     /**
      * @var array<string, array>
      */
-    public static $errors;
+    public static $errors = [];
 
     #[Pure(true)]
     public static function getExtraWrongCount(): int

@@ -7,9 +7,9 @@ use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class SummeryReport
 {
-    public static function summery($errors)
+    public static function summery($errorsList)
     {
-        ErrorCounter::$errors = $errors;
+        ErrorCounter::calculateErrors($errorsList);
 
         $messages = [
             self::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount),

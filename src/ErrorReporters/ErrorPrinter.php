@@ -16,15 +16,6 @@ class ErrorPrinter
     public $errorsList = [];
 
     /**
-     * @var array
-     */
-    public $errorsCounts = [
-        'extraWrongImport' => 0,
-        'wrongClassRef' => 0,
-        'extraCorrectImport' => 0,
-    ];
-
-    /**
      * @var int
      */
     public $total = 0;
@@ -78,9 +69,6 @@ class ErrorPrinter
     {
         if ($this->hasErrors()) {
             $this->logErrors();
-            foreach (['extraWrongImport', 'wrongClassRef', 'extraCorrectImport'] as $item) {
-                $this->errorsCounts[$item] += count($this->errorsList[$item] ?? []);
-            }
             $this->errorsList = [];
             $this->count = 0;
         }

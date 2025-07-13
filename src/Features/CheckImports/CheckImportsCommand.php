@@ -137,8 +137,7 @@ class CheckImportsCommand extends Command
         $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
         $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
         $messages[7] = AutoloadFiles::getLines($autoloadedFilesGen);
-        $errorPrinter->flushErrors();
-        $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsCounts);
+        $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>'];
