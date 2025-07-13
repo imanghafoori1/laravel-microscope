@@ -14,12 +14,12 @@ class ClassAtMethodHandler
         $fix = false;
 
         foreach ($atSignTokens as $token) {
-            $trimmed = \trim($token[1], '\'\"');
-            [$class, $method] = \explode('@', $trimmed);
+            $trimmed = trim($token[1], '\'\"');
+            [$class, $method] = explode('@', $trimmed);
 
-            $class = \str_replace('\\\\', '\\', $class);
+            $class = str_replace('\\\\', '\\', $class);
 
-            if (! \class_exists($class)) {
+            if (! class_exists($class)) {
                 $result = [false];
 
                 if (self::$fix && Analyzers\Fixer::isInUserSpace($class)) {
@@ -32,7 +32,7 @@ class ClassAtMethodHandler
                 } else {
                     self::wrongUsedClassError($absFilePath, $token[1], $token[2]);
                 }
-            } elseif (! \method_exists($class, $method)) {
+            } elseif (! method_exists($class, $method)) {
                 self::wrongMethodError($absFilePath, $trimmed, $token[2]);
             }
         }
