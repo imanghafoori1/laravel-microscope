@@ -77,9 +77,6 @@ class SpyRouter extends Router
 
     public function routeError($info, $err, $msg)
     {
-        /**
-         * @var $p ErrorPrinter
-         */
         $p = ErrorPrinter::singleton();
 
         $p->simplePendError(

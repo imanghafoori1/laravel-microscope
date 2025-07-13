@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use JetBrains\PhpStorm\Pure;
 
 class FixWrongClassRefs
 {
@@ -91,6 +92,7 @@ class FixWrongClassRefs
         );
     }
 
+    #[Pure]
     private static function removeFirst($search, $subject)
     {
         if (($position = strpos($subject, $search)) !== false) {

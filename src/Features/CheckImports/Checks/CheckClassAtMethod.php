@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use JetBrains\PhpStorm\Pure;
 
 class CheckClassAtMethod implements Check
 {
@@ -25,6 +26,7 @@ class CheckClassAtMethod implements Check
         }
     }
 
+    #[Pure]
     private static function getAtSignTokens($tokens, $onlyAbsClassPath)
     {
         $atSignTokens = [];
@@ -57,6 +59,7 @@ class CheckClassAtMethod implements Check
         return $atSignTokens;
     }
 
+    #[Pure]
     private static function contains($haystack, $needles)
     {
         foreach ($needles as $needle) {

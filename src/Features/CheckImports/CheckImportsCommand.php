@@ -191,7 +191,7 @@ class CheckImportsCommand extends Command
     /**
      * @return array<string, \Generator>
      */
-    #[Pure]
+    #[Pure(true)]
     private static function getLaravelFolders()
     {
         return [

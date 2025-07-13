@@ -11,31 +11,31 @@ class ErrorCounter
      */
     public static $errors;
 
-    #[Pure]
+    #[Pure(true)]
     public static function getExtraWrongCount(): int
     {
         return self::getCount('extraWrongImport');
     }
 
-    #[Pure]
+    #[Pure(true)]
     public static function getWrongUsedClassCount(): int
     {
         return self::getCount('wrongClassRef');
     }
 
-    #[Pure]
+    #[Pure(true)]
     public static function getExtraImportsCount(): int
     {
         return self::getCount('extraCorrectImport') + self::getExtraWrongCount();
     }
 
-    #[Pure]
+    #[Pure(true)]
     public static function getTotalErrors(): int
     {
         return self::getExtraWrongCount() + self::getWrongUsedClassCount() + self::getExtraImportsCount();
     }
 
-    #[Pure]
+    #[Pure(true)]
     private static function getCount(string $key)
     {
         return self::$errors[$key] ?? 0;

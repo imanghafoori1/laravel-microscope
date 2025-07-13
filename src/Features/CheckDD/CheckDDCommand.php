@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use JetBrains\PhpStorm\Pure;
 
 class CheckDDCommand extends Command
 {
@@ -61,6 +62,7 @@ class CheckDDCommand extends Command
     /**
      * @return array<string, \Generator>
      */
+    #[Pure(true)]
     private function getLaravelFolders()
     {
         return [
