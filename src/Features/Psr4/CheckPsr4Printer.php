@@ -61,8 +61,10 @@ class CheckPsr4Printer extends ErrorPrinter
 
     public static function getErrorsCount($errorCount)
     {
-        if ($errorCount) {
-            return [[PHP_EOL.$errorCount.' error(s) found.', 'warn']];
+        if ($errorCount === 1) {
+            return [[PHP_EOL.'one error was found.', 'warn']];
+        } elseif ($errorCount > 1) {
+            return [[PHP_EOL.$errorCount.' errors were found.', 'warn']];
         } else {
             return CheckPsr4Printer::noErrorFound();
         }

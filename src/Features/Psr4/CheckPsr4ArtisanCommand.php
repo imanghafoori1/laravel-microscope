@@ -36,7 +36,7 @@ class CheckPsr4ArtisanCommand extends Command
         $errorsLists = $this->getErrorsLists($composer, $classLists);
         Psr4Errors::handle($errorsLists, $this);
 
-        $duration = round(microtime(true) - $time, 5);
+        $duration = $this->getDuration($time);
         $this->printReport($printer, $duration, $composer->readAutoload(), $classLists);
         $this->composerDumpIfNeeded($printer);
 
@@ -134,5 +134,10 @@ class CheckPsr4ArtisanCommand extends Command
     private function write($text): void
     {
         $this->getOutput()->writeln($text);
+    }
+
+    private function getDuration($time)
+    {
+        return round(microtime(true) - ($time + Confirm::$askTime), 5);
     }
 }
