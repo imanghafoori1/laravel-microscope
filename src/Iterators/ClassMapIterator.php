@@ -28,9 +28,9 @@ class ClassMapIterator extends BaseIterator
     }
 
     /**
-     * @param \Generator<string, string> $classMap
-     * @param $checks
-     * @param $paramProvider
+     * @param  \Generator<string, string>  $classMap
+     * @param  $checks
+     * @param  $paramProvider
      * @return \Generator<string, \Generator<int, PhpFileDescriptor>>
      */
     private static function getDirStats($classMap, $checks, $paramProvider)

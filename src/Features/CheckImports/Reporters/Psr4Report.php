@@ -13,7 +13,7 @@ class Psr4Report
     public static $callback;
 
     /**
-     * @param  array|\Generator $psr4Stats
+     * @param  array|\Generator  $psr4Stats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @return string
      */

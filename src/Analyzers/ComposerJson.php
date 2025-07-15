@@ -57,9 +57,9 @@ class ComposerJson
     }
 
     /**
-     * @param $compPath
-     * @param $basePath
-     * @param $classmapPath
+     * @param  $compPath
+     * @param  $basePath
+     * @param  $classmapPath
      * @return string[]
      */
     private static function getClasses($compPath, $basePath, $classmapPath)
@@ -72,9 +72,9 @@ class ComposerJson
     }
 
     /**
-     * @param string[] $classes
-     * @param $basePath
-     * @param $pathDTO
+     * @param  string[]  $classes
+     * @param  $basePath
+     * @param  $pathDTO
      * @return string[]
      */
     private static function filterClasses(array $classes, $basePath, $pathDTO)
