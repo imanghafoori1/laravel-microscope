@@ -20,11 +20,20 @@ class ComposerJson
         return self::make()->readAutoload($purgeAutoload);
     }
 
+    /**
+     * @param  string  $basePath
+     * @return string[]
+     */
     public static function autoloadedFilesList($basePath)
     {
         return self::make()->autoloadedFilesList($basePath);
     }
 
+    /**
+     * @param  string  $basePath
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @return \Generator<string, \Generator<string, string[]>>
+     */
     public static function getClassMaps($basePath, $pathDTO)
     {
         foreach (self::make()->readAutoloadClassMap() as $composerPath => $classMapPaths) {
@@ -32,6 +41,13 @@ class ComposerJson
         }
     }
 
+    /**
+     * @param  string  $composerPath
+     * @param  string[]  $classMapPaths
+     * @param  string  $basePath
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @return \Generator<string, string[]>
+     */
     private static function getFilteredClasses($composerPath, $classMapPaths, $basePath, $pathDTO)
     {
         foreach ($classMapPaths as $classmapPath) {
@@ -40,6 +56,12 @@ class ComposerJson
         }
     }
 
+    /**
+     * @param $compPath
+     * @param $basePath
+     * @param $classmapPath
+     * @return string[]
+     */
     private static function getClasses($compPath, $basePath, $classmapPath)
     {
         $compPath1 = trim($compPath, '/');
@@ -49,6 +71,12 @@ class ComposerJson
         return array_values(ClassMapGenerator::createMap($classmapFullPath));
     }
 
+    /**
+     * @param string[] $classes
+     * @param $basePath
+     * @param $pathDTO
+     * @return string[]
+     */
     private static function filterClasses(array $classes, $basePath, $pathDTO)
     {
         foreach ($classes as $i => $class) {

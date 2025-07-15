@@ -67,14 +67,11 @@ class CheckEnvCallsCommand extends Command
     }
 
     /**
-     * @param  \Generator  $paths
+     * @param  \Generator<int, string>|string[]  $paths
      * @return void
      */
     private function checkPaths($paths)
     {
-        /**
-         * @var $filePath string
-         */
         foreach ($paths as $filePath) {
             $this->checkForEnv($filePath);
         }

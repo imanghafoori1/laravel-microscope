@@ -12,7 +12,7 @@ use Throwable;
 class RoutePaths
 {
     /**
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     public static function get()
     {

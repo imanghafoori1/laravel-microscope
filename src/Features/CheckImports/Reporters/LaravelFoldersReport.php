@@ -7,7 +7,7 @@ class LaravelFoldersReport
     use Reporting;
 
     /**
-     * @param  \Generator  $foldersStats
+     * @param  iterable<string, iterable<string, iterable<string, iterable<int, string>>>>  $foldersStats
      * @return string
      */
     public static function foldersStats($foldersStats): string
@@ -28,7 +28,7 @@ class LaravelFoldersReport
     }
 
     /**
-     * @param  \Generator  $stats
+     * @param  iterable<string, iterable<string, iterable<int, string>>>  $stats
      * @return array
      */
     private static function subDirs($stats)

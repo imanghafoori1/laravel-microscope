@@ -6,6 +6,9 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 abstract class BaseIterator
 {
+    /**
+     * @return \Generator<int, PhpFileDescriptor>
+     */
     protected static function applyChecks($absFilePaths, $checks, $params)
     {
         foreach ($absFilePaths as $absFilePath) {

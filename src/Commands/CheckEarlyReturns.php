@@ -67,6 +67,11 @@ class CheckEarlyReturns extends Command
         ];
     }
 
+    /**
+     * @param  PathFilterDTO  $pathDTO
+     * @param  bool  $nofix
+     * @return array
+     */
     public static function applyCheckEarly($pathDTO, $nofix): array
     {
         $check = [CheckEarlyReturn::class];

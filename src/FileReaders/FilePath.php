@@ -84,9 +84,9 @@ class FilePath
     }
 
     /**
-     * @param  string[]  $paths
+     * @param  \Generator<int, string>|string[]  $paths
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     public static function removeExtraPaths($paths, $pathDTO)
     {

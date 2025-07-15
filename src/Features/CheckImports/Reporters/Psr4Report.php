@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 use Generator;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Report
@@ -12,7 +13,8 @@ class Psr4Report
     public static $callback;
 
     /**
-     * @param  array<string, \Generator>  $psr4Stats
+     * @param  array|\Generator $psr4Stats
+     * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @return string
      */
     #[Pure]
@@ -136,6 +138,13 @@ class Psr4Report
         return implode('', $lines);
     }
 
+    /**
+     * @param  string  $composerPath
+     * @param  \Generator  $psr4
+     * @param  \Generator<string, \Generator<string, int>>  $classMapStats
+     * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @return string
+     */
     #[Pure]
     private static function present(string $composerPath, Generator $psr4, $classMapStats)
     {

@@ -33,6 +33,10 @@ class CheckCompact extends Command
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
+    /**
+     * @param  non-empty-string  $absPath
+     * @return void
+     */
     private function checkPathForCompact($absPath)
     {
         $tokens = token_get_all(file_get_contents($absPath));
@@ -53,6 +57,10 @@ class CheckCompact extends Command
         }
     }
 
+    /**
+     * @param  \Generator<int, string>  $paths
+     * @return void
+     */
     private function checkRoutePaths($paths)
     {
         foreach ($paths as $filePath) {

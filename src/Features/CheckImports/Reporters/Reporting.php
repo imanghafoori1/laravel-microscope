@@ -58,6 +58,10 @@ trait Reporting
         return PHP_EOL.'    '.self::hyphen('<fg=green>'.$relPath.'</>');
     }
 
+    /**
+     * @param PhpFileDescriptor[] $files
+     * @return string[]
+     */
     #[Pure]
     private static function formatFiles($files)
     {

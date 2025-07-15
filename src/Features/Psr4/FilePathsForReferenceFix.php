@@ -13,6 +13,9 @@ class FilePathsForReferenceFix
 {
     public static $pathsForReferenceFix = [];
 
+    /**
+     * @return array<string, \Generator<int, string>>
+     */
     public static function getFiles()
     {
         if (self::$pathsForReferenceFix) {
@@ -27,12 +30,6 @@ class FilePathsForReferenceFix
         $paths['routes'] = RoutePaths::get();
         $paths['blades'] = LaravelPaths::allBladeFiles();
 
-        // $dirs = [
-        //     LaravelPaths::migrationDirs(),
-        //     LaravelPaths::configDirs(),
-        // ];
-        // $paths['others'] = self::collectFilesInNonPsr4Paths($dirs);
-
         return $paths;
     }
 
@@ -43,6 +40,9 @@ class FilePathsForReferenceFix
         }
     }
 
+    /**
+     * @return \Generator<int, string>
+     */
     private static function getPsr4()
     {
         // @todo: this should get refactored into the ComposerJson class using the iterator pattern.

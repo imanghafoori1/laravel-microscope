@@ -8,11 +8,13 @@ class CheckImportReporter
 {
     use Reporting;
 
+    #[Pure]
     public static function totalImportsMsg()
     {
         return '<options=bold;fg=yellow>Imports were checked under:</>';
     }
 
+    #[Pure]
     public static function getRouteStats($routeFiles)
     {
         $linesArr = self::formatFiles($routeFiles);

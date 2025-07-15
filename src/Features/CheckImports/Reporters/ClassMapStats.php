@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 class ClassMapStats
@@ -9,7 +10,7 @@ class ClassMapStats
     use Reporting;
 
     /**
-     * @param  \Generator  $stat
+     * @param  \Generator<string, \Generator<int, PhpFileDescriptor>>  $stat
      * @param  \Closure  $callback
      * @return string|void
      */
