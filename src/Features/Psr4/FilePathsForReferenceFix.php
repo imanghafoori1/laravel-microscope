@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -31,13 +30,6 @@ class FilePathsForReferenceFix
         $paths['blades'] = LaravelPaths::allBladeFiles();
 
         return $paths;
-    }
-
-    private static function collectFilesInNonPsr4Paths($dirs)
-    {
-        foreach ($dirs as $dir) {
-            yield from Paths::getAbsFilePaths($dir);
-        }
     }
 
     /**
