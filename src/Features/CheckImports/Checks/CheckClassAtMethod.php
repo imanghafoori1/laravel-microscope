@@ -22,7 +22,7 @@ class CheckClassAtMethod implements Check
         );
 
         if ($replaced) {
-            return token_get_all(file_get_contents($absFilePath));
+            return $file->getTokens(true);
         }
     }
 
