@@ -20,28 +20,25 @@ class ClassRefCorrector
         self::fixAllRefs($changes, $paths);
     }
 
-    private static function fixAllRefs($changes, $paths)
+    /**
+     * @param  array<string, string>  $changes
+     * @param  array<string, \Generator<int, string>>  $allPaths
+     * @return void
+     */
+    private static function fixAllRefs($changes, $allPaths)
     {
-        foreach ($paths as $path) {
-            foreach ($path as $p) {
-                self::applyFix($p, $changes);
+        foreach ($allPaths as $paths) {
+            foreach ($paths as $path) {
+                self::fix($path, $changes);
             }
         }
     }
 
-    private static function applyFix($paths, $changes)
-    {
-        if (! is_string($paths)) {
-            foreach (iterator_to_array($paths) as $path) {
-                foreach ($path as $p) {
-                    self::fix($p, $changes);
-                }
-            }
-        } else {
-            self::fix($paths, $changes);
-        }
-    }
-
+    /**
+     * @param  string  $path
+     * @param  array<string, string>  $changes
+     * @return void
+     */
     private static function fix($path, $changes)
     {
         [$changedLineNums, $content] = self::fixRefs($path, $changes);
