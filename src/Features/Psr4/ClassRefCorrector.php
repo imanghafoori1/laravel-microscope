@@ -8,7 +8,7 @@ class ClassRefCorrector
 
     private static $beforeFix = [ClassRefCorrector\BeforeRefFix::class, 'getCallback'];
 
-    public static function fixOldRefs($from, $class, $to, $path, $beforeFix = null, $afterFix = null)
+    public static function fixOldRefs($from, $class, $to, $paths, $beforeFix = null, $afterFix = null)
     {
         $afterFix && self::$afterFix = $afterFix;
         $beforeFix && self::$beforeFix = $beforeFix;
@@ -17,7 +17,7 @@ class ClassRefCorrector
             $from.'\\'.$class => $to.'\\'.$class,
         ];
 
-        self::fixAllRefs($changes, $path);
+        self::fixAllRefs($changes, $paths);
     }
 
     private static function fixAllRefs($changes, $paths)
