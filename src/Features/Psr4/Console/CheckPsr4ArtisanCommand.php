@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
@@ -9,6 +9,7 @@ use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\Psr4Errors;
 
 class CheckPsr4ArtisanCommand extends Command
 {
@@ -66,7 +67,7 @@ class CheckPsr4ArtisanCommand extends Command
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->write(CheckPsr4Printer::reportResult($autoload, $time, $classListStatistics));
+            $this->write(ReportPrinter::reportResult($autoload, $time, $classListStatistics));
             $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->total));
         } else {
             $this->write($this->getTotalCheckedMessage($classListStatistics->getTotalCount()));

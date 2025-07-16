@@ -4,6 +4,10 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Illuminate\Console\Command;
 use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\ClassRefCorrector;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForReferenceFix;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\CheckPsr4Printer;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\Confirm;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors

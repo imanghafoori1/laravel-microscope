@@ -14,7 +14,7 @@ trait CommandsRegistry
         Commands\CheckGates::class,
         Commands\CheckRoutes::class,
         Features\CheckView\CheckViewsCommand::class,
-        Features\Psr4\CheckPsr4ArtisanCommand::class,
+        Features\Psr4\Console\CheckPsr4ArtisanCommand::class,
         Features\CheckImports\CheckImportsCommand::class,
         Features\FacadeAlias\CheckAliasesCommand::class,
         Commands\CheckAll::class,

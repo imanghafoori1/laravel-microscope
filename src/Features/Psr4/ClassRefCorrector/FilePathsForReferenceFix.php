@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;

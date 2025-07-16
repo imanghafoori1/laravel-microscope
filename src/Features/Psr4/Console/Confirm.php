@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 class Confirm
 {
