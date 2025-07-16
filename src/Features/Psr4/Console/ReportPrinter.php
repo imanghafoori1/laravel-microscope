@@ -6,8 +6,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ReportPrinter
 {
-
-    public static function  reportResult($autoload, $time, TypeStatistics $typesStats)
+    public static function reportResult($autoload, $time, TypeStatistics $typesStats)
     {
         $messages = [];
 
@@ -56,6 +55,7 @@ class ReportPrinter
 
         return $max;
     }
+
     private static function getNamespaces($psr4, TypeStatistics $typesStats, int $max): string
     {
         $output = '';
