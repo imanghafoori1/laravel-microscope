@@ -11,16 +11,15 @@ class ReportPrinter
     {
         $messages = [];
 
-        $messages[] = ErrorPrinter::lineSeparator();
-        $messages[] = self::getHeaderLine($typesStats);
-        $messages[] = '';
-
         $max = self::getMaxNamespaceLength($autoload);
 
         foreach ($autoload as $composerPath => $psr4) {
             $messages[] = self::getComposerFileAddress($composerPath);
             $messages[] = self::getNamespaces($psr4, $typesStats, $max);
         }
+        $messages[] = ErrorPrinter::lineSeparator();
+        $messages[] = self::getHeaderLine($typesStats);
+        $messages[] = '';
 
         $messages[] = self::getFinishMsg($time);
 
