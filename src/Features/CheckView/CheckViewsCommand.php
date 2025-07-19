@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
@@ -53,17 +54,10 @@ class CheckViewsCommand extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    private function checkForViewMake($absPath, $staticCalls)
-    {
-        $tokens = \token_get_all(\file_get_contents($absPath));
-
-        CheckView::checkViewCalls($tokens, $absPath, $staticCalls);
-    }
-
     private function checkRoutePaths($paths)
     {
         foreach ($paths as $filePath) {
-            $this->checkForViewMake($filePath, [
+            CheckView::checkViewCalls(PhpFileDescriptor::make($filePath), [
                 'View' => ['make', 0],
                 'Route' => ['view', 1],
             ]);

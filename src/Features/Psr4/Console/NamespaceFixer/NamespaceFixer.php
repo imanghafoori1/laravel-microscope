@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer;
 
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
@@ -11,7 +11,7 @@ class NamespaceFixer
     {
         // decides to add namespace (in case there is no namespace) or edit the existing one.
         [$oldLine, $newline] = self::getNewLine($incorrectNamespace, $correctNamespace);
-        $oldLine = \ltrim($oldLine, '\\');
+        $oldLine = ltrim($oldLine, '\\');
 
         $tokens = $file->getTokens();
         if ($oldLine !== '<?php') {
@@ -19,18 +19,10 @@ class NamespaceFixer
             [$newVersion, $lines] = Searcher::searchReplace(self::getPattern($oldLine, $newline), $tokens);
             $file->putContents($newVersion);
         } elseif ($tokens[2][0] !== T_DECLARE) {
-            // insertion
+            // insert if namespace is missing
             $file->replaceFirst($oldLine, '<?php'.PHP_EOL.PHP_EOL.$newline);
         } else {
-            // inserts after declare
-            $i = 2;
-            while ($tokens[$i] !== ';') {
-                $i++;
-            }
-            while (! isset($tokens[$i][2])) {
-                $i++;
-            }
-            $file->insertNewLine(PHP_EOL.$newline, $tokens[$i][2] + 1);
+            self::insertsAfterDeclare($file, $newline);
         }
     }
 
@@ -52,5 +44,18 @@ class NamespaceFixer
                 'replace' => 'namespace '.$newline.';',
             ],
         ];
+    }
+
+    private static function insertsAfterDeclare(PhpFileDescriptor $file, $newline): void
+    {
+        $tokens = $file->getTokens();
+        $i = 2;
+        while ($tokens[$i] !== ';') {
+            $i++;
+        }
+        while (! isset($tokens[$i][2])) {
+            $i++;
+        }
+        $file->insertNewLine(PHP_EOL.$newline, (int) $tokens[$i][2] + 1);
     }
 }

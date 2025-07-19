@@ -34,10 +34,11 @@ class CheckPsr4ArtisanCommand extends Command
         $composer = ComposerJson::make();
         start:
         $classLists = $this->getClassLists($composer);
-        $errorsLists = $this->getErrorsLists($composer, $classLists);
+        $errorsLists = $this->checkClassLists($composer, $classLists);
+        $this->deleteLastLine();
         Psr4Errors::handle($errorsLists, $this);
 
-        $duration = $this->getDuration($time);
+        $duration = self::getDuration($time);
         $this->printReport($printer, $duration, $composer->readAutoload(), $classLists);
         $this->composerDumpIfNeeded($printer);
 
@@ -67,10 +68,10 @@ class CheckPsr4ArtisanCommand extends Command
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->write(ReportPrinter::reportResult($autoload, $time, $classListStatistics));
-            $this->printMessages(CheckPsr4Printer::getErrorsCount($errorPrinter->total));
+            $this->write(ReportMessages::reportResult($autoload, $time, $classListStatistics));
+            $this->printMessages(ReportMessages::getErrorsCount($errorPrinter->total));
         } else {
-            $this->write($this->getTotalCheckedMessage($classListStatistics->getTotalCount()));
+            $this->write(ReportMessages::getTotalChecked($classListStatistics->getTotalCount()));
         }
     }
 
@@ -116,7 +117,7 @@ class CheckPsr4ArtisanCommand extends Command
         return $composer->getClasslists($filter, $pathFilter);
     }
 
-    private function getErrorsLists(Comp $composer, ClassLists $classLists)
+    private function checkClassLists(Comp $composer, ClassLists $classLists)
     {
         $onCheck = $this->option('detailed') ? function ($class) {
             $msg = 'Checking: '.$class['currentNamespace'].'\\'.$class['class'];
@@ -127,18 +128,18 @@ class CheckPsr4ArtisanCommand extends Command
         return $composer->getErrorsLists($classLists->getAllLists(), $onCheck);
     }
 
-    private function getTotalCheckedMessage($total): string
-    {
-        return ' - '.$total.' namespaces were checked.';
-    }
-
     private function write($text): void
     {
         $this->getOutput()->writeln($text);
     }
 
-    private function getDuration($time)
+    private static function getDuration($time)
     {
         return round(microtime(true) - ($time + Confirm::$askTime), 5);
+    }
+
+    private function deleteLastLine()
+    {
+        $this->getOutput()->write("\x1b[1A\x1b[1G\x1b[2K");
     }
 }

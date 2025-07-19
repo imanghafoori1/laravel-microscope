@@ -16,15 +16,12 @@ class CheckView implements Check
 
     public static function check(PhpFileDescriptor $file)
     {
-        $tokens = $file->getTokens();
-        $absPath = $file->getAbsolutePath();
-
         $staticCalls = [
             'View' => ['make', 0],
             'Route' => ['view', 1],
         ];
 
-        self::checkViewCalls($tokens, $absPath, $staticCalls);
+        self::checkViewCalls($file, $staticCalls);
     }
 
     private static function checkViewParams($absPath, &$tokens, $i, $index)
@@ -45,8 +42,10 @@ class CheckView implements Check
         }
     }
 
-    public static function checkViewCalls($tokens, $absPath, array $staticCalls)
+    public static function checkViewCalls(PhpFileDescriptor $file, array $staticCalls)
     {
+        $absPath = $file->getAbsolutePath();
+        $tokens = $file->getTokens();
         foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
                 self::checkViewParams($absPath, $tokens, $i, 0);
