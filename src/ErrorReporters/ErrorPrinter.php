@@ -103,13 +103,16 @@ class ErrorPrinter
         $this->printer->writeln($path.$msg);
     }
 
-    public function printHeader($msg)
+    public function printHeader($msg, $counted = true)
     {
-        $number = ++$this->total;
-        ($number < 10) && $number = " $number";
-
-        $number = $this->color($number, 'cyan');
-        $path = "  $number ";
+        if ($counted) {
+            $number = ++$this->total;
+            ($number < 10) && $number = " $number";
+            $number = $this->color($number, 'cyan');
+            $path = "  $number ";
+        } else {
+            $path = '';
+        }
 
         $width = (new Terminal)->getWidth() - 6;
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);

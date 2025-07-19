@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class ReportPrinter
+class ReportMessages
 {
     public static function reportResult($autoload, $time, TypeStatistics $typesStats)
     {
@@ -13,7 +13,9 @@ class ReportPrinter
         $max = self::getMaxNamespaceLength($autoload);
 
         foreach ($autoload as $composerPath => $psr4) {
-            $messages[] = self::getComposerFileAddress($composerPath);
+            if ((count($autoload) > 1)) {
+                $messages[] = self::getComposerFileAddress($composerPath);
+            }
             $messages[] = self::getNamespaces($psr4, $typesStats, $max);
         }
         $messages[] = ErrorPrinter::lineSeparator();
@@ -23,6 +25,22 @@ class ReportPrinter
         $messages[] = self::getFinishMsg($time);
 
         return $messages;
+    }
+
+    public static function getTotalChecked($count)
+    {
+        return " - $count namespaces were checked.";
+    }
+
+    public static function getErrorsCount($errorCount)
+    {
+        if ($errorCount === 1) {
+            return [[PHP_EOL.'one error was found.', 'warn']];
+        } elseif ($errorCount > 1) {
+            return [[PHP_EOL.$errorCount.' errors were found.', 'warn']];
+        } else {
+            return self::noErrorFound();
+        }
     }
 
     private static function getComposerFileAddress($composerPath): string
@@ -100,5 +118,13 @@ class ReportPrinter
     private static function colorizer($str, $color)
     {
         return '<fg='.$color.'>'.$str.'</>';
+    }
+
+    private static function noErrorFound()
+    {
+        return [
+            [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'],
+            ['', 'line'],
+        ];
     }
 }

@@ -6,8 +6,9 @@ use Illuminate\Console\Command;
 use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\ClassRefCorrector;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForReferenceFix;
-use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\CheckPsr4Printer;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\Confirm;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixer;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixerMessages;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors
@@ -50,12 +51,17 @@ class Psr4Errors
 
     private static function applyFixProcess(PhpFileDescriptor $file, $from, $class, $to)
     {
-        CheckPsr4Printer::warnIncorrectNamespace($file->relativePath(), $from, $class);
+        $answer = self::getAnswer($file, $from, $class, $to);
 
-        if (self::$confirm::ask(self::$command, $to)) {
+        if ($answer) {
             NamespaceFixer::fix($file, $from, $to);
+            self::$command->getOutput()->writeln('Namespace updated to: '.$to);
+            self::$command->getOutput()->writeln('Searching for old references...');
             self::updateOldRefs($from, $to, $class);
-            CheckPsr4Printer::fixedNamespace($file, $from, $to, $class);
+            self::deleteLine(2);
+            NamespaceFixerMessages::fixedNamespace($file, $from, $to, $class);
+        } else {
+            NamespaceFixerMessages::wrongNamespace($file, $from, $to, $class);
         }
     }
 
@@ -71,10 +77,39 @@ class Psr4Errors
 
     private static function wrongFileName($error)
     {
-        CheckPsr4Printer::wrongFileName(
+        NamespaceFixerMessages::wrongFileName(
             $error['relativePath'],
             $error['class'],
             $error['fileName']
         );
+    }
+
+    public static function deleteLine($lines = 1): void
+    {
+        $output = self::$command->getOutput();
+        $i = 0;
+        while (true) {
+            $output->write("\x1b[1A\x1b[1G\x1b[2K");
+            $i++;
+            if ($i >= $lines) {
+                break;
+            }
+            usleep(70000);
+        }
+    }
+
+    private static function getAnswer(PhpFileDescriptor $file, $from, $class, $to): mixed
+    {
+        if (self::$command->option('nofix')) {
+            $answer = false;
+        } elseif (self::$command->option('force')) {
+            $answer = true;
+        } else {
+            NamespaceFixerMessages::warnIncorrectNamespace($file->relativePath(), $from, $class);
+            $answer = self::$confirm::ask(self::$command, $to);
+            self::deleteLine(9);
+        }
+
+        return $answer;
     }
 }

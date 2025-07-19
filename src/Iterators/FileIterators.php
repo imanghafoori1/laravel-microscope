@@ -46,8 +46,6 @@ class FileIterators extends BaseIterator
      */
     public static function checkFiles($absFilePaths, $checks, $paramProvider): Generator
     {
-        is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
-
         yield from self::applyChecks($absFilePaths, $checks, $paramProvider);
     }
 }
