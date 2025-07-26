@@ -4,16 +4,15 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Closure;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Symfony\Component\Finder\Finder;
 
 trait FiltersFiles
 {
     /**
-     * @param  \Symfony\Component\Finder\Finder  $files
+     * @param  \Symfony\Component\Finder\Finder|array  $files
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
-    private static function filterFiles(Finder $files, $pathDTO)
+    private static function filterFiles($files, $pathDTO)
     {
         return self::filterItems($files, function ($file) use ($pathDTO) {
             return FilePath::contains($file->getPathname(), $pathDTO);
@@ -21,7 +20,7 @@ trait FiltersFiles
     }
 
     /**
-     * @param  $items
+     * @param  \Symfony\Component\Finder\Finder|array  $items
      * @param  \Closure  $condition
      * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
