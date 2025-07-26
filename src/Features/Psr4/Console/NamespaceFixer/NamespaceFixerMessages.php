@@ -8,7 +8,6 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class NamespaceFixerMessages
 {
-
     public static function warnIncorrectNamespace($path, $currentNamespace, $className)
     {
         $printer = ErrorPrinter::singleton();

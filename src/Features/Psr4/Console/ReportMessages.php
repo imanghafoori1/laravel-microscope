@@ -13,7 +13,7 @@ class ReportMessages
         $max = self::getMaxNamespaceLength($autoload);
 
         foreach ($autoload as $composerPath => $psr4) {
-            if ((count($autoload) > 1)) {
+            if (count($autoload) > 1) {
                 $messages[] = self::getComposerFileAddress($composerPath);
             }
             $messages[] = self::getNamespaces($psr4, $typesStats, $max);
