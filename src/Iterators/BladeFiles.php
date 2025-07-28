@@ -2,8 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class BladeFiles implements Check
 {
@@ -34,7 +37,7 @@ class BladeFiles implements Check
             $hints['pagination']
         );
 
-        yield from $hints;
+        return self::normalizeAndFilterVendorPaths($hints);
     }
 
     /**
@@ -44,5 +47,29 @@ class BladeFiles implements Check
     {
         $compiler = app('microscope.blade.compiler');
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
+    }
+
+    private static function filterPaths($paths): array
+    {
+        $newPaths = [];
+        foreach ($paths as $path) {
+            $path = FilePath::normalize($path);
+            if (! Str::startsWith($path, Container::getInstance()->basePath().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
+                $newPaths[] = $path;
+            }
+        }
+
+        return $newPaths;
+    }
+
+    private static function normalizeAndFilterVendorPaths(array $hints)
+    {
+        foreach ($hints as $key => $paths) {
+            $paths = self::filterPaths($paths);
+            if (empty($paths)) {
+                continue;
+            }
+            yield $key => $paths;
+        }
     }
 }
