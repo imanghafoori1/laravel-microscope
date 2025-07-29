@@ -1,12 +1,12 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks\PSR12;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckPsr12;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
-class CurlyBraces implements Check
+class CurlyBracesCheck implements Check
 {
     public static $command;
 
