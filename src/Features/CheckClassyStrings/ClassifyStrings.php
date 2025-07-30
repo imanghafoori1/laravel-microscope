@@ -32,9 +32,7 @@ class ClassifyStrings extends Command
 
         [$psr4Stats, $classMapStats] = self::classifyString($pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         $this->getOutput()->writeln(CheckStringyMsg::finished());
 

@@ -36,9 +36,7 @@ class CheckEndIf extends Command
 
         [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }

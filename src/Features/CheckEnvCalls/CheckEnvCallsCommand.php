@@ -90,9 +90,7 @@ class CheckEnvCallsCommand extends Command
 
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
     }
 
     private function isLikelyConfigFile($absPath, $tokens)

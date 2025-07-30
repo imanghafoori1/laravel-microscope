@@ -34,9 +34,7 @@ class CheckDeadControllers extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
         $psr4Stats = ForPsr4LoadedClasses::check([RoutelessControllerActions::class], [], $pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();

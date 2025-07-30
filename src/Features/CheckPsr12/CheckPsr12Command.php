@@ -5,7 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckPsr12;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\CheckImportsCommand;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -42,10 +44,7 @@ class CheckPsr12Command extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($check, [], $pathFilterDTO);
         $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $pathFilterDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
-        ]));
-
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
         $this->finishCommand($errorPrinter);
 
         return $errorPrinter->hasErrors() ? 1 : 0;

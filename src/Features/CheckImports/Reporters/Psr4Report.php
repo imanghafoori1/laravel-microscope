@@ -15,22 +15,15 @@ class Psr4Report
     /**
      * @param  array|\Generator  $psr4Stats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @return string
+     * @return \Generator
      */
-    #[Pure]
-    public static function printAutoload($psr4Stats, $classMapStats)
+    public static function printAutoload($psr4Stats, $classMapStats, $console)
     {
-        $callback = function ($composerPath, $psr4, $classMapStats) {
-            return self::present($composerPath, $psr4, $classMapStats);
-        };
+        $presentations = self::getPresentations($psr4Stats, $classMapStats);
 
-        $outputAll = '';
-        foreach ($psr4Stats as $composerPath => $psr4) {
-            $output = $callback($composerPath, $psr4, $classMapStats);
-            $outputAll .= $output;
+        foreach ($presentations as $presentation) {
+            Psr4ReportPrinter::printMessages($presentation, $console);
         }
-
-        return trim($outputAll);
     }
 
     #[Pure]
@@ -51,21 +44,24 @@ class Psr4Report
     {
         $lengths = [1];
         $lines = [];
-        $i = 0;
-        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            $folders = self::getFolders($psr4Paths);
-            if (! $folders) {
-                continue;
-            }
-            self::$callback && (self::$callback)();
-            $i++;
-            $lengths[] = strlen($psr4Namespace);
-            $lines[$i][0] = PHP_EOL.self::getPsr4Head();
-            $lines[$i][1] = $psr4Namespace;
-            $lines[$i][2] = $folders;
-        }
 
-        return self::concatinate(max($lengths), $lines);
+        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+            /*  if (! $folders) {
+                continue;
+            }*/
+            self::$callback && (self::$callback)();
+            $lengths[] = strlen($psr4Namespace);
+            $lines[0] = PHP_EOL.self::getPsr4Head();
+            $lines[1] = self::getPsr4(max($lengths), $psr4Namespace);
+
+            yield implode('', $lines);
+            $folders = self::getFolders($psr4Paths);
+            if ($folders === '') {
+                yield "\x1b[1G\x1b[2K\x1b[1A";
+            } else {
+                yield $folders;
+            }
+        }
     }
 
     #[Pure]
@@ -108,8 +104,8 @@ class Psr4Report
             $result[$i][1] = self::green('./'.$path);
             $result[$i][2] = self::files($countClasses);
             if ($i > 1) {
-                $result[$i - 1][0] = PHP_EOL.str_repeat(' ', 12).'- ';
-                $result[$i][0] = PHP_EOL.str_repeat(' ', 12).'- ';
+                $result[$i - 1][0] = str_repeat(' ', 12).'- ';
+                $result[$i][0] = str_repeat(' ', 12).'- ';
             }
         }
 
@@ -149,16 +145,24 @@ class Psr4Report
     private static function present(string $composerPath, Generator $psr4, $classMapStats)
     {
         $output = '';
-        $output .= PHP_EOL;
-        $output .= self::formatComposerPath($composerPath);
-        $output .= PHP_EOL;
-        $output .= self::hyphen('<options=bold;fg=white>PSR-4 </>');
-        $output .= self::formatPsr4Stats($psr4);
+        yield PHP_EOL.self::formatComposerPath($composerPath);
+        yield PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
+        yield self::formatPsr4Stats($psr4);
         if (isset($classMapStats[$composerPath])) {
             $lines = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
             $lines && ($output .= PHP_EOL.$lines);
         }
 
-        return $output;
+        yield $output;
+    }
+
+    public static function getPresentations($psr4Stats, array $classMapStats): array
+    {
+        $results = [];
+        foreach ($psr4Stats as $composerPath => $psr4) {
+            $results[] = self::present($composerPath, $psr4, $classMapStats);
+        }
+
+        return $results;
     }
 }

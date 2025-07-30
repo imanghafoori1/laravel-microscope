@@ -23,7 +23,7 @@ trait Reporting
     #[Pure]
     public static function files($count)
     {
-        return '<fg=white> ( '.$count.' file'.($count == 1 ? '' : 's').' )</>';
+        return '<fg=white> ('.$count.' file'.($count == 1 ? '' : 's').')</>';
     }
 
     #[Pure]
