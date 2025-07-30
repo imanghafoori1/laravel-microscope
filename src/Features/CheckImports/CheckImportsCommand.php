@@ -128,23 +128,15 @@ class CheckImportsCommand extends Command
         /**
          * @var string[] $messages
          */
-        $messages = [];
-        $messages[0] = CheckImportReporter::totalImportsMsg();
-        $messages[1] = Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
-        $messages[2] = CheckImportReporter::header();
-        $messages[3] = self::getFilesStats();
-        $messages[4] = Reporters\BladeReport::getBladeStats($bladeStats);
-        $messages[5] = Reporters\LaravelFoldersReport::foldersStats($foldersStats);
-        $messages[6] = CheckImportReporter::getRouteStats($routeFiles);
-        $messages[7] = AutoloadFiles::getLines($autoloadedFilesGen);
-        $messages[8] = Reporters\SummeryReport::summery($errorPrinter->errorsList);
+        $messages = $this->getMessages($psr4Stats, $classMapStats, $bladeStats, $foldersStats, $routeFiles, $autoloadedFilesGen, $errorPrinter);
 
+        $this->printMessages($messages);
         if (! ImportsAnalyzer::$checkedRefCount) {
-            $messages = ['<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>'];
+            $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
+            $this->getOutput()->writeln($messages);
         }
 
         $this->finishCommand($errorPrinter);
-        $this->getOutput()->writeln(implode(PHP_EOL, array_filter($messages)));
 
         $errorPrinter->printTime();
 
@@ -207,5 +199,37 @@ class CheckImportsCommand extends Command
         $path = $folder.'check_imports.php';
         file_exists($path) && chmod($path, 0777);
         file_put_contents($path, $content);
+    }
+
+    private function getMessages(
+        $psr4Stats,
+        $classMapStats,
+        $bladeStats,
+        $foldersStats,
+        $routeFiles,
+        $autoloadedFilesGen,
+        ErrorPrinter $errorPrinter
+    ) {
+        yield CheckImportReporter::totalImportsMsg();
+        yield Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
+        yield PHP_EOL.CheckImportReporter::header();
+        yield PHP_EOL.self::getFilesStats();
+        yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats);
+        yield PHP_EOL.Reporters\LaravelFoldersReport::foldersStats($foldersStats);
+        yield PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
+        yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
+        yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
+    }
+
+    private function printMessages($messages): void
+    {
+        foreach ($messages as $message) {
+            if (is_string($message)) {
+                $this->getOutput()->write($message);
+            } else {
+                $this->printMessages($message);
+            }
+        }
+        $this->getOutput()->writeln('');
     }
 }
