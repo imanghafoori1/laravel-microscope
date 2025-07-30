@@ -17,15 +17,12 @@ class Psr4Report
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @return \Generator
      */
-    #[Pure]
-    public static function printAutoload($psr4Stats, $classMapStats)
+    public static function printAutoload($psr4Stats, $classMapStats, $console)
     {
-        $callback = function ($composerPath, $psr4, $classMapStats) {
-            return self::present($composerPath, $psr4, $classMapStats);
-        };
+        $presentations = self::getPresentations($psr4Stats, $classMapStats);
 
-        foreach ($psr4Stats as $composerPath => $psr4) {
-            return $callback($composerPath, $psr4, $classMapStats);
+        foreach ($presentations as $presentation) {
+            Psr4ReportPrinter::printMessages($presentation, $console);
         }
     }
 
@@ -157,5 +154,15 @@ class Psr4Report
         }
 
         yield $output;
+    }
+
+    public static function getPresentations($psr4Stats, array $classMapStats): array
+    {
+        $results = [];
+        foreach ($psr4Stats as $composerPath => $psr4) {
+            $results[] = self::present($composerPath, $psr4, $classMapStats);
+        }
+
+        return $results;
     }
 }

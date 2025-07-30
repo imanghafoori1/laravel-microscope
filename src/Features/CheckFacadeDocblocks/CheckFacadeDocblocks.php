@@ -45,9 +45,7 @@ class CheckFacadeDocblocks extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($check, [], $pathDTO);
         $classMapStats = ClassMapIterator::iterate(base_path(), $check, null, $pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         $errorPrinter->printTime();
         $errorPrinter->logErrors();

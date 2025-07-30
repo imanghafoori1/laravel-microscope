@@ -54,9 +54,7 @@ class CheckAliasesCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
         $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         $this->info(PHP_EOL.' '.$this->finishMsg);
 

@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Generator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
@@ -59,14 +60,14 @@ trait PatternApply
         CheckBladePaths::$readOnly = false;
         $bladeStats = BladeFiles::check($check, [$parsedPatterns], $pathDTO);
 
-        return self::getFinalMessage($psr4Stats, $classMapStats, $bladeStats);
+        return $this->getFinalMessage($psr4Stats, $classMapStats, $bladeStats);
     }
 
-    private static function getFinalMessage(array $psr4Stats, array $classMapStats, Generator $bladeStats): string
+    private function getFinalMessage(array $psr4Stats, array $classMapStats, Generator $bladeStats): string
     {
         try {
+            Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
             return implode(PHP_EOL, [
-                Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats),
                 Reporters\BladeReport::getBladeStats($bladeStats),
             ]);
         } finally {

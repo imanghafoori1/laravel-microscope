@@ -32,9 +32,7 @@ class CheckGenericDocBlocksCommand extends Command
             $pathDTO
         );
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, []),
-        ]));
+        Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
         $this->info(GenericDocblocks::$removedCount.' of them were removed.');

@@ -130,7 +130,7 @@ class CheckImportsCommand extends Command
          */
         $messages = $this->getMessages($psr4Stats, $classMapStats, $bladeStats, $foldersStats, $routeFiles, $autoloadedFilesGen, $errorPrinter);
 
-        $this->printMessages($messages);
+        Reporters\Psr4ReportPrinter::printMessages($messages, $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
@@ -211,7 +211,7 @@ class CheckImportsCommand extends Command
         ErrorPrinter $errorPrinter
     ) {
         yield CheckImportReporter::totalImportsMsg();
-        yield Reporters\Psr4Report::printAutoload($psr4Stats, $classMapStats);
+        yield Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $this->getOutput());
         yield PHP_EOL.CheckImportReporter::header();
         yield PHP_EOL.self::getFilesStats();
         yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats);
@@ -221,15 +221,4 @@ class CheckImportsCommand extends Command
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
     }
 
-    private function printMessages($messages): void
-    {
-        foreach ($messages as $message) {
-            if (is_string($message)) {
-                $this->getOutput()->write($message);
-            } else {
-                $this->printMessages($message);
-            }
-        }
-        $this->getOutput()->writeln('');
-    }
 }

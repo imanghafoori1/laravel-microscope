@@ -47,8 +47,8 @@ class CheckDDCommand extends Command
             [CheckDD::class], $this->getLaravelFolders(), [$paramProvider], $pathDTO
         );
 
+        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
         $this->getOutput()->writeln(implode(PHP_EOL, [
-            Psr4Report::printAutoload($psr4Stats, $classMapStats),
             LaravelFoldersReport::foldersStats($foldersStats),
         ]));
 
