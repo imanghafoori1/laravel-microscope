@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use JetBrains\PhpStorm\Pure;
 
 class CheckDDCommand extends Command
@@ -51,6 +52,7 @@ class CheckDDCommand extends Command
         $this->getOutput()->writeln(implode(PHP_EOL, [
             LaravelFoldersReport::foldersStats($foldersStats),
         ]));
+        CachedFiles::writeCacheFiles();
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');
 

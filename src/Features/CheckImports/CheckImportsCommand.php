@@ -73,7 +73,7 @@ class CheckImportsCommand extends Command
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
-        if (file_exists($path = CachedFiles::getPathForPattern().'check_imports.php')) {
+        if (file_exists($path = CachedFiles::getFolderPath().'check_imports.php')) {
             CheckClassReferencesAreValid::$cache = (require $path) ?: [];
         }
 
@@ -193,7 +193,7 @@ class CheckImportsCommand extends Command
 
     private static function writeCacheContent(array $cache): void
     {
-        $folder = CachedFiles::getPathForPattern();
+        $folder = CachedFiles::getFolderPath();
         ! is_dir($folder) && mkdir($folder);
         $content = CachedFiles::getCacheFileContents($cache);
         $path = $folder.'check_imports.php';
@@ -220,5 +220,4 @@ class CheckImportsCommand extends Command
         yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
     }
-
 }

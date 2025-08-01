@@ -10,6 +10,8 @@ class CachedFiles
 
     private static $cacheChange = [];
 
+    private static $fileExists = null;
+
     private function __construct()
     {
         //
@@ -17,38 +19,42 @@ class CachedFiles
 
     public static function isCheckedBefore($patternKey, PhpFileDescriptor $file): bool
     {
-        if (self::cacheIsLoaded($patternKey)) {
-            return self::check($patternKey, $file);
+        if (self::cacheIsLoadedIntoMemory($patternKey)) {
+            return self::checkIsInCache($patternKey, $file);
         }
 
-        $path = self::getPathForPattern().$patternKey.'.php';
+        $path = self::getFolderPath().$patternKey.'.php';
+
+        if (self::$fileExists === null) {
+            self::$fileExists = file_exists($path);
+        }
 
         // If there is no cache file:
-        if (! file_exists($path)) {
+        if (self::$fileExists === false) {
             return false;
         }
 
         // If there is a cache file but not loaded yet:
-        self::load($patternKey, $path);
+        self::loadIntoMemory($patternKey, $path);
 
-        return self::check($patternKey, $file);
+        return self::checkIsInCache($patternKey, $file);
     }
 
-    private static function cacheIsLoaded($patternKey): bool
+    private static function cacheIsLoadedIntoMemory($patternKey): bool
     {
         return isset(self::$cache[$patternKey]);
     }
 
-    public static function getPathForPattern(): string
+    public static function getFolderPath(): string
     {
         $ds = DIRECTORY_SEPARATOR;
 
         return storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
     }
 
-    private static function check($patternKey, PhpFileDescriptor $file)
+    private static function checkIsInCache($patternKey, PhpFileDescriptor $file)
     {
-        return $file->getFileName() === self::readFromCache($patternKey, $file->getMd5());
+        return $file->getFileName() === self::readFromMemoryCache($patternKey, $file->getMd5());
     }
 
     /**
@@ -56,7 +62,7 @@ class CachedFiles
      * @param  string  $path
      * @return void
      */
-    private static function load($patternKey, $path): void
+    private static function loadIntoMemory($patternKey, $path): void
     {
         self::$cache[$patternKey] = require $path;
     }
@@ -69,7 +75,7 @@ class CachedFiles
 
     public static function writeCacheFiles()
     {
-        $folder = self::getPathForPattern();
+        $folder = self::getFolderPath();
 
         if (! is_dir($folder)) {
             mkdir($folder, 0777);
@@ -85,7 +91,7 @@ class CachedFiles
         }
     }
 
-    private static function readFromCache($patternKey, $md5)
+    private static function readFromMemoryCache($patternKey, $md5)
     {
         return self::$cache[$patternKey][$md5] ?? '';
     }
