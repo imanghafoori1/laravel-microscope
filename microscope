@@ -5,8 +5,8 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassRefere
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -31,7 +31,7 @@ require_once base_path().'/vendor/autoload.php';
 require_once COMPOSER_INSTALL;
 
 \Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson::$composer = function () {
-    $comp = FilePath::$basePath = base_path();
+    $comp = base_path();
 
     return \ImanGhafoori\ComposerJson\ComposerJson::make($comp);
 };
@@ -47,14 +47,15 @@ function base_path() {
 }
 
 CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
+$pathDTO = PathFilterDTO::make(null, null);
 $psr4Stats = ForPsr4LoadedClasses::check([CheckClassReferencesAreValid::class], function ($tokens) {
     $imports = ParseUseStatement::parseUseStatements($tokens);
 
     return $imports[0] ?: [$imports[1]];
-});
+}, $pathDTO);
 
 $output = new ConsoleOutput();
 ErrorPrinter::singleton($output)->logErrors();
 
-$output->writeln(CheckImportReporter::totalImportsMsg(1));
-$output->writeln(Psr4Report::printPsr4($psr4Stats));
+$output->writeln(CheckImportReporter::totalImportsMsg());
+Psr4Report::printAutoload($psr4Stats, [], $output);

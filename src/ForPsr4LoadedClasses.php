@@ -14,7 +14,7 @@ class ForPsr4LoadedClasses
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, \Generator<string, \Generator<string, int>>>
      */
-    public static function check($checks, $params = [], $pathDTO)
+    public static function check($checks, $params, $pathDTO)
     {
         ChecksOnPsr4Classes::$errorExceptionHandler = ErrorExceptionHandler::class;
 
