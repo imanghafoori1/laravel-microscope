@@ -27,7 +27,7 @@ if (isset($GLOBALS['_composer_autoload_path'])) {
     unset($file);
 }
 
-require_once base_path().'\vendor\autoload.php';
+require_once base_path().'/vendor/autoload.php';
 require_once COMPOSER_INSTALL;
 
 \Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson::$composer = function () {
@@ -58,4 +58,3 @@ ErrorPrinter::singleton($output)->logErrors();
 
 $output->writeln(CheckImportReporter::totalImportsMsg(1));
 $output->writeln(Psr4Report::printPsr4($psr4Stats));
-//$output->writeln(CheckImportReporter::printErrorsCount());
