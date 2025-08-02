@@ -7,12 +7,11 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
-use Imanghafoori\TokenAnalyzer\FunctionCall;
-use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class CheckEnvCallsCommand extends Command
 {
@@ -51,30 +50,13 @@ class CheckEnvCallsCommand extends Command
     }
 
     /**
-     * @param  string  $absPath
-     * @return void
-     */
-    private function checkForEnv($absPath)
-    {
-        $tokens = token_get_all(file_get_contents($absPath));
-
-        foreach ($tokens as $i => $token) {
-            if ($index = FunctionCall::isGlobalCall('env', $tokens, $i)) {
-                if (! $this->isLikelyConfigFile($absPath, $tokens)) {
-                    EnvFound::warn($absPath, $tokens[$index][2], $tokens[$index][1]);
-                }
-            }
-        }
-    }
-
-    /**
      * @param  \Generator<int, string>|string[]  $paths
      * @return void
      */
     private function checkPaths($paths)
     {
         foreach ($paths as $filePath) {
-            $this->checkForEnv($filePath);
+            EnvCallsCheck::check(PhpFileDescriptor::make($filePath));
         }
     }
 
@@ -93,20 +75,5 @@ class CheckEnvCallsCommand extends Command
 
         Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
         CachedFiles::writeCacheFiles();
-    }
-
-    private function isLikelyConfigFile($absPath, $tokens)
-    {
-        [$token] = TokenManager::getNextToken($tokens, 0);
-
-        if ($token[0] === T_NAMESPACE) {
-            return false;
-        }
-
-        if ($token[0] === T_RETURN && strpos(strtolower($absPath), 'config')) {
-            return true;
-        }
-
-        return basename($absPath) === 'config.php';
     }
 }
