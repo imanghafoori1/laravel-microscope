@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\TokenManager;
@@ -91,6 +92,7 @@ class CheckEnvCallsCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
 
         Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
+        CachedFiles::writeCacheFiles();
     }
 
     private function isLikelyConfigFile($absPath, $tokens)
