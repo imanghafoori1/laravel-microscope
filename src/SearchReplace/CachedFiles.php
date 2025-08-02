@@ -10,7 +10,7 @@ class CachedFiles
 
     private static $cacheChange = [];
 
-    private static $fileExists = null;
+    private static $fileExists = [];
 
     private function __construct()
     {
@@ -25,12 +25,12 @@ class CachedFiles
 
         $path = self::getFolderPath().$patternKey.'.php';
 
-        if (self::$fileExists === null) {
-            self::$fileExists = file_exists($path);
+        if (! isset(self::$fileExists[$patternKey])) {
+            self::$fileExists[$patternKey] = file_exists($path);
         }
 
         // If there is no cache file:
-        if (self::$fileExists === false) {
+        if (self::$fileExists[$patternKey] === false) {
             return false;
         }
 
