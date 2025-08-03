@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
@@ -49,9 +50,8 @@ class CheckDDCommand extends Command
         );
 
         Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            LaravelFoldersReport::foldersStats($foldersStats),
-        ]));
+        $messages = LaravelFoldersReport::foldersStats($foldersStats);
+        Psr4ReportPrinter::printMessages($messages, $this->getOutput());
         CachedFiles::writeCacheFiles();
 
         $this->getOutput()->writeln(' - Finished looking for debug functions. ('.self::$checkedCallsNum.' files checked)');

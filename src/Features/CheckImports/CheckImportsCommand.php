@@ -94,11 +94,11 @@ class CheckImportsCommand extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
+        $autoloadFiles = ComposerJson::autoloadedFilesList(base_path());
 
-        $autoloadedFilesGen = FilePath::removeExtraPaths(
-            ComposerJson::autoloadedFilesList(base_path()),
-            $pathDTO
-        );
+        foreach ($autoloadFiles as $path => $autoloadFile) {
+            $autoloadFiles[$path] = FilePath::removeExtraPaths($autoloadFile, $pathDTO);
+        }
 
         $paramProvider = self::getParamProvider();
 
@@ -108,7 +108,7 @@ class CheckImportsCommand extends Command
         $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $pathDTO);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
-        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadedFilesGen, $checks, $paramProvider);
+        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadFiles, $checks, $paramProvider);
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
@@ -211,13 +211,12 @@ class CheckImportsCommand extends Command
         ErrorPrinter $errorPrinter
     ) {
         yield CheckImportReporter::totalImportsMsg();
-        yield Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $this->getOutput());
+        yield Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
         yield PHP_EOL.CheckImportReporter::header();
         yield PHP_EOL.self::getFilesStats();
-        yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats);
-        yield PHP_EOL.Reporters\LaravelFoldersReport::foldersStats($foldersStats);
-        yield PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
-        yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
+        yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL;
+        yield Reporters\LaravelFoldersReport::foldersStats($foldersStats);
+        yield CheckImportReporter::getRouteStats($routeFiles);
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
     }
 }

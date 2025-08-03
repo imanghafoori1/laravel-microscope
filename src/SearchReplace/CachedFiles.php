@@ -25,12 +25,12 @@ class CachedFiles
 
         $path = self::getFolderPath().$patternKey.'.php';
 
-        if (! isset(self::$fileExists[$patternKey])) {
-            self::$fileExists[$patternKey] = file_exists($path);
+        if (self::$fileExists === null) {
+            self::$fileExists = file_exists($path);
         }
 
         // If there is no cache file:
-        if (self::$fileExists[$patternKey] === false) {
+        if (self::$fileExists === false) {
             return false;
         }
 

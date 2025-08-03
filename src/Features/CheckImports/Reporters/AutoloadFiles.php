@@ -9,18 +9,14 @@ class AutoloadFiles
     use Reporting;
 
     /**
-     * @param  \Generator  $filesListGen
+     * @param  \Generator  $filesList
      * @return string
      */
-    public static function getLines($filesListGen)
+    public static function getLines($filesList)
     {
-        $lines = '';
-        $total = 0;
-        foreach ($filesListGen as $files) {
-            $linesArr = self::formatFiles($files);
-            $total += count($linesArr);
-            $lines .= implode('', $linesArr);
-        }
+        $lines = self::formatFiles($filesList);
+        $total = count($lines);
+        $lines = implode('', $lines);
 
         return $total ? self::autoloadFilesHeader($total, $lines) : '';
     }

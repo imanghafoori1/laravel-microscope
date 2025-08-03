@@ -15,15 +15,13 @@ class Psr4Report
     /**
      * @param  array|\Generator  $psr4Stats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @return \Generator
+     * @param  \Illuminate\Console\OutputStyle  $console
      */
     public static function printAutoload($psr4Stats, $classMapStats, $console)
     {
         $presentations = self::getPresentations($psr4Stats, $classMapStats);
 
-        foreach ($presentations as $presentation) {
-            Psr4ReportPrinter::printMessages($presentation, $console);
-        }
+        Psr4ReportPrinter::printMessages($presentations, $console);
     }
 
     #[Pure]
@@ -46,9 +44,6 @@ class Psr4Report
         $lines = [];
 
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            /*  if (! $folders) {
-                continue;
-            }*/
             self::$callback && (self::$callback)();
             $lengths[] = strlen($psr4Namespace);
             $lines[0] = PHP_EOL.self::getPsr4Head();
@@ -139,28 +134,32 @@ class Psr4Report
      * @param  \Generator  $psr4
      * @param  \Generator<string, \Generator<string, int>>  $classMapStats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @return string
+     * @return array
      */
     #[Pure]
-    private static function present(string $composerPath, Generator $psr4, $classMapStats)
+    private static function present(string $composerPath, Generator $psr4, $classMapStats, $autoloadedFilesGen)
     {
-        $output = '';
-        yield PHP_EOL.self::formatComposerPath($composerPath);
-        yield PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
-        yield self::formatPsr4Stats($psr4);
-        if (isset($classMapStats[$composerPath])) {
-            $lines = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
-            $lines && ($output .= PHP_EOL.$lines);
-        }
+        $lines = [];
+        $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
+        $lines[] = PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
+        $lines[] = self::formatPsr4Stats($psr4);
 
-        yield $output;
+        if (isset($classMapStats[$composerPath])) {
+            $line = ClassMapStats::getMessage($classMapStats[$composerPath], self::$callback);
+            $line && ($lines[] = PHP_EOL.$line);
+        }
+        if (isset($autoloadedFilesGen[$composerPath])) {
+            $line = AutoloadFiles::getLines($autoloadedFilesGen[$composerPath]);
+            $line && ($lines[] = PHP_EOL.$line);
+        }
+        return $lines;
     }
 
-    public static function getPresentations($psr4Stats, array $classMapStats): array
+    public static function getPresentations($psr4Stats, array $classMapStats, $autoloadedFilesGen = [])
     {
         $results = [];
         foreach ($psr4Stats as $composerPath => $psr4) {
-            $results[] = self::present($composerPath, $psr4, $classMapStats);
+            $results[] = self::present($composerPath, $psr4, $classMapStats, $autoloadedFilesGen);
         }
 
         return $results;

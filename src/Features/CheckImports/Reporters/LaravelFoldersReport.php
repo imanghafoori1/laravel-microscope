@@ -8,23 +8,18 @@ class LaravelFoldersReport
 
     /**
      * @param  iterable<string, iterable<string, iterable<string, iterable<int, string>>>>  $foldersStats
-     * @return string
+     * @return \Generator<int, string>
      */
-    public static function foldersStats($foldersStats): string
+    public static function foldersStats($foldersStats)
     {
-        $output = '';
-
         foreach ($foldersStats as $fileType => $stats) {
             [$total, $sub, $c] = self::subDirs($stats);
             if ($total) {
                 $c === 1 && $total = '';
 
-                $output .= self::blue($total).$fileType.$sub;
-                $output .= PHP_EOL;
+                yield self::blue($total).$fileType.$sub.PHP_EOL;
             }
         }
-
-        return trim($output, PHP_EOL);
     }
 
     /**

@@ -17,11 +17,14 @@ class FileIterators extends BaseIterator
      */
     public static function checkFilePaths($paths, $checks, $paramProvider)
     {
+        $files = [];
         foreach ($paths as $dir => $absFilePaths) {
             is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 
-            yield $dir => self::checkFiles($absFilePaths, $checks, $paramProvider);
+            $files[$dir] = self::checkFiles($absFilePaths, $checks, $paramProvider);
         }
+
+        return $files;
     }
 
     /**
