@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
 class ClassRefCorrector
 {
-    private static $afterFix = [ClassRefCorrector\AfterRefFix::class, 'getCallback'];
+    private static $afterFix = [AfterRefFix::class, 'getCallback'];
 
-    private static $beforeFix = [ClassRefCorrector\BeforeRefFix::class, 'getCallback'];
+    private static $beforeFix = [BeforeRefFix::class, 'getCallback'];
 
     public static function fixOldRefs($from, $class, $to, $paths, $beforeFix = null, $afterFix = null)
     {
