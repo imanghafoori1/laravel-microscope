@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
 
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;

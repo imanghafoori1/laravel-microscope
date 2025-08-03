@@ -1,14 +1,13 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\Psr4;
+namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 use Illuminate\Console\Command;
 use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\ClassRefCorrector;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForReferenceFix;
-use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\Confirm;
-use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixer;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixerMessages;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\NamespaceFixer;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors
