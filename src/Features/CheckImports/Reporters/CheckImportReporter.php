@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use JetBrains\PhpStorm\Pure;
 
 class CheckImportReporter

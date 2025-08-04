@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use JetBrains\PhpStorm\Pure;
 
 class AutoloadFiles

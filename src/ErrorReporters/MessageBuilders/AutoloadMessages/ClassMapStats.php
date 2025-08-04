@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
@@ -15,7 +16,7 @@ class ClassMapStats
      * @return string|void
      */
     #[Pure]
-    public static function getMessage($stat, $callback)
+    public static function getLines($stat, $callback)
     {
         $lines = '';
         $c = $total = 0;

@@ -1,6 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders;
+
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 
 class LaravelFoldersReport
 {

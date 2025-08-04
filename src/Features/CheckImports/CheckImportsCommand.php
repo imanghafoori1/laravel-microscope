@@ -5,11 +5,12 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\AutoloadFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
@@ -130,7 +131,7 @@ class CheckImportsCommand extends Command
          */
         $messages = $this->getMessages($psr4Stats, $classMapStats, $bladeStats, $foldersStats, $routeFiles, $autoloadedFilesGen, $errorPrinter);
 
-        Reporters\Psr4ReportPrinter::printAll($messages, $this->getOutput());
+        Psr4ReportPrinter::printAll($messages, $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
@@ -215,9 +216,8 @@ class CheckImportsCommand extends Command
         yield PHP_EOL.CheckImportReporter::header();
         yield PHP_EOL.self::getFilesStats();
         yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL;
-        yield Reporters\LaravelFoldersReport::formatFoldersStats($foldersStats);
+        yield LaravelFoldersReport::formatFoldersStats($foldersStats);
         yield CheckImportReporter::getRouteStats($routeFiles);
-        //yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
     }
 }
