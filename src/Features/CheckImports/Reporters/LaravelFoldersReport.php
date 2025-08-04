@@ -10,7 +10,7 @@ class LaravelFoldersReport
      * @param  iterable<string, iterable<string, iterable<string, iterable<int, string>>>>  $foldersStats
      * @return \Generator<int, string>
      */
-    public static function foldersStats($foldersStats)
+    public static function formatFoldersStats($foldersStats)
     {
         foreach ($foldersStats as $fileType => $stats) {
             [$total, $sub, $c] = self::subDirs($stats);

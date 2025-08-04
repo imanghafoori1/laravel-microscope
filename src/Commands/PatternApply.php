@@ -66,7 +66,7 @@ trait PatternApply
     private function getFinalMessage(array $psr4Stats, array $classMapStats, Generator $bladeStats): string
     {
         try {
-            Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
+            Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
             return implode(PHP_EOL, [
                 Reporters\BladeReport::getBladeStats($bladeStats),

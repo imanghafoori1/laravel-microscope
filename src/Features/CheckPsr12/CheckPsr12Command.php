@@ -42,7 +42,7 @@ class CheckPsr12Command extends Command
         $psr4Stats = ForPsr4LoadedClasses::check($check, [], $pathFilterDTO);
         $classMapStats = ClassMapIterator::iterate(base_path(), $check, [], $pathFilterDTO);
 
-        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
         $this->finishCommand($errorPrinter);
 
         return $errorPrinter->hasErrors() ? 1 : 0;

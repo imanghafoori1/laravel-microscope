@@ -39,7 +39,7 @@ class CheckViewsCommand extends Command
 
         $psr4Stats = ForPsr4LoadedClasses::check([CheckView::class], [], $pathDTO);
 
-        Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
+        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 
         $this->checkBladeFiles($pathDTO);
 

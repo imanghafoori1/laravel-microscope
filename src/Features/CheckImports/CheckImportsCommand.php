@@ -130,7 +130,7 @@ class CheckImportsCommand extends Command
          */
         $messages = $this->getMessages($psr4Stats, $classMapStats, $bladeStats, $foldersStats, $routeFiles, $autoloadedFilesGen, $errorPrinter);
 
-        Reporters\Psr4ReportPrinter::printMessages($messages, $this->getOutput());
+        Reporters\Psr4ReportPrinter::printAll($messages, $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
@@ -215,7 +215,7 @@ class CheckImportsCommand extends Command
         yield PHP_EOL.CheckImportReporter::header();
         yield PHP_EOL.self::getFilesStats();
         yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL;
-        yield Reporters\LaravelFoldersReport::foldersStats($foldersStats);
+        yield Reporters\LaravelFoldersReport::formatFoldersStats($foldersStats);
         yield CheckImportReporter::getRouteStats($routeFiles);
         //yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);

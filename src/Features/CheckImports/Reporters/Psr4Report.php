@@ -17,11 +17,11 @@ class Psr4Report
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @param  \Illuminate\Console\OutputStyle  $console
      */
-    public static function printAutoload($psr4Stats, $classMapStats, $console)
+    public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
     {
         $presentations = self::getPresentations($psr4Stats, $classMapStats);
 
-        Psr4ReportPrinter::printMessages($presentations, $console);
+        Psr4ReportPrinter::printAll($presentations, $console);
     }
 
     #[Pure]

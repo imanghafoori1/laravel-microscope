@@ -39,7 +39,7 @@ class CheckEarlyReturns extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
         [$psr4Stats, $classMapStats] = self::applyCheckEarly($pathDTO, $this->option('nofix'));
-        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }

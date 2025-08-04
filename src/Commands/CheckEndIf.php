@@ -36,7 +36,7 @@ class CheckEndIf extends Command
 
         [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($pathDTO);
 
-        Psr4Report::printAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }

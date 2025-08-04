@@ -73,7 +73,7 @@ class CheckEnvCallsCommand extends Command
 
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
 
-        Psr4Report::printAutoload($psr4Stats, [], $this->getOutput());
+        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
         CachedFiles::writeCacheFiles();
     }
 }

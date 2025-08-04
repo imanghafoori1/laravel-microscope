@@ -4,13 +4,13 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 class Psr4ReportPrinter
 {
-    public static function printMessages($messages, $output): void
+    public static function printAll($messages, $output): void
     {
         foreach ($messages as $message) {
             if (is_string($message)) {
                 $output->write($message);
             } else {
-                self::printMessages($message, $output);
+                self::printAll($message, $output);
             }
         }
         $output->writeln('');
