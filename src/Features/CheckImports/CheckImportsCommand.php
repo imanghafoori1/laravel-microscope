@@ -217,6 +217,7 @@ class CheckImportsCommand extends Command
         yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL;
         yield Reporters\LaravelFoldersReport::foldersStats($foldersStats);
         yield CheckImportReporter::getRouteStats($routeFiles);
+        //yield PHP_EOL.AutoloadFiles::getLines($autoloadedFilesGen);
         yield PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList);
     }
 }

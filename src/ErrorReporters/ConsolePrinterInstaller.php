@@ -17,12 +17,14 @@ class ConsolePrinterInstaller
         $commandName = class_basename($command);
         $commandType = Str::after($commandName, 'Check');
         $commandType = strtolower($commandType);
+        $commandType = str_replace('command', '', $commandType);
 
         if (! $errorPrinter->logErrors) {
             return;
         }
 
-        if (($errorCount = $errorPrinter->hasErrors()) || $errorPrinter->pended) {
+        if (($errorPrinter->hasErrors()) || $errorPrinter->pended) {
+            $errorCount = $errorPrinter->count;
             $lastTimeCount = cache()->get(self::getKey($commandType), null);
 
             $errorCount && $command->getOutput()->writeln(PHP_EOL.$errorCount.' errors found for '.$commandType);
