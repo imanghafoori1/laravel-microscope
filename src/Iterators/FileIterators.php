@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Generator;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -10,13 +11,19 @@ use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 class FileIterators extends BaseIterator
 {
     /**
-     * @param  \Generator  $paths
+     * @param  \Generator|array  $paths
      * @param  \Closure  $paramProvider
      * @param  array  $checks
-     * @return \Generator<string, \Generator>
+     * @return array<string, \Generator<int, \Generator<int, PhpFileDescriptor>>>
      */
-    public static function checkFilePaths($paths, $checks, $paramProvider)
+    public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
+        if ($pathDTO) {
+            foreach ($paths as $path => $autoloadFile) {
+                $paths[$path] = FilePath::removeExtraPaths($autoloadFile, $pathDTO);
+            }
+        }
+
         $files = [];
         foreach ($paths as $dir => $absFilePaths) {
             is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);

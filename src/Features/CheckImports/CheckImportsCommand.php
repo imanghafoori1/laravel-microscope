@@ -23,6 +23,7 @@ use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
@@ -95,11 +96,6 @@ class CheckImportsCommand extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
-        $autoloadFiles = ComposerJson::autoloadedFilesList(base_path());
-
-        foreach ($autoloadFiles as $path => $autoloadFile) {
-            $autoloadFiles[$path] = FilePath::removeExtraPaths($autoloadFile, $pathDTO);
-        }
 
         $paramProvider = self::getParamProvider();
 
@@ -109,7 +105,7 @@ class CheckImportsCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $paramProvider, $pathDTO);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
-        $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadFiles, $checks, $paramProvider);
+        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), $checks, $paramProvider, $pathDTO);
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
@@ -126,10 +122,11 @@ class CheckImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
+        $autoloadStats = Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
         /**
          * @var string[] $messages
          */
-        $messages = $this->getMessages($psr4Stats, $classMapStats, $bladeStats, $foldersStats, $routeFiles, $autoloadedFilesGen, $errorPrinter);
+        $messages = $this->getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles, $errorPrinter);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {
@@ -203,16 +200,14 @@ class CheckImportsCommand extends Command
     }
 
     private function getMessages(
-        $psr4Stats,
-        $classMapStats,
+        $autoloadStats,
         $bladeStats,
         $foldersStats,
         $routeFiles,
-        $autoloadedFilesGen,
         ErrorPrinter $errorPrinter
     ) {
         yield CheckImportReporter::totalImportsMsg();
-        yield Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
+        yield $autoloadStats;
         yield PHP_EOL.CheckImportReporter::header();
         yield PHP_EOL.self::getFilesStats();
         yield PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL;
