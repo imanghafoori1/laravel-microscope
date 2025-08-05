@@ -21,7 +21,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -106,7 +106,7 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $classMapStats = ClassMapIterator::iterate(base_path(), $checks, $paramProvider, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $paramProvider, $pathDTO);
 
         $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
         $autoloadedFilesGen = FileIterators::checkFilePaths($autoloadFiles, $checks, $paramProvider);

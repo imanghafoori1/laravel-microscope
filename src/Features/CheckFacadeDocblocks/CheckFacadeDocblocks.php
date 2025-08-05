@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -43,7 +43,7 @@ class CheckFacadeDocblocks extends Command
 
         $check = [FacadeDocblocks::class];
         $psr4Stats = ForPsr4LoadedClasses::check($check, [], $pathDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, null, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, null, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 

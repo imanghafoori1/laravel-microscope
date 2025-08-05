@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ClassifyStrings extends Command
@@ -42,7 +42,7 @@ class ClassifyStrings extends Command
     public static function classifyString(PathFilterDTO $pathFilterDTO): array
     {
         $psr4Stats = ForPsr4LoadedClasses::check([CheckStringy::class], [], $pathFilterDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckStringy::class], [], $pathFilterDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckStringy::class], [], $pathFilterDTO);
 
         return [$psr4Stats, $classMapStats];
     }

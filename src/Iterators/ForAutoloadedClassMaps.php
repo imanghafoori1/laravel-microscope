@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
-class ClassMapIterator extends BaseIterator
+class ForAutoloadedClassMaps extends BaseIterator
 {
     /**
      * @param  string  $basePath
@@ -15,7 +15,7 @@ class ClassMapIterator extends BaseIterator
      * @param  PathFilterDTO  $pathDTO
      * @return array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>
      */
-    public static function iterate($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
+    public static function check($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
     {
         $classMapFiles = ComposerJson::getClassMaps($basePath, $pathDTO);
 

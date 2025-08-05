@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -41,7 +41,7 @@ class CheckDDCommand extends Command
         };
 
         $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$onErrorCallback], $pathDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
         $foldersStatsData = FileIterators::checkFolders(
             [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO

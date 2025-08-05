@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
@@ -56,7 +56,7 @@ trait PatternApply
         $check = [PatternRefactorings::class];
 
         $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, [$parsedPatterns], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [$parsedPatterns], $pathDTO);
         CheckBladePaths::$readOnly = false;
         $bladeStats = BladeFiles::check($check, [$parsedPatterns], $pathDTO);
 

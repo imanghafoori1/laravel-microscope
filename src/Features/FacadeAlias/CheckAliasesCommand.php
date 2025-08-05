@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\ClassMapIterator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -52,7 +52,7 @@ class CheckAliasesCommand extends Command
 
         $check = [FacadeAliasesCheck::class];
         $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), $check, $paramProvider, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $paramProvider, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
