@@ -34,17 +34,17 @@ class CheckDDCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $paramProvider = function (PhpFileDescriptor $file, $token) {
+        $onErrorCallback = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
                 $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
 
-        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$paramProvider], $pathDTO);
-        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$paramProvider], $pathDTO);
+        $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$onErrorCallback], $pathDTO);
+        $classMapStats = ClassMapIterator::iterate(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
         $foldersStatsData = FileIterators::checkFolders(
-            [CheckDD::class], $this->getLaravelFolders(), [$paramProvider], $pathDTO
+            [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO
         );
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
