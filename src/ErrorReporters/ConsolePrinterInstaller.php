@@ -23,7 +23,7 @@ class ConsolePrinterInstaller
             return;
         }
 
-        if (($errorPrinter->hasErrors()) || $errorPrinter->pended) {
+        if ($errorPrinter->hasErrors() || $errorPrinter->pended) {
             $errorCount = $errorPrinter->count;
             $lastTimeCount = cache()->get(self::getKey($commandType), null);
 
