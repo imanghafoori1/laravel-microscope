@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
@@ -42,12 +43,14 @@ class CheckDDCommand extends Command
 
         $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$onErrorCallback], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
+        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
         $foldersStatsData = FileIterators::checkFolders(
             [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO
         );
 
-        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        $lines = Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $messages = LaravelFoldersReport::formatFoldersStats($foldersStatsData);
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         CachedFiles::writeCacheFiles();
