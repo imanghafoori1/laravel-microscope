@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
@@ -97,27 +96,27 @@ class CheckImportsCommand extends Command
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
 
-        $paramProvider = self::getParamProvider();
+        $useStatementParser = self::useStatementParser();
 
         $checks = $this->checks;
         unset($checks[1]);
 
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $paramProvider, $pathDTO);
-        $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $paramProvider);
-        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), $checks, $paramProvider, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
+        $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $useStatementParser);
+        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
 
         $foldersStats = FileIterators::checkFolders(
             $checks,
             self::getLaravelFolders(),
-            $paramProvider,
+            $useStatementParser,
             $pathDTO
         );
 
-        $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $paramProvider, $pathDTO);
+        $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = BladeFiles::check($checks, $paramProvider, $pathDTO);
+        $bladeStats = BladeFiles::check($checks, $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
@@ -159,7 +158,7 @@ class CheckImportsCommand extends Command
     }
 
     #[Pure]
-    private static function getParamProvider()
+    private static function useStatementParser()
     {
         return function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
