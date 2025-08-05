@@ -96,7 +96,7 @@ class CheckImportsCommand extends Command
 
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
 
-        $useStatementParser = self::useStatementParser();
+        $useStatementParser = [self::useStatementParser()];
 
         $checks = $this->checks;
         unset($checks[1]);
@@ -143,6 +143,7 @@ class CheckImportsCommand extends Command
         if ($cache = CheckClassReferencesAreValid::$cache) {
             self::writeCacheContent($cache);
         }
+        CachedFiles::writeCacheFiles();
 
         $this->line('');
 

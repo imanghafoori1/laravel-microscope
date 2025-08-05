@@ -25,21 +25,14 @@ class CheckClassReferencesAreValid implements Check
     public static function check(PhpFileDescriptor $file, $imports = [])
     {
         loopStart:
-        $md5 = $file->getMd5();
-        $absFilePath = $file->getAbsolutePath();
 
-        $tokens = $file->getTokens();
-        $refFinder = function () use ($file, $tokens, $imports) {
+        $refFinder = function () use ($file, $imports) {
+            $tokens = $file->getTokens();
+            $imports = ($imports[0])($file);
             $absFilePath = $file->getAbsolutePath();
 
             return ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
         };
-
-        if (count($tokens) > 100) {
-            $refFinder = function () use ($md5, $refFinder) {
-                return self::getForever($md5, $refFinder);
-            };
-        }
 
         [
             $classReferences,
@@ -47,18 +40,21 @@ class CheckClassReferencesAreValid implements Check
             $extraImports,
             $docblockRefs,
             $attributeReferences,
-        ] = $refFinder();
+        ] = self::getForever($file->getMd5(), $refFinder);
 
+        $absFilePath = $file->getAbsolutePath();
         [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);
         [$wrongDocblockRefs] = ImportsAnalyzer::filterWrongClassRefs($docblockRefs, $absFilePath);
         [$extraWrongImports, $extraCorrectImports] = ImportsAnalyzer::filterWrongClassRefs($extraImports, $absFilePath);
 
-        if (self::$checkWrong && self::$wrongClassRefsHandler) {
+        $wrongClassRefs = array_merge($wrongClassRefs, $wrongDocblockRefs);
+        $tokens = null;
+        if ($wrongClassRefs && self::$checkWrong && self::$wrongClassRefsHandler) {
             [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
-                array_merge($wrongClassRefs, $wrongDocblockRefs),
+                $wrongClassRefs,
                 $absFilePath,
                 $hostNamespace,
-                $tokens
+                $file->getTokens(),
             );
 
             if ($isFixed) {
