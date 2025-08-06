@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls\EnvFound;
 use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 
 class ConsolePrinterInstaller
@@ -22,7 +21,7 @@ class ConsolePrinterInstaller
         if (! $errorPrinter->logErrors) {
             return;
         }
-
+        $errorCount = 0;
         if ($errorPrinter->hasErrors() || $errorPrinter->pended) {
             $errorCount = $errorPrinter->count;
             $lastTimeCount = cache()->get(self::getKey($commandType), null);
@@ -49,8 +48,6 @@ class ConsolePrinterInstaller
     public static function boot()
     {
         RouteOverrideInstaller::install();
-
-        EnvFound::listen();
 
         Event::listen('microscope.finished.checks', function ($command) {
             self::finishCommand($command);

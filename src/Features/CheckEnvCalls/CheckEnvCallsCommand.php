@@ -4,10 +4,12 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
@@ -29,17 +31,28 @@ class CheckEnvCallsCommand extends Command
         event('microscope.start.command');
         $this->info('Checking for env() calls outside config files...');
 
-        $this->checkPaths(RoutePaths::get());
-
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $paths = LaravelPaths::getMigrationsFiles($pathDTO);
 
+        $params = function ($name, $absPath, $lineNumber) {
+            ErrorPrinter::singleton()->simplePendError(
+                $name, $absPath, $lineNumber, 'envFound', 'env() function found: '
+            );
+        };
+
+        $this->checkPaths(RoutePaths::get(), $params);
+
         foreach ($paths as $path) {
-            $this->checkPaths($path);
+            $this->checkPaths($path, $params);
         }
 
-        $this->checkPsr4Classes($pathDTO);
+        $psr4Stats = $this->checkPsr4Classes($pathDTO, $params);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
+        $lines = Psr4Report::getPresentations($psr4Stats, [], $autoloadedFilesStats);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
+
+        CachedFiles::writeCacheFiles();
 
         event('microscope.finished.checks', [$this]);
         $this->info('&It is recommended use env() calls, only and only in config files.');
@@ -53,14 +66,14 @@ class CheckEnvCallsCommand extends Command
      * @param  \Generator<int, string>|string[]  $paths
      * @return void
      */
-    private function checkPaths($paths)
+    private function checkPaths($paths, $params)
     {
         foreach ($paths as $filePath) {
-            EnvCallsCheck::check(PhpFileDescriptor::make($filePath));
+            EnvCallsCheck::check(PhpFileDescriptor::make($filePath), [$params]);
         }
     }
 
-    private function checkPsr4Classes(PathFilterDTO $pathDTO)
+    private function checkPsr4Classes(PathFilterDTO $pathDTO, $params)
     {
         $configs = Paths::getAbsFilePaths(LaravelPaths::configDirs(), PathFilterDTO::make());
 
@@ -71,9 +84,6 @@ class CheckEnvCallsCommand extends Command
             $pathDTO->excludeFolder = $configs;
         }
 
-        $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [], $pathDTO);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-        CachedFiles::writeCacheFiles();
+        return ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);
     }
 }
