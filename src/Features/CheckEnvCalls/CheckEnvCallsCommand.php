@@ -6,11 +6,14 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -43,7 +46,8 @@ class CheckEnvCallsCommand extends Command
         };
 
         $this->excludeConfigFiles($pathDTO);
-        $this->checkPaths(RoutePaths::get(), $params);
+        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
+        $routeFiles = FileIterators::checkFiles($routeFiles, [EnvCallsCheck::class], [$params]);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);
@@ -53,6 +57,7 @@ class CheckEnvCallsCommand extends Command
 
         $lines = Psr4Report::getPresentations($psr4Stats, $classmapStats, $autoloadedFilesStats);
         $lines[] = BladeReport::getBladeStats($bladeStats);
+        $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         CachedFiles::writeCacheFiles();

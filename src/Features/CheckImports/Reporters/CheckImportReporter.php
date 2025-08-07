@@ -22,7 +22,7 @@ class CheckImportReporter
         $count = count($linesArr);
         $lines = implode('', $linesArr);
 
-        return self::blue($count).' route'.($count <= 1 ? '' : 's').$lines;
+        return self::hyphen().'route'.($count <= 1 ? '' : 's').' <fg=white>('.$count.' files)</>'.$lines;
     }
 
     #[Pure]
