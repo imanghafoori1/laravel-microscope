@@ -5,10 +5,13 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -26,14 +29,12 @@ class CheckEnvCallsCommand extends Command
 
     protected $description = 'Checks for bad practices';
 
-    public function handle()
+    public function handle(): int
     {
         event('microscope.start.command');
         $this->info('Checking for env() calls outside config files...');
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-
-        $paths = LaravelPaths::getMigrationsFiles($pathDTO);
 
         $params = function ($name, $absPath, $lineNumber) {
             ErrorPrinter::singleton()->simplePendError(
@@ -41,15 +42,17 @@ class CheckEnvCallsCommand extends Command
             );
         };
 
+        $this->excludeConfigFiles($pathDTO);
         $this->checkPaths(RoutePaths::get(), $params);
+        $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
-        foreach ($paths as $path) {
-            $this->checkPaths($path, $params);
-        }
-
-        $psr4Stats = $this->checkPsr4Classes($pathDTO, $params);
+        $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);
+        $classmapStats = ForAutoloadedClassMaps::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $lines = Psr4Report::getPresentations($psr4Stats, [], $autoloadedFilesStats);
+        $bladeStats = BladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
+
+        $lines = Psr4Report::getPresentations($psr4Stats, $classmapStats, $autoloadedFilesStats);
+        $lines[] = BladeReport::getBladeStats($bladeStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         CachedFiles::writeCacheFiles();
@@ -69,11 +72,15 @@ class CheckEnvCallsCommand extends Command
     private function checkPaths($paths, $params)
     {
         foreach ($paths as $filePath) {
-            EnvCallsCheck::check(PhpFileDescriptor::make($filePath), [$params]);
+            if (is_string($filePath)) {
+                EnvCallsCheck::check(PhpFileDescriptor::make($filePath), [$params]);
+            } else {
+                $this->checkPaths($filePath, $params);
+            }
         }
     }
 
-    private function checkPsr4Classes(PathFilterDTO $pathDTO, $params)
+    private function excludeConfigFiles(PathFilterDTO $pathDTO)
     {
         $configs = Paths::getAbsFilePaths(LaravelPaths::configDirs(), PathFilterDTO::make());
 
@@ -83,7 +90,5 @@ class CheckEnvCallsCommand extends Command
         } else {
             $pathDTO->excludeFolder = $configs;
         }
-
-        return ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);
     }
 }
