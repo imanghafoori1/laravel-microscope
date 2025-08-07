@@ -20,8 +20,8 @@ use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -198,7 +198,8 @@ class CheckImportsCommand extends Command
         file_put_contents($path, $content);
     }
 
-    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles, $errorsList) {
+    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles, $errorsList)
+    {
         return [
             CheckImportReporter::totalImportsMsg(),
             $autoloadStats,
