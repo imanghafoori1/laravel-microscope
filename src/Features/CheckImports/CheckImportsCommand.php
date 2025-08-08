@@ -18,7 +18,7 @@ use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
@@ -116,7 +116,7 @@ class CheckImportsCommand extends Command
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = BladeFiles::check($checks, $useStatementParser, $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

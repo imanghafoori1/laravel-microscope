@@ -12,7 +12,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
@@ -53,7 +53,7 @@ class CheckEnvCallsCommand extends Command
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);
         $classmapStats = ForAutoloadedClassMaps::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $bladeStats = BladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
+        $bladeStats = ForBladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
 
         $lines = Psr4Report::getPresentations($psr4Stats, $classmapStats, $autoloadedFilesStats);
         $lines[] = BladeReport::getBladeStats($bladeStats);

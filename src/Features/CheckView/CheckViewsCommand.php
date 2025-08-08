@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExiste
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
@@ -64,7 +64,7 @@ class CheckViewsCommand extends Command
 
     private function checkBladeFiles($pathDTO)
     {
-        iterator_to_array(BladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO));
+        iterator_to_array(ForBladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO));
     }
 
     private function stats($checkedCallsCount, $skippedCallsCount): string

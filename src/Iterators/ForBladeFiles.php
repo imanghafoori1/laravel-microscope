@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
-class BladeFiles implements Check
+class ForBladeFiles implements Check
 {
     /**
      * @param  $checkers
