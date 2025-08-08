@@ -15,7 +15,6 @@ use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
@@ -23,10 +22,10 @@ use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\FileIterators;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
-use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -94,15 +93,13 @@ class CheckImportsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
-
         $useStatementParser = [self::useStatementParser()];
 
         $checks = $this->checks;
         unset($checks[1]);
+        $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
 
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $routeFiles = FileIterators::checkFiles($routeFiles, $checks, $useStatementParser);
         $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
 
         $foldersStats = FileIterators::checkFolders(
