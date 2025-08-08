@@ -36,9 +36,13 @@ class ComposerJson
      */
     public static function getClassMaps($basePath, $pathDTO)
     {
+        $classmaps = [];
+
         foreach (self::make()->readAutoloadClassMap() as $composerPath => $classMapPaths) {
-            yield $composerPath => self::getFilteredClasses($composerPath, $classMapPaths, $basePath, $pathDTO);
+            $classmaps[$composerPath] = self::getFilteredClasses($composerPath, $classMapPaths, $basePath, $pathDTO);
         }
+
+        return $classmaps;
     }
 
     /**

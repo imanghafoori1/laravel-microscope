@@ -43,13 +43,13 @@ class CheckDDCommand extends Command
 
         $psr4Stats = ForPsr4LoadedClasses::check([CheckDD::class], [$onErrorCallback], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
-        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
         $foldersStatsData = FileIterators::checkFolders(
             [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO
         );
 
-        $lines = Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
+        $lines = Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $messages = LaravelFoldersReport::formatFoldersStats($foldersStatsData);
         Psr4ReportPrinter::printAll($messages, $this->getOutput());

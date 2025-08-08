@@ -14,7 +14,7 @@ class FileIterators extends BaseIterator
      * @param  \Generator|array  $paths
      * @param  \Closure  $paramProvider
      * @param  array  $checks
-     * @return array<string, \Generator<int, \Generator<int, PhpFileDescriptor>>>
+     * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
@@ -38,24 +38,27 @@ class FileIterators extends BaseIterator
      * @param  array  $checks
      * @param  array<string, \Generator>  $dirsList
      * @param  $paramProvider
-     * @return \Generator<string, iterable<string, iterable<int, string>>>
+     * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
     public static function checkFolders($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
     {
+        $lists = [];
         foreach ($dirsList as $listName => $dirs) {
             $filePathsGen = Paths::getAbsFilePaths($dirs, $pathFilter);
-            yield $listName => self::checkFilePaths($filePathsGen, $checks, $paramProvider);
+            $lists[$listName] = self::checkFilePaths($filePathsGen, $checks, $paramProvider);
         }
+
+        return $lists;
     }
 
     /**
      * @param  $absFilePaths
      * @param  $paramProvider
      * @param  $checks
-     * @return \Generator<int, \Generator<int, PhpFileDescriptor>>
+     * @return \Generator<int, PhpFileDescriptor>
      */
     public static function checkFiles($absFilePaths, $checks, $paramProvider): Generator
     {
-        yield from self::applyChecks($absFilePaths, $checks, $paramProvider);
+        return self::applyChecks($absFilePaths, $checks, $paramProvider);
     }
 }

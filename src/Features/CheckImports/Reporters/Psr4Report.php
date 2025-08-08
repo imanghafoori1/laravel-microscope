@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
-use Generator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
@@ -19,6 +18,8 @@ class Psr4Report
      * @param  array|\Generator  $psr4Stats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @param  \Illuminate\Console\OutputStyle  $console
+     *
+     * @return void
      */
     public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
     {
@@ -39,12 +40,11 @@ class Psr4Report
     /**
      * @param  string  $composerPath
      * @param  \Generator  $psr4
-     * @param  \Generator<string, \Generator<string, int>>  $classMapStats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @return array
      */
     #[Pure]
-    private static function present(string $composerPath, Generator $psr4, $classMapStats, $autoloadedFiles)
+    private static function present(string $composerPath, $psr4, $classMapStats, $autoloadedFiles)
     {
         $lines = [];
         $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
@@ -63,6 +63,12 @@ class Psr4Report
         return $lines;
     }
 
+    /**
+     * @param $psr4Stats
+     * @param array $classMapStats
+     * @param $autoloadedFiles
+     * @return array<int, array>
+     */
     public static function getPresentations($psr4Stats, array $classMapStats, $autoloadedFiles = [])
     {
         $results = [];

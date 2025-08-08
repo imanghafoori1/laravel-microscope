@@ -13,7 +13,7 @@ class ForAutoloadedClassMaps extends BaseIterator
      * @param  array  $checks
      * @param  \Closure|null  $paramProvider
      * @param  PathFilterDTO  $pathDTO
-     * @return array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>
+     * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
     public static function check($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
     {
@@ -31,12 +31,16 @@ class ForAutoloadedClassMaps extends BaseIterator
      * @param  \Generator<string, string>  $classMap
      * @param  $checks
      * @param  $paramProvider
-     * @return \Generator<string, \Generator<int, PhpFileDescriptor>>
+     * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
     private static function getDirStats($classMap, $checks, $paramProvider)
     {
+        $stats = [];
+
         foreach ($classMap as $dir => $absFilePaths) {
-            yield $dir => self::applyChecks($absFilePaths, $checks, $paramProvider);
+            $stats[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
         }
+
+        return $stats;
     }
 }
