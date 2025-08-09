@@ -52,7 +52,7 @@ class CheckEnvCallsCommand extends Command
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
         $bladeStats = ForBladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
 
-        $lines = Psr4Report::getPresentations($psr4Stats, $classmapStats, $autoloadedFilesStats);
+        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classmapStats, $autoloadedFilesStats);
         $lines[] = BladeReport::getBladeStats($bladeStats);
         $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());

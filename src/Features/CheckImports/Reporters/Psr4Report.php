@@ -23,7 +23,7 @@ class Psr4Report
      */
     public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
     {
-        $lines = self::getPresentations($psr4Stats, $classMapStats);
+        $lines = self::getConsoleMessages($psr4Stats, $classMapStats);
 
         Psr4ReportPrinter::printAll($lines, $console);
     }
@@ -69,7 +69,7 @@ class Psr4Report
      * @param $autoloadedFiles
      * @return array<int, array>
      */
-    public static function getPresentations($psr4Stats, array $classMapStats, $autoloadedFiles = [])
+    public static function getConsoleMessages($psr4Stats, array $classMapStats, $autoloadedFiles = [])
     {
         $lines = [];
         foreach ($psr4Stats as $composerPath => $psr4) {

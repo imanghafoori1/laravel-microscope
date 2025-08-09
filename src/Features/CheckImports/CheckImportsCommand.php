@@ -97,19 +97,12 @@ class CheckImportsCommand extends Command
 
         $checks = $this->checks;
         unset($checks[1]);
+
         $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
-
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFilesGen = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-
-        $foldersStats = FileIterators::checkFolders(
-            $checks,
-            self::getLaravelFolders(),
-            $useStatementParser,
-            $pathDTO
-        );
-
+        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForPsr4LoadedClasses::check($this->checks, $useStatementParser, $pathDTO);
+        $foldersStats = FileIterators::checkFolders($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
@@ -117,11 +110,11 @@ class CheckImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $autoloadStats = Reporters\Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesGen);
+        $consoleOutput = Reporters\Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
         /**
          * @var string[] $messages
          */
-        $messages = self::getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles, $errorPrinter->errorsList);
+        $messages = self::getMessages($consoleOutput, $bladeStats, $foldersStats, $routeFiles, $errorPrinter->errorsList);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {

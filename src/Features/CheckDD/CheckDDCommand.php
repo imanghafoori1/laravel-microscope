@@ -49,7 +49,7 @@ class CheckDDCommand extends Command
             [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO
         );
 
-        $lines = Psr4Report::getPresentations($psr4Stats, $classMapStats, $autoloadedFilesStats);
+        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $messages = LaravelFoldersReport::formatFoldersStats($foldersStatsData);
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
