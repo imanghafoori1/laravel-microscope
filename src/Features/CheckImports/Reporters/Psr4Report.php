@@ -23,9 +23,9 @@ class Psr4Report
      */
     public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
     {
-        $presentations = self::getPresentations($psr4Stats, $classMapStats);
+        $lines = self::getPresentations($psr4Stats, $classMapStats);
 
-        Psr4ReportPrinter::printAll($presentations, $console);
+        Psr4ReportPrinter::printAll($lines, $console);
     }
 
     #[Pure]
@@ -71,11 +71,11 @@ class Psr4Report
      */
     public static function getPresentations($psr4Stats, array $classMapStats, $autoloadedFiles = [])
     {
-        $results = [];
+        $lines = [];
         foreach ($psr4Stats as $composerPath => $psr4) {
-            $results[] = self::present($composerPath, $psr4, $classMapStats, $autoloadedFiles);
+            $lines[] = self::present($composerPath, $psr4, $classMapStats, $autoloadedFiles);
         }
 
-        return $results;
+        return $lines;
     }
 }
