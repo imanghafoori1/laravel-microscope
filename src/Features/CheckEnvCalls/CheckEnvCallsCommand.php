@@ -44,7 +44,7 @@ class CheckEnvCallsCommand extends Command
         };
 
         $this->excludeConfigFiles($pathDTO);
-        $routeFiles = ForRouteFiles::check([EnvCallsCheck::class], $params, $pathDTO);
+        $routeFiles = ForRouteFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
         $psr4Stats = ForPsr4LoadedClasses::check([EnvCallsCheck::class], [$params], $pathDTO);

@@ -11,6 +11,6 @@ class ForRouteFiles
     {
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
 
-        return FileIterators::checkFiles($routeFiles, $checks, [$params]);
+        return FileIterators::checkFiles($routeFiles, $checks, $params);
     }
 }
