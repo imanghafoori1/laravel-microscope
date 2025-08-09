@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Generator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
@@ -31,9 +32,7 @@ trait PatternApply
 
         $patterns = $this->getPatterns();
 
-        $report = $this->appliesPatterns($patterns, $pathDTO);
-
-        $this->getOutput()->writeln($report);
+        $this->appliesPatterns($patterns, $pathDTO);
 
         $this->finishCommand($errorPrinter);
 
@@ -43,37 +42,37 @@ trait PatternApply
     }
 
     /**
-     * @return string
+     * @return void
      */
     private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO)
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $paramProvider = function () use ($parsedPatterns) {
-            return [$parsedPatterns];
-        };
-
         $check = [PatternRefactorings::class];
 
-        $psr4Stats = ForPsr4LoadedClasses::check($check, $paramProvider, $pathDTO);
+        $psr4Stats = ForPsr4LoadedClasses::check($check, [$parsedPatterns], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [$parsedPatterns], $pathDTO);
         CheckBladePaths::$readOnly = false;
         $bladeStats = ForBladeFiles::check($check, [$parsedPatterns], $pathDTO);
 
-        return $this->getFinalMessage($psr4Stats, $classMapStats, $bladeStats);
-    }
+        $messages = $this->getConsoleMessages($psr4Stats, $classMapStats, $bladeStats);
 
-    private function getFinalMessage(array $psr4Stats, array $classMapStats, Generator $bladeStats): string
-    {
         try {
-            Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
-
-            return implode(PHP_EOL, [
-                Reporters\BladeReport::getBladeStats($bladeStats),
-            ]);
+            Psr4ReportPrinter::printAll($messages, $this->getOutput());
         } finally {
             CachedFiles::writeCacheFiles();
         }
+    }
+
+    private function getConsoleMessages(array $psr4Stats, array $classMapStats, Generator $bladeStats): array
+    {
+        $lines = Psr4Report::getPresentations($psr4Stats, $classMapStats);
+
+        $lines[] = implode(PHP_EOL, [
+            Reporters\BladeReport::getBladeStats($bladeStats),
+        ]);
+
+        return $lines;
     }
 
     private function hasFoundPatterns(): bool
