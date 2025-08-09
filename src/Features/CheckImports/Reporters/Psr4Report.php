@@ -18,7 +18,6 @@ class Psr4Report
      * @param  array|\Generator  $psr4Stats
      * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @param  \Illuminate\Console\OutputStyle  $console
-     *
      * @return void
      */
     public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
@@ -64,9 +63,9 @@ class Psr4Report
     }
 
     /**
-     * @param $psr4Stats
-     * @param array $classMapStats
-     * @param $autoloadedFiles
+     * @param  $psr4Stats
+     * @param  array  $classMapStats
+     * @param  $autoloadedFiles
      * @return array<int, array>
      */
     public static function getConsoleMessages($psr4Stats, array $classMapStats, $autoloadedFiles = [])
