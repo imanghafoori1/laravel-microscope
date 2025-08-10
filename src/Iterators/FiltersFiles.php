@@ -22,7 +22,7 @@ trait FiltersFiles
     /**
      * @param  \Symfony\Component\Finder\Finder|array  $items
      * @param  \Closure  $condition
-     * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
+     * @return mixed
      */
     private static function filterItems($items, Closure $condition)
     {

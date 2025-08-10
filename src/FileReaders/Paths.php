@@ -12,20 +12,25 @@ class Paths
     /**
      * @param  string|string[]|\Generator  $dirs
      * @param  PathFilterDTO  $pathFilter
-     * @return array|\Generator
+     * @return array<string, \Generator<int, \Symfony\Component\Finder\SplFileInfo>>
      */
     public static function getAbsFilePaths($dirs, PathFilterDTO $pathFilter)
     {
         if (! $dirs) {
             return [];
         }
-        $fileName = $pathFilter->includeFile;
 
+        $fileName = $pathFilter->includeFile;
         is_string($dirs) && ($dirs = [$dirs]);
+
+        $files = [];
+
         foreach ($dirs as $dir) {
             if (is_dir($dir)) {
-                yield $dir => self::filterFiles(PhpFinder::getPathsInDir($dir, $fileName), $pathFilter);
+                $files[$dir] = self::filterFiles(PhpFinder::getPathsInDir($dir, $fileName), $pathFilter);
             }
         }
+
+        return $files;
     }
 }
