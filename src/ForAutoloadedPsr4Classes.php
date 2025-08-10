@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Handlers\ErrorExceptionHandler;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
-class ForPsr4LoadedClasses
+class ForAutoloadedPsr4Classes
 {
     /**
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks

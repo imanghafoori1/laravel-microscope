@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -60,7 +60,7 @@ class CheckRefactorsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        ForPsr4LoadedClasses::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
+        ForAutoloadedPsr4Classes::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
 
         $this->getOutput()->writeln(' - Finished search/replace');
 

@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -32,7 +32,7 @@ class CheckActionComments extends Command
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
 
-        $psr4Stats = ForPsr4LoadedClasses::check(
+        $psr4Stats = ForAutoloadedPsr4Classes::check(
             [ActionsComments::class],
             [],
             PathFilterDTO::makeFromOption($this)

@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\ForPsr4LoadedClasses;
+use Imanghafoori\LaravelMicroscope\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
@@ -53,7 +53,7 @@ trait PatternApply
         $check = [PatternRefactorings::class];
 
         $routeFiles = ForRouteFiles::check($check, [$parsedPatterns], $pathDTO);
-        $psr4Stats = ForPsr4LoadedClasses::check($check, [$parsedPatterns], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [$parsedPatterns], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [$parsedPatterns], $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [$parsedPatterns], $pathDTO);
         CheckBladePaths::$readOnly = false;
