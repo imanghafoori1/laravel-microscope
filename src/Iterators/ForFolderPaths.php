@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
-class FileIterators extends BaseIterator
+class ForFolderPaths extends BaseIterator
 {
     /**
      * @param  \Generator|array  $paths
@@ -38,6 +38,7 @@ class FileIterators extends BaseIterator
      * @param  array  $checks
      * @param  array<string, \Generator>  $dirsList
      * @param  $paramProvider
+     * @param  PathFilterDTO  $pathFilter
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
     public static function checkFolders($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
