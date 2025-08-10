@@ -38,28 +38,35 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  array<string, string|string[]>  $psr4
-     * @return \Generator<string, \Generator<string, int>>
+     * @return array<string, array<string, \Generator<int, int>>>
      */
     private static function processGetStats($psr4)
     {
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            yield $psr4Namespace => self::applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths);
+            $psr4[$psr4Namespace] = self::applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths);
         }
+
+        return $psr4;
     }
 
     /**
      * @param  string  $psr4Namespace
      * @param  string[]|string  $psr4Paths
-     * @return \Generator<string, int>
+     * @return array<string, \Generator<int, int>>
      */
     private static function applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths)
     {
+        $pathStats = [];
         foreach ((array) $psr4Paths as $psr4Path) {
-            $filesCount = self::$checker->applyChecksInPath($psr4Namespace, $psr4Path);
-            self::$checkedFilesCount += $filesCount;
+            $checker = self::$checker;
+            $filesCount = function () use ($psr4Namespace, $psr4Path, $checker) {
+                return $checker->applyChecksInPath($psr4Namespace, $psr4Path);
+            };
 
-            yield $psr4Path => $filesCount;
+            $pathStats[$psr4Path] = $filesCount;
         }
+
+        return $pathStats;
     }
 
     private static function handleExceptions()
@@ -70,7 +77,7 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @return array<string, \Generator<string, \Generator<string, int>>>
+     * @return array<string, array<string, array<string, \Generator<int, int>>>>
      */
     private static function processAll()
     {

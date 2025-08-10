@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
@@ -45,10 +46,12 @@ class Psr4Report
     #[Pure]
     private static function present(string $composerPath, $psr4, $classMapStats, $autoloadedFiles)
     {
+        $max = max(array_map('strlen', array_keys(ComposerJson::readPsr4()[$composerPath])));
+
         $lines = [];
         $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
         $lines[] = PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
-        $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4);
+        $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4, $max);
 
         if (isset($classMapStats[$composerPath])) {
             $line = AutoloadMessages\ClassMapStats::getLines($classMapStats[$composerPath], self::$callback);

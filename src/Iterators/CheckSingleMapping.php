@@ -44,9 +44,9 @@ class CheckSingleMapping
     /**
      * @param  string  $psr4Namespace
      * @param  string  $psr4Path
-     * @return int
+     * @return \Generator<int, int>
      */
-    public function applyChecksInPath($psr4Namespace, $psr4Path): int
+    public function applyChecksInPath($psr4Namespace, $psr4Path)
     {
         $this->namespace = $psr4Namespace;
         $this->path = $psr4Path;
@@ -59,6 +59,7 @@ class CheckSingleMapping
             $filesCount++;
             $this->applyChecks($phpFilePath);
         }
+        ChecksOnPsr4Classes::$checkedFilesCount += $filesCount;
 
         return $filesCount;
     }

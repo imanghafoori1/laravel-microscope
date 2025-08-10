@@ -11,27 +11,35 @@ class Psr4Stats
     use Reporting;
 
     /**
-     * @param  array<string, array<string, int>>  $psr4
-     * @return string
+     * @param  array<string, array<string, \Closure>>  $psr4
+     * @return \Generator
      */
     #[Pure]
-    public static function getLines($psr4)
+    public static function getLines($psr4, $max = 1)
     {
-        $lengths = [1];
         $lines = [];
 
         foreach ($psr4 as $psr4Namespace => $psr4Paths) {
             Psr4Report::$callback && (Psr4Report::$callback)();
-            $lengths[] = strlen($psr4Namespace);
             $lines[0] = PHP_EOL.self::getPsr4Head();
-            $lines[1] = self::getPsr4(max($lengths), $psr4Namespace);
+            $lines[1] = self::getPsr4($max, $psr4Namespace);
 
             yield implode('', $lines);
-            $folders = self::getFolders($psr4Paths);
-            if ($folders === '') {
-                yield "\x1b[1G\x1b[2K\x1b[1A";
-            } else {
-                yield $folders;
+
+            // consumes the generator:
+            foreach ($psr4Paths as $path => $countClasses) {
+                $spaces = str_repeat(' ', 6);
+                $path = self::green('./'.$path);
+
+                yield $spaces.$path;
+
+                $count = $countClasses();
+
+                if ($count > 0) {
+                    yield self::files($count);
+                } else {
+                    yield "\x1b[1G\x1b[2K\x1b[1A";
+                }
             }
         }
     }
@@ -54,45 +62,5 @@ class Psr4Stats
     private static function getPsr4Head()
     {
         return '    '.self::hyphen().'<fg=red>';
-    }
-
-    /**
-     * @param  \Generator  $psr4Paths
-     * @return string
-     */
-    #[Pure]
-    private static function getFolders($psr4Paths): string
-    {
-        $result = [];
-        $i = 0;
-        // consumes the generator:
-        foreach ($psr4Paths as $path => $countClasses) {
-            // skip if no file was found
-            if (! $countClasses) {
-                continue;
-            }
-            $i++;
-            $result[$i] = [];
-            $result[$i][0] = str_repeat(' ', 6);
-            $result[$i][1] = self::green('./'.$path);
-            $result[$i][2] = self::files($countClasses);
-            if ($i > 1) {
-                $result[$i - 1][0] = str_repeat(' ', 12).'- ';
-                $result[$i][0] = str_repeat(' ', 12).'- ';
-            }
-        }
-
-        return self::implode($result);
-    }
-
-    #[Pure]
-    private static function implode($lines)
-    {
-        $output = '';
-        foreach ($lines as $segments) {
-            $output .= implode('', $segments);
-        }
-
-        return $output;
     }
 }
