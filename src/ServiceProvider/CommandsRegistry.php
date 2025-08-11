@@ -40,6 +40,7 @@ trait CommandsRegistry
         Commands\CheckEmptyComments::class,
         Commands\CheckExtraSemiColons::class,
         Commands\EnforceArrowFunctions::class,
+        Features\CheckExtraFQCN\CheckExtraFQCNCommand::class,
     ];
 
     private function registerCommands()
