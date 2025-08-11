@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckView implements Check
@@ -16,12 +17,20 @@ class CheckView implements Check
 
     public static function check(PhpFileDescriptor $file)
     {
+        if (CachedFiles::isCheckedBefore('check_view_command', $file)) {
+            return;
+        }
+
         $staticCalls = [
             'View' => ['make', 0],
             'Route' => ['view', 1],
         ];
 
-        self::checkViewCalls($file, $staticCalls);
+        $hasCalls = self::checkViewCalls($file, $staticCalls);
+
+        if ($hasCalls === false) {
+            CachedFiles::put('check_view_command', $file);
+        }
     }
 
     private static function checkViewParams($absPath, &$tokens, $i, $index)
@@ -46,20 +55,23 @@ class CheckView implements Check
     {
         $absPath = $file->getAbsolutePath();
         $tokens = $file->getTokens();
+        $hasViewCalls = false;
         foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
+                $hasViewCalls = true;
                 self::checkViewParams($absPath, $tokens, $i, 0);
                 continue;
             }
 
             foreach ($staticCalls as $class => $method) {
                 if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
+                    $hasViewCalls = true;
                     self::checkViewParams($absPath, $tokens, $i, $method[1]);
                 }
             }
         }
 
-        return $tokens;
+        return $hasViewCalls;
     }
 
     public static function viewError($absPath, $lineNumber, $fileName)

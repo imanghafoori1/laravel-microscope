@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class CheckViewsCommand extends Command
@@ -48,6 +49,7 @@ class CheckViewsCommand extends Command
             CheckView::$checkedCallsCount,
             CheckView::$skippedCallsCount
         ));
+        CachedFiles::writeCacheFiles();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
