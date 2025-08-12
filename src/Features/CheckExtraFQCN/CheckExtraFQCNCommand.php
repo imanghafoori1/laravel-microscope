@@ -6,10 +6,8 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ErrorCounter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\SummeryReport;
 use Imanghafoori\LaravelMicroscope\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
@@ -29,22 +27,16 @@ class CheckExtraFQCNCommand extends Command
     use LogsErrors;
 
     protected $signature = 'check:fqcn
+        {--fix : Fix references}
+        {--class= : Fix references of the specified class}
         {--f|file= : Pattern for file names to scan}
         {--d|folder= : Pattern for file names to scan}
         {--F|except-file= : Pattern for file names to avoid}
-        {--D|except-folder= : Pattern for folder names to avoid}
-    ';
+        {--D|except-folder= : Pattern for folder names to avoid}';
 
     protected $description = 'Checks for unnecessary FQCNs.';
 
-    protected $customMsg = 'No Fully qualified Class Name found.  \(^_^)/';
-
-    /**
-     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>
-     */
-    private $checks = [
-        ExtraFQCN::class,
-    ];
+    protected $customMsg = 'No Unnecessary Fully Qualified Class Name found.  \(^_^)/';
 
     public function handle()
     {
@@ -54,21 +46,24 @@ class CheckExtraFQCNCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $useStatementParser = [self::useStatementParser()];
+        $fix = $this->option('fix');
+        $class = $this->option('class');
 
-        $checks = $this->checks;
+        $useStatementParser = [self::useStatementParser(), $fix, $class];
+
+        $checks = [ExtraFQCN::class];
 
         $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($this->checks, $useStatementParser, $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
         $foldersStats = ForFolderPaths::checkFolders($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
         $consoleOutput = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
 
-        $messages = self::getMessages($consoleOutput, $foldersStats, $routeFiles, $errorPrinter->errorsList);
+        $messages = self::getMessages($consoleOutput, $foldersStats, $routeFiles);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
 
@@ -78,9 +73,9 @@ class CheckExtraFQCNCommand extends Command
 
         CachedFiles::writeCacheFiles();
 
-        $this->line('');
+        ! $fix && self::hasError() && $this->printGuide();
 
-        return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
+        return self::hasError() > 0 ? 1 : 0;
     }
 
     #[Pure]
@@ -113,7 +108,7 @@ class CheckExtraFQCNCommand extends Command
         ];
     }
 
-    private static function getMessages($autoloadStats, $foldersStats, $routeFiles, $errorsList)
+    private static function getMessages($autoloadStats, $foldersStats, $routeFiles)
     {
         return [
             CheckImportReporter::totalImportsMsg(),
@@ -122,7 +117,17 @@ class CheckExtraFQCNCommand extends Command
             PHP_EOL.self::getFilesStats(),
             LaravelFoldersReport::formatFoldersStats($foldersStats),
             CheckImportReporter::getRouteStats($routeFiles),
-            PHP_EOL.SummeryReport::summery($errorsList),
         ];
+    }
+
+    private function printGuide()
+    {
+        $this->line('<fg=yellow> You may use `--fix` option to delete extra code:</>');
+        $this->line('<fg=yellow> php artisan check:fqcn --fix</>');
+    }
+
+    private static function hasError()
+    {
+        return isset(ErrorPrinter::singleton()->errorsList['FQCN']);
     }
 }
