@@ -178,7 +178,7 @@ class ErrorPrinter
 
     public function getCount($key)
     {
-        return \count($this->errorsList[$key] ?? []);
+        return count($this->errorsList[$key] ?? []);
     }
 
     public function printTime()
@@ -240,7 +240,7 @@ class ErrorPrinter
         $duration = microtime(true) - microscope_start;
         $duration = round($duration, 3);
 
-        return "time: {$duration} (sec)";
+        return " ⏰ Finished in: {$duration} (sec)";
     }
 
     public static function lineSeparator(): string

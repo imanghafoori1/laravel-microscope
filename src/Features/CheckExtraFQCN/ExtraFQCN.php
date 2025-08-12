@@ -10,19 +10,18 @@ use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class ExtraFQCN implements Check
 {
-    public static function check(PhpFileDescriptor $file, $imports = [])
+    public static function check(PhpFileDescriptor $file, $params = [])
     {
         if (CachedFiles::isCheckedBefore('ExtraFQCN', $file)) {
             return;
         }
-
+        $fix = $params[1];
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
-        $imports = ($imports[0])($file);
+        $imports = ($params[0])($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
         $imports = self::restructureImports($imports);
-
-        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath);
+        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, $fix);
 
         if ($hasError === false) {
             CachedFiles::put('ExtraFQCN', $file);
@@ -62,7 +61,7 @@ class ExtraFQCN implements Check
         );
     }
 
-    private static function checkClassRef(array $classRefs, array $imports, string $absFilePath): bool
+    private static function checkClassRef(array $classRefs, array $imports, string $absFilePath, $fix = true): bool
     {
         $hasError = false;
         $namespace = $classRefs[1];
@@ -72,12 +71,14 @@ class ExtraFQCN implements Check
             }
 
             if (self::isImported($classRef['class'], $imports)) {
-                $hasError = true;
                 $line = $imports[$classRef['class']][0];
+                $hasError = true;
                 self::report($classRef, $absFilePath, $line);
+                $fix && self::deleteFQCN($absFilePath, $classRef['line'], $classRef['class']);
             } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class'])) {
                 $hasError = true;
                 self::reportSameNamespace($classRef, $absFilePath);
+                $fix && self::deleteFQCN($absFilePath, $classRef['line'], $classRef['class']);
             }
         }
 
@@ -94,5 +95,18 @@ class ExtraFQCN implements Check
         }
 
         return $imports;
+    }
+
+    private static function deleteFQCN(string $absFilePath, $line, $classRef)
+    {
+        $lines = file($absFilePath);
+        $count = 0;
+        $new = str_replace($classRef, basename($classRef), $lines[$line - 1], $count);
+
+        if ($count === 1) {
+            $lines[$line - 1] = $new;
+        }
+
+        file_put_contents($absFilePath, implode('', $lines));
     }
 }
