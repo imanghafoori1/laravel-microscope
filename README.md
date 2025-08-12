@@ -83,6 +83,7 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:migrations`](#migrations)
         1. [`php artisan check:empty_comment`](#empty_comment)
         1. [`php artisan enforce:helper_functions`](#helper_functions)
+        1. [`php artisan check:fqcn`](#fqcn)
         1. [`php artisan list:models`](#models)
     
      </details>
@@ -142,30 +143,31 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 <a name="less-use-commands"></a>
 ### Less Used Commands:
 
-|#|Artisan Command|
-|---|---|
-|1|`php artisan check:views`|
-|2|`php artisan check:routes`|
-|3|`php artisan check:psr4 {-s\|--nofix} `|
-|4|`php artisan check:imports {-s\|--nofix} {--wrong} {--extra}`|
-|5|`php artisan check:stringy_classes`|
-|6|`php artisan check:dd`|
-|7|`php artisan check:bad_practices`|
-|8|`php artisan check:compact`|
-|9|`php artisan check:blade_queries`|
-|10|`php artisan check:action_comments`|
-|11|`php artisan check:extract_blades`|
-|12|`php artisan pp:route`|
-|13|`php artisan check:generate`|
-|14|`php artisan check:endif`|
-|15|`php artisan check:events`|
-|16|`php artisan check:gates`|
-|17|`php artisan check:dynamic_where`|
-|18|`php artisan check:aliases`|
-|19|`php artisan check:dead_controllers`|
-|20|`php artisan check:generic_docblocks`|
-|21|`php artisan enforce:helper_functions`|
-|22|`php artisan list:models`|
+| #  | Artisan Command                                               |
+|----|---------------------------------------------------------------|
+| 1  | `php artisan check:views`                                     |
+| 2  | `php artisan check:routes`                                    |
+| 3  | `php artisan check:psr4 {-s\|--nofix} `                       |
+| 4  | `php artisan check:imports {-s\|--nofix} {--wrong} {--extra}` |
+| 5  | `php artisan check:stringy_classes`                           |
+| 6  | `php artisan check:dd`                                        |
+| 7  | `php artisan check:bad_practices`                             |
+| 8  | `php artisan check:compact`                                   |
+| 9  | `php artisan check:blade_queries`                             |
+| 10 | `php artisan check:action_comments`                           |
+| 11 | `php artisan check:extract_blades`                            |
+| 12 | `php artisan pp:route`                                        |
+| 13 | `php artisan check:generate`                                  |
+| 14 | `php artisan check:endif`                                     |
+| 15 | `php artisan check:events`                                    |
+| 16 | `php artisan check:gates`                                     |
+| 17 | `php artisan check:dynamic_where`                             |
+| 18 | `php artisan check:aliases`                                   |
+| 19 | `php artisan check:dead_controllers`                          |
+| 20 | `php artisan check:generic_docblocks`                         |
+| 21 | `php artisan enforce:helper_functions`                        |
+| 22 | `php artisan list:models`                                     |
+| 23 | `php artisan check:fqcn`                                      |
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions:
@@ -846,7 +848,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 
 - Removes Laravel's DocBlocks.
-- You can use `--folder=` or `--file=` option to narrow down the scanned folders.
+- You can use `--folder=` or `--file=`, `--except-file`, `--except-folder` option to narrow down the scanned folders.
 
 <a name="helper_functions"></a>
 
@@ -854,7 +856,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 
 - Converting Laravel facade into helper functions.
-- You can use `--folder=` or `--file=` option to narrow down the scanned folders.
+- You can use `--folder=`, `--file=`, `--except-file`, `--except-folder`  option to narrow down the scanned folders.
 
 <a name="models"></a>
 
@@ -862,6 +864,11 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 - It searches the project and lists the model classes.
 - You can use `--folder=` option to narrow down the scanned folders.
+
+### `php artisan check:fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}`
+
+- It searches for unnecessary FQCN which are already imported at the top.
+- You can use `--class=` option to only fix references to a certain class. 
 
 And more features will be added soon. ;)
 
