@@ -20,28 +20,9 @@ class ExtraFQCN implements Check
         $absFilePath = $file->getAbsolutePath();
         $imports = ($imports[0])($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
-        $imports = array_values($imports)[0];
-        $hasError = false;
+        $imports = self::restructureImports($imports);
 
-        foreach ($imports as $key => $import) {
-            $imports['\\'.$import[0]] = [$import[1], $key];
-            unset($imports[$key]);
-        }
-
-        $namespace = $classRefs[1];
-        foreach ($classRefs[0] as $classRef) {
-            if ($classRef['class'][0] !== '\\' ) {
-                continue;
-            }
-            if (self::isImported($classRef['class'], $imports)) {
-                $hasError = true;
-                $line = $imports[$classRef['class']][0];
-                self::report($classRef, $absFilePath, $line);
-            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class'])) {
-                $hasError = true;
-                self::reportSameNamespace($classRef, $absFilePath);
-            }
-        }
+        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath);
 
         if ($hasError === false) {
             CachedFiles::put('ExtraFQCN', $file);
@@ -65,14 +46,7 @@ class ExtraFQCN implements Check
         return trim(self::beforeLast($ref, '\\'), '\\') === $namespace;
     }
 
-    /**
-     * Return the remainder of a string after the last occurrence of a given value.
-     *
-     * @param  string  $subject
-     * @param  string  $search
-     * @return string
-     */
-    public static function beforeLast($subject, $search)
+    private static function beforeLast($subject, $search)
     {
         $pos = mb_strrpos($subject, $search) ?: 0;
 
@@ -81,10 +55,44 @@ class ExtraFQCN implements Check
 
     private static function reportSameNamespace($classRef, string $absFilePath)
     {
-        $header = 'FQCN is already no same namespace';
+        $header = 'FQCN is already on the same namespace.';
 
         ErrorPrinter::singleton()->simplePendError(
             $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
         );
+    }
+
+    private static function checkClassRef(array $classRefs, array $imports, string $absFilePath): bool
+    {
+        $hasError = false;
+        $namespace = $classRefs[1];
+        foreach ($classRefs[0] as $classRef) {
+            if ($classRef['class'][0] !== '\\') {
+                continue;
+            }
+
+            if (self::isImported($classRef['class'], $imports)) {
+                $hasError = true;
+                $line = $imports[$classRef['class']][0];
+                self::report($classRef, $absFilePath, $line);
+            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class'])) {
+                $hasError = true;
+                self::reportSameNamespace($classRef, $absFilePath);
+            }
+        }
+
+        return $hasError;
+    }
+
+    private static function restructureImports(array $imports): array
+    {
+        $imports = array_values($imports)[0];
+
+        foreach ($imports as $key => $import) {
+            $imports['\\'.$import[0]] = [$import[1], $key];
+            unset($imports[$key]);
+        }
+
+        return $imports;
     }
 }
