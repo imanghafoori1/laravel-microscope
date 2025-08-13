@@ -12,7 +12,7 @@ class ExtraFQCN implements Check
 {
     public static function check(PhpFileDescriptor $file, $params = [])
     {
-        if (CachedFiles::isCheckedBefore('ExtraFQCN', $file)) {
+        if (CachedFiles::isCheckedBefore('extra_fqcn', $file)) {
             return;
         }
         $fix = $params[1];
@@ -20,24 +20,21 @@ class ExtraFQCN implements Check
         $absFilePath = $file->getAbsolutePath();
         $imports = ($params[0])($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
-        $imports = self::restructureImports($imports);
         $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, $params[2], $fix);
 
         if ($hasError === false) {
-            CachedFiles::put('ExtraFQCN', $file);
+            CachedFiles::put('extra_fqcn', $file);
         }
     }
 
-    private static function isImported($class, $imports): bool
+    private static function isDirectlyImported($class, $imports): bool
     {
-        return isset($imports[$class]) && $imports[$class][1] === basename($class);
+        return isset($imports[basename($class)]) && $imports[basename($class)][0] === ltrim($class, '\\');
     }
 
-    private static function report(array $classRef, string $absFilePath, $line)
+    private static function conflictingAlias($class, $imports)
     {
-        $header = 'FQCN is already imported at line: '.$line;
-
-        ErrorPrinter::singleton()->simplePendError($classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header);
+        return isset($imports[basename($class)]);
     }
 
     private static function isInSameNamespace($namespace, $ref)
@@ -52,35 +49,37 @@ class ExtraFQCN implements Check
         return mb_substr($subject, 0, $pos, 'UTF-8');
     }
 
-    private static function reportSameNamespace($classRef, string $absFilePath)
-    {
-        $header = 'FQCN is already on the same namespace.';
-
-        ErrorPrinter::singleton()->simplePendError(
-            $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
-        );
-    }
-
     private static function checkClassRef($classRefs, $imports, $absFilePath, $class, $fix = true): bool
     {
         $hasError = false;
         $namespace = $classRefs[1];
+        $imports = array_values($imports)[0];
         foreach ($classRefs[0] as $classRef) {
             if ($classRef['class'][0] !== '\\') {
                 continue;
             }
 
             $shouldBeSkipped = $class && strpos(basename($classRef['class']), $class) === false;
-
-            if (self::isImported($classRef['class'], $imports)) {
-                $line = $imports[$classRef['class']][0];
+            if (self::isDirectlyImported($classRef['class'], $imports)) {
                 $hasError = true;
-                ! $shouldBeSkipped && self::report($classRef, $absFilePath, $line);
-                ! $shouldBeSkipped && $fix && self::deleteFQCN($absFilePath, $classRef);
-            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class'])) {
+                if (! $shouldBeSkipped) {
+                    $line = $imports[basename($classRef['class'])][1]; // <== get the line number of the import
+                    self::report($classRef, $absFilePath, $line);
+                    $fix && self::deleteFQCN($absFilePath, $classRef);
+                }
+            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::conflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
-                ! $shouldBeSkipped && self::reportSameNamespace($classRef, $absFilePath);
-                ! $shouldBeSkipped && $fix && self::deleteFQCN($absFilePath, $classRef);
+                if (! $shouldBeSkipped) {
+                    self::reportSameNamespace($classRef, $absFilePath);
+                    $fix && self::deleteFQCN($absFilePath, $classRef);
+                }
+            } else {
+                $imports2 = self::restructureImports($imports);
+                if (isset($imports2[ltrim($classRef['class'])])) {
+                    $hasError = true;
+                    $alias = $imports2[ltrim($classRef['class'])][1];
+                    ! $shouldBeSkipped && self::reportAliasImported($absFilePath, $alias, $classRef);
+                }
             }
         }
 
@@ -89,8 +88,6 @@ class ExtraFQCN implements Check
 
     private static function restructureImports(array $imports): array
     {
-        $imports = array_values($imports)[0];
-
         foreach ($imports as $key => $import) {
             $imports['\\'.$import[0]] = [$import[1], $key];
             unset($imports[$key]);
@@ -112,5 +109,33 @@ class ExtraFQCN implements Check
         }
 
         file_put_contents($absFilePath, implode('', $lines));
+    }
+
+    private static function reportAliasImported($absFilePath, $alias, $classRef)
+    {
+        $header = 'FQCN is already imported with an alias: '.$alias;
+        $body = $classRef['class'].' can be replaced with: '.$alias;
+
+        ErrorPrinter::singleton()->simplePendError(
+            $body, $absFilePath, $classRef['line'], 'FQCN', $header
+        );
+    }
+
+    private static function reportSameNamespace($classRef, string $absFilePath)
+    {
+        $header = 'FQCN is already on the same namespace.';
+
+        ErrorPrinter::singleton()->simplePendError(
+            $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
+        );
+    }
+
+    private static function report(array $classRef, string $absFilePath, $line)
+    {
+        $header = 'FQCN is already imported at line: '.$line;
+
+        ErrorPrinter::singleton()->simplePendError(
+            $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
+        );
     }
 }
