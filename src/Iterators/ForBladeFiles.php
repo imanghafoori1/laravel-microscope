@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 class ForBladeFiles implements Check
 {
     /**
-     * @param  $checkers
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checkers
      * @param  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<string, int>

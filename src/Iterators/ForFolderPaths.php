@@ -12,8 +12,9 @@ class ForFolderPaths extends BaseIterator
 {
     /**
      * @param  \Generator|array  $paths
-     * @param  \Closure  $paramProvider
-     * @param  array  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array|\Closure  $paramProvider
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
@@ -35,10 +36,10 @@ class ForFolderPaths extends BaseIterator
     }
 
     /**
-     * @param  array  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array<string, \Generator>  $dirsList
-     * @param  $paramProvider
-     * @param  PathFilterDTO  $pathFilter
+     * @param  array|\Closure  $paramProvider
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathFilter
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
     public static function checkFolders($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
@@ -54,8 +55,8 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param  $absFilePaths
-     * @param  $paramProvider
-     * @param  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array|\Closure  $paramProvider
      * @return \Generator<int, PhpFileDescriptor>
      */
     public static function checkFiles($absFilePaths, $checks, $paramProvider): Generator

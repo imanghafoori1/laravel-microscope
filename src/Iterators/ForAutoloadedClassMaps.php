@@ -10,7 +10,7 @@ class ForAutoloadedClassMaps extends BaseIterator
 {
     /**
      * @param  string  $basePath
-     * @param  array  $checks
+     * @param  array<int, class-string>  $checks
      * @param  \Closure|null  $paramProvider
      * @param  PathFilterDTO  $pathDTO
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
@@ -29,8 +29,8 @@ class ForAutoloadedClassMaps extends BaseIterator
 
     /**
      * @param  \Generator<string, string>  $classMap
-     * @param  $checks
-     * @param  $paramProvider
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
     private static function getDirStats($classMap, $checks, $paramProvider)

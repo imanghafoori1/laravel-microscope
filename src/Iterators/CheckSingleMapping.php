@@ -44,7 +44,7 @@ class CheckSingleMapping
     /**
      * @param  string  $psr4Namespace
      * @param  string  $psr4Path
-     * @return \Generator<int, int>
+     * @return int
      */
     public function applyChecksInPath($psr4Namespace, $psr4Path)
     {

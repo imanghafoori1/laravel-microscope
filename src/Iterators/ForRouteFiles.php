@@ -7,6 +7,12 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class ForRouteFiles
 {
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array|\Closure  $params
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @return \Generator
+     */
     public static function check($checks, $params, $pathDTO)
     {
         $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
