@@ -41,6 +41,7 @@ trait CommandsRegistry
         Commands\CheckExtraSemiColons::class,
         Commands\EnforceArrowFunctions::class,
         Features\CheckExtraFQCN\CheckExtraFQCNCommand::class,
+        Features\EnforceImports\EnforceImportsCommand::class,
     ];
 
     private function registerCommands()
