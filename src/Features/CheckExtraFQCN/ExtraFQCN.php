@@ -96,19 +96,34 @@ class ExtraFQCN implements Check
         return $imports;
     }
 
-    private static function deleteFQCN($absFilePath, $classRef)
+    public static function deleteFQCN($absFilePath, $classRef)
     {
         $line = $classRef['line'];
         $classRef = $classRef['class'];
         $lines = file($absFilePath);
         $count = 0;
-        $new = str_replace($classRef, basename($classRef), $lines[$line - 1], $count);
 
+        $new = str_replace([$classRef], basename($classRef), $lines[$line - 1], $count);
         if ($count === 1) {
             $lines[$line - 1] = $new;
+            file_put_contents($absFilePath, implode('', $lines));
+
+            return true;
+        } elseif ($count > 1) {
+            $className = basename($classRef);
+            $search = [$classRef.' ', $classRef.'(', $classRef.'::', $classRef.')', $classRef.';'];
+            $replace = [$className.' ', $className.'(', $className.'::', $className.')', $className.';'];
+
+            $new = str_replace($search, $replace, $lines[$line - 1], $count);
+            if ($count === 1) {
+                $lines[$line - 1] = $new;
+                file_put_contents($absFilePath, implode('', $lines));
+
+                return true;
+            }
         }
 
-        file_put_contents($absFilePath, implode('', $lines));
+        return false;
     }
 
     private static function reportAliasImported($absFilePath, $alias, $classRef)
