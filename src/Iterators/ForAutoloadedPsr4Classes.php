@@ -1,10 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Handlers\ErrorExceptionHandler;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping;
-use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 
 class ForAutoloadedPsr4Classes
 {
