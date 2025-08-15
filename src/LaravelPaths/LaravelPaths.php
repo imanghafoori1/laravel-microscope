@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Throwable;
 
@@ -71,7 +72,7 @@ class LaravelPaths
     {
         foreach (ForBladeFiles::getViews() as $paths) {
             foreach ($paths as $path) {
-                $files = is_dir($path) ? BladeFiles\CheckBladePaths::findFiles($path) : [];
+                $files = is_dir($path) ? CheckBladePaths::findFiles($path) : [];
                 foreach ($files as $blade) {
                     /**
                      * @var \Symfony\Component\Finder\SplFileInfo $blade
