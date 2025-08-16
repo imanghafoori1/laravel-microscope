@@ -44,6 +44,7 @@ class EnforceImportsCommand extends Command
         EnforceImports::$fix = ! $this->option('no-fix');
         EnforceImports::$onlyRefs = $this->option('class');
         EnforceImports::$importsProvider = self::useStatementParser();
+        EnforceImports::$onError = self::getOnErrorCallback($this->option('no-fix'));
 
         $checks = [EnforceImports::class];
 
@@ -89,5 +90,18 @@ class EnforceImportsCommand extends Command
     private static function hasError()
     {
         return isset(ErrorPrinter::singleton()->errorsList['enforce_imports']);
+    }
+
+    private static function getOnErrorCallback($noFix)
+    {
+        if ($noFix) {
+            $header = 'FQCN needs to be imported';
+        } else {
+            $header = 'FQCN got imported at the top';
+        }
+
+        return function ($classRef, $file, $line) use ($header) {
+            ErrorPrinter::singleton()->simplePendError($classRef, $file->getAbsolutePath(), $line, 'enforce_imports', $header);
+        };
     }
 }

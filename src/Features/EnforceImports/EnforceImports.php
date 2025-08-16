@@ -27,6 +27,11 @@ class EnforceImports implements Check
      */
     public static $importsProvider;
 
+    /**
+     * @var \Closure
+     */
+    public static $onError;
+
     public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('EnforceImports', $file)) {
@@ -56,20 +61,10 @@ class EnforceImports implements Check
         $original = file_get_contents($file->getAbsolutePath());
 
         foreach ($classRefs[0] as $classRef) {
-            if ($classRef['class'][0] !== '\\') {
+            if (! self::shouldBeImported($classRef['class'], $imports, $namespace)) {
                 continue;
             }
 
-            if (self::isDirectlyImported($classRef['class'], $imports)) {
-                continue;
-            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class'])) {
-                continue;
-            } else {
-                $imports2 = self::restructureImports($imports);
-                if (isset($imports2[ltrim($classRef['class'])])) {
-                    continue;
-                }
-            }
             $hasError = true;
 
             $class = self::$onlyRefs;
@@ -104,16 +99,9 @@ class EnforceImports implements Check
             }
         }
 
-        try {
-            return $hasError;
-        } finally {
-            $header = 'FQCN got imported at the top';
-            if (! $reverted) {
-                foreach ($replacedRefs as $classRef => $line) {
-                    ErrorPrinter::singleton()->simplePendError($classRef, $file->getAbsolutePath(), $line, 'force_import', $header);
-                }
-            }
-        }
+        ! $reverted && self::report($replacedRefs, $file);
+
+        return $hasError;
     }
 
     private static function insertImport(PhpFileDescriptor $file, $classRef)
@@ -172,5 +160,32 @@ class EnforceImports implements Check
     private static function refIsDeleted(array $deletes, string $className, string $class): bool
     {
         return isset($deletes[$className]) && $deletes[$className] !== $class;
+    }
+
+    private static function report(array $replacedRefs, PhpFileDescriptor $file): void
+    {
+        foreach ($replacedRefs as $classRef => $line) {
+            (self::$onError)($classRef, $file, $line);
+        }
+    }
+
+    private static function shouldBeImported($class, $imports, $namespace)
+    {
+        if ($class[0] !== '\\') {
+            return false;
+        }
+
+        if (self::isDirectlyImported($class, $imports)) {
+            return false;
+        } elseif ($namespace && self::isInSameNamespace($namespace, $class)) {
+            return false;
+        } else {
+            $imports2 = self::restructureImports($imports);
+            if (isset($imports2[ltrim($class)])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
