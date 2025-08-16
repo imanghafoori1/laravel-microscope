@@ -12,7 +12,22 @@ use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class EnforceImports implements Check
 {
-    public static function check(PhpFileDescriptor $file, $imports = [])
+    /**
+     * @var bool
+     */
+    public static $fix = true;
+
+    /**
+     * @var string
+     */
+    public static $onlyRefs;
+
+    /**
+     * @var \Closure
+     */
+    public static $importsProvider;
+
+    public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('EnforceImports', $file)) {
             return;
@@ -20,19 +35,18 @@ class EnforceImports implements Check
 
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
-        $class = $imports[1];
-        $imports = ($imports[0])($file);
+        $imports = (self::$importsProvider)($file);
 
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
 
-        $hasError = self::checkClassRef($classRefs, $imports, $file, $class);
+        $hasError = self::checkClassRef($classRefs, $imports, $file);
 
         if ($hasError === false) {
             CachedFiles::put('EnforceImports', $file);
         }
     }
 
-    private static function checkClassRef(array $classRefs, array $imports, PhpFileDescriptor $file, $class): bool
+    private static function checkClassRef(array $classRefs, array $imports, PhpFileDescriptor $file): bool
     {
         $hasError = false;
         $namespace = $classRefs[1];
@@ -56,20 +70,21 @@ class EnforceImports implements Check
                     continue;
                 }
             }
+            $hasError = true;
 
+            $class = self::$onlyRefs;
             $shouldBeSkipped = $class && self::contains(basename($classRef['class']), $class) === false;
 
             if ($shouldBeSkipped) {
-                $hasError = true;
                 continue;
             }
 
             $className = basename($classRef['class']);
 
-            if ($namespace && ! (isset($deletes[$className]) && $deletes[$className] !== $classRef['class'])) {
+            if ($namespace && ! self::refIsDeleted($deletes, $className, $classRef['class'])) {
                 $absFilePath = $file->getAbsolutePath();
                 if ($file->getFileName() !== $className.'.php') {
-                    ExtraFQCN::deleteFQCN($absFilePath, $classRef);
+                    self::$fix && ExtraFQCN::deleteFQCN($absFilePath, $classRef);
                     $deletes[$className] = $classRef['class'];
                     $replacedRefs[$classRef['class']] = $classRef['line'];
                 }
@@ -77,24 +92,28 @@ class EnforceImports implements Check
         }
 
         $reverted = false;
-        foreach ($replacedRefs as $classRef => $_) {
-            $replacements = self::insertImport($file, $classRef);
-            // in case we are not able to insert imports at the top:
-            if (count($replacements) === 0) {
-                file_put_contents($file->getAbsolutePath(), $original);
-                $hasError = $reverted = true;
-                break;
+        if (self::$fix) {
+            foreach ($replacedRefs as $classRef => $_) {
+                $replacements = self::insertImport($file, $classRef);
+                // in case we are not able to insert imports at the top:
+                if (count($replacements) === 0) {
+                    file_put_contents($file->getAbsolutePath(), $original);
+                    $hasError = $reverted = true;
+                    break;
+                }
             }
         }
 
-        $header = 'FQCN got imported at the top';
-        if (! $reverted) {
-            foreach ($replacedRefs as $classRef => $line) {
-                ErrorPrinter::singleton()->simplePendError($classRef, $file->getAbsolutePath(), $line, 'force_import', $header);
+        try {
+            return $hasError;
+        } finally {
+            $header = 'FQCN got imported at the top';
+            if (! $reverted) {
+                foreach ($replacedRefs as $classRef => $line) {
+                    ErrorPrinter::singleton()->simplePendError($classRef, $file->getAbsolutePath(), $line, 'force_import', $header);
+                }
             }
         }
-
-        return $hasError;
     }
 
     private static function insertImport(PhpFileDescriptor $file, $classRef)
@@ -148,5 +167,10 @@ class EnforceImports implements Check
         }
 
         return false;
+    }
+
+    private static function refIsDeleted(array $deletes, string $className, string $class): bool
+    {
+        return isset($deletes[$className]) && $deletes[$className] !== $class;
     }
 }

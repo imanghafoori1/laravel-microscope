@@ -22,6 +22,7 @@ class EnforceImportsCommand extends Command
     use LogsErrors;
 
     protected $signature = 'enforce:imports
+        {--no-fix : avoid changing the files}
         {--class= : Fix references of the specified class}
         {--f|file= : Pattern for file names to scan}
         {--d|folder= : Pattern for file names to scan}
@@ -40,15 +41,15 @@ class EnforceImportsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $class = $this->option('class');
-
-        $useStatementParser = [self::useStatementParser(), $class];
+        EnforceImports::$fix = ! $this->option('no-fix');
+        EnforceImports::$onlyRefs = $this->option('class');
+        EnforceImports::$importsProvider = self::useStatementParser();
 
         $checks = [EnforceImports::class];
 
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathDTO);
+        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
