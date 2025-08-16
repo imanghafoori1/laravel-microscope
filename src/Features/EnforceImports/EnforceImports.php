@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
