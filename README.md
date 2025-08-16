@@ -85,7 +85,7 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan enforce:helper_functions`](#helper_functions)
         1. [`php artisan check:fqcn`](#fqcn)
         1. [`php artisan list:models`](#models)
-    
+        1. [`php artisan enforce:imports`](#enforce_imports)
      </details>
 
     - [Credits](#credits)
@@ -166,8 +166,9 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 19 | `php artisan check:dead_controllers`                          |
 | 20 | `php artisan check:generic_docblocks`                         |
 | 21 | `php artisan enforce:helper_functions`                        |
-| 22 | `php artisan list:models`                                     |
+| 22 | `php artisan enforce:imports`                                 |
 | 23 | `php artisan check:fqcn`                                      |
+| 24 | `php artisan list:models`                                     |
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions:
@@ -194,12 +195,12 @@ This is a smart and very powerful search/replace functionality that can be a rea
 #### :one:		Defining patterns:
 
 > If you run the command `artisan search_replace` for the first time, it will create a `search_replace.php` file in the project's root.
-> Then, you can define your patterns, within that file.
+> Then, you can define your patterns within that file.
 
 
 **Examples:**
 
-Let's define a pattern to replace the `optional()` global helper with the `?->` php 8 null safe operator:
+Let's define a pattern to replace the `optional()` global helper with the `?->` PHP 8 null-safe operator:
 
 ```php
 return [
@@ -216,11 +217,11 @@ return [
     ]
 ];
 ```
-- Here the key `optional_to_nullsafe` is the "unique name" of your pattern. (You can target your pattern by running ```php artisan search_replace --name=optional_to_nullsafe```)
-- The search pattern has a `"<in_between>"` placeholder which captures everything in between the pair of parenthesis.
-- In the `replace` block we substitute what we have captured by the first placeholder with the `"<1>"`.
+- Here, the key `optional_to_nullsafe` is the "unique name" of your pattern. (You can target your pattern by running ```php artisan search_replace --name=optional_to_nullsafe```)
+- The search pattern has a `"<in_between>"` placeholder which captures everything in between the pair of parentheses.
+- In the `replace` block, we substitute what we have captured by the first placeholder with the `"<1>"`.
   If we have more placeholders, we could have had `"<2>"` etc.
-- In the tag block we can mention some tags as an array of strings or a string separated by commas
+- In the tag block, we can mention some tags as an array of strings or a string separated by commas
   and target them by `--tag` flag: ```php artisan search_replace --tag=php8```
 
 <a name="placeholders" ></a>
@@ -271,7 +272,7 @@ Here is a comprehensive list of placeholders you can use:
 
 ```
 
-_Note_ If you do not mention the `'replace'` key it only searches and reports them to you.
+_Note_ If you do not mention the `'replace'` key, it only searches and reports them to you.
 
 :two: Ok, now let's say you want to remove the "todo:" word from your comments:
 
@@ -304,7 +305,7 @@ In mutators, you are free to manipulate the `$matched` values as much as you nee
 You can also mention a static method instead of a function, like this: `[MyClass::class, 'myStaticMethod']`
 
 
-:three: Let's say you want to put the optional comma for the Lets  elements in the arrays if they are missing.
+:three: Let's say you want to put the optional comma for the Let's elements in the arrays if they are missing.
 ```php
     'enforce_optional_comma' => [
         'search' => '<white_space>?]',
@@ -318,8 +319,8 @@ You can also mention a static method instead of a function, like this: `[MyClass
     ]
 ```
 In this case, our pattern is not very accurate and in some cases, it may result in syntax errors.
-Because of  that, we turn on the php syntax validator to check the result, but that costs us a performance penalty!!!
-To exclude the usage of PHP, to validate the results we have mentioned the `avoid_result_in` so that if they happen in the result it skips.
+Because of  that, we turn on the PHP syntax validator to check the result, but that costs us a performance penalty!!!
+To exclude the usage of PHP, to validate the results we have mentioned the `avoid_result_in` so that if they happen in the result, it skips.
 
 - **Note**: The `?` in the "<white_space>?" notes this is an `optional` placeholder.
 
@@ -412,7 +413,7 @@ Let's say we want to opt into PHP v7.4 arrow functions:
 ```
 
 In this example, we have mentioned one single "statement" in the body of the function.
-So if it encounters a function with two or more statements it will ignore that.
+So if it encounters a function with two or more statements, it will ignore that.
 
 ```php
 $closure = function ($a) use ($b) {
@@ -510,7 +511,7 @@ User:where([
 ])->get();
 ```
 
-Ok, how the pattern would look like then?!
+Ok, how would the pattern look like then?!
 
 ```php
 "group_wheres" => [
@@ -678,14 +679,14 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 - It checks that your routes refer to valid controller classes and methods.
 - It checks all the controller methods to have valid type-hints.
 - It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
-- It will report the public methods of controllers, which have no routes pointing to them. In other words `dead controllers` are detected.
+- It will report the public methods of controllers, which have no routes pointing to them. In other words, `dead controllers` are detected.
 
 <a name="compact"></a>
 
 ### `php artisan check:compact`
 
 
-- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you, which parameters should be removed.
+- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you which parameters should be removed.
 
 <a name="blade_queries"></a>
 
@@ -867,7 +868,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 ### `php artisan check:fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}`
 
-- It searches for unnecessary FQCN which are already imported at the top.
+- It searches for unnecessary FQCN that are already imported at the top.
 - You can use `--class=` option to only fix references to a certain class. 
 
 And more features will be added soon. ;)
