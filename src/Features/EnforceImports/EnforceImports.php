@@ -56,7 +56,8 @@ class EnforceImports implements Check
                     continue;
                 }
             }
-            $shouldBeSkipped = $class && strpos(basename($classRef['class']), $class) === false;
+
+            $shouldBeSkipped = $class && self::contains(basename($classRef['class']), $class) === false;
 
             if ($shouldBeSkipped) {
                 $hasError = true;
@@ -136,5 +137,16 @@ class EnforceImports implements Check
         }
 
         return $imports;
+    }
+
+    private static function contains($haystack, $needle)
+    {
+        foreach (explode(',', $needle) as $item) {
+            if (strpos($haystack, $item) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
