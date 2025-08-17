@@ -17,7 +17,7 @@ class EnforceImports implements Check
     public static $fix = true;
 
     /**
-     * @var string
+     * @var array
      */
     public static $onlyRefs;
 
@@ -30,6 +30,11 @@ class EnforceImports implements Check
      * @var \Closure
      */
     public static $onError;
+
+    /**
+     * @var \Closure
+     */
+    public static $mutator;
 
     public static function check(PhpFileDescriptor $file)
     {
@@ -50,6 +55,19 @@ class EnforceImports implements Check
         }
     }
 
+    public static function setOptions($noFix, $onlyRefs, $provider, $onError, $mutator)
+    {
+        if (is_string($onlyRefs)) {
+            $onlyRefs = explode(',', $onlyRefs);
+        }
+
+        self::$fix = ! $noFix;
+        self::$onlyRefs = $onlyRefs;
+        self::$importsProvider = $provider;
+        self::$onError = $onError;
+        self::$mutator = $mutator;
+    }
+
     private static function checkClassRef(array $classRefs, array $imports, PhpFileDescriptor $file): bool
     {
         $hasError = false;
@@ -66,8 +84,8 @@ class EnforceImports implements Check
 
             $hasError = true;
 
-            $class = self::$onlyRefs;
-            $shouldBeSkipped = $class && self::contains(basename($classRef['class']), $class) === false;
+            $onlyRefs = self::$onlyRefs;
+            $shouldBeSkipped = $onlyRefs && ! self::contains($onlyRefs, $classRef['class']);
 
             if ($shouldBeSkipped) {
                 continue;
@@ -105,12 +123,18 @@ class EnforceImports implements Check
 
     private static function insertImport(PhpFileDescriptor $file, $classRef)
     {
+        $classRef = ltrim($classRef, '\\');
+
+        if (self::$mutator) {
+            $classRef = (self::$mutator)($classRef);
+        }
+
         [$string, $replacements] = Searcher::searchReplaceFirst([
             [
                 'ignore_whitespaces' => false,
                 'name' => 'enforceImports',
                 'search' => 'namespace <any>;<white_space>?',
-                'replace' => 'namespace <1>;'.PHP_EOL.PHP_EOL.'use '.ltrim($classRef, '\\').';'.PHP_EOL,
+                'replace' => 'namespace <1>;'.PHP_EOL.PHP_EOL.'use '.$classRef.';'.PHP_EOL,
             ],
         ], $file->getTokens(true));
         file_put_contents($file->getAbsolutePath(), $string);
@@ -145,17 +169,6 @@ class EnforceImports implements Check
         return $imports;
     }
 
-    private static function contains($haystack, $needle)
-    {
-        foreach (explode(',', $needle) as $item) {
-            if (strpos($haystack, $item) !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static function refIsDeleted(array $deletes, string $className, string $class): bool
     {
         return isset($deletes[$className]) && $deletes[$className] !== $class;
@@ -186,5 +199,22 @@ class EnforceImports implements Check
         }
 
         return true;
+    }
+
+    private static function contains($onlyRefs, $class): bool
+    {
+        foreach ($onlyRefs as $only) {
+            if ($only[0] === '\\') {
+                if ($only === $class) {
+                    return true;
+                }
+            } else {
+                if ($only === basename($class)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

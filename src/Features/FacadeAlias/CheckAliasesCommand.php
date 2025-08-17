@@ -3,8 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Console\Command;
+use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -50,7 +52,22 @@ class CheckAliasesCommand extends Command
             return $imports[0] ?: [$imports[1]];
         };
 
-        $check = [FacadeAliasesCheck::class];
+        $aliases = AliasLoader::getInstance()->getAliases();
+        $aliaseKeys = array_map(function ($alias) {
+            return '\\'.$alias;
+        }, array_keys($aliases));
+
+        $onError = function () {
+            //
+        };
+
+        $mutator = function ($class) use ($aliases) {
+            return ltrim($aliases[$class] ?? $class, '\\');
+        };
+
+        EnforceImports::setOptions(false, $aliaseKeys, $paramProvider, $onError, $mutator);
+
+        $check = [EnforceImports::class, FacadeAliasesCheck::class];
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, $paramProvider, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $paramProvider, $pathDTO);
 

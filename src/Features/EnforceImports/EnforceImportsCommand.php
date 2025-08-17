@@ -41,10 +41,9 @@ class EnforceImportsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        EnforceImports::$fix = ! $this->option('no-fix');
-        EnforceImports::$onlyRefs = $this->option('class');
-        EnforceImports::$importsProvider = self::useStatementParser();
-        EnforceImports::$onError = self::getOnErrorCallback($this->option('no-fix'));
+        $noFix = $this->option('no-fix');
+        $class = $this->option('class');
+        EnforceImports::setOptions(! $noFix, $class, self::useParser(), self::getOnError($noFix));
 
         $checks = [EnforceImports::class];
 
@@ -70,7 +69,7 @@ class EnforceImportsCommand extends Command
     }
 
     #[Pure]
-    private static function useStatementParser()
+    private static function useParser()
     {
         return function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
@@ -92,7 +91,7 @@ class EnforceImportsCommand extends Command
         return isset(ErrorPrinter::singleton()->errorsList['enforce_imports']);
     }
 
-    private static function getOnErrorCallback($noFix)
+    private static function getOnError($noFix)
     {
         if ($noFix) {
             $header = 'FQCN needs to be imported';
