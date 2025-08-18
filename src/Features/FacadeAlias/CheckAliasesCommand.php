@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
+use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -45,27 +46,9 @@ class CheckAliasesCommand extends Command
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
-        $this->handleAliasOption();
-        $paramProvider = function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
-
-        $aliases = AliasLoader::getInstance()->getAliases();
-        $aliaseKeys = array_map(function ($alias) {
-            return '\\'.$alias;
-        }, array_keys($aliases));
-
-        $onError = function () {
-            //
-        };
-
-        $mutator = function ($class) use ($aliases) {
-            return ltrim($aliases[$class] ?? $class, '\\');
-        };
-
-        EnforceImports::setOptions(false, $aliaseKeys, $paramProvider, $onError, $mutator);
+        $paramProvider = self::getParamProvider();
+        self::setEnforceImportsOptions($paramProvider);
+        self::setFacadeAliasCheckOptions($this->option('alias'));
 
         $check = [EnforceImports::class, FacadeAliasesCheck::class];
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, $paramProvider, $pathDTO);
@@ -80,11 +63,39 @@ class CheckAliasesCommand extends Command
         return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
     }
 
-    private function handleAliasOption(): void
+    private static function setFacadeAliasCheckOptions($alias): void
     {
-        $alias = ltrim($this->option('alias'), '=');
+        $alias = ltrim($alias, '=');
         if ($alias) {
             FacadeAliasesCheck::$alias = explode(',', strtolower($alias));
         }
+    }
+
+    private static function setEnforceImportsOptions(Closure $paramProvider): void
+    {
+        $aliases = AliasLoader::getInstance()->getAliases();
+
+        $aliasKeys = array_map(function ($alias) {
+            return '\\'.$alias;
+        }, array_keys($aliases));
+
+        $onError = function () {
+            //
+        };
+
+        $mutator = function ($class) use ($aliases) {
+            return ltrim($aliases[$class] ?? $class, '\\');
+        };
+
+        EnforceImports::setOptions(false, $aliasKeys, $paramProvider, $onError, $mutator);
+    }
+
+    private static function getParamProvider(): Closure
+    {
+        return function (PhpFileDescriptor $file) {
+            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
+
+            return $imports[0] ?: [$imports[1]];
+        };
     }
 }
