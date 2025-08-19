@@ -114,9 +114,11 @@ class CheckImportsCommand extends Command
         /**
          * @var string[] $messages
          */
-        $messages = self::getMessages($consoleOutput, $bladeStats, $foldersStats, $routeFiles, $errorPrinter->errorsList);
+        $messages = self::getMessages($consoleOutput, $bladeStats, $foldersStats, $routeFiles);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
+        // must be after other messages:
+        Psr4ReportPrinter::printAll([PHP_EOL.Reporters\SummeryReport::summery($errorPrinter->errorsList)], $this->getOutput());
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
@@ -188,7 +190,7 @@ class CheckImportsCommand extends Command
         file_put_contents($path, $content);
     }
 
-    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles, $errorsList)
+    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
     {
         return [
             CheckImportReporter::totalImportsMsg(),
@@ -198,7 +200,6 @@ class CheckImportsCommand extends Command
             PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL,
             LaravelFoldersReport::formatFoldersStats($foldersStats),
             CheckImportReporter::getRouteStats($routeFiles),
-            PHP_EOL.Reporters\SummeryReport::summery($errorsList),
         ];
     }
 }
