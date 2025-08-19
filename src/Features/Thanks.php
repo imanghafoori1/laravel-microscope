@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features;
 
 use DateInterval;
+use Exception;
 use JetBrains\PhpStorm\Pure;
 
 class Thanks
@@ -11,14 +12,18 @@ class Thanks
     {
         $key = 'microscope_thanks_throttle';
 
-        if (cache()->get($key)) {
+        try {
+            if (cache()->get($key)) {
+                return false;
+            }
+
+            $show = random_int(1, 5) === 2;
+            $show && cache()->set($key, '_', DateInterval::createFromDateString('2 days'));
+
+            return $show;
+        } catch (Exception $e) {
             return false;
         }
-
-        $show = random_int(1, 5) === 2;
-        $show && cache()->set($key, '_', DateInterval::createFromDateString('2 days'));
-
-        return $show;
     }
 
     #[Pure]

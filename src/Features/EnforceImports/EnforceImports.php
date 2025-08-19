@@ -55,7 +55,7 @@ class EnforceImports implements Check
         }
     }
 
-    public static function setOptions($noFix, $onlyRefs, $provider, $onError, $mutator)
+    public static function setOptions($noFix, $onlyRefs, $provider, $onError, $mutator = null)
     {
         if (is_string($onlyRefs)) {
             $onlyRefs = explode(',', $onlyRefs);
