@@ -60,7 +60,7 @@ trait PatternApply
         $bladeStats = ForBladeFiles::check($check, [$parsedPatterns], $pathDTO);
 
         $messages = self::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats, $bladeStats);
-        $messages[] = CheckImportReporter::getRouteStats($routeFiles);
+        $messages[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
         try {
             Psr4ReportPrinter::printAll($messages, $this->getOutput());
         } finally {

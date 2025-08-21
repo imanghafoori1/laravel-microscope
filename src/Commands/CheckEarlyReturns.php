@@ -5,9 +5,11 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
@@ -38,10 +40,27 @@ class CheckEarlyReturns extends Command
         }
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        [$psr4Stats, $classMapStats] = self::applyCheckEarly($pathDTO, $this->option('nofix'));
-        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        [$psr4Stats, $classMapStats, $fileStats] = self::applyCheckEarly($pathDTO, $this->option('nofix'));
+        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $fileStats);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
+    }
+
+    /**
+     * @param  PathFilterDTO  $pathDTO
+     * @param  bool  $nofix
+     * @return array
+     */
+    private static function applyCheckEarly($pathDTO, $nofix): array
+    {
+        $check = [CheckEarlyReturn::class];
+        $params = self::getParams($nofix);
+        $psr4stats = ForAutoloadedPsr4Classes::check($check, $params, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
+        $filesStats = ForAutoloadedFiles::check(base_path(), $check, $params, $pathDTO);
+
+        return [$psr4stats, $classMapStats, $filesStats];
     }
 
     private function startWarning()
@@ -63,20 +82,5 @@ class CheckEarlyReturns extends Command
                 $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));
             },
         ];
-    }
-
-    /**
-     * @param  PathFilterDTO  $pathDTO
-     * @param  bool  $nofix
-     * @return array
-     */
-    public static function applyCheckEarly($pathDTO, $nofix): array
-    {
-        $check = [CheckEarlyReturn::class];
-        $params = self::getParams($nofix);
-        $psr4stats = ForAutoloadedPsr4Classes::check($check, $params, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
-
-        return [$psr4stats, $classMapStats];
     }
 }
