@@ -11,10 +11,6 @@ use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckView implements Check
 {
-    public static $checkedCallsCount = 0;
-
-    public static $skippedCallsCount = 0;
-
     public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('check_view_command', $file)) {
@@ -41,13 +37,13 @@ class CheckView implements Check
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
 
         if (FunctionCall::isSolidString($paramTokens)) {
-            self::$checkedCallsCount++;
+            CheckViewStats::$checkedCallsCount++;
             $viewName = self::getViewName($paramTokens[0][1]);
             if ($viewName && ! View::exists($viewName)) {
                 CheckView::viewError($absPath, $paramTokens[0][2], $viewName);
             }
         } else {
-            self::$skippedCallsCount++;
+            CheckViewStats::$skippedCallsCount++;
         }
     }
 

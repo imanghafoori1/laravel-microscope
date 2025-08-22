@@ -20,7 +20,7 @@ class CheckViewFilesExistence implements Check
             }
 
             $viewName = trim($tokens[$i + 4][1], '\'\"');
-            CheckView::$checkedCallsCount++;
+            CheckViewStats::$checkedCallsCount++;
             if (! View::exists($viewName)) {
                 self::error($tokens, $absPath, $i);
             }
@@ -57,6 +57,6 @@ class CheckViewFilesExistence implements Check
 
     private static function isMethodCall($tokens, $i, $varName, $methods)
     {
-        return self::isVariable($tokens[$i], $varName) && \in_array($tokens[$i + 2][1] ?? null, $methods);
+        return self::isVariable($tokens[$i], $varName) && in_array($tokens[$i + 2][1] ?? null, $methods);
     }
 }

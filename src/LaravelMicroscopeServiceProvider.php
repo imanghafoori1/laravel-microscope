@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
-use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Path;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
@@ -113,8 +113,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function resetCountersOnFinish()
     {
         Event::listen('microscope.finished.checks', function () {
-            CheckView::$checkedCallsCount = 0;
-            CheckView::$skippedCallsCount = 0;
+            CheckViewStats::$checkedCallsCount = 0;
+            CheckViewStats::$skippedCallsCount = 0;
         });
 
         Event::listen('microscope.finished.checks', function () {

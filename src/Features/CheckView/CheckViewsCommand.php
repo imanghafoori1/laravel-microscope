@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
+use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
@@ -48,8 +49,8 @@ class CheckViewsCommand extends Command
 
         $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats(
-            CheckView::$checkedCallsCount,
-            CheckView::$skippedCallsCount
+            CheckViewStats::$checkedCallsCount,
+            CheckViewStats::$skippedCallsCount
         ));
         CachedFiles::writeCacheFiles();
 
