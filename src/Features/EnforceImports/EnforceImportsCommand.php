@@ -43,7 +43,7 @@ class EnforceImportsCommand extends Command
 
         $noFix = $this->option('no-fix');
         $class = $this->option('class');
-        EnforceImports::setOptions(! $noFix, $class, self::useParser(), self::getOnError($noFix));
+        EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
 
         $checks = [EnforceImports::class];
 
