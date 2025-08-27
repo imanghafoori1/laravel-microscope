@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Generator;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -20,8 +19,8 @@ class ForFolderPaths extends BaseIterator
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
         if ($pathDTO) {
-            foreach ($paths as $path => $autoloadFile) {
-                $paths[$path] = FilePath::removeExtraPaths($autoloadFile, $pathDTO);
+            foreach ($paths as $basePath => $autoloadFiles) {
+                $paths[$basePath] = FilePath::filter($autoloadFiles, $pathDTO);
             }
         }
 
@@ -29,7 +28,7 @@ class ForFolderPaths extends BaseIterator
         foreach ($paths as $dir => $absFilePaths) {
             is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
 
-            $files[$dir] = self::checkFiles($absFilePaths, $checks, $paramProvider);
+            $files[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
         }
 
         return $files;
@@ -51,16 +50,5 @@ class ForFolderPaths extends BaseIterator
         }
 
         return $lists;
-    }
-
-    /**
-     * @param  $absFilePaths
-     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
-     * @param  array|\Closure  $paramProvider
-     * @return \Generator<int, PhpFileDescriptor>
-     */
-    public static function checkFiles($absFilePaths, $checks, $paramProvider): Generator
-    {
-        return self::applyChecks($absFilePaths, $checks, $paramProvider);
     }
 }

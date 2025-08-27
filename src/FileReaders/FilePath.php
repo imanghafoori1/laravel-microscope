@@ -88,7 +88,7 @@ class FilePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, string>
      */
-    public static function removeExtraPaths($paths, $pathDTO)
+    public static function filter($paths, $pathDTO)
     {
         foreach ($paths as $absFilePath) {
             if (self::contains($absFilePath, $pathDTO)) {

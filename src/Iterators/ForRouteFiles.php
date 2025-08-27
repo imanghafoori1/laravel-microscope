@@ -15,8 +15,8 @@ class ForRouteFiles
      */
     public static function check($checks, $params, $pathDTO)
     {
-        $routeFiles = FilePath::removeExtraPaths(RoutePaths::get(), $pathDTO);
+        $routeFiles = FilePath::filter(RoutePaths::get(), $pathDTO);
 
-        return ForFolderPaths::checkFiles($routeFiles, $checks, $params);
+        return ForFolderPaths::applyChecks($routeFiles, $checks, $params);
     }
 }
