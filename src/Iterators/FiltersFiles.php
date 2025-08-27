@@ -20,7 +20,7 @@ trait FiltersFiles
     }
 
     /**
-     * @param  \Symfony\Component\Finder\Finder|array  $items
+     * @param  \Generator<int, string>|string[]  $items
      * @param  \Closure  $condition
      * @return mixed
      */

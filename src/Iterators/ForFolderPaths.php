@@ -19,19 +19,10 @@ class ForFolderPaths extends BaseIterator
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
         if ($pathDTO) {
-            foreach ($paths as $basePath => $autoloadFiles) {
-                $paths[$basePath] = FilePath::filter($autoloadFiles, $pathDTO);
-            }
+            $paths = array_map(fn ($files) => FilePath::filter($files, $pathDTO), $paths);
         }
 
-        $files = [];
-        foreach ($paths as $dir => $absFilePaths) {
-            is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
-
-            $files[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
-        }
-
-        return $files;
+        return self::applyOnFiles($paths, $checks, $paramProvider);
     }
 
     /**
@@ -50,5 +41,23 @@ class ForFolderPaths extends BaseIterator
         }
 
         return $lists;
+    }
+
+    /**
+     * @param $paths
+     * @param array $checks
+     * @param $paramProvider
+     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     */
+    private static function applyOnFiles($paths, array $checks, $paramProvider)
+    {
+        $files = [];
+        foreach ($paths as $dir => $absFilePaths) {
+            is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
+
+            $files[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
+        }
+
+        return $files;
     }
 }

@@ -17,18 +17,14 @@ class ForAutoloadedClassMaps extends BaseIterator
      */
     public static function check($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
     {
-        $classMapFiles = ComposerJson::getClassMaps($basePath, $pathDTO);
-
-        $results = [];
-        foreach ($classMapFiles as $composerPath => $classMap) {
-            $results[$composerPath] = self::getDirStats($classMap, $checks, $paramProvider);
-        }
-
-        return $results;
+        return array_map(
+            fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider),
+            ComposerJson::getClassMaps($basePath, $pathDTO)
+        );
     }
 
     /**
-     * @param  \Generator<string, string>  $classMap
+     * @param  \Generator<string, string>|string[]  $classMap
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>

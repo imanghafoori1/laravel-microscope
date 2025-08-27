@@ -14,21 +14,21 @@ class ForBladeFiles implements Check
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checkers
      * @param  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return \Generator<string, int>
+     * @return array<int, \Generator<string, int>>
      */
     public static function check($checkers, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
 
-        foreach (self::getViews() as $paths) {
-            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $pathDTO, $params);
+        foreach (self::getViewsPaths() as $paths) {
+            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $params, $pathDTO);
         }
     }
 
     /**
-     * @return \Generator<string, array>
+     * @return array<string, \Generator<int, string>>
      */
-    public static function getViews()
+    public static function getViewsPaths()
     {
         $hints = View::getFinder()->getHints();
         $hints['random_key_69471'] = View::getFinder()->getPaths();
@@ -49,27 +49,35 @@ class ForBladeFiles implements Check
         method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
     }
 
-    private static function filterPaths($paths): array
+    /**
+     * @param $paths
+     * @return \Generator<int, string>
+     */
+    private static function filterPaths($paths)
     {
-        $newPaths = [];
         foreach ($paths as $path) {
             $path = FilePath::normalize($path);
             if (! Str::startsWith($path, Container::getInstance()->basePath().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
-                $newPaths[] = $path;
+                yield $path;
             }
         }
-
-        return $newPaths;
     }
 
+    /**
+     * @param array<string, array> $hints
+     * @return array<string, \Generator<int, string>>
+     */
     private static function normalizeAndFilterVendorPaths(array $hints)
     {
+        $results = [];
         foreach ($hints as $key => $paths) {
             $paths = self::filterPaths($paths);
             if (empty($paths)) {
                 continue;
             }
-            yield $key => $paths;
+            $results[$key] = $paths;
         }
+
+        return $results;
     }
 }

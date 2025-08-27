@@ -32,7 +32,7 @@ class ComposerJson
     /**
      * @param  string  $basePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return \Generator<string, \Generator<string, string[]>>
+     * @return array<string, \Generator<string, string[]>>
      */
     public static function getClassMaps($basePath, $pathDTO)
     {

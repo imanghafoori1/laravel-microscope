@@ -63,7 +63,7 @@ class CheckDDCommand extends Command
     }
 
     /**
-     * @return array<string, \Generator>
+     * @return array<string, \Generator<int, string>>
      */
     #[Pure(true)]
     private function getLaravelFolders()

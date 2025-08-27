@@ -17,13 +17,13 @@ class CheckBladePaths
     public static $readOnly = true;
 
     /**
-     * @param  \Generator  $dirs
+     * @param  \Generator<int, string>  $dirs
      * @param  array  $checkers
      * @param  PathFilterDTO  $pathDTO
      * @param  array|callable  $params
-     * @return \Generator
+     * @return \Generator<string, int>
      */
-    public static function checkPaths($dirs, $checkers, PathFilterDTO $pathDTO, $params)
+    public static function checkPaths($dirs, $checkers, $params, $pathDTO)
     {
         $includeFile = $pathDTO->includeFile;
 
@@ -107,7 +107,7 @@ class CheckBladePaths
     }
 
     /**
-     * @param  array  $paths
+     * @param  \Generator<int, string>  $paths
      * @return \Generator
      */
     private static function filterUnwantedBlades($paths)

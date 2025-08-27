@@ -61,13 +61,13 @@ class CheckPsr4ArtisanCommand extends Command
         }
     }
 
-    private function printReport(ErrorPrinter $errorPrinter, $time, $autoload, ClassLists $classLists)
+    private function printReport(ErrorPrinter $errorPrinter, $duration, $autoload, ClassLists $classLists)
     {
         $classListStatistics = self::countClasses($classLists);
         $errorPrinter->logErrors();
 
         if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
-            $this->write(ReportMessages::reportResult($autoload, $time, $classListStatistics));
+            $this->write(ReportMessages::reportResult($autoload, $duration, $classListStatistics));
             $this->printMessages(ReportMessages::getErrorsCount($errorPrinter->total));
         } else {
             $this->write(ReportMessages::getTotalChecked($classListStatistics->getTotalCount()));

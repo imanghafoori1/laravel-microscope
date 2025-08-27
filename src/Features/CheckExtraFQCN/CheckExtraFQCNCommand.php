@@ -97,7 +97,7 @@ class CheckExtraFQCNCommand extends Command
     }
 
     /**
-     * @return array<string, \Generator>
+     * @return array<string, \Generator<int, string>>
      */
     #[Pure(true)]
     private static function getLaravelFolders()
@@ -108,6 +108,12 @@ class CheckExtraFQCNCommand extends Command
         ];
     }
 
+    /**
+     * @param $autoloadStats
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
+     * @param $routeFiles
+     * @return array
+     */
     private static function getMessages($autoloadStats, $foldersStats, $routeFiles)
     {
         return [

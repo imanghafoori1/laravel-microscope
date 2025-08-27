@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ReportMessages
 {
-    public static function reportResult($autoload, $time, TypeStatistics $typesStats)
+    public static function reportResult($autoload, $duration, TypeStatistics $typesStats)
     {
         $messages = [];
 
@@ -22,7 +22,7 @@ class ReportMessages
         $messages[] = self::getHeaderLine($typesStats);
         $messages[] = '';
 
-        $messages[] = self::getFinishMsg($time);
+        $messages[] = self::getFinishMsg($duration);
 
         return $messages;
     }

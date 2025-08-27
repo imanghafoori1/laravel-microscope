@@ -169,7 +169,7 @@ class CheckImportsCommand extends Command
     }
 
     /**
-     * @return array<string, \Generator>
+     * @return array<string, \Generator<int, string>>
      */
     #[Pure(true)]
     private static function getLaravelFolders()
@@ -190,6 +190,13 @@ class CheckImportsCommand extends Command
         file_put_contents($path, $content);
     }
 
+    /**
+     * @param $autoloadStats
+     * @param $bladeStats
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
+     * @param $routeFiles
+     * @return array
+     */
     private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
     {
         return [

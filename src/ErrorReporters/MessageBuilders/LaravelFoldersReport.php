@@ -3,13 +3,14 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class LaravelFoldersReport
 {
     use Reporting;
 
     /**
-     * @param  iterable<string, iterable<string, iterable<string, iterable<int, string>>>>  $foldersStats
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
      * @return \Generator<int, string>
      */
     public static function formatFoldersStats($foldersStats)
@@ -25,7 +26,7 @@ class LaravelFoldersReport
     }
 
     /**
-     * @param  iterable<string, iterable<string, iterable<int, string>>>  $stats
+     * @param  iterable<string, \Generator<int, PhpFileDescriptor>>  $stats
      * @return array
      */
     private static function subDirs($stats)
@@ -35,6 +36,7 @@ class LaravelFoldersReport
         foreach ($stats as $dir => $files) {
             $c++;
             $filesCount = 0;
+            // consume generator:
             foreach ($files as $_file) {
                 $filesCount++;
             }

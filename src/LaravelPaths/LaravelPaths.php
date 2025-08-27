@@ -12,7 +12,7 @@ use Throwable;
 class LaravelPaths
 {
     /**
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     public static function configDirs()
     {
@@ -42,7 +42,7 @@ class LaravelPaths
     }
 
     /**
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     public static function migrationDirs()
     {
@@ -70,7 +70,7 @@ class LaravelPaths
      */
     public static function allBladeFiles()
     {
-        foreach (ForBladeFiles::getViews() as $paths) {
+        foreach (ForBladeFiles::getViewsPaths() as $paths) {
             foreach ($paths as $path) {
                 $files = is_dir($path) ? CheckBladePaths::findFiles($path) : [];
                 foreach ($files as $blade) {
