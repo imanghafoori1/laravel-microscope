@@ -35,7 +35,7 @@ class ClassRefCorrector
     }
 
     /**
-     * @param  string[]|string  $path
+     * @param  string  $path
      * @param  array<string, string>  $changes
      * @return void
      */
@@ -51,14 +51,6 @@ class ClassRefCorrector
 
     private static function fixRefs($path, $changes)
     {
-        if (is_array($path)) {
-            foreach ($path as $p) {
-                self::fixRefs($p, $changes);
-            }
-
-            return;
-        }
-
         $lines = file($path);
         $changedLineNums = [];
         $beforeFix = self::$beforeFix;
