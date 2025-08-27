@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 
 use Exception;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Facade;
 use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -16,17 +15,27 @@ class FacadeDocblocks
 {
     public static $command;
 
+    /**
+     * @var \Closure|null
+     */
+    public static $onError;
+
+    /**
+     * @var \Closure|null
+     */
+    public static $onFix;
+
     public static function check(PhpFileDescriptor $file)
     {
         $absFilePath = $file->getAbsolutePath();
 
-        $facade = $file->getNamespace();
+        $fqcnFacade = $file->getNamespace();
 
-        if (! self::isFacade($facade)) {
+        if (! self::isFacade($fqcnFacade)) {
             return null;
         }
 
-        if (! is_string($accessor = self::getAccessor($facade))) {
+        if (! is_string($accessor = self::getAccessor($fqcnFacade))) {
             return null;
         }
 
@@ -35,18 +44,17 @@ class FacadeDocblocks
         // We also skip if the class is not bound on the $app
         if ((! $isClass && ! interface_exists($accessor)) || ($isClass && app()->bound($accessor))) {
             try {
-                $accessor = get_class($facade::getFacadeRoot());
+                $accessor = get_class($fqcnFacade::getFacadeRoot());
             } catch (Exception $e) {
-                Event::dispatch('microscope.facade.accessor_error', [$accessor, $absFilePath]);
-
+                (self::$onError)($accessor, $absFilePath);
                 return;
             }
         }
 
-        self::addDocBlocks($accessor, $facade, $file->getTokens(), $absFilePath);
+        self::addDocBlocks($accessor, $fqcnFacade, $file->getTokens(), $absFilePath);
     }
 
-    private static function addDocBlocks(string $accessor, $facade, $tokens, $absFilePath)
+    private static function addDocBlocks(string $accessor, $fqcnFacade, $tokens, $absFilePath)
     {
         $publicMethods = (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
 
@@ -55,7 +63,7 @@ class FacadeDocblocks
             $methodName = $method->getName();
 
             $magicMethods = ['__invoke', '__construct', '__destruct', '__toString', '__call', '__set', '__get'];
-            if (! method_exists($facade, $methodName) && ! $method->isStatic() && ! in_array($methodName, $magicMethods)) {
+            if (! method_exists($fqcnFacade, $methodName) && ! $method->isStatic() && ! in_array($methodName, $magicMethods)) {
                 $_methods[] = $method;
             }
         }
@@ -66,12 +74,12 @@ class FacadeDocblocks
 
         $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($_methods).'/';
 
-        $s = explode('\\', $facade);
-        $className = array_pop($s);
+        $parts = explode('\\', $fqcnFacade);
+        $className = array_pop($parts);
         $newVersion = self::injectDocblocks($className, $docblocks, $tokens);
 
         if (Filesystem::$fileSystem::file_get_contents($absFilePath) !== $newVersion) {
-            Event::dispatch('microscope.facade.docblocked', [$facade, $absFilePath]);
+            (self::$onFix)($fqcnFacade, $absFilePath);
             Filesystem::$fileSystem::file_put_contents($absFilePath, $newVersion);
         }
     }

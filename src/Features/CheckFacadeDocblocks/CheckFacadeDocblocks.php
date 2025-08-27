@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Event;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
@@ -31,13 +30,13 @@ class CheckFacadeDocblocks extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        Event::listen('microscope.facade.docblocked', function ($class) {
+        FacadeDocblocks::$onFix = function ($class) {
             $this->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
-        });
+        };
 
-        Event::listen('microscope.facade.accessor_error', function ($accessor, $absFilePath) {
+        FacadeDocblocks::$onError = function ($accessor, $absFilePath) {
             ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
-        });
+        };
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 

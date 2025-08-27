@@ -63,15 +63,13 @@ class CheckAliasesCommand extends Command
         return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
     }
 
-    private static function setFacadeAliasCheckOptions($alias): void
+    private static function setFacadeAliasCheckOptions($alias)
     {
         $alias = ltrim($alias, '=');
-        if ($alias) {
-            FacadeAliasesCheck::$alias = explode(',', strtolower($alias));
-        }
+        $alias && (FacadeAliasesCheck::$alias = explode(',', strtolower($alias)));
     }
 
-    private static function setEnforceImportsOptions(Closure $paramProvider): void
+    private static function setEnforceImportsOptions(Closure $paramProvider)
     {
         $aliases = AliasLoader::getInstance()->getAliases();
 
@@ -84,7 +82,7 @@ class CheckAliasesCommand extends Command
         EnforceImports::setOptions(false, $aliasKeys, $paramProvider, $onError, $mutator);
     }
 
-    private static function getParamProvider(): Closure
+    private static function getParamProvider()
     {
         return function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
