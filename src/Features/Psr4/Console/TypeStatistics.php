@@ -14,27 +14,17 @@ class TypeStatistics
 
     public $trait = 0;
 
-    public function increment(string $type)
+    public function increment(?string $type)
     {
-        if ($type === 'interface') {
-            $this->interface++;
-        } elseif ($type === 'class') {
-            $this->class++;
-        } elseif ($type === 'trait') {
-            $this->trait++;
-        } elseif ($type === 'enum') {
-            $this->enum++;
-        }
+        $type && $this->$type++;
     }
 
     public function iterate($callback)
     {
-        $results = [];
-        foreach (['class', 'trait', 'interface', 'enum'] as $prop) {
-            $results[] = $callback($prop, $this->$prop);
-        }
-
-        return $results;
+        return array_map(
+            fn ($typeStr) => $callback($typeStr, (int) $this->$typeStr),
+            ['class', 'trait', 'interface', 'enum']
+        );
     }
 
     /**

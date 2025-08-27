@@ -45,7 +45,15 @@ class ReportMessages
 
     private static function getComposerFileAddress($composerPath): string
     {
-        return ' <fg=blue>./'.trim($composerPath.'/', '/').'composer.json </>';
+        $composerPath = trim($composerPath, ['.', '/']);
+
+        if ($composerPath === '') {
+            $line = " ./composer.json ";
+        } else {
+            $line = " ./$composerPath/composer.json ";
+        }
+
+        return self::colorizer($line, 'blue');
     }
 
     private static function getHeaderLine(TypeStatistics $typesStats): string
@@ -56,9 +64,9 @@ class ReportMessages
         return $header.'  '.PHP_EOL.$types;
     }
 
-    private static function getFinishMsg($time): string
+    private static function getFinishMsg($time)
     {
-        return 'Finished In: <fg=blue>'.$time.'(s)</>';
+        return 'Finished In: '.self::colorizer($time.'(s)', 'blue');
     }
 
     private static function getMaxNamespaceLength($autoload): int
@@ -89,9 +97,9 @@ class ReportMessages
 
     private static function presentTypes(TypeStatistics $typesStats)
     {
-        $results = $typesStats->iterate(function ($type, $count) {
-            return " | $count <fg=blue>$type</>";
-        });
+        $results = $typesStats->iterate(
+            fn ($type, $count) => " | $count ".self::colorizer($type, 'blue')
+        );
 
         return implode('', $results).' |';
     }
@@ -123,7 +131,7 @@ class ReportMessages
     private static function noErrorFound()
     {
         return [
-            [PHP_EOL.'<fg=green>All namespaces are correct!</><fg=blue> You rock  \(^_^)/ </>', 'line'],
+            [PHP_EOL.self::colorizer('All namespaces are correct!', 'green').self::colorizer(' You rock  \(^_^)/ ', 'blue'), 'line'],
             ['', 'line'],
         ];
     }
