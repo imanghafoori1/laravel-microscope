@@ -44,7 +44,7 @@ class ForFolderPaths extends BaseIterator
     }
 
     /**
-     * @param $paths
+     * @param  $paths
      * @param  array  $checks
      * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>

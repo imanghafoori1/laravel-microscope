@@ -50,7 +50,7 @@ class ForBladeFiles implements Check
     }
 
     /**
-     * @param $paths
+     * @param  $paths
      * @return \Generator<int, string>
      */
     private static function filterPaths($paths)
@@ -64,7 +64,7 @@ class ForBladeFiles implements Check
     }
 
     /**
-     * @param array<string, array> $hints
+     * @param  array<string, array>  $hints
      * @return array<string, \Generator<int, string>>
      */
     private static function normalizeAndFilterVendorPaths(array $hints)

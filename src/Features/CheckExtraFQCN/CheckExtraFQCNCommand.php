@@ -109,9 +109,9 @@ class CheckExtraFQCNCommand extends Command
     }
 
     /**
-     * @param $autoloadStats
+     * @param  $autoloadStats
      * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
-     * @param $routeFiles
+     * @param  $routeFiles
      * @return array
      */
     private static function getMessages($autoloadStats, $foldersStats, $routeFiles)

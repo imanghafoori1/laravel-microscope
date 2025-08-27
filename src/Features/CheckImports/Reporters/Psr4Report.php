@@ -69,7 +69,7 @@ class Psr4Report
     /**
      * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
      * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @param  array<string, \Generator<int, PhpFileDescriptor>> $autoloadedFiles
+     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $autoloadedFiles
      * @return array<int, array<int, string|\Generator<int, string>>>
      */
     public static function getConsoleMessages($psr4Stats, array $classMapStats, $autoloadedFiles = [])

@@ -6,7 +6,7 @@ class Psr4ReportPrinter
 {
     /**
      * @param  array<int, array<int, string|\Generator<int, string>>>  $messages
-     * @param $output
+     * @param  $output
      * @return void
      */
     public static function printAll($messages, $output): void
