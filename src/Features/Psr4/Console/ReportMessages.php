@@ -48,7 +48,7 @@ class ReportMessages
         $composerPath = trim($composerPath, ['.', '/']);
 
         if ($composerPath === '') {
-            $line = " ./composer.json ";
+            $line = ' ./composer.json ';
         } else {
             $line = " ./$composerPath/composer.json ";
         }
