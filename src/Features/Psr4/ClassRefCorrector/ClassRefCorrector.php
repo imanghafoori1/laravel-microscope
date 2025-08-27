@@ -55,6 +55,7 @@ class ClassRefCorrector
             foreach ($path as $p) {
                 self::fixRefs($p, $changes);
             }
+
             return;
         }
 
