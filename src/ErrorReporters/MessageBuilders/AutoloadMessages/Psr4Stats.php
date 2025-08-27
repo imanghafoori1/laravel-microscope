@@ -11,8 +11,9 @@ class Psr4Stats
     use Reporting;
 
     /**
-     * @param  array<string, array<string, \Closure>>  $psr4
-     * @return \Generator
+     * @param  array<string, array<string, (callable(): int)>>  $psr4
+     * @param  int  $max
+     * @return \Generator<int, string>
      */
     #[Pure]
     public static function getLines($psr4, $max = 1)

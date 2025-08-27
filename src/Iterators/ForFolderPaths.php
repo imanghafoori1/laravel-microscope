@@ -27,7 +27,7 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
-     * @param  array<string, \Generator>  $dirsList
+     * @param  array<string, \Generator<int, string>>  $dirsList
      * @param  array|\Closure  $paramProvider
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathFilter
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
@@ -45,8 +45,8 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param $paths
-     * @param array $checks
-     * @param $paramProvider
+     * @param  array  $checks
+     * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
     private static function applyOnFiles($paths, array $checks, $paramProvider)

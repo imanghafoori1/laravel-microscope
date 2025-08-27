@@ -16,8 +16,8 @@ class Psr4Report
     public static $callback;
 
     /**
-     * @param  array|\Generator  $psr4Stats
-     * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
      * @param  \Illuminate\Console\OutputStyle  $console
      * @return void
      */
@@ -39,9 +39,10 @@ class Psr4Report
 
     /**
      * @param  string  $composerPath
-     * @param  \Generator  $psr4
-     * @param  array<string, \Generator<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @return array
+     * @param  array<string, array<string, (callable(): int)>>  $psr4
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $autoloadedFiles
+     * @return array<int, string|\Generator<int, string>>
      */
     #[Pure]
     private static function present(string $composerPath, $psr4, $classMapStats, $autoloadedFiles)
@@ -66,10 +67,10 @@ class Psr4Report
     }
 
     /**
-     * @param  $psr4Stats
-     * @param  array  $classMapStats
-     * @param  $autoloadedFiles
-     * @return array<int, array>
+     * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @param  array<string, \Generator<int, PhpFileDescriptor>> $autoloadedFiles
+     * @return array<int, array<int, string|\Generator<int, string>>>
      */
     public static function getConsoleMessages($psr4Stats, array $classMapStats, $autoloadedFiles = [])
     {

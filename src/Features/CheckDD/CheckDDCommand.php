@@ -45,13 +45,11 @@ class CheckDDCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
-        $foldersStatsData = ForFolderPaths::checkFolders(
-            [CheckDD::class], $this->getLaravelFolders(), [$onErrorCallback], $pathDTO
-        );
+        $foldersStats = ForFolderPaths::checkFolders([CheckDD::class], self::getLaravelFolders(), [$onErrorCallback], $pathDTO);
 
         $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
-        $messages = LaravelFoldersReport::formatFoldersStats($foldersStatsData);
+        $messages = LaravelFoldersReport::formatFoldersStats($foldersStats);
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         CachedFiles::writeCacheFiles();
 
@@ -66,7 +64,7 @@ class CheckDDCommand extends Command
      * @return array<string, \Generator<int, string>>
      */
     #[Pure(true)]
-    private function getLaravelFolders()
+    private static function getLaravelFolders()
     {
         return [
             'config' => LaravelPaths::configDirs(),

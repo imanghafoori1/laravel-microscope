@@ -10,7 +10,7 @@ class AutoloadFiles
     use Reporting;
 
     /**
-     * @param  \Generator  $filesList
+     * @param  \Generator<int, PhpFileDescriptor>  $filesList
      * @return string
      */
     public static function getLines($filesList)

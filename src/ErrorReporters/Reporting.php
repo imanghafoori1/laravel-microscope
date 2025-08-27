@@ -59,7 +59,7 @@ trait Reporting
     }
 
     /**
-     * @param  PhpFileDescriptor[]  $files
+     * @param  \Generator<int, PhpFileDescriptor>  $files
      * @return string[]
      */
     #[Pure]

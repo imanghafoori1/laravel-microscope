@@ -22,7 +22,7 @@ class ComposerJson
 
     /**
      * @param  string  $basePath
-     * @return string[]
+     * @return array<string, string[]>
      */
     public static function autoloadedFilesList($basePath)
     {

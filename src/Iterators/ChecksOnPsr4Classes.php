@@ -23,7 +23,7 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  CheckSingleMapping  $checker
-     * @return array<string, \Generator<string, \Generator<string, int>>>
+     * @return array<string, array<string, array<string, (callable(): int)>>>
      */
     public static function apply($checker)
     {
@@ -38,7 +38,7 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  array<string, string|string[]>  $psr4
-     * @return array<string, array<string, \Generator<int, int>>>
+     * @return array<string, array<string, (callable(): int)>>
      */
     private static function processGetStats($psr4)
     {
@@ -52,7 +52,7 @@ class ChecksOnPsr4Classes
     /**
      * @param  string  $psr4Namespace
      * @param  string[]|string  $psr4Paths
-     * @return array<string, \Generator<int, int>>
+     * @return array<string, (callable(): int)>
      */
     private static function applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths)
     {
@@ -77,7 +77,7 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @return array<string, array<string, array<string, \Generator<int, int>>>>
+     * @return array<string, array<string, array<string, (callable(): int)>>>
      */
     private static function processAll()
     {

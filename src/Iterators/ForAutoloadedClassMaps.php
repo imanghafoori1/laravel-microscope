@@ -15,7 +15,7 @@ class ForAutoloadedClassMaps extends BaseIterator
      * @param  PathFilterDTO  $pathDTO
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
-    public static function check($basePath, $checks, $paramProvider = null, PathFilterDTO $pathDTO)
+    public static function check($basePath, $checks, $paramProvider, PathFilterDTO $pathDTO)
     {
         return array_map(
             fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider),

@@ -15,6 +15,10 @@ class CheckImportReporter
         return '<options=bold;fg=yellow>Imports were checked under:</>';
     }
 
+    /**
+     * @param  \Generator<int, PhpFileDescriptor>  $routeFiles
+     * @return string
+     */
     #[Pure]
     public static function getRouteStats($routeFiles)
     {

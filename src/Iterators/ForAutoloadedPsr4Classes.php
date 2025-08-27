@@ -10,7 +10,7 @@ class ForAutoloadedPsr4Classes
      * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  array  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return array<string, \Generator<string, \Generator<string, int>>>
+     * @return array<string, array<string, array<string, (callable(): int)>>>
      */
     public static function check($checks, $params, $pathDTO)
     {

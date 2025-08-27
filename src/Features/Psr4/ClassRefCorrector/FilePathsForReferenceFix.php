@@ -24,7 +24,7 @@ class FilePathsForReferenceFix
 
         $paths = [];
         $paths['psr4'] = self::getPsr4();
-        $paths['autoload_files'] = ComposerJson::autoloadedFilesList(base_path());
+        $paths['autoload_files'] = self::autoloadedFiles();
         $paths['class_map'] = self::getClassMapList();
         $paths['routes'] = RoutePaths::get();
         $paths['blades'] = LaravelPaths::allBladeFiles();
@@ -59,6 +59,18 @@ class FilePathsForReferenceFix
                 foreach ($paths as $path) {
                     yield $path;
                 }
+            }
+        }
+    }
+
+    /**
+     * @return \Generator<int, string>
+     */
+    private static function autoloadedFiles()
+    {
+        foreach (ComposerJson::autoloadedFilesList(base_path()) as $files) {
+            foreach ($files as $file) {
+                yield $file;
             }
         }
     }
