@@ -191,10 +191,10 @@ class CheckImportsCommand extends Command
     }
 
     /**
-     * @param  $autoloadStats
-     * @param  $bladeStats
+     * @param  array<int, array<int, string|\Generator<int, string>>>  $autoloadStats
+     * @param  array<int, \Generator<string, int>>  $bladeStats
      * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
-     * @param  $routeFiles
+     * @param  \Generator<int, PhpFileDescriptor>  $routeFiles
      * @return array
      */
     private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)

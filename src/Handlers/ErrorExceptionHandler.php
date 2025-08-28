@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Handlers;
 
 use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ErrorExceptionHandler
 {
@@ -35,13 +36,10 @@ class ErrorExceptionHandler
 
     private static function startsWith($haystack, $needles)
     {
-        foreach ($needles as $needle) {
-            if (substr($haystack, 0, strlen($needle)) === $needle) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any(
+            $needles,
+            fn ($needle) => substr($haystack, 0, strlen($needle)) === $needle
+        );
     }
 
     private static function endsWith($haystack, $needle)

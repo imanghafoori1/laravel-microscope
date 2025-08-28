@@ -15,6 +15,10 @@ class ComposerJson
         return (self::$composer)();
     }
 
+    /**
+     * @param $purgeAutoload
+     * @return array<string, array<string, array>>
+     */
     public static function readPsr4($purgeAutoload = false)
     {
         return self::make()->readAutoload($purgeAutoload);
@@ -61,9 +65,9 @@ class ComposerJson
     }
 
     /**
-     * @param  $compPath
-     * @param  $basePath
-     * @param  $classmapPath
+     * @param  string  $compPath
+     * @param  string  $basePath
+     * @param  string  $classmapPath
      * @return string[]
      */
     private static function getClasses($compPath, $basePath, $classmapPath)
@@ -77,8 +81,8 @@ class ComposerJson
 
     /**
      * @param  string[]  $classes
-     * @param  $basePath
-     * @param  $pathDTO
+     * @param  string  $basePath
+     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return string[]
      */
     private static function filterClasses(array $classes, $basePath, $pathDTO)

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
@@ -17,9 +18,9 @@ class ForAutoloadedClassMaps extends BaseIterator
      */
     public static function check($basePath, $checks, $paramProvider, PathFilterDTO $pathDTO)
     {
-        return array_map(
-            fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider),
-            ComposerJson::getClassMaps($basePath, $pathDTO)
+        return Loop::map(
+            ComposerJson::getClassMaps($basePath, $pathDTO),
+            fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider)
         );
     }
 
@@ -31,12 +32,9 @@ class ForAutoloadedClassMaps extends BaseIterator
      */
     private static function getDirStats($classMap, $checks, $paramProvider)
     {
-        $stats = [];
-
-        foreach ($classMap as $dir => $absFilePaths) {
-            $stats[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
-        }
-
-        return $stats;
+        return Loop::map(
+            $classMap,
+            fn ($absFilePaths) => self::applyChecks($absFilePaths, $checks, $paramProvider)
+        );
     }
 }

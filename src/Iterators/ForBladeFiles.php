@@ -7,22 +7,22 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ForBladeFiles implements Check
 {
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checkers
-     * @param  $params
+     * @param  array|\Closure  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<int, \Generator<string, int>>
      */
     public static function check($checkers, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
+        $mapper = fn ($paths) => BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $params, $pathDTO);
 
-        foreach (self::getViewsPaths() as $paths) {
-            yield from BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $params, $pathDTO);
-        }
+        return Loop::map(self::getViewsPaths(), $mapper);
     }
 
     /**
@@ -50,7 +50,7 @@ class ForBladeFiles implements Check
     }
 
     /**
-     * @param  $paths
+     * @param  string[]  $paths
      * @return \Generator<int, string>
      */
     private static function filterPaths($paths)
@@ -64,20 +64,11 @@ class ForBladeFiles implements Check
     }
 
     /**
-     * @param  array<string, array>  $hints
+     * @param  array<string, string[]>  $pathsList
      * @return array<string, \Generator<int, string>>
      */
-    private static function normalizeAndFilterVendorPaths(array $hints)
+    private static function normalizeAndFilterVendorPaths(array $pathsList)
     {
-        $results = [];
-        foreach ($hints as $key => $paths) {
-            $paths = self::filterPaths($paths);
-            if (empty($paths)) {
-                continue;
-            }
-            $results[$key] = $paths;
-        }
-
-        return $results;
+        return Loop::map($pathsList, fn ($paths) => self::filterPaths($paths));
     }
 }

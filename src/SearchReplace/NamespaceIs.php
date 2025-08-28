@@ -8,6 +8,9 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class NamespaceIs
 {
+    /**
+     * @return bool
+     */
     public static function check($placeholderVal, $parameter, $tokens)
     {
         if ($placeholderVal[1] === 'self') {

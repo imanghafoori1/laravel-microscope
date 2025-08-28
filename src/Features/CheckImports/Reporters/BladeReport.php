@@ -10,7 +10,7 @@ class BladeReport
     use Reporting;
 
     /**
-     * @param  \Generator  $stats
+     * @param  array<string, \Generator<string, int>>  $stats
      * @return string
      */
     #[Pure]
@@ -18,13 +18,12 @@ class BladeReport
     {
         $c = $total = 0;
         $output = '';
-        foreach ($stats as $path => $count) {
-            if (! $count) {
-                continue;
+        foreach ($stats as $stat) {
+            foreach ($stat as $path => $count) {
+                $c++;
+                $total += $count;
+                $output .= self::addLine($path, $count);
             }
-            $c++;
-            $total += $count;
-            $output .= self::addLine($path, $count);
         }
         if (! $total) {
             return '';

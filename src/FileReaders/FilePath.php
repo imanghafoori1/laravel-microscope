@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\Pure;
 
@@ -54,6 +55,11 @@ class FilePath
         return [$fileName, implode('/', $segments)];
     }
 
+    /**
+     * @param $filePath
+     * @param \Imanghafoori\LaravelMicroscope\PathFilterDTO $pathDTO
+     * @return bool
+     */
     #[Pure]
     public static function contains($filePath, PathFilterDTO $pathDTO)
     {
@@ -99,12 +105,9 @@ class FilePath
 
     private static function has($needles, $haystack): bool
     {
-        foreach (explode(',', $needles) as $needle) {
-            if (strpos($haystack, $needle) !== false) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any(
+            explode(',', $needles),
+            fn ($needle) => strpos($haystack, $needle) !== false
+        );
     }
 }

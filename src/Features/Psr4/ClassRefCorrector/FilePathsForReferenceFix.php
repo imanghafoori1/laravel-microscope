@@ -10,6 +10,9 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class FilePathsForReferenceFix
 {
+    /**
+     * @var  array<string, \Generator<int, string>>
+     */
     public static $pathsForReferenceFix = [];
 
     /**
@@ -22,14 +25,13 @@ class FilePathsForReferenceFix
             return self::$pathsForReferenceFix;
         }
 
-        $paths = [];
-        $paths['psr4'] = self::getPsr4();
-        $paths['autoload_files'] = self::autoloadedFiles();
-        $paths['class_map'] = self::getClassMapList();
-        $paths['routes'] = RoutePaths::get();
-        $paths['blades'] = LaravelPaths::allBladeFiles();
-
-        return $paths;
+        return [
+            'psr4' => self::getPsr4(),
+            'autoload_files' => self::autoloadedFiles(),
+            'class_map' => self::getClassMapList(),
+            'routes' => RoutePaths::get(),
+            'blades' => LaravelPaths::allBladeFiles(),
+        ];
     }
 
     /**

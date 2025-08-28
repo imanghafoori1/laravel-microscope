@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
@@ -62,12 +63,6 @@ class CheckClassAtMethod implements Check
     #[Pure]
     private static function contains($haystack, $needles)
     {
-        foreach ($needles as $needle) {
-            if (mb_strpos($haystack, $needle) !== false) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any($needles, fn ($needle) => mb_strpos($haystack, $needle) !== false);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+
 class ClassRefCorrector
 {
     private static $afterFix = [AfterRefFix::class, 'getCallback'];
@@ -90,12 +92,6 @@ class ClassRefCorrector
 
     private static function strContains($haystack, $needles)
     {
-        foreach ($needles as $needle) {
-            if (mb_strpos($haystack, $needle) !== false) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any($needles, fn ($needle) => mb_strpos($haystack, $needle) !== false);
     }
 }

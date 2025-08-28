@@ -64,7 +64,7 @@ class CheckRouteCalls implements Check
     public static function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
     {
         /**
-         * @var $p  ErrorPrinter
+         * @var  $p  ErrorPrinter
          */
         $p = ErrorPrinter::singleton();
         $p->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);

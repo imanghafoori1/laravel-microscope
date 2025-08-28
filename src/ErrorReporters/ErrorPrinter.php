@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Symfony\Component\Console\Terminal;
 
 class ErrorPrinter
@@ -200,13 +201,10 @@ class ErrorPrinter
             return false;
         }
 
-        foreach ($ignorePatterns as $ignorePattern) {
-            if (self::is(base_path($ignorePattern), $path)) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any(
+            $ignorePatterns,
+            fn ($pattern) => self::is(base_path($pattern), $path)
+        );
     }
 
     private static function is($pattern, $value)

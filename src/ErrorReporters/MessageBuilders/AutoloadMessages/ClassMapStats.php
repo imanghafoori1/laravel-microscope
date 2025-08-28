@@ -11,7 +11,7 @@ class ClassMapStats
     use Reporting;
 
     /**
-     * @param  \Generator<string, \Generator<int, PhpFileDescriptor>>  $stat
+     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $stat
      * @param  \Closure  $callback
      * @return string|void
      */

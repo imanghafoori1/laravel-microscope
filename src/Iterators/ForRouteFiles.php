@@ -11,7 +11,7 @@ class ForRouteFiles
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array|\Closure  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return \Generator
+     * @return \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>
      */
     public static function check($checks, $params, $pathDTO)
     {

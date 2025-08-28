@@ -14,15 +14,13 @@ trait FiltersFiles
      */
     private static function filterFiles($files, $pathDTO)
     {
-        return self::filterItems($files, function ($file) use ($pathDTO) {
-            return FilePath::contains($file->getPathname(), $pathDTO);
-        });
+        return self::filterItems($files, fn ($file) => FilePath::contains($file->getPathname(), $pathDTO));
     }
 
     /**
      * @param  \Generator<int, string>|string[]  $items
      * @param  \Closure  $condition
-     * @return mixed
+     * @return \Generator<int, mixed>
      */
     private static function filterItems($items, Closure $condition)
     {

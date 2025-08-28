@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\Handlers\ErrorExceptionHandler;
 class ForAutoloadedPsr4Classes
 {
     /**
-     * @param  array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>  $checks
      * @param  \Closure|array  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, array<string, array<string, (callable(): int)>>>

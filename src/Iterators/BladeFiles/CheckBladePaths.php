@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -18,7 +19,7 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, string>  $dirs
-     * @param  array  $checkers
+     * @param  array<int, class-string>  $checkers
      * @param  PathFilterDTO  $pathDTO
      * @param  array|callable  $params
      * @return \Generator<string, int>
@@ -31,14 +32,15 @@ class CheckBladePaths
             $finder = self::findFiles($dirPath, $includeFile);
             $filteredFiles = self::filterFiles($finder, $pathDTO);
             $count = self::applyChecks($filteredFiles, $params, $checkers);
-
-            yield $dirPath => $count;
+            if ($count > 0) {
+                yield $dirPath => $count;
+            }
         }
     }
 
     /**
      * @param  string  $path
-     * @param  null  $fileName
+     * @param  string|null  $fileName
      * @return \Symfony\Component\Finder\Finder
      */
     public static function findFiles($path, $fileName = null): Finder
@@ -74,9 +76,9 @@ class CheckBladePaths
     }
 
     /**
-     * @param  \Iterator  $files
+     * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
      * @param  callable|array  $paramsProvider
-     * @param  $checkers
+     * @param  array<int, class-string> $checkers
      * @return int
      */
     private static function applyChecks($files, $paramsProvider, $checkers): int
@@ -98,9 +100,7 @@ class CheckBladePaths
 
             $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($file) : $paramsProvider;
 
-            foreach ($checkers as $check) {
-                $check::check($file, $params1);
-            }
+            Loop::map($checkers, fn ($check) => $check::check($file, $params1));
         }
 
         return $count;
@@ -108,12 +108,10 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, string>  $paths
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     private static function filterUnwantedBlades($paths)
     {
-        return self::filterItems($paths, function ($path) {
-            return ! self::shouldSkip($path);
-        });
+        return self::filterItems($paths, fn ($path) => ! self::shouldSkip($path));
     }
 }

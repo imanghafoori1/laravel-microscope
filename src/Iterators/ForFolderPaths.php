@@ -4,13 +4,14 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ForFolderPaths extends BaseIterator
 {
     /**
-     * @param  \Generator|array  $paths
+     * @param  array<string, string[]>  $paths
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array|\Closure  $paramProvider
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
@@ -19,7 +20,7 @@ class ForFolderPaths extends BaseIterator
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
         if ($pathDTO) {
-            $paths = array_map(fn ($files) => FilePath::filter($files, $pathDTO), $paths);
+            $paths = Loop::map($paths, fn ($files) => FilePath::filter($files, $pathDTO));
         }
 
         return self::applyOnFiles($paths, $checks, $paramProvider);
@@ -45,19 +46,15 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param  $paths
-     * @param  array  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checkers
      * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
-    private static function applyOnFiles($paths, array $checks, $paramProvider)
+    private static function applyOnFiles($paths, array $checkers, $paramProvider)
     {
-        $files = [];
-        foreach ($paths as $dir => $absFilePaths) {
-            is_string($absFilePaths) && ($absFilePaths = [$absFilePaths]);
-
-            $files[$dir] = self::applyChecks($absFilePaths, $checks, $paramProvider);
-        }
-
-        return $files;
+        return Loop::map(
+            $paths,
+            fn ($absPaths) => self::applyChecks($absPaths, $checkers, $paramProvider)
+        );
     }
 }

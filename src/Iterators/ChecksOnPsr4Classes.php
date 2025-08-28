@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ChecksOnPsr4Classes
 {
@@ -42,11 +43,9 @@ class ChecksOnPsr4Classes
      */
     private static function processGetStats($psr4)
     {
-        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
-            $psr4[$psr4Namespace] = self::applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths);
-        }
+        $cb = fn ($paths, $namespace) => self::applyCheckOnFiles($namespace, $paths);
 
-        return $psr4;
+        return Loop::map($psr4, $cb);
     }
 
     /**
@@ -54,26 +53,22 @@ class ChecksOnPsr4Classes
      * @param  string[]|string  $psr4Paths
      * @return array<string, (callable(): int)>
      */
-    private static function applyCheckOnFilesInPaths($psr4Namespace, $psr4Paths)
+    private static function applyCheckOnFiles($psr4Namespace, $psr4Paths)
     {
-        $pathStats = [];
+        $statsGenerator = [];
         foreach ((array) $psr4Paths as $psr4Path) {
-            $checker = self::$checker;
-            $filesCount = function () use ($psr4Namespace, $psr4Path, $checker) {
-                return $checker->applyChecksInPath($psr4Namespace, $psr4Path);
-            };
-
-            $pathStats[$psr4Path] = $filesCount;
+            $statsGenerator[$psr4Path] = self::getCounter($psr4Namespace, $psr4Path);
         }
 
-        return $pathStats;
+        return $statsGenerator;
     }
 
     private static function handleExceptions()
     {
-        foreach ((self::$checker)->exceptions as $e) {
-            self::$errorExceptionHandler::handle($e);
-        }
+        Loop::map(
+            (self::$checker)->exceptions,
+            fn ($e) => self::$errorExceptionHandler::handle($e)
+        );
     }
 
     /**
@@ -81,11 +76,16 @@ class ChecksOnPsr4Classes
      */
     private static function processAll()
     {
-        $stats = [];
-        foreach (ComposerJson::readPsr4() as $composerPath => $psr4) {
-            $stats[$composerPath] = self::processGetStats($psr4);
-        }
+        return Loop::map(ComposerJson::readPsr4(), fn ($psr4) => self::processGetStats($psr4));
+    }
 
-        return $stats;
+    /**
+     * @param  string  $psr4Namespace
+     * @param  string  $psr4Path
+     * @return \Closure(): int
+     */
+    private static function getCounter($psr4Namespace, $psr4Path)
+    {
+        return fn () => (self::$checker)->applyChecksInPath($psr4Namespace, $psr4Path);
     }
 }

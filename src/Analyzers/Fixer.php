@@ -2,9 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
+use Closure;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\ClassListProvider;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
@@ -25,24 +27,18 @@ class Fixer
 
     private static function compare($class)
     {
-        foreach (ComposerJson::readPsr4() as $autoload) {
-            if (self::startsWith($class, array_keys($autoload))) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any(
+            ComposerJson::readPsr4(),
+            fn ($autoload) => self::startsWith($class, array_keys($autoload))
+        );
     }
 
-    private static function startsWith($haystack, $needles)
+    private static function startsWith($haystack, $needle)
     {
-        foreach ($needles as $needle) {
-            if (0 === strncmp($haystack, $needle, strlen($needle))) {
-                return true;
-            }
-        }
-
-        return false;
+        return Loop::any(
+            $needle,
+            fn ($needle) => strncmp($haystack, $needle, strlen($needle)) === 0
+        );
     }
 
     private static function guessCorrect($classBaseName)
