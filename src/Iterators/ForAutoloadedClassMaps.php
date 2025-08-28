@@ -24,7 +24,7 @@ class ForAutoloadedClassMaps extends BaseIterator
     }
 
     /**
-     * @param  \Generator<string, string>|string[]  $classMap
+     * @param  \Generator<string, string[]>  $classMap
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>

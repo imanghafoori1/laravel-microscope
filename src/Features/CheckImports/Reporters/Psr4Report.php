@@ -72,7 +72,7 @@ class Psr4Report
      * @param  array<string, \Generator<int, PhpFileDescriptor>>  $autoloadedFiles
      * @return array<int, array<int, string|\Generator<int, string>>>
      */
-    public static function getConsoleMessages($psr4Stats, array $classMapStats, $autoloadedFiles = [])
+    public static function getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles = [])
     {
         $lines = [];
         foreach ($psr4Stats as $composerPath => $psr4) {

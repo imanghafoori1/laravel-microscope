@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 abstract class BaseIterator
 {
     /**
-     * @param  $absFilePaths
+     * @param  \Generator<int, string>|string[]  $absFilePaths
      * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
      * @param  array|\Closure  $params
      * @return \Generator<int, PhpFileDescriptor>
