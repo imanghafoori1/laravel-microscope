@@ -74,28 +74,21 @@ class CheckSingleMapping
 
         $file = PhpFileDescriptor::make($absFilePath);
 
-        $processedParams = $this->getParams($file);
+        $params = $this->params;
 
         foreach ($this->checks as $check) {
             try {
                 /**
                  * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>
                  */
-                $newTokens = $check::check($file, $processedParams, $this->path, $this->namespace);
+                $newTokens = $check::check($file, $params, $this->path, $this->namespace);
                 if ($newTokens) {
                     $file->setTokens($newTokens);
-                    $processedParams = $this->getParams($file);
+                    $params = $this->params;
                 }
             } catch (Throwable $exception) {
                 $this->exceptions[] = $exception;
             }
         }
-    }
-
-    private function getParams(PhpFileDescriptor $file)
-    {
-        $params = $this->params;
-
-        return (! is_array($params) && is_callable($params)) ? $params($file, $this->path, $this->namespace) : $params;
     }
 }

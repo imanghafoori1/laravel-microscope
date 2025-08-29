@@ -96,9 +96,7 @@ class CheckBladePaths
                 $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
-            $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($file) : $paramsProvider;
-
-            Loop::map($checks, fn ($check) => $check::check($file, $params1));
+            Loop::map($checks, fn ($check) => $check::check($file, $paramsProvider));
         }
 
         return $count;

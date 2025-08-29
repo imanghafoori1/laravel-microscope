@@ -17,14 +17,9 @@ abstract class BaseIterator
         foreach ($absFilePaths as $absFilePath) {
             $fileDescriptor = PhpFileDescriptor::make($absFilePath);
             foreach ($checks as $check) {
-                $check::check($fileDescriptor, self::processParams($fileDescriptor, $params));
+                $check::check($fileDescriptor, $params);
             }
             yield $fileDescriptor;
         }
-    }
-
-    private static function processParams(PhpFileDescriptor $file, $params)
-    {
-        return (! is_array($params) && is_callable($params)) ? $params($file) : $params;
     }
 }
