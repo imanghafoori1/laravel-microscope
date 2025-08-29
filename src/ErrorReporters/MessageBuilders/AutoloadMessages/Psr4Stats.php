@@ -11,16 +11,16 @@ class Psr4Stats
     use Reporting;
 
     /**
-     * @param  array<string, array<string, (callable(): int)>>  $psr4
+     * @param  array<string, array<string, (callable(): int)>>  $psr4Stats
      * @param  int  $max
      * @return \Generator<int, string>
      */
     #[Pure]
-    public static function getLines($psr4, $max = 1)
+    public static function getLines($psr4Stats, $max = 1)
     {
         $lines = [];
 
-        foreach ($psr4 as $psr4Namespace => $psr4Paths) {
+        foreach ($psr4Stats as $psr4Namespace => $psr4Paths) {
             Psr4Report::$callback && (Psr4Report::$callback)();
             $lines[0] = PHP_EOL.self::getPsr4Head();
             $lines[1] = self::getPsr4($max, $psr4Namespace);

@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
@@ -39,27 +40,28 @@ class Psr4Report
 
     /**
      * @param  string  $composerPath
-     * @param  array<string, array<string, (callable(): int)>>  $psr4
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $autoloadedFiles
+     * @param  array<string, array<string, (callable(): int)>>  $psr4Stat
+     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStat
+     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
      * @return array<int, string|\Generator<int, string>>
      */
     #[Pure]
-    private static function present(string $composerPath, $psr4, $classMapStats, $autoloadedFiles)
+    private static function present($composerPath, $psr4Stat, $classMapStat, $filesStat)
     {
         $max = max(array_map('strlen', array_keys(ComposerJson::readPsr4()[$composerPath])));
 
         $lines = [];
         $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
         $lines[] = PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
-        $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4, $max);
+        $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4Stat, $max);
 
-        if (isset($classMapStats[$composerPath])) {
-            $line = AutoloadMessages\ClassMapStats::getLines($classMapStats[$composerPath], self::$callback);
+        if ($classMapStat) {
+            $line = AutoloadMessages\ClassMapStats::getLines($classMapStat, self::$callback);
             $line && ($lines[] = PHP_EOL.$line);
         }
-        if (isset($autoloadedFiles[$composerPath])) {
-            $line = AutoloadMessages\AutoloadFiles::getLines($autoloadedFiles[$composerPath]);
+
+        if ($filesStat) {
+            $line = AutoloadMessages\AutoloadFiles::getLines($filesStat);
             $line && ($lines[] = PHP_EOL.$line);
         }
 
@@ -69,16 +71,15 @@ class Psr4Report
     /**
      * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
      * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $autoloadedFiles
+     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
      * @return array<int, array<int, string|\Generator<int, string>>>
      */
-    public static function getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles = [])
+    public static function getConsoleMessages($psr4Stats, $classMapStats, $filesStat = [])
     {
-        $lines = [];
-        foreach ($psr4Stats as $composerPath => $psr4) {
-            $lines[] = self::present($composerPath, $psr4, $classMapStats, $autoloadedFiles);
-        }
+        $cb = fn ($psr4Stat, $key) => self::present(
+            $key, $psr4Stat, $classMapStats[$key] ?? null, $filesStat[$key] ?? null
+        );
 
-        return $lines;
+        return Loop::map($psr4Stats, $cb);
     }
 }

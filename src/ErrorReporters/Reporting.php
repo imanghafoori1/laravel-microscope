@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
@@ -65,11 +66,6 @@ trait Reporting
     #[Pure]
     private static function formatFiles($files)
     {
-        $lines = [];
-        foreach ($files as $file) {
-            $lines[] = self::formatLine($file);
-        }
-
-        return $lines;
+        return Loop::map($files, fn ($file) => self::formatLine($file));
     }
 }

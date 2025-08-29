@@ -40,8 +40,7 @@ class CheckEarlyReturns extends Command
         }
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        [$psr4Stats, $classMapStats, $fileStats] = self::applyCheckEarly($pathDTO, $this->option('nofix'));
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $fileStats);
+        $lines = self::applyCheckEarly($pathDTO, $this->option('nofix'));
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
@@ -60,7 +59,7 @@ class CheckEarlyReturns extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
         $filesStats = ForAutoloadedFiles::check(base_path(), $check, $params, $pathDTO);
 
-        return [$psr4stats, $classMapStats, $filesStats];
+        return Psr4Report::getConsoleMessages($psr4stats, $classMapStats, $filesStats);
     }
 
     private function startWarning()
