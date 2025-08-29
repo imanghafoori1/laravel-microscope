@@ -33,7 +33,7 @@ class ForFolderPaths extends BaseIterator
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathFilter
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
      */
-    public static function checkFolders($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
+    public static function check($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
     {
         $lists = [];
         foreach ($dirsList as $listName => $dirs) {

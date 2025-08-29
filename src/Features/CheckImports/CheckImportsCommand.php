@@ -103,7 +103,7 @@ class CheckImportsCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($this->checks, $useStatementParser, $pathDTO);
-        $foldersStats = ForFolderPaths::checkFolders($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
@@ -129,9 +129,7 @@ class CheckImportsCommand extends Command
 
         $errorPrinter->printTime();
 
-        if (Thanks::shouldShow()) {
-            self::printThanks($this);
-        }
+        Thanks::shouldShow() && self::printThanks($this);
 
         if ($cache = CheckClassReferencesAreValid::$cache) {
             self::writeCacheContent($cache);

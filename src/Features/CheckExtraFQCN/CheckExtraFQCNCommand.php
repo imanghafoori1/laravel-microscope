@@ -57,7 +57,7 @@ class CheckExtraFQCNCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
-        $foldersStats = ForFolderPaths::checkFolders($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
