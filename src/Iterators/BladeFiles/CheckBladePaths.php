@@ -19,19 +19,19 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, string>  $dirs
-     * @param  array<int, class-string>  $checkers
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  PathFilterDTO  $pathDTO
      * @param  array|callable  $params
      * @return \Generator<string, int>
      */
-    public static function checkPaths($dirs, $checkers, $params, $pathDTO)
+    public static function checkPaths($dirs, $checks, $params, $pathDTO)
     {
         $includeFile = $pathDTO->includeFile;
 
         foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
             $finder = self::findFiles($dirPath, $includeFile);
             $filteredFiles = self::filterFiles($finder, $pathDTO);
-            $count = self::applyChecks($filteredFiles, $params, $checkers);
+            $count = self::applyChecks($filteredFiles, $params, $checks);
             if ($count > 0) {
                 yield $dirPath => $count;
             }
@@ -78,10 +78,10 @@ class CheckBladePaths
     /**
      * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
      * @param  callable|array  $paramsProvider
-     * @param  array<int, class-string> $checkers
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>> $checks
      * @return int
      */
-    private static function applyChecks($files, $paramsProvider, $checkers): int
+    private static function applyChecks($files, $paramsProvider, $checks): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -93,14 +93,12 @@ class CheckBladePaths
 
             $file = PhpFileDescriptor::make($absFilePath);
             if (self::$readOnly) {
-                $file->setTokenizer(function ($absPath) {
-                    return ViewsData::getBladeTokens($absPath);
-                });
+                $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
             $params1 = (! is_array($paramsProvider) && is_callable($paramsProvider)) ? $paramsProvider($file) : $paramsProvider;
 
-            Loop::map($checkers, fn ($check) => $check::check($file, $params1));
+            Loop::map($checks, fn ($check) => $check::check($file, $params1));
         }
 
         return $count;

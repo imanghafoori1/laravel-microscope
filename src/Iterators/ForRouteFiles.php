@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 class ForRouteFiles
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array|\Closure  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>

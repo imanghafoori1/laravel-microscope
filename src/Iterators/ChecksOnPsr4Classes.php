@@ -20,15 +20,15 @@ class ChecksOnPsr4Classes
     /**
      * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping
      */
-    private static $checker;
+    private static $check;
 
     /**
-     * @param  CheckSingleMapping  $checker
+     * @param  CheckSingleMapping  $check
      * @return array<string, array<string, array<string, (callable(): int)>>>
      */
-    public static function apply($checker)
+    public static function apply($check)
     {
-        self::$checker = $checker;
+        self::$check = $check;
 
         $stats = self::processAll();
 
@@ -66,7 +66,7 @@ class ChecksOnPsr4Classes
     private static function handleExceptions()
     {
         Loop::map(
-            (self::$checker)->exceptions,
+            (self::$check)->exceptions,
             fn ($e) => self::$errorExceptionHandler::handle($e)
         );
     }
@@ -86,6 +86,6 @@ class ChecksOnPsr4Classes
      */
     private static function getCounter($psr4Namespace, $psr4Path)
     {
-        return fn () => (self::$checker)->applyChecksInPath($psr4Namespace, $psr4Path);
+        return fn () => (self::$check)->applyChecksInPath($psr4Namespace, $psr4Path);
     }
 }

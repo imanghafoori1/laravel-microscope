@@ -16,7 +16,7 @@ class CheckSingleMapping
     public $params;
 
     /**
-     * @var array<class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>
+     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     public $checks;
 
@@ -79,7 +79,7 @@ class CheckSingleMapping
         foreach ($this->checks as $check) {
             try {
                 /**
-                 * @var $check \Imanghafoori\LaravelMicroscope\Iterators\Check
+                 * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>
                  */
                 $newTokens = $check::check($file, $processedParams, $this->path, $this->namespace);
                 if ($newTokens) {

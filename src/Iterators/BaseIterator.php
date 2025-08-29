@@ -8,7 +8,7 @@ abstract class BaseIterator
 {
     /**
      * @param  \Generator<int, string>|string[]  $absFilePaths
-     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array|\Closure  $params
      * @return \Generator<int, PhpFileDescriptor>
      */

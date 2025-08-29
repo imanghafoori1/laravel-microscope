@@ -12,15 +12,15 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 class ForBladeFiles implements Check
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checkers
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array|\Closure  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<int, \Generator<string, int>>
      */
-    public static function check($checkers, $params = [], $pathDTO = null)
+    public static function check($checks, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
-        $mapper = fn ($paths) => BladeFiles\CheckBladePaths::checkPaths($paths, $checkers, $params, $pathDTO);
+        $mapper = fn ($paths) => BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO);
 
         return Loop::map(self::getViewsPaths(), $mapper);
     }

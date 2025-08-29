@@ -51,7 +51,7 @@ class CheckImportsCommand extends Command
     protected $customMsg = '';
 
     /**
-     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Iterators\Check>>
+     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     private $checks = [
         1 => CheckClassAtMethod::class,

@@ -11,7 +11,7 @@ class ForAutoloadedClassMaps extends BaseIterator
 {
     /**
      * @param  string  $basePath
-     * @param  array<int, class-string>  $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  \Closure|null  $paramProvider
      * @param  PathFilterDTO  $pathDTO
      * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
@@ -26,7 +26,7 @@ class ForAutoloadedClassMaps extends BaseIterator
 
     /**
      * @param  \Generator<string, string[]>  $classMap
-     * @param  \Imanghafoori\LaravelMicroscope\Check[]  $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array|\Closure  $paramProvider
      * @return array<string, \Generator<int, PhpFileDescriptor>>
      */
