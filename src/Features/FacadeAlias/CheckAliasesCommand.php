@@ -49,10 +49,11 @@ class CheckAliasesCommand extends Command
         $paramProvider = self::getParamProvider();
         self::setEnforceImportsOptions($paramProvider);
         self::setFacadeAliasCheckOptions($this->option('alias'));
+        FacadeAliasesCheck::$importsProvider = $paramProvider;
 
         $check = [EnforceImports::class, FacadeAliasesCheck::class];
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, $paramProvider, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $paramProvider, $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 

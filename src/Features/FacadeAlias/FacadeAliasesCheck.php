@@ -21,7 +21,9 @@ class FacadeAliasesCheck implements Check
      */
     public static $command;
 
-    public static function check(PhpFileDescriptor $file, $imports)
+    public static $importsProvider;
+
+    public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('check_facade_aliad_command', $file)) {
             return;
@@ -32,6 +34,7 @@ class FacadeAliasesCheck implements Check
         $aliases = AliasLoader::getInstance()->getAliases();
         self::$handler::$command = self::$command;
 
+        $imports = (self::$importsProvider)($file);
         $hasError = false;
         foreach ($imports as $import) {
             foreach ($import as $base => $usageInfo) {
