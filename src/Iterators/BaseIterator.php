@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 abstract class BaseIterator
@@ -16,9 +17,7 @@ abstract class BaseIterator
     {
         foreach ($absFilePaths as $absFilePath) {
             $fileDescriptor = PhpFileDescriptor::make($absFilePath);
-            foreach ($checks as $check) {
-                $check::check($fileDescriptor, $params);
-            }
+            Loop::over($checks, fn ($check) => $check::check($fileDescriptor, $params));
             yield $fileDescriptor;
         }
     }
