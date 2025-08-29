@@ -15,6 +15,7 @@ use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
@@ -145,9 +146,7 @@ class CheckImportsCommand extends Command
     private static function printThanks($command)
     {
         $command->line(PHP_EOL);
-        foreach (Thanks::messages() as $msg) {
-            $command->line($msg);
-        }
+        Loop::over(Thanks::messages(), fn ($msg) => $command->line($msg));
     }
 
     #[Pure]

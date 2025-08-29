@@ -4,6 +4,13 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 class Loop
 {
+    public static function over($iterable, callable $callback)
+    {
+        foreach ($iterable as $key => $value) {
+            $callback($value, $key);
+        }
+    }
+
     public static function map($iterable, callable $callback)
     {
         $result = [];
