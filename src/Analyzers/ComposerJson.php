@@ -16,7 +16,7 @@ class ComposerJson
     }
 
     /**
-     * @param $purgeAutoload
+     * @param  $purgeAutoload
      * @return array<string, array<string, array>>
      */
     public static function readPsr4($purgeAutoload = false)

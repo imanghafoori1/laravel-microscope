@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
-use Closure;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\ClassListProvider;
