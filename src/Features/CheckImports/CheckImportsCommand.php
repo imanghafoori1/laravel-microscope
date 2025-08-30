@@ -96,6 +96,7 @@ class CheckImportsCommand extends Command
 
         $useStatementParser = [self::useStatementParser()];
 
+        FacadeAliasesCheck::$importsProvider = self::useStatementParser();
         $checks = $this->checks;
         unset($checks[1]);
 

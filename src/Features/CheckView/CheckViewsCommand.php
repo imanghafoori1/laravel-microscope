@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
@@ -39,13 +40,14 @@ class CheckViewsCommand extends Command
 
         $psr4Stats = ForAutoloadedPsr4Classes::check([CheckView::class], [], $pathDTO);
         $routeFiles = ForRouteFiles::check([CheckView::class], [], $pathDTO);
+        $bladeStats = ForBladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 
-        $this->checkBladeFiles($pathDTO);
-
         $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
+
+        $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
 
         $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats(
@@ -55,11 +57,6 @@ class CheckViewsCommand extends Command
         CachedFiles::writeCacheFiles();
 
         return $errorPrinter->hasErrors() ? 1 : 0;
-    }
-
-    private function checkBladeFiles($pathDTO)
-    {
-        iterator_to_array(ForBladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO));
     }
 
     private function stats($checkedCallsCount, $skippedCallsCount): string
