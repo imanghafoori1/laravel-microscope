@@ -17,9 +17,7 @@ abstract class BaseIterator
     {
         foreach ($absFilePaths as $absFilePath) {
             $fileDescriptor = PhpFileDescriptor::make($absFilePath);
-            Loop::over($checks, function ($check) use ($fileDescriptor, $params) {
-                return $check::check($fileDescriptor, $params);
-            });
+            Loop::over($checks, fn ($check) => $check::check($fileDescriptor, $params));
             yield $fileDescriptor;
         }
     }

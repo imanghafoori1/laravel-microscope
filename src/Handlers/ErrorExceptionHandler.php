@@ -38,9 +38,7 @@ class ErrorExceptionHandler
     {
         return Loop::any(
             $needles,
-            function ($needle) use ($haystack) {
-                return substr($haystack, 0, strlen($needle)) === $needle;
-            }
+            fn ($needle) => substr($haystack, 0, strlen($needle)) === $needle
         );
     }
 

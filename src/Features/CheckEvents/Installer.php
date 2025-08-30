@@ -12,9 +12,7 @@ class Installer
         app()->booting(function () {
             app()->singleton('events', function ($app) {
                 return (new SpyDispatcher($app))->setQueueResolver(
-                    function () use ($app) {
-                        return $app->make(QueueFactoryContract::class);
-                    }
+                    fn () => $app->make(QueueFactoryContract::class)
                 );
             });
             Event::clearResolvedInstance('events');

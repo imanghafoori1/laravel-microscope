@@ -20,9 +20,7 @@ class ForBladeFiles implements Check
     public static function check($checks, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
-        $mapper = function ($paths) use ($checks, $params, $pathDTO) {
-            return BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO);
-        };
+        $mapper = fn ($paths) => BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO);
 
         return Loop::map(self::getViewsPaths(), $mapper);
     }
@@ -71,8 +69,6 @@ class ForBladeFiles implements Check
      */
     private static function normalizeAndFilterVendorPaths(array $pathsList)
     {
-        return Loop::map($pathsList, function ($paths) {
-            return self::filterPaths($paths);
-        });
+        return Loop::map($pathsList, fn ($paths) => self::filterPaths($paths));
     }
 }

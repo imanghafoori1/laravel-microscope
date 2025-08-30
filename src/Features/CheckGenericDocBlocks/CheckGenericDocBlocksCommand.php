@@ -38,11 +38,7 @@ class CheckGenericDocBlocksCommand extends Command
 
     private function getConformer()
     {
-        return $this->option('nofix') ? function () {
-            return false;
-        } : function ($path) {
-            return $this->confirm($this->getQuestion($path), true);
-        };
+        return $this->option('nofix') ? fn () => false : fn ($path) => $this->confirm($this->getQuestion($path), true);
     }
 
     private function getQuestion($absFilePath)

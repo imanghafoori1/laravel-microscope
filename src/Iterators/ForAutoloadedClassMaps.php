@@ -20,9 +20,7 @@ class ForAutoloadedClassMaps extends BaseIterator
     {
         return Loop::map(
             ComposerJson::getClassMaps($basePath, $pathDTO),
-            function ($classMap) use ($checks, $paramProvider) {
-                return self::getDirStats($classMap, $checks, $paramProvider);
-            }
+            fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider)
         );
     }
 
@@ -36,9 +34,7 @@ class ForAutoloadedClassMaps extends BaseIterator
     {
         return Loop::map(
             $classMap,
-            function ($absFilePaths) use ($checks, $paramProvider) {
-                return self::applyChecks($absFilePaths, $checks, $paramProvider);
-            }
+            fn ($absFilePaths) => self::applyChecks($absFilePaths, $checks, $paramProvider)
         );
     }
 }

@@ -203,9 +203,7 @@ class ErrorPrinter
 
         return Loop::any(
             $ignorePatterns,
-            function ($pattern) use ($path) {
-                return self::is(base_path($pattern), $path);
-            }
+            fn ($pattern) => self::is(base_path($pattern), $path)
         );
     }
 

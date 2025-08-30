@@ -20,9 +20,7 @@ class ForFolderPaths extends BaseIterator
     public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
     {
         if ($pathDTO) {
-            $paths = Loop::map($paths, function ($files) use ($pathDTO) {
-                return FilePath::filter($files, $pathDTO);
-            });
+            $paths = Loop::map($paths, fn ($files) => FilePath::filter($files, $pathDTO));
         }
 
         return self::applyOnFiles($paths, $checks, $paramProvider);
@@ -56,9 +54,7 @@ class ForFolderPaths extends BaseIterator
     {
         return Loop::map(
             $paths,
-            function ($absPaths) use ($checks, $paramProvider) {
-                return self::applyChecks($absPaths, $checks, $paramProvider);
-            }
+            fn ($absPaths) => self::applyChecks($absPaths, $checks, $paramProvider)
         );
     }
 }

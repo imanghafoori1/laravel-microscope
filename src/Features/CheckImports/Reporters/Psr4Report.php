@@ -76,9 +76,9 @@ class Psr4Report
      */
     public static function getConsoleMessages($psr4Stats, $classMapStats, $filesStat = [])
     {
-        $cb = function ($psr4Stat, $key) use ($classMapStats, $filesStat) {
-            return self::present($key, $psr4Stat, $classMapStats[$key] ?? null, $filesStat[$key] ?? null);
-        };
+        $cb = fn ($psr4Stat, $key) => self::present(
+            $key, $psr4Stat, $classMapStats[$key] ?? null, $filesStat[$key] ?? null
+        );
 
         return Loop::map($psr4Stats, $cb);
     }
