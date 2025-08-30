@@ -107,7 +107,9 @@ class FilePath
     {
         return Loop::any(
             explode(',', $needles),
-            fn ($needle) => strpos($haystack, $needle) !== false
+            function ($needle) use ($haystack) {
+                return strpos($haystack, $needle) !== false;
+            }
         );
     }
 }

@@ -22,7 +22,9 @@ class TypeStatistics
     public function iterate($callback)
     {
         return array_map(
-            fn ($typeStr) => $callback($typeStr, (int) $this->$typeStr),
+            function ($typeStr) use ($callback) {
+                return $callback($typeStr, (int) $this->$typeStr);
+            },
             ['class', 'trait', 'interface', 'enum']
         );
     }

@@ -28,7 +28,9 @@ trait PatternApply
 
         $errorPrinter->printer = $this->output;
 
-        Reporters\Psr4Report::$callback = fn () => $errorPrinter->flushErrors();
+        Reporters\Psr4Report::$callback = function () use ($errorPrinter) {
+            return $errorPrinter->flushErrors();
+        };
 
         $patterns = $this->getPatterns();
 

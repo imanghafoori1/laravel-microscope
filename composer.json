@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^7.4|8.0.*|8.1.*|8.2.*|8.3.*|8.4.*",
+        "php": "^7.2|8.0.*|8.1.*|8.2.*|8.3.*|8.4.*",
         "imanghafoori/composer-json": "^2.1.0",
         "composer/class-map-generator": "^1.0.0",
         "imanghafoori/php-abstract-filesystem": "^0.1.5",

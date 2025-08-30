@@ -10,7 +10,9 @@ class BeforeRefFix
     public static function getCallback($command)
     {
         if ($command->option('force-ref-fix')) {
-            return fn () => true;
+            return function () {
+                return true;
+            };
         }
 
         return function (PhpFileDescriptor $file, $lineIndex, $lineContent) use ($command) {

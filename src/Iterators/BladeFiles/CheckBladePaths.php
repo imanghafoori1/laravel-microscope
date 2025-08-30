@@ -93,10 +93,14 @@ class CheckBladePaths
 
             $file = PhpFileDescriptor::make($absFilePath);
             if (self::$readOnly) {
-                $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
+                $file->setTokenizer(function ($absPath) {
+                    return ViewsData::getBladeTokens($absPath);
+                });
             }
 
-            Loop::map($checks, fn ($check) => $check::check($file, $paramsProvider));
+            Loop::map($checks, function ($check) use ($file, $paramsProvider) {
+                return $check::check($file, $paramsProvider);
+            });
         }
 
         return $count;
@@ -108,6 +112,8 @@ class CheckBladePaths
      */
     private static function filterUnwantedBlades($paths)
     {
-        return self::filterItems($paths, fn ($path) => ! self::shouldSkip($path));
+        return self::filterItems($paths, function ($path) {
+            return ! self::shouldSkip($path);
+        });
     }
 }

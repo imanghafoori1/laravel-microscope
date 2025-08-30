@@ -145,7 +145,9 @@ class CheckImportsCommand extends Command
     private static function printThanks($command)
     {
         $command->line(PHP_EOL);
-        Loop::over(Thanks::messages(), fn ($msg) => $command->line($msg));
+        Loop::over(Thanks::messages(), function ($msg) use ($command) {
+            return $command->line($msg);
+        });
     }
 
     #[Pure]

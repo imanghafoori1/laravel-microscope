@@ -66,6 +66,8 @@ trait Reporting
     #[Pure]
     private static function formatFiles($files)
     {
-        return Loop::map($files, fn ($file) => self::formatLine($file));
+        return Loop::map($files, function ($file) {
+            return self::formatLine($file);
+        });
     }
 }

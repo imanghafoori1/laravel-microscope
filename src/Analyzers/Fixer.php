@@ -29,7 +29,9 @@ class Fixer
     {
         return Loop::any(
             ComposerJson::readPsr4(),
-            fn ($autoload) => self::startsWith($class, array_keys($autoload))
+            function ($autoload) use ($class) {
+                return self::startsWith($class, array_keys($autoload));
+            }
         );
     }
 
@@ -37,7 +39,9 @@ class Fixer
     {
         return Loop::any(
             $needle,
-            fn ($needle) => strncmp($haystack, $needle, strlen($needle)) === 0
+            function ($needle) use ($haystack) {
+                return strncmp($haystack, $needle, strlen($needle)) === 0;
+            }
         );
     }
 

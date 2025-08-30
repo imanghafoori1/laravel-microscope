@@ -98,7 +98,9 @@ class ReportMessages
     private static function presentTypes(TypeStatistics $typesStats)
     {
         $results = $typesStats->iterate(
-            fn ($type, $count) => " | $count ".self::colorizer($type, 'blue')
+            function ($type, $count) {
+                return " | $count ".self::colorizer($type, 'blue');
+            }
         );
 
         return implode('', $results).' |';

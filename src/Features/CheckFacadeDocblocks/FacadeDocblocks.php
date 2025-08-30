@@ -87,7 +87,9 @@ class FacadeDocblocks
 
     protected static function getAccessor($class)
     {
-        $cb = (fn ($class) => $class::getFacadeAccessor())->bindTo(null, $class);
+        $cb = (function ($class) {
+            return $class::getFacadeAccessor();
+        })->bindTo(null, $class);
 
         $accessor = $cb($class);
 

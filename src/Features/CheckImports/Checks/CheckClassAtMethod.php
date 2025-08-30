@@ -63,6 +63,8 @@ class CheckClassAtMethod implements Check
     #[Pure]
     private static function contains($haystack, $needles)
     {
-        return Loop::any($needles, fn ($needle) => mb_strpos($haystack, $needle) !== false);
+        return Loop::any($needles, function ($needle) use ($haystack) {
+            return mb_strpos($haystack, $needle) !== false;
+        });
     }
 }

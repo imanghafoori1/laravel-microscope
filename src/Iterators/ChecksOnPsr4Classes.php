@@ -43,7 +43,9 @@ class ChecksOnPsr4Classes
      */
     private static function processGetStats($psr4)
     {
-        $cb = fn ($paths, $namespace) => self::applyCheckOnFiles($namespace, $paths);
+        $cb = function ($paths, $namespace) {
+            return self::applyCheckOnFiles($namespace, $paths);
+        };
 
         return Loop::map($psr4, $cb);
     }
@@ -67,7 +69,9 @@ class ChecksOnPsr4Classes
     {
         Loop::map(
             (self::$check)->exceptions,
-            fn ($e) => self::$errorExceptionHandler::handle($e)
+            function ($e) {
+                return self::$errorExceptionHandler::handle($e);
+            }
         );
     }
 
@@ -76,7 +80,9 @@ class ChecksOnPsr4Classes
      */
     private static function processAll()
     {
-        return Loop::map(ComposerJson::readPsr4(), fn ($psr4) => self::processGetStats($psr4));
+        return Loop::map(ComposerJson::readPsr4(), function ($psr4) {
+            return self::processGetStats($psr4);
+        });
     }
 
     /**
@@ -86,6 +92,8 @@ class ChecksOnPsr4Classes
      */
     private static function getCounter($psr4Namespace, $psr4Path)
     {
-        return fn () => (self::$check)->applyChecksInPath($psr4Namespace, $psr4Path);
+        return function () use ($psr4Namespace, $psr4Path) {
+            return (self::$check)->applyChecksInPath($psr4Namespace, $psr4Path);
+        };
     }
 }

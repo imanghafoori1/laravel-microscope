@@ -14,7 +14,9 @@ trait FiltersFiles
      */
     private static function filterFiles($files, $pathDTO)
     {
-        return self::filterItems($files, fn ($file) => FilePath::contains($file->getPathname(), $pathDTO));
+        return self::filterItems($files, function ($file) use ($pathDTO) {
+            return FilePath::contains($file->getPathname(), $pathDTO);
+        });
     }
 
     /**

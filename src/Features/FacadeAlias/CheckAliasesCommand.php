@@ -74,11 +74,17 @@ class CheckAliasesCommand extends Command
     {
         $aliases = AliasLoader::getInstance()->getAliases();
 
-        $aliasKeys = array_map(fn ($alias) => '\\'.$alias, array_keys($aliases));
+        $aliasKeys = array_map(function ($alias) {
+            return '\\'.$alias;
+        }, array_keys($aliases));
 
-        $onError = fn () => null;
+        $onError = function () {
+            return null;
+        };
 
-        $mutator = fn ($class) => ltrim($aliases[$class] ?? $class, '\\');
+        $mutator = function ($class) use ($aliases) {
+            return ltrim($aliases[$class] ?? $class, '\\');
+        };
 
         EnforceImports::setOptions(false, $aliasKeys, $paramProvider, $onError, $mutator);
     }
