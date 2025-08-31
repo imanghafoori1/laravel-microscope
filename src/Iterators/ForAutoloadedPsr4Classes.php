@@ -20,31 +20,4 @@ class ForAutoloadedPsr4Classes
 
         return ChecksOnPsr4Classes::apply($checker);
     }
-
-    /**
-     * @return void
-     */
-    public static function checkNow($checks, $params = [], $pathDTO = null, $callback = null)
-    {
-        self::applyOnStats(
-            self::check($checks, $params, $pathDTO),
-            $callback
-        );
-    }
-
-    /**
-     * @param  array<string, \Generator<string, \Generator<string, int>>>  $allStats
-     * @param  \Closure|null  $callback
-     * @return void
-     */
-    public static function applyOnStats(array $allStats, $callback = null)
-    {
-        foreach ($allStats as $path => $results) {
-            foreach (iterator_to_array($results) as $namespace => $result) {
-                foreach ($result as $folder => $count) {
-                    $callback && $callback($folder, $count, $path, $namespace);
-                }
-            }
-        }
-    }
 }

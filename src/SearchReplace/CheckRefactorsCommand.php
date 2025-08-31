@@ -5,6 +5,10 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\SearchReplace\Filters;
@@ -60,8 +64,12 @@ class CheckRefactorsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        ForAutoloadedPsr4Classes::checkNow([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
+        $filesStats = ForAutoloadedFiles::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
 
+        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $filesStats);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return PatternRefactorings::$patternFound ? 1 : 0;
