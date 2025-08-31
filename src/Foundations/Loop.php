@@ -21,6 +21,16 @@ class Loop
         return $result;
     }
 
+    public static function list($iterable, callable $callback)
+    {
+        $result = [];
+        foreach ($iterable as $key => $value) {
+            $result[] = $callback($value, $key);
+        }
+
+        return $result;
+    }
+
     public static function any($values, $condition) {
         foreach ($values as $value) {
             if ($condition($value)) {
@@ -29,5 +39,31 @@ class Loop
         }
 
         return false;
+    }
+
+    public static function mapKey($iterable, $callback)
+    {
+        $result = [];
+        foreach ($iterable as $key => $value) {
+            foreach ($callback($value, $key) as $key => $value) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public static function mapIf($iterable, $if, $callback)
+    {
+        $result = [];
+        foreach ($iterable as $key => $value) {
+            if ($if($value, $key)) {
+                foreach ($callback($value, $key) as $key => $value) {
+                    $result[$key] = $value;
+                }
+            }
+        }
+
+        return $result;
     }
 }

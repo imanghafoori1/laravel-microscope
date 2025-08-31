@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use InvalidArgumentException;
@@ -66,11 +67,9 @@ class ExtractBladePartial implements Check
             $spaces = Str::before($extracted[0], trim($extracted[0]));
             // add space before the @include to have proper indentation.
             $file[$start] = $spaces.$file[$start];
-            foreach ($extracted as $i => $line) {
-                // remove spaces so that the created file
-                // does not have irrelevant indentation.
-                $extracted[$i] = Str::after($extracted[$i], $spaces);
-            }
+            // remove spaces so that the created file
+            // does not have irrelevant indentation.
+            $extracted = Loop::map($extracted, fn ($line, $i) => Str::after($line, $spaces));
             self::forceFilePutContents($partialPath, implode('', $extracted));
         }
 
@@ -91,7 +90,7 @@ class ExtractBladePartial implements Check
     protected static function getPossibleViewFiles($name)
     {
         return array_map(function ($extension) use ($name) {
-            return \str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
+            return str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
         }, ['blade.php']);
     }
 

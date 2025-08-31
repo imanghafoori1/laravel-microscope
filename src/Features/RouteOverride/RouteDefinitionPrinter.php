@@ -54,6 +54,6 @@ class RouteDefinitionPrinter
 
     private static function getMethods($route1): string
     {
-        return \implode(',', $route1->methods());
+        return implode(',', $route1->methods());
     }
 }

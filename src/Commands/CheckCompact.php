@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\Ifs;
@@ -112,7 +113,7 @@ class CheckCompact extends Command
     private static function compactError($path, $lineNumber, $absent, $key, $header)
     {
         $p = ErrorPrinter::singleton();
-        $errorData = $p->color(\implode(', ', array_keys($absent))).' does not exist';
+        $errorData = $p->color(implode(', ', array_keys($absent))).' does not exist';
 
         $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }
@@ -128,12 +129,11 @@ class CheckCompact extends Command
             $signatures = array_merge($useBodySignatures, $signatures);
         }
 
-        $vars = [];
-        foreach ($signatures as $sig) {
-            ($sig[0] == T_VARIABLE) && $vars[$sig[1]] = null;
-        }
-
-        return $vars;
+        return Loop::mapIf(
+            $signatures,
+            fn ($sig) => $sig[0] === T_VARIABLE,
+            fn ($sig) => [$sig[1] => null]
+        );
     }
 
     private function readMethodBodyAsTokens($tokens, $i)

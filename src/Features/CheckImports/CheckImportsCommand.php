@@ -104,7 +104,7 @@ class CheckImportsCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($this->checks, $useStatementParser, $pathDTO);
-        $foldersStats = ForFolderPaths::check($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
@@ -164,18 +164,6 @@ class CheckImportsCommand extends Command
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
-    }
-
-    /**
-     * @return array<string, \Generator<int, string>>
-     */
-    #[Pure(true)]
-    private static function getLaravelFolders()
-    {
-        return [
-            'config' => LaravelPaths::configDirs(),
-            'migrations' => LaravelPaths::migrationDirs(),
-        ];
     }
 
     private static function writeCacheContent(array $cache): void

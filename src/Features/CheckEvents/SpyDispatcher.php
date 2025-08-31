@@ -8,8 +8,10 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use ReflectionException;
 use ReflectionFunction;
+use ReflectionParameter;
 
 class SpyDispatcher extends Dispatcher
 {
@@ -112,7 +114,7 @@ class SpyDispatcher extends Dispatcher
 
     protected function noClass($event, $class, $method)
     {
-        $at = \implode('@', [$class, $method]);
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The class of '.$at.' can not be resolved as a listener for "'.$e.'" event';
@@ -120,7 +122,7 @@ class SpyDispatcher extends Dispatcher
 
     protected function noMethod($event, $class, $method)
     {
-        $at = \implode('@', [$class, $method]);
+        $at = implode('@', [$class, $method]);
         $e = $this->stringify($event);
 
         return 'The method of '.$at.' is not callable as an event listener for "'.$e.'" event';
@@ -129,15 +131,11 @@ class SpyDispatcher extends Dispatcher
     protected function getTypeHintedClasses($listenerObj, $methodName)
     {
         try {
-            $ref = new \ReflectionParameter([$listenerObj, $methodName], 0);
+            $ref = new ReflectionParameter([$listenerObj, $methodName], 0);
             $typeHint = $ref->getType();
             if ($typeHint) {
                 if (method_exists($typeHint, 'getTypes')) {
-                    $types = $typeHint->getTypes();
-                    $names = [];
-                    foreach ($types as $t) {
-                        $names[] = $t->getName();
-                    }
+                    $names = Loop::list($typeHint->getTypes(), fn ($t) => $t->getName());
                 } else {
                     $names = [$typeHint->getName()];
                 }

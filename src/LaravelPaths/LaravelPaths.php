@@ -7,10 +7,23 @@ use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
+use JetBrains\PhpStorm\Pure;
 use Throwable;
 
 class LaravelPaths
 {
+    /**
+     * @return array<string, \Generator<int, string>>
+     */
+    #[Pure(true)]
+    public static function getMigrationConfig()
+    {
+        return [
+            'config' => LaravelPaths::configDirs(),
+            'migrations' => LaravelPaths::migrationDirs(),
+        ];
+    }
+
     /**
      * @return \Generator<int, string>
      */

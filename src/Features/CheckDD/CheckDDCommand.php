@@ -45,7 +45,7 @@ class CheckDDCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
 
-        $foldersStats = ForFolderPaths::check([CheckDD::class], self::getLaravelFolders(), [$onErrorCallback], $pathDTO);
+        $foldersStats = ForFolderPaths::check([CheckDD::class], LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
 
         $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
@@ -58,17 +58,5 @@ class CheckDDCommand extends Command
         event('microscope.finished.checks', [$this]);
 
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
-    }
-
-    /**
-     * @return array<string, \Generator<int, string>>
-     */
-    #[Pure(true)]
-    private static function getLaravelFolders()
-    {
-        return [
-            'config' => LaravelPaths::configDirs(),
-            'migrations' => LaravelPaths::migrationDirs(),
-        ];
     }
 }

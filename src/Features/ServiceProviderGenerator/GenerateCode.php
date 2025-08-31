@@ -31,15 +31,15 @@ class GenerateCode
             $absFilePath = $classFilePath->getRealPath();
             $content = file_get_contents($absFilePath);
 
-            if (strlen(\trim($content)) > 10) {
-                // file is not empty
+            // file is not empty
+            if (strlen(trim($content)) > 10) {
                 continue;
             }
 
             $relativePath = FilePath::getRelativePath($absFilePath);
             $correctNamespace = NamespaceCalculator::calculateCorrectNamespace($relativePath, $composerPath, $composerNamespace);
 
-            $className = \str_replace('.php', '', $classFilePath->getFilename());
+            $className = str_replace('.php', '', $classFilePath->getFilename());
             $answer = self::ask($command, $correctNamespace.'\\'.$className);
             if (! $answer) {
                 continue;
@@ -77,8 +77,8 @@ class GenerateCode
         $token = $tokens[$i];
 
         return $token[0] == T_CONSTANT_ENCAPSED_STRING &&
-            \trim($token[1], '\'\"') === 'providers' &&
-            \in_array(T_DOUBLE_ARROW, [$tokens[$i + 1][0], $tokens[$i + 2][0]], true);
+            trim($token[1], '\'\"') === 'providers' &&
+            in_array(T_DOUBLE_ARROW, [$tokens[$i + 1][0], $tokens[$i + 2][0]], true);
     }
 
     private static function addToProvidersArray($providerPath)

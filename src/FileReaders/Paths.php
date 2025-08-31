@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\FileReaders;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
@@ -23,14 +24,10 @@ class Paths
         $fileName = $pathFilter->includeFile;
         is_string($dirs) && ($dirs = [$dirs]);
 
-        $files = [];
-
-        foreach ($dirs as $dir) {
-            if (is_dir($dir)) {
-                $files[$dir] = self::filterFiles(PhpFinder::getPathsInDir($dir, $fileName), $pathFilter);
-            }
-        }
-
-        return $files;
+        return Loop::mapIf(
+            $dirs,
+            fn ($dir) => is_dir($dir),
+            fn ($dir) => self::filterFiles(PhpFinder::getPathsInDir($dir, $fileName), $pathFilter)
+        );
     }
 }

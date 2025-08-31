@@ -34,9 +34,7 @@ class CheckBladeQueriesCommand extends Command
         // checks the blade files for database queries.
         $bladeStats = ForBladeFiles::check([IsQueryCheck::class], [], $pathDTO);
 
-        $this->getOutput()->writeln(implode(PHP_EOL, [
-            BladeReport::getBladeStats($bladeStats),
-        ]));
+        $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
 
         $this->finishCommand($errorPrinter);
         $errorPrinter->printTime();

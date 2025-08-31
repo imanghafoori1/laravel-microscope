@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class ViewsData
@@ -18,13 +19,10 @@ class ViewsData
 
     public function getMainVars()
     {
-        $new = [];
-        $mainVars = $this->main->getData();
-        foreach ($mainVars as $i => $vars) {
-            $new['$'.$i] = null;
-        }
-
-        return $new;
+        return Loop::mapKey(
+            $this->main->getData(),
+            fn ($val, $i) => ['$'.$i => null]
+        );
     }
 
     public function readTokenizedVars()

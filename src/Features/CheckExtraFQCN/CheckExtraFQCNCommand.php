@@ -57,7 +57,7 @@ class CheckExtraFQCNCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
-        $foldersStats = ForFolderPaths::check($checks, self::getLaravelFolders(), $useStatementParser, $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
@@ -94,18 +94,6 @@ class CheckExtraFQCNCommand extends Command
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
-    }
-
-    /**
-     * @return array<string, \Generator<int, string>>
-     */
-    #[Pure(true)]
-    private static function getLaravelFolders()
-    {
-        return [
-            'config' => LaravelPaths::configDirs(),
-            'migrations' => LaravelPaths::migrationDirs(),
-        ];
     }
 
     /**

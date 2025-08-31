@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\SearchReplace\Searcher;
@@ -161,12 +162,12 @@ class EnforceImports implements Check
 
     private static function restructureImports(array $imports): array
     {
-        foreach ($imports as $key => $import) {
-            $imports['\\'.$import[0]] = [$import[1], $key];
-            unset($imports[$key]);
-        }
-
-        return $imports;
+        return Loop::mapKey(
+            $imports,
+            fn ($import, $key) => [
+                '\\'.$import[0] => [$import[1], $key]
+            ]
+        );
     }
 
     private static function refIsDeleted(array $deletes, string $className, string $class): bool
@@ -176,9 +177,10 @@ class EnforceImports implements Check
 
     private static function report(array $replacedRefs, PhpFileDescriptor $file): void
     {
-        foreach ($replacedRefs as $classRef => $line) {
-            (self::$onError)($classRef, $file, $line);
-        }
+        Loop::over(
+            $replacedRefs,
+            fn ($line, $classRef) => (self::$onError)($classRef, $file, $line)
+        );
     }
 
     private static function shouldBeImported($class, $imports, $namespace)

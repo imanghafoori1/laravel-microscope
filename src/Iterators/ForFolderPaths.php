@@ -35,13 +35,9 @@ class ForFolderPaths extends BaseIterator
      */
     public static function check($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
     {
-        $lists = [];
-        foreach ($dirsList as $listName => $dirs) {
-            $filePathsGen = Paths::getAbsFilePaths($dirs, $pathFilter);
-            $lists[$listName] = self::checkFilePaths($filePathsGen, $checks, $paramProvider);
-        }
-
-        return $lists;
+        return Loop::map($dirsList, fn ($dirs, $listName) => self::checkFilePaths(
+            Paths::getAbsFilePaths($dirs, $pathFilter), $checks, $paramProvider
+        ));
     }
 
     /**

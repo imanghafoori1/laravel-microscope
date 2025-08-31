@@ -43,9 +43,9 @@ class ChecksOnPsr4Classes
      */
     private static function processGetStats($psr4)
     {
-        $cb = fn ($paths, $namespace) => self::applyCheckOnFiles($namespace, $paths);
-
-        return Loop::map($psr4, $cb);
+        return Loop::map(
+            $psr4, fn ($paths, $namespace) => self::checkFiles($namespace, $paths)
+        );
     }
 
     /**
@@ -53,14 +53,12 @@ class ChecksOnPsr4Classes
      * @param  string[]|string  $psr4Paths
      * @return array<string, (callable(): int)>
      */
-    private static function applyCheckOnFiles($psr4Namespace, $psr4Paths)
+    private static function checkFiles($psr4Namespace, $psr4Paths)
     {
-        $statsGenerator = [];
-        foreach ((array) $psr4Paths as $psr4Path) {
-            $statsGenerator[$psr4Path] = self::getCounter($psr4Namespace, $psr4Path);
-        }
-
-        return $statsGenerator;
+        return Loop::mapKey(
+            (array) $psr4Paths,
+            fn ($psr4Path) => [$psr4Path => self::getCounter($psr4Namespace, $psr4Path)]
+        );
     }
 
     private static function handleExceptions()
