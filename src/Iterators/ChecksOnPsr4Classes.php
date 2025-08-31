@@ -64,7 +64,7 @@ class ChecksOnPsr4Classes
     private static function handleExceptions()
     {
         Loop::map(
-            (self::$check)->exceptions,
+            self::$check->exceptions,
             fn ($e) => self::$errorExceptionHandler::handle($e)
         );
     }
@@ -84,6 +84,6 @@ class ChecksOnPsr4Classes
      */
     private static function getCounter($psr4Namespace, $psr4Path)
     {
-        return fn () => (self::$check)->applyChecksInPath($psr4Namespace, $psr4Path);
+        return fn () => self::$check->applyChecksInPath($psr4Namespace, $psr4Path);
     }
 }

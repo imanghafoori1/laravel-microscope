@@ -165,7 +165,7 @@ class EnforceImports implements Check
         return Loop::mapKey(
             $imports,
             fn ($import, $key) => [
-                '\\'.$import[0] => [$import[1], $key]
+                '\\'.$import[0] => [$import[1], $key],
             ]
         );
     }

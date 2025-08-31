@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 class FilePathsForReferenceFix
 {
     /**
-     * @var  array<string, \Generator<int, string>>
+     * @var array<string, \Generator<int, string>>
      */
     public static $pathsForReferenceFix = [];
 

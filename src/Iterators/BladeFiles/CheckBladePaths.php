@@ -78,7 +78,7 @@ class CheckBladePaths
     /**
      * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
      * @param  callable|array  $paramsProvider
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>> $checks
+     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @return int
      */
     private static function applyChecks($files, $paramsProvider, $checks): int
