@@ -4,14 +4,16 @@ namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class EnforceImports implements Check
 {
+    use CachedCheck;
+
     /**
      * @var bool
      */
@@ -37,23 +39,20 @@ class EnforceImports implements Check
      */
     public static $mutator;
 
-    public static function check(PhpFileDescriptor $file)
-    {
-        if (CachedFiles::isCheckedBefore('EnforceImports', $file)) {
-            return;
-        }
+    /**
+     * @var string
+     */
+    private static $cacheKey = 'EnforceImports';
 
+    public static function performCheck(PhpFileDescriptor $file): bool
+    {
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
         $imports = (self::$importsProvider)($file);
 
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
 
-        $hasError = self::checkClassRef($classRefs, $imports, $file);
-
-        if ($hasError === false) {
-            CachedFiles::put('EnforceImports', $file);
-        }
+        return self::checkClassRef($classRefs, $imports, $file);
     }
 
     public static function setOptions($noFix, $onlyRefs, $provider, $onError, $mutator = null)
