@@ -17,8 +17,8 @@ class Psr4Report
     public static $callback;
 
     /**
-     * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
      * @param  \Illuminate\Console\OutputStyle  $console
      * @return void
      */
@@ -40,8 +40,8 @@ class Psr4Report
 
     /**
      * @param  string  $composerPath
-     * @param  array<string, array<string, (callable(): int)>>  $psr4Stat
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $classMapStat
      * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
      * @return array<int, string|\Generator<int, string>>
      */
@@ -69,8 +69,8 @@ class Psr4Report
     }
 
     /**
-     * @param  array<string, array<string, array<string, (callable(): int)>>>  $psr4Stats
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $classMapStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
      * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
      * @return array<int, array<int, string|\Generator<int, string>>>
      */

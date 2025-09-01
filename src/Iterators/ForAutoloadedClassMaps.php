@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ForAutoloadedClassMaps extends BaseIterator
@@ -12,9 +12,9 @@ class ForAutoloadedClassMaps extends BaseIterator
     /**
      * @param  string  $basePath
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  \Closure|null  $paramProvider
+     * @param  array  $paramProvider
      * @param  PathFilterDTO  $pathDTO
-     * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
     public static function check($basePath, $checks, $paramProvider, PathFilterDTO $pathDTO)
     {
@@ -27,14 +27,14 @@ class ForAutoloadedClassMaps extends BaseIterator
     /**
      * @param  \Generator<string, string[]>  $classMap
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
-     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     * @param  array  $paramProvider
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
     private static function getDirStats($classMap, $checks, $paramProvider)
     {
-        return Loop::map(
+        return StatsDto::make(Loop::map(
             $classMap,
             fn ($absFilePaths) => self::applyChecks($absFilePaths, $checks, $paramProvider)
-        );
+        ));
     }
 }
