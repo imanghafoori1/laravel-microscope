@@ -4,17 +4,22 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class ExtraFQCN implements Check
 {
-    public static function check(PhpFileDescriptor $file, $params = [])
+    use CachedCheck;
+
+    /**
+     * @var string
+     */
+    private static $cacheKey = 'extra_fqcn';
+
+    private static function performCheck(PhpFileDescriptor $file, $params): bool
     {
-        if (CachedFiles::isCheckedBefore('extra_fqcn', $file)) {
-            return;
-        }
         $fix = $params[1];
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
@@ -22,31 +27,7 @@ class ExtraFQCN implements Check
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
         $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, $params[2], $fix);
 
-        if ($hasError === false) {
-            CachedFiles::put('extra_fqcn', $file);
-        }
-    }
-
-    private static function isDirectlyImported($class, $imports): bool
-    {
-        return isset($imports[basename($class)]) && $imports[basename($class)][0] === ltrim($class, '\\');
-    }
-
-    private static function conflictingAlias($class, $imports)
-    {
-        return isset($imports[basename($class)]);
-    }
-
-    private static function isInSameNamespace($namespace, $ref)
-    {
-        return trim(self::beforeLast($ref, '\\'), '\\') === $namespace;
-    }
-
-    private static function beforeLast($subject, $search)
-    {
-        $pos = mb_strrpos($subject, $search) ?: 0;
-
-        return mb_substr($subject, 0, $pos, 'UTF-8');
+        return $hasError;
     }
 
     private static function checkClassRef($classRefs, $imports, $absFilePath, $class, $fix = true): bool
@@ -86,14 +67,31 @@ class ExtraFQCN implements Check
         return $hasError;
     }
 
+    private static function isDirectlyImported($class, $imports): bool
+    {
+        return isset($imports[basename($class)]) && $imports[basename($class)][0] === ltrim($class, '\\');
+    }
+
+    private static function conflictingAlias($class, $imports)
+    {
+        return isset($imports[basename($class)]);
+    }
+
+    private static function isInSameNamespace($namespace, $ref)
+    {
+        return trim(self::beforeLast($ref, '\\'), '\\') === $namespace;
+    }
+
+    private static function beforeLast($subject, $search)
+    {
+        $pos = mb_strrpos($subject, $search) ?: 0;
+
+        return mb_substr($subject, 0, $pos, 'UTF-8');
+    }
+
     private static function restructureImports(array $imports): array
     {
-        foreach ($imports as $key => $import) {
-            $imports['\\'.$import[0]] = [$import[1], $key];
-            unset($imports[$key]);
-        }
-
-        return $imports;
+        return Loop::mapKey($imports, fn ($import, $key) => ['\\'.$import[0] => [$import[1], $key]]);
     }
 
     public static function deleteFQCN($absFilePath, $classRef)
