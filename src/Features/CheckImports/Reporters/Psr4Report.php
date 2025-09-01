@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessag
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Report
@@ -42,7 +41,7 @@ class Psr4Report
      * @param  string  $composerPath
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stat
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $classMapStat
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
      * @return array<int, string|\Generator<int, string>>
      */
     #[Pure]
@@ -71,13 +70,16 @@ class Psr4Report
     /**
      * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
      * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $filesStat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
      * @return array<int, array<int, string|\Generator<int, string>>>
      */
     public static function getConsoleMessages($psr4Stats, $classMapStats, $filesStat = [])
     {
         $cb = fn ($psr4Stat, $key) => self::present(
-            $key, $psr4Stat, $classMapStats[$key] ?? null, $filesStat[$key] ?? null
+            $key,
+            $psr4Stat,
+            $classMapStats[$key] ?? null,
+            $filesStat->stats[$key] ?? null
         );
 
         return Loop::map($psr4Stats, $cb);

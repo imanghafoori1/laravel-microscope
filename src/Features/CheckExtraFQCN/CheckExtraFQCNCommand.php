@@ -98,7 +98,7 @@ class CheckExtraFQCNCommand extends Command
 
     /**
      * @param  $autoloadStats
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $foldersStats
      * @param  $routeFiles
      * @return array
      */
