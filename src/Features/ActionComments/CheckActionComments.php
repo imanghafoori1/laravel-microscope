@@ -5,6 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -37,7 +39,11 @@ class CheckActionComments extends Command
             [],
             PathFilterDTO::makeFromOption($this)
         );
-        iterator_to_array($psr4Stats);
+
+        Psr4ReportPrinter::printAll(
+            Psr4Report::getConsoleMessages($psr4Stats, []),
+            $this->getOutput()
+        );
 
         return 0;
     }
