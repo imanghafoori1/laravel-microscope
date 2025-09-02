@@ -112,11 +112,11 @@ class CheckImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $consoleOutput = Reporters\Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
+        $messages = Reporters\Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
         /**
          * @var string[] $messages
          */
-        $messages = self::getMessages($consoleOutput, $bladeStats, $foldersStats, $routeFiles);
+        $messages = self::addOtherMessages($messages, $bladeStats, $foldersStats, $routeFiles);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         // must be after other messages:
@@ -183,7 +183,7 @@ class CheckImportsCommand extends Command
      * @param  \Generator<int, PhpFileDescriptor>  $routeFiles
      * @return array
      */
-    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
+    private static function addOtherMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
     {
         return [
             CheckImportReporter::totalImportsMsg(),

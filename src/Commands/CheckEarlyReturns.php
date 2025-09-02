@@ -59,7 +59,7 @@ class CheckEarlyReturns extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
         $filesStats = ForAutoloadedFiles::check(base_path(), $check, $params, $pathDTO);
 
-        return Psr4Report::getConsoleMessages($psr4stats, $classMapStats, $filesStats);
+        return Psr4Report::formatAutoloads($psr4stats, $classMapStats, $filesStats);
     }
 
     private function startWarning()

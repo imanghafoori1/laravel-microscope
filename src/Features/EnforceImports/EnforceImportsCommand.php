@@ -53,7 +53,7 @@ class EnforceImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $consoleOutput = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
+        $consoleOutput = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
 
         $messages = self::getMessages($consoleOutput);
 

@@ -68,11 +68,9 @@ trait PatternApply
 
     private static function getConsoleMessages($psr4Stats, $classMapStats, $filesStats, $bladeStats)
     {
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $filesStats);
+        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
 
-        $lines[] = implode(PHP_EOL, [
-            Reporters\BladeReport::getBladeStats($bladeStats),
-        ]);
+        $lines[] = Reporters\BladeReport::getBladeStats($bladeStats);
 
         return $lines;
     }

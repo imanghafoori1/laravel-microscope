@@ -59,16 +59,16 @@ class CheckExtraFQCNCommand extends Command
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
         $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
-        $errorPrinter = ErrorPrinter::singleton($this->output);
-
-        $consoleOutput = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
-
-        $messages = self::addOtherMessages($consoleOutput, $foldersStats, $routeFiles);
+        $messages = self::addOtherMessages(
+            Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles),
+            $foldersStats,
+            $routeFiles
+        );
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
 
+        $errorPrinter = ErrorPrinter::singleton($this->output);
         $this->finishCommand($errorPrinter);
-
         $errorPrinter->printTime();
 
         CachedFiles::writeCacheFiles();

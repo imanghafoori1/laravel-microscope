@@ -41,7 +41,7 @@ class CheckActionComments extends Command
         );
 
         Psr4ReportPrinter::printAll(
-            Psr4Report::getConsoleMessages($psr4Stats, []),
+            Psr4Report::formatAutoloads($psr4Stats, []),
             $this->getOutput()
         );
 

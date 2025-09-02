@@ -23,7 +23,7 @@ class Psr4Report
      */
     public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
     {
-        $lines = self::getConsoleMessages($psr4Stats, $classMapStats);
+        $lines = self::formatAutoloads($psr4Stats, $classMapStats);
 
         Psr4ReportPrinter::printAll($lines, $console);
     }
@@ -73,7 +73,7 @@ class Psr4Report
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
      * @return array<int, array<int, string|\Generator<int, string>>>
      */
-    public static function getConsoleMessages($psr4Stats, $classMapStats, $filesStat = [])
+    public static function formatAutoloads($psr4Stats, $classMapStats, $filesStat = [])
     {
         $cb = fn ($psr4Stat, $key) => self::present(
             $key,

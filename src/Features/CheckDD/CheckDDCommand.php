@@ -39,14 +39,15 @@ class CheckDDCommand extends Command
                 $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
+        CheckDD::$onErrorCallback = $onErrorCallback;
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckDD::class], [$onErrorCallback], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckDD::class], [], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [], $pathDTO);
 
         $foldersStats = ForFolderPaths::check([CheckDD::class], LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
 
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats);
+        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $messages = LaravelFoldersReport::formatFoldersStats($foldersStats);
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
