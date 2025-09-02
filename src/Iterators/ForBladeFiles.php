@@ -13,9 +13,9 @@ class ForBladeFiles implements Check
 {
     /**
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $params
+     * @param  array  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return array<int, \Generator<string, int>>
+     * @return array<string, \Generator<string, int>>
      */
     public static function check($checks, $params = [], $pathDTO = null)
     {

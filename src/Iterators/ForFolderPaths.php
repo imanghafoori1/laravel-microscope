@@ -13,7 +13,7 @@ class ForFolderPaths extends BaseIterator
     /**
      * @param  array<string, string[]>  $paths
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
+     * @param  array  $paramProvider
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return StatsDto
      */
@@ -29,9 +29,9 @@ class ForFolderPaths extends BaseIterator
     /**
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array<string, \Generator<int, string>>  $dirsList
-     * @param  array|\Closure  $paramProvider
+     * @param  array  $paramProvider
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathFilter
-     * @return array<string, StatsDto>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
     public static function check($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
     {
@@ -43,14 +43,16 @@ class ForFolderPaths extends BaseIterator
     /**
      * @param  $paths
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
+     * @param  array  $paramProvider
      * @return StatsDto
      */
     private static function applyOnFiles($paths, array $checks, $paramProvider)
     {
-        return StatsDto::make(Loop::map(
-            $paths,
-            fn ($absPaths) => self::applyChecks($absPaths, $checks, $paramProvider)
-        ));
+        return StatsDto::make(
+            Loop::map(
+                $paths,
+                fn ($absPaths) => self::applyChecks($absPaths, $checks, $paramProvider)
+            )
+        );
     }
 }

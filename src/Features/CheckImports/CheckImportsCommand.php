@@ -178,8 +178,8 @@ class CheckImportsCommand extends Command
 
     /**
      * @param  array<int, array<int, string|\Generator<int, string>>>  $autoloadStats
-     * @param  array<int, \Generator<string, int>>  $bladeStats
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
+     * @param  array<string, \Generator<string, int>>  $bladeStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $foldersStats
      * @param  \Generator<int, PhpFileDescriptor>  $routeFiles
      * @return array
      */
