@@ -2,25 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators\DTO;
 
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-
 class StatsDto
 {
+    use MakeDto;
+
     /**
-     * @var  array<string, \Generator<int, PhpFileDescriptor>>
+     * @var  array<string, \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>>
      */
     public $stats = [];
-
-    /**
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $stats
-     * @return self
-     */
-    public static function make($stats)
-    {
-        $obj = new self();
-
-        $obj->stats = $stats;
-
-        return $obj;
-    }
 }
