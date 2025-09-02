@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
 use JetBrains\PhpStorm\Pure;
 
 class BladeReport
@@ -10,7 +11,7 @@ class BladeReport
     use Reporting;
 
     /**
-     * @param  array<string, \Generator<string, int>>  $stats
+     * @param  array<string, BladeStatDto>  $stats
      * @return string
      */
     #[Pure]
@@ -19,7 +20,7 @@ class BladeReport
         $c = $total = 0;
         $output = '';
         foreach ($stats as $stat) {
-            foreach ($stat as $path => $count) {
+            foreach ($stat->stats as $path => $count) {
                 $c++;
                 $total += $count;
                 $output .= self::addLine($path, $count);

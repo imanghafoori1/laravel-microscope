@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
 
 class ForBladeFiles implements Check
 {
@@ -15,12 +16,12 @@ class ForBladeFiles implements Check
      * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
      * @param  array  $params
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return array<string, \Generator<string, int>>
+     * @return array<string, BladeStatDto>
      */
     public static function check($checks, $params = [], $pathDTO = null)
     {
         self::withoutComponentTags();
-        $mapper = fn ($paths) => BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO);
+        $mapper = fn ($paths) => BladeStatDto::make(BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO));
 
         return Loop::map(self::getViewsPaths(), $mapper);
     }
