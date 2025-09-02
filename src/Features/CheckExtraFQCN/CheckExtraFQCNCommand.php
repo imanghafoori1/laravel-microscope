@@ -63,7 +63,7 @@ class CheckExtraFQCNCommand extends Command
 
         $consoleOutput = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
 
-        $messages = self::getMessages($consoleOutput, $foldersStats, $routeFiles);
+        $messages = self::addOtherMessages($consoleOutput, $foldersStats, $routeFiles);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
 
@@ -102,7 +102,7 @@ class CheckExtraFQCNCommand extends Command
      * @param  $routeFiles
      * @return array
      */
-    private static function getMessages($autoloadStats, $foldersStats, $routeFiles)
+    private static function addOtherMessages($autoloadStats, $foldersStats, $routeFiles)
     {
         return [
             CheckImportReporter::totalImportsMsg(),
