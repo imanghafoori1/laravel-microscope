@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -47,10 +48,11 @@ class CheckEnvCallsCommand extends Command
         $routeFiles = ForRouteFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([EnvCallsCheck::class], [$params], $pathDTO);
-        $classmapStats = ForAutoloadedClassMaps::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $bladeStats = ForBladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
+        $checks = CheckCollection::make([EnvCallsCheck::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [$params], $pathDTO);
+        $classmapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [$params], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [$params], $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, [$params], $pathDTO);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classmapStats, $autoloadedFilesStats);
         $lines[] = BladeReport::getBladeStats($bladeStats);

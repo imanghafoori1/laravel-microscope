@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -53,7 +54,7 @@ class CheckEarlyReturns extends Command
      */
     private static function applyCheckEarly($pathDTO, $nofix): array
     {
-        $check = [CheckEarlyReturn::class];
+        $check = CheckCollection::make([CheckEarlyReturn::class]);
         $params = self::getParams($nofix);
         $psr4stats = ForAutoloadedPsr4Classes::check($check, $params, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);

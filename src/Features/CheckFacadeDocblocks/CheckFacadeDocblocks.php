@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -40,7 +41,7 @@ class CheckFacadeDocblocks extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $check = [FacadeDocblocks::class];
+        $check = CheckCollection::make([FacadeDocblocks::class]);
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, null, $pathDTO);
 

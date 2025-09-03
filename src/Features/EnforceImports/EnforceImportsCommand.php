@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -45,17 +46,17 @@ class EnforceImportsCommand extends Command
         $class = $this->option('class');
         EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
 
-        $checks = [EnforceImports::class];
+        $check = CheckCollection::make([EnforceImports::class]);
 
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathDTO);
-        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, [], $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
+        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $consoleOutput = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
+        $messages = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
 
-        $messages = self::getMessages($consoleOutput);
+        $messages = self::addOtherMessages($messages);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
 
@@ -78,7 +79,7 @@ class EnforceImportsCommand extends Command
         };
     }
 
-    private static function getMessages($autoloadStats)
+    private static function addOtherMessages($autoloadStats)
     {
         return [
             CheckImportReporter::totalImportsMsg(),

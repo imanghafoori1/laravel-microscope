@@ -80,7 +80,7 @@ class ChecksOnPsr4Classes
      */
     private static function getCounter($psr4Namespace, $psr4Path)
     {
-        return fn () => (self::$check)->applyChecksInPath($psr4Namespace, $psr4Path);
+        return fn () => self::$check->applyChecksInPath($psr4Namespace, $psr4Path);
     }
 
     private static function handleExceptions()

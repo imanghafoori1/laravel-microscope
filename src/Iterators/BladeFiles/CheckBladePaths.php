@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
-use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -19,7 +18,7 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, string>  $dirs
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
      * @param  PathFilterDTO  $pathDTO
      * @param  array|callable  $params
      * @return \Generator<string, int>
@@ -77,11 +76,11 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
-     * @param  callable|array  $paramsProvider
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
+     * @param  array  $params
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
      * @return int
      */
-    private static function applyChecks($files, $paramsProvider, $checks): int
+    private static function applyChecks($files, $params, $checks): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -96,7 +95,7 @@ class CheckBladePaths
                 $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
-            Loop::map($checks, fn ($check) => $check::check($file, $paramsProvider));
+            $checks->applyOnFile($file, $params);
         }
 
         return $count;

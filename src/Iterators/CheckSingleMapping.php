@@ -16,9 +16,9 @@ class CheckSingleMapping
     public $params;
 
     /**
-     * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
+     * @var \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection
      */
-    public $checks;
+    public $checksCollection;
 
     private $namespace;
 
@@ -34,7 +34,7 @@ class CheckSingleMapping
         $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
-        $obj->checks = $checks;
+        $obj->checksCollection = $checks;
         $obj->params = $params;
         $obj->pathDTO = $pathDTO;
 
@@ -76,7 +76,7 @@ class CheckSingleMapping
 
         $params = $this->params;
 
-        foreach ($this->checks as $check) {
+        foreach ($this->checksCollection->checks as $check) {
             try {
                 /**
                  * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>

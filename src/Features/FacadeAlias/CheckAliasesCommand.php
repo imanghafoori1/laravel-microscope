@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -46,12 +47,12 @@ class CheckAliasesCommand extends Command
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
-        $paramProvider = self::getParamProvider();
-        self::setEnforceImportsOptions($paramProvider);
+        $importsProvider = self::getParamProvider();
+        self::setEnforceImportsOptions($importsProvider);
         self::setFacadeAliasCheckOptions($this->option('alias'));
-        FacadeAliasesCheck::$importsProvider = $paramProvider;
+        FacadeAliasesCheck::$importsProvider = $importsProvider;
 
-        $check = [EnforceImports::class, FacadeAliasesCheck::class];
+        $check = CheckCollection::make([EnforceImports::class, FacadeAliasesCheck::class]);
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
 

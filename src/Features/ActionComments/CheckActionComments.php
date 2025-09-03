@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -35,7 +36,7 @@ class CheckActionComments extends Command
         ActionsComments::$controllers = self::findDefinedRouteActions();
 
         $psr4Stats = ForAutoloadedPsr4Classes::check(
-            [ActionsComments::class],
+            CheckCollection::make([ActionsComments::class]),
             [],
             PathFilterDTO::makeFromOption($this)
         );

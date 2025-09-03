@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -48,7 +49,7 @@ trait PatternApply
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $check = [PatternRefactorings::class];
+        $check = CheckCollection::make([PatternRefactorings::class]);
 
         $routeFiles = ForRouteFiles::check($check, [$parsedPatterns], $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, [$parsedPatterns], $pathDTO);

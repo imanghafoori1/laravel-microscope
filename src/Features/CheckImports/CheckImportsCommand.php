@@ -18,6 +18,7 @@ use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -100,15 +101,16 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
+        $checks = CheckCollection::make($checks);
         $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($this->checks, $useStatementParser, $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check(CheckCollection::make($this->checks), $useStatementParser, $pathDTO);
         $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = ForBladeFiles::check($checks, $useStatementParser, $pathDTO);
+        $bladeStats = ForBladeFiles::check(CheckCollection::make($checks), $useStatementParser, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

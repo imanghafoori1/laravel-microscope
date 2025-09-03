@@ -2,11 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators\DTO;
 
-trait MakeDto
+class MakeDto
 {
-    public static function make($stats)
+    public static function make($stats, $class)
     {
-        $obj = new self();
+        $obj = new $class();
 
         $obj->stats = $stats;
 

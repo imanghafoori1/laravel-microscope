@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFolders
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -40,12 +41,12 @@ class CheckDDCommand extends Command
             );
         };
         CheckDD::$onErrorCallback = $onErrorCallback;
+        $checks = CheckCollection::make([CheckDD::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [], $pathDTO);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckDD::class], [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [], $pathDTO);
-
-        $foldersStats = ForFolderPaths::check([CheckDD::class], LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
+        $foldersStats = ForFolderPaths::check(CheckCollection::make([CheckDD::class]), LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());

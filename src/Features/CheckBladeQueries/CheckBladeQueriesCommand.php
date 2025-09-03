@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckBladeQueries;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -31,8 +32,9 @@ class CheckBladeQueriesCommand extends Command
 
         $errorPrinter->printer = $this->output;
 
+        $checks = CheckCollection::make([IsQueryCheck::class]);
         // checks the blade files for database queries.
-        $bladeStats = ForBladeFiles::check([IsQueryCheck::class], [], $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, [], $pathDTO);
 
         $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
 

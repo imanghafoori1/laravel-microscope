@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -64,9 +65,10 @@ class CheckRefactorsCommand extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
+        $checks = CheckCollection::make([PatternRefactorings::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [$parsedPatterns, $patterns], $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
+        $filesStats = ForAutoloadedFiles::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());

@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -52,8 +53,9 @@ class CheckRoutes extends Command
 
         $this->info('Checking route names exists...');
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckRouteCalls::class], [], $pathDTO);
-        $bladeStats = ForBladeFiles::check([CheckRouteCalls::class], [], $pathDTO);
+        $checks = CheckCollection::make([CheckRouteCalls::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, [], $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
         $this->getOutput()->writeln(

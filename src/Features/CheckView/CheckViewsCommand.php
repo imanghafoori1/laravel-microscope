@@ -11,6 +11,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
@@ -37,10 +38,15 @@ class CheckViewsCommand extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
+        $checks = CheckCollection::make([CheckView::class]);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckView::class], [], $pathDTO);
-        $routeFiles = ForRouteFiles::check([CheckView::class], [], $pathDTO);
-        $bladeStats = ForBladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, [], $pathDTO);
+        $bladeStats = ForBladeFiles::check(
+            CheckCollection::make([CheckViewFilesExistence::class]),
+            null,
+            $pathDTO
+        );
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 

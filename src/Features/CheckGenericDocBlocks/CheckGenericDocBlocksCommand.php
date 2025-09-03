@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
@@ -26,7 +27,9 @@ class CheckGenericDocBlocksCommand extends Command
         GenericDocblocks::$conformer = $this->getConformer();
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([GenericDocblocks::class], [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check(
+            CheckCollection::make([GenericDocblocks::class]), [], $pathDTO
+        );
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 

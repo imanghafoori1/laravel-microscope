@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -32,7 +33,11 @@ class CheckDeadControllers extends Command
         $errorPrinter->printer = $this->output;
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        $psr4Stats = ForAutoloadedPsr4Classes::check([RoutelessControllerActions::class], [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check(
+            CheckCollection::make([RoutelessControllerActions::class]),
+            [],
+            $pathDTO
+        );
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 

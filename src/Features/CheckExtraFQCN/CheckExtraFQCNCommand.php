@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -51,7 +52,7 @@ class CheckExtraFQCNCommand extends Command
 
         $useStatementParser = [self::useStatementParser(), $fix, $class];
 
-        $checks = [ExtraFQCN::class];
+        $checks = CheckCollection::make([ExtraFQCN::class]);
 
         $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);

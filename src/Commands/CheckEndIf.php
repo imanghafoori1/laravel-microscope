@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -54,7 +55,7 @@ class CheckEndIf extends Command
 
     public static function applyRubySyntaxCheck($pathDTO)
     {
-        $check = [CheckRubySyntax::class];
+        $check = CheckCollection::make([CheckRubySyntax::class]);
         $psr4stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
         $filesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);

@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -41,8 +42,9 @@ class ClassifyStrings extends Command
 
     public static function classifyString(PathFilterDTO $pathFilterDTO): array
     {
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckStringy::class], [], $pathFilterDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckStringy::class], [], $pathFilterDTO);
+        $checks = CheckCollection::make([CheckStringy::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathFilterDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathFilterDTO);
 
         return [$psr4Stats, $classMapStats];
     }
