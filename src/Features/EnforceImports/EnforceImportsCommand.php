@@ -79,6 +79,10 @@ class EnforceImportsCommand extends Command
         };
     }
 
+    /**
+     * @param  $autoloadStats
+     * @return array
+     */
     private static function addOtherMessages($autoloadStats)
     {
         return [

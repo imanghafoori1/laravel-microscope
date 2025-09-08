@@ -59,7 +59,7 @@ trait PatternApply
         $bladeStats = ForBladeFiles::check($check, [$parsedPatterns], $pathDTO);
 
         $messages = self::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats, $bladeStats);
-        $messages[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
+        $messages->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
         try {
             Psr4ReportPrinter::printAll($messages, $this->getOutput());
         } finally {
@@ -71,7 +71,9 @@ trait PatternApply
     {
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
 
-        $lines[] = Reporters\BladeReport::getBladeStats($bladeStats);
+        $lines->add(
+            Reporters\BladeReport::getBladeStats($bladeStats)
+        );
 
         return $lines;
     }

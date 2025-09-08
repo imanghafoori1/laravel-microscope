@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessag
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Report
@@ -71,15 +72,15 @@ class Psr4Report
      * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
      * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
-     * @return array<int, array<int, string|\Generator<int, string>>>
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
      */
     public static function formatAutoloads($psr4Stats, $classMapStats, $filesStat = [])
     {
-        return Loop::map($psr4Stats, fn ($psr4Stat, $key) => self::present(
+        return AutoloadStats::make(Loop::map($psr4Stats, fn ($psr4Stat, $key) => self::present(
             $key,
             $psr4Stat,
             $classMapStats[$key] ?? null,
             $filesStat->stats[$key] ?? null
-        ));
+        )));
     }
 }

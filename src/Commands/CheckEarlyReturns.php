@@ -50,9 +50,9 @@ class CheckEarlyReturns extends Command
     /**
      * @param  PathFilterDTO  $pathDTO
      * @param  bool  $nofix
-     * @return array
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
      */
-    private static function applyCheckEarly($pathDTO, $nofix): array
+    private static function applyCheckEarly($pathDTO, $nofix)
     {
         $check = CheckCollection::make([CheckEarlyReturn::class]);
         $params = self::getParams($nofix);

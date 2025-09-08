@@ -55,8 +55,8 @@ class CheckEnvCallsCommand extends Command
         $bladeStats = ForBladeFiles::check($checks, [$params], $pathDTO);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classmapStats, $autoloadedFilesStats);
-        $lines[] = BladeReport::getBladeStats($bladeStats);
-        $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
+        $lines->add(BladeReport::getBladeStats($bladeStats));
+        $lines->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         CachedFiles::writeCacheFiles();
