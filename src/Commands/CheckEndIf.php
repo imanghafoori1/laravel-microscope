@@ -5,8 +5,10 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
+use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
@@ -34,9 +36,10 @@ class CheckEndIf extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        [$psr4Stats, $classMapStats] = self::applyRubySyntaxCheck($pathDTO);
+        [$psr4Stats, $classMapStats, $filesStats] = self::applyRubySyntaxCheck($pathDTO);
 
-        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
     }
@@ -54,7 +57,8 @@ class CheckEndIf extends Command
         $check = [CheckRubySyntax::class];
         $psr4stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
+        $filesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
 
-        return [$psr4stats, $classMapStats];
+        return [$psr4stats, $classMapStats, $filesStats];
     }
 }
