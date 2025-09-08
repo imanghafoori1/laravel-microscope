@@ -60,11 +60,11 @@ class FixWrongClassRefs
         return Fixer::fixReference($file, $class, $line);
     }
 
-    private static function wrongRef($printer, $wrongClassRef, $absFilePath, $line): void
+    private static function wrongRef($printer, $wrongClassRef, $file, $line): void
     {
         $printer->simplePendError(
             $wrongClassRef,
-            $absFilePath,
+            $file,
             $line,
             'wrongClassRef',
             'Inline class Ref does not exist:'

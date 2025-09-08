@@ -31,6 +31,9 @@ class Loop
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public static function any($values, $condition)
     {
         foreach ($values as $value) {
