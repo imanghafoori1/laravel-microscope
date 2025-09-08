@@ -75,13 +75,11 @@ class Psr4Report
      */
     public static function formatAutoloads($psr4Stats, $classMapStats, $filesStat = [])
     {
-        $cb = fn ($psr4Stat, $key) => self::present(
+        return Loop::map($psr4Stats, fn ($psr4Stat, $key) => self::present(
             $key,
             $psr4Stat,
             $classMapStats[$key] ?? null,
             $filesStat->stats[$key] ?? null
-        );
-
-        return Loop::map($psr4Stats, $cb);
+        ));
     }
 }

@@ -35,7 +35,7 @@ class FacadeAliasReplacer
 
     private static function ask($absFilePath, $use, $base, $aliases)
     {
-        $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
+        $relativePath = FilePath::normalize(trim(str_replace(base_path(), '', $absFilePath), '\\/'));
         self::$command->writeln('at '.$relativePath.':'.$use[1]);
         $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases.'</>';
 

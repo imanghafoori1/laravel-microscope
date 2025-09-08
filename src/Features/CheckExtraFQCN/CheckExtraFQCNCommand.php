@@ -97,9 +97,9 @@ class CheckExtraFQCNCommand extends Command
     }
 
     /**
-     * @param  $autoloadStats
+     * @param  array<int, array<int, string|\Generator<int, string>>>  $autoloadStats
      * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $foldersStats
-     * @param  $routeFiles
+     * @param  \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>  $routeFiles
      * @return array
      */
     private static function addOtherMessages($autoloadStats, $foldersStats, $routeFiles)
