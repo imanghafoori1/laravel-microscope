@@ -26,7 +26,7 @@ class CheckView implements Check
         ]);
     }
 
-    private static function checkViewParams($absPath, &$tokens, $i, $index)
+    private static function checkViewParams($file, &$tokens, $i, $index)
     {
         $params = FunctionCall::readParameters($tokens, $i);
 
@@ -37,7 +37,7 @@ class CheckView implements Check
             CheckViewStats::$checkedCallsCount++;
             $viewName = self::getViewName($paramTokens[0][1]);
             if ($viewName && ! View::exists($viewName)) {
-                CheckView::viewError($absPath, $paramTokens[0][2], $viewName);
+                CheckView::viewError($file, $paramTokens[0][2], $viewName);
             }
         } else {
             CheckViewStats::$skippedCallsCount++;
@@ -46,20 +46,19 @@ class CheckView implements Check
 
     public static function checkViewCalls(PhpFileDescriptor $file, array $staticCalls)
     {
-        $absPath = $file->getAbsolutePath();
         $tokens = $file->getTokens();
         $hasViewCalls = false;
         foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
                 $hasViewCalls = true;
-                self::checkViewParams($absPath, $tokens, $i, 0);
+                self::checkViewParams($file, $tokens, $i, 0);
                 continue;
             }
 
             foreach ($staticCalls as $class => $method) {
                 if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
                     $hasViewCalls = true;
-                    self::checkViewParams($absPath, $tokens, $i, $method[1]);
+                    self::checkViewParams($file, $tokens, $i, $method[1]);
                 }
             }
         }
@@ -67,11 +66,11 @@ class CheckView implements Check
         return $hasViewCalls;
     }
 
-    public static function viewError($absPath, $lineNumber, $fileName)
+    public static function viewError($file, $lineNumber, $fileName)
     {
         ErrorPrinter::singleton()->simplePendError(
             $fileName.'.blade.php',
-            $absPath,
+            $file,
             $lineNumber,
             'missing_view',
             'The blade file is missing:',

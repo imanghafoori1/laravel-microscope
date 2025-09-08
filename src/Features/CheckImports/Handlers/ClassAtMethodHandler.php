@@ -53,11 +53,11 @@ class ClassAtMethodHandler
         $header = $wrongClass.'  <=== Did not exist';
         $msg = 'Fixed to:  '.substr($correct[0], 0, 55);
 
-        ErrorPrinter::singleton()->simplePendError($msg, $file->getAbsolutePath(), $lineNumber, 'ns_replacement', $header);
+        ErrorPrinter::singleton()->simplePendError($msg, $file, $lineNumber, 'ns_replacement', $header);
     }
 
     private static function wrongUsedClassError(PhpFileDescriptor $file, $class, $lineNumber)
     {
-        ErrorPrinter::singleton()->simplePendError($class, $file->getAbsolutePath(), $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
+        ErrorPrinter::singleton()->simplePendError($class, $file, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 }

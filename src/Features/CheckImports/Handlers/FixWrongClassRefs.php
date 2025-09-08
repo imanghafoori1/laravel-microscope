@@ -75,7 +75,7 @@ class FixWrongClassRefs
     {
         ErrorPrinter::singleton()->simplePendError(
             'Fixed to:   '.substr($correct[0], 0, 55),
-            $file->getAbsolutePath(),
+            $file,
             $lineNumber,
             'ns_replacement',
             $wrongClass.'  <=== Did not exist'

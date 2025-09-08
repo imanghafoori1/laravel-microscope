@@ -46,7 +46,7 @@ class FacadeDocblocks
             try {
                 $accessor = get_class($fqcnFacade::getFacadeRoot());
             } catch (Exception $e) {
-                (self::$onError)($accessor, $absFilePath);
+                (self::$onError)($accessor, $file);
 
                 return;
             }

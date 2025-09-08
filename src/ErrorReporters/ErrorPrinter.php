@@ -89,6 +89,10 @@ class ErrorPrinter
 
     public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
+        if (is_object($absPath)) {
+            $absPath = $absPath->getAbsolutePath();
+        }
+
         $errorData = $pre.$this->color($yellowText).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);

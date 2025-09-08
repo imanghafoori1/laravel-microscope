@@ -35,8 +35,8 @@ class CheckFacadeDocblocks extends Command
             $this->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
         };
 
-        FacadeDocblocks::$onError = function ($accessor, $absFilePath) {
-            ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $absFilePath, 20, 'asd', 'The Facade Accessor Not Found.');
+        FacadeDocblocks::$onError = function ($accessor, $file) {
+            ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $file, 20, 'asd', 'The Facade Accessor Not Found.');
         };
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
