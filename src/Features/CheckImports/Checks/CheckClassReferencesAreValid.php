@@ -52,7 +52,7 @@ class CheckClassReferencesAreValid implements Check
         if ($wrongClassRefs && self::$checkWrong && self::$wrongClassRefsHandler) {
             [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
                 $wrongClassRefs,
-                $absFilePath,
+                $file,
                 $hostNamespace,
                 $file->getTokens(),
             );

@@ -33,6 +33,9 @@ class PhpFileDescriptor
         return $obj;
     }
 
+    /**
+     * @return false|string
+     */
     public function getMd5()
     {
         return md5_file($this->path->getWithUnixDirectorySeprator());
@@ -52,11 +55,17 @@ class PhpFileDescriptor
         return $this->tokens;
     }
 
+    /**
+     * @return string
+     */
     public function getAbsolutePath()
     {
         return $this->path->__toString();
     }
 
+    /**
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Path
+     */
     public function relativePath()
     {
         return $this->path->relativePath();
@@ -64,24 +73,42 @@ class PhpFileDescriptor
 
     public function getLine(int $lineNumber)
     {
-        return file($this->path)[$lineNumber - 1] ?? '';
+        return file($this->getAbsolutePath())[$lineNumber - 1] ?? '';
     }
 
     public function getNamespace()
     {
-        return ComposerJson::make()->getNamespacedClassFromPath($this->path);
+        return ComposerJson::make()->getNamespacedClassFromPath($this->getAbsolutePath());
     }
 
+    /**
+     * @return false|string
+     */
+    public function getContent()
+    {
+        return file_get_contents($this->getAbsolutePath());
+    }
+
+    /**
+     * @return array
+     */
     private function tokenize()
     {
-        return token_get_all(file_get_contents($this->path));
+        return token_get_all($this->getContent());
     }
 
+    /**
+     * @param  list  $tokens
+     * @return void
+     */
     public function setTokens($tokens)
     {
         $this->tokens = $tokens;
     }
 
+    /**
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Path
+     */
     public function path()
     {
         return $this->path;
@@ -91,7 +118,7 @@ class PhpFileDescriptor
     {
         $this->tokens = [];
 
-        return Filesystem::$fileSystem::file_put_contents((string) $this->path, $newVersion);
+        return Filesystem::$fileSystem::file_put_contents($this->getAbsolutePath(), $newVersion);
     }
 
     public function replaceFirst($search, $replace)
@@ -101,14 +128,14 @@ class PhpFileDescriptor
 
     public function replaceFirstAtLine($search, $replace, $line)
     {
-        return FileManipulator::replaceFirst((string) $this->path, $search, $replace, $line);
+        return FileManipulator::replaceFirst($this->getAbsolutePath(), $search, $replace, $line);
     }
 
     public function replaceAtLine($search, $replace, $lineNum)
     {
         $this->tokens = [];
 
-        return FileManipulator::replaceFirst($this->path, $search, $replace, $lineNum);
+        return FileManipulator::replaceFirst($this->getAbsolutePath(), $search, $replace, $lineNum);
     }
 
     public function searchReplacePatterns($search, $replace)
@@ -137,11 +164,11 @@ class PhpFileDescriptor
 
     public function insertNewLine($newLine, $atLine)
     {
-        return FileManipulator::insertNewLine((string) $this->path, $newLine, $atLine);
+        return FileManipulator::insertNewLine($this->getAbsolutePath(), $newLine, $atLine);
     }
 
     public function getFileName()
     {
-        return basename($this->path->__toString());
+        return basename($this->getAbsolutePath());
     }
 }

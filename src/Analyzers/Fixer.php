@@ -45,7 +45,7 @@ class Fixer
         return ClassListProvider::get()[$classBaseName] ?? [];
     }
 
-    public static function fixReference($absPath, $inlinedClassRef, $lineNum)
+    public static function fixReference(PhpFileDescriptor $file, $inlinedClassRef, $lineNum)
     {
         $classBaseName = class_basename($inlinedClassRef);
 
@@ -56,14 +56,13 @@ class Fixer
         }
         $fullClassPath = $correct[0];
 
-        $file = PhpFileDescriptor::make($absPath);
         $contextClassNamespace = $file->getNamespace();
 
         if (NamespaceCalculator::haveSameNamespace($contextClassNamespace, $fullClassPath)) {
             return [self::doReplacement($file, $inlinedClassRef, class_basename($fullClassPath), $lineNum), $correct];
         }
 
-        $uses = ParseUseStatement::parseUseStatements(token_get_all(file_get_contents($absPath)))[1];
+        $uses = ParseUseStatement::parseUseStatements($file->getTokens())[1];
 
         // if there is some use statements at the top but the class is not imported.
         if (count($uses) === 0 || isset($uses[$classBaseName])) {
@@ -93,7 +92,7 @@ class Fixer
             return [false, []];
         }
 
-        return [FileManipulator::insertNewLine($absPath, "use $fullClassPath;", $lineNum), $correct];
+        return [FileManipulator::insertNewLine($file->getAbsolutePath(), "use $fullClassPath;", $lineNum), $correct];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
