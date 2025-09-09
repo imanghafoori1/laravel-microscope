@@ -58,8 +58,8 @@ class CheckEndIf extends Command
         $check = CheckCollection::make([CheckRubySyntax::class]);
         $psr4stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
 
-        return [$psr4stats, $classMapStats, $filesStats];
+        return [$psr4stats, $classMapStats, $autoloadedFilesStats];
     }
 }

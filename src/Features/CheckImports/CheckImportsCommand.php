@@ -103,9 +103,9 @@ class CheckImportsCommand extends Command
 
         $checks = CheckCollection::make($checks);
         $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check(CheckCollection::make($this->checks), $useStatementParser, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
         $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
@@ -114,7 +114,7 @@ class CheckImportsCommand extends Command
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $messages = Reporters\Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
+        $messages = Reporters\Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         /**
          * @var string[] $messages
          */

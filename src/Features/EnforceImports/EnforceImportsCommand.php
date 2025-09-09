@@ -49,12 +49,12 @@ class EnforceImportsCommand extends Command
         $check = CheckCollection::make([EnforceImports::class]);
 
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
-        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
         $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $messages = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFiles);
+        $messages = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
 
         $messages = self::addOtherMessages($messages);
 

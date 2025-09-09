@@ -68,9 +68,9 @@ class CheckRefactorsCommand extends Command
         $checks = CheckCollection::make([PatternRefactorings::class]);
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [$parsedPatterns, $patterns], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
 
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
+        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
         $this->getOutput()->writeln(' - Finished search/replace');
 
