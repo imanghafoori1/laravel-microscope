@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use ImanGhafoori\ComposerJson\ClassLists;
 use ReflectionClass;
 use Symfony\Component\Console\Terminal;
 
@@ -26,10 +27,10 @@ class ListModelsArtisanCommand extends Command
         );
     }
 
-    protected function inspectModels($classLists)
+    protected function inspectModels(ClassLists $classLists)
     {
         $models = [];
-        foreach ($classLists as $path => $classList) {
+        foreach ($classLists->getAllLists() as $path => $classList) {
             $models[$path] = [];
             foreach ($classList as $list) {
                 foreach ($list as $class) {
