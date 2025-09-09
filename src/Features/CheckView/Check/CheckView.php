@@ -37,14 +37,14 @@ class CheckView implements Check
             CheckViewStats::$checkedCallsCount++;
             $viewName = self::getViewName($paramTokens[0][1]);
             if ($viewName && ! View::exists($viewName)) {
-                CheckView::viewError($file, $paramTokens[0][2], $viewName);
+                self::viewError($file, $paramTokens[0][2], $viewName);
             }
         } else {
             CheckViewStats::$skippedCallsCount++;
         }
     }
 
-    public static function checkViewCalls(PhpFileDescriptor $file, array $staticCalls)
+    private static function checkViewCalls(PhpFileDescriptor $file, array $staticCalls)
     {
         $tokens = $file->getTokens();
         $hasViewCalls = false;
