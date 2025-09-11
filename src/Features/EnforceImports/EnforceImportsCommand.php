@@ -46,11 +46,11 @@ class EnforceImportsCommand extends Command
         $class = $this->option('class');
         EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
 
-        $check = CheckCollection::make([EnforceImports::class]);
+        $checks = CheckCollection::make([EnforceImports::class]);
 
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

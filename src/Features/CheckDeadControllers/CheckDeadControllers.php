@@ -33,11 +33,8 @@ class CheckDeadControllers extends Command
         $errorPrinter->printer = $this->output;
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        $psr4Stats = ForAutoloadedPsr4Classes::check(
-            CheckCollection::make([RoutelessControllerActions::class]),
-            [],
-            $pathDTO
-        );
+        $checks = CheckCollection::make([RoutelessControllerActions::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 

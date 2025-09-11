@@ -41,9 +41,9 @@ class CheckFacadeDocblocks extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $check = CheckCollection::make([FacadeDocblocks::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, null, $pathDTO);
+        $checks = CheckCollection::make([FacadeDocblocks::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 

@@ -26,10 +26,9 @@ class CheckGenericDocBlocksCommand extends Command
 
         GenericDocblocks::$conformer = $this->getConformer();
         $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checks = CheckCollection::make([GenericDocblocks::class]);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check(
-            CheckCollection::make([GenericDocblocks::class]), [], $pathDTO
-        );
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
 

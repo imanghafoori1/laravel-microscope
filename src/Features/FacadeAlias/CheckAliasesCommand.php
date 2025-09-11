@@ -52,9 +52,9 @@ class CheckAliasesCommand extends Command
         self::setFacadeAliasCheckOptions($this->option('alias'));
         FacadeAliasesCheck::$importsProvider = $importsProvider;
 
-        $check = CheckCollection::make([EnforceImports::class, FacadeAliasesCheck::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
+        $checks = CheckCollection::make([EnforceImports::class, FacadeAliasesCheck::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 

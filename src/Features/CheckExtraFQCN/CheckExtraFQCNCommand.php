@@ -54,10 +54,10 @@ class CheckExtraFQCNCommand extends Command
 
         $checks = CheckCollection::make([ExtraFQCN::class]);
 
-        $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $useStatementParser, $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, $pathDTO, $useStatementParser);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $useStatementParser);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $useStatementParser);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, $useStatementParser);
         $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $messages = self::addOtherMessages(

@@ -40,10 +40,10 @@ class CheckPsr12Command extends Command
 
         ActionsComments::$command = $this;
 
-        $pathFilterDTO = PathFilterDTO::makeFromOption($this);
-        $check = CheckCollection::make([CurlyBracesCheck::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [], $pathFilterDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathFilterDTO);
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checks = CheckCollection::make([CurlyBracesCheck::class]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
         $this->finishCommand($errorPrinter);

@@ -9,7 +9,7 @@ class ForAutoloadedFiles
     /**
      * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
-    public static function check($basePath, $checks, $paramProvider, $pathDTO = null)
+    public static function check($basePath, $checks, $pathDTO = null, $paramProvider = [])
     {
         $autoloadFiles = ComposerJson::autoloadedFilesList($basePath);
 

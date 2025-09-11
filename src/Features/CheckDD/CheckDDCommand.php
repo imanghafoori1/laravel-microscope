@@ -42,9 +42,9 @@ class CheckDDCommand extends Command
         };
         CheckDD::$onErrorCallback = $onErrorCallback;
         $checks = CheckCollection::make([CheckDD::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
 
         $foldersStats = ForFolderPaths::check(CheckCollection::make([CheckDD::class]), LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
 

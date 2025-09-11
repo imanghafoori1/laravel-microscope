@@ -66,9 +66,9 @@ class CheckRefactorsCommand extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $checks = CheckCollection::make([PatternRefactorings::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [$parsedPatterns, $patterns], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [$parsedPatterns, $patterns], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, [$parsedPatterns, $patterns]);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, [$parsedPatterns, $patterns]);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, [$parsedPatterns, $patterns]);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());

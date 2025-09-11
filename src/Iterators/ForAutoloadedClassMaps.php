@@ -12,11 +12,11 @@ class ForAutoloadedClassMaps extends BaseIterator
     /**
      * @param  string  $basePath
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
-     * @param  array  $params
      * @param  PathFilterDTO  $pathDTO
+     * @param  array  $params
      * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
-    public static function check($basePath, $checks, $params, PathFilterDTO $pathDTO)
+    public static function check($basePath, $checks, PathFilterDTO $pathDTO, $params = [])
     {
         return Loop::map(
             ComposerJson::getClassMaps($basePath, $pathDTO),

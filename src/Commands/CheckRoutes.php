@@ -54,8 +54,8 @@ class CheckRoutes extends Command
         $this->info('Checking route names exists...');
         $pathDTO = PathFilterDTO::makeFromOption($this);
         $checks = CheckCollection::make([CheckRouteCalls::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
-        $bladeStats = ForBladeFiles::check($checks, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, $pathDTO);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
         $this->getOutput()->writeln(

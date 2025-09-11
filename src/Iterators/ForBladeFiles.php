@@ -18,7 +18,7 @@ class ForBladeFiles implements Check
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, BladeStatDto>
      */
-    public static function check($checks, $params = [], $pathDTO = null)
+    public static function check($checks, $pathDTO = null, $params = [])
     {
         self::withoutComponentTags();
         $mapper = fn ($paths) => BladeStatDto::make(

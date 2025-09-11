@@ -40,11 +40,11 @@ class ClassifyStrings extends Command
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
-    public static function classifyString(PathFilterDTO $pathFilterDTO): array
+    public static function classifyString(PathFilterDTO $pathDTO): array
     {
         $checks = CheckCollection::make([CheckStringy::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathFilterDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [], $pathFilterDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
 
         return [$psr4Stats, $classMapStats];
     }

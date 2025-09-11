@@ -54,11 +54,11 @@ class CheckEarlyReturns extends Command
      */
     private static function applyCheckEarly($pathDTO, $nofix)
     {
-        $check = CheckCollection::make([CheckEarlyReturn::class]);
+        $checks = CheckCollection::make([CheckEarlyReturn::class]);
         $params = self::getParams($nofix);
-        $psr4stats = ForAutoloadedPsr4Classes::check($check, $params, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, $params, $pathDTO);
+        $psr4stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, $params);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $params);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $params);
 
         return Psr4Report::formatAutoloads($psr4stats, $classMapStats, $autoloadedFilesStats);
     }

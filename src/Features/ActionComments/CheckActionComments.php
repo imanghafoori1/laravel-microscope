@@ -34,12 +34,10 @@ class CheckActionComments extends Command
         ActionsComments::$command = $this;
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
+        $checks = CheckCollection::make([ActionsComments::class]);
+        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check(
-            CheckCollection::make([ActionsComments::class]),
-            [],
-            PathFilterDTO::makeFromOption($this)
-        );
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
 
         Psr4ReportPrinter::printAll(
             Psr4Report::formatAutoloads($psr4Stats, []),

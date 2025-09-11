@@ -55,10 +55,10 @@ class CheckEndIf extends Command
 
     public static function applyRubySyntaxCheck($pathDTO)
     {
-        $check = CheckCollection::make([CheckRubySyntax::class]);
-        $psr4stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
+        $checks = CheckCollection::make([CheckRubySyntax::class]);
+        $psr4stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
 
         return [$psr4stats, $classMapStats, $autoloadedFilesStats];
     }

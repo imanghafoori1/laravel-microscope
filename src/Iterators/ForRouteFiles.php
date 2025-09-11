@@ -13,7 +13,7 @@ class ForRouteFiles
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>
      */
-    public static function check($checks, $params, $pathDTO)
+    public static function check($checks, $pathDTO, $params = [])
     {
         $routeFiles = FilePath::filter(RoutePaths::get(), $pathDTO);
 

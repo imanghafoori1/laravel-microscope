@@ -40,11 +40,10 @@ class CheckViewsCommand extends Command
         $errorPrinter->printer = $this->output;
         $checks = CheckCollection::make([CheckView::class]);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [], $pathDTO);
-        $routeFiles = ForRouteFiles::check($checks, [], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, $pathDTO);
         $bladeStats = ForBladeFiles::check(
             CheckCollection::make([CheckViewFilesExistence::class]),
-            null,
             $pathDTO
         );
 

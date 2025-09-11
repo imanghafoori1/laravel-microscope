@@ -102,15 +102,15 @@ class CheckImportsCommand extends Command
         unset($checks[1]);
 
         $checks = CheckCollection::make($checks);
-        $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check(CheckCollection::make($this->checks), $useStatementParser, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, $pathDTO, $useStatementParser);
+        $psr4Stats = ForAutoloadedPsr4Classes::check(CheckCollection::make($this->checks), $pathDTO, $useStatementParser);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $useStatementParser);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $useStatementParser);
         $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = ForBladeFiles::check(CheckCollection::make($checks), $useStatementParser, $pathDTO);
+        $bladeStats = ForBladeFiles::check(CheckCollection::make($checks), $pathDTO, $useStatementParser);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

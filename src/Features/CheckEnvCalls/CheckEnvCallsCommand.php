@@ -45,14 +45,14 @@ class CheckEnvCallsCommand extends Command
         };
 
         $this->excludeConfigFiles($pathDTO);
-        $routeFiles = ForRouteFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
         $checks = CheckCollection::make([EnvCallsCheck::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, [$params], $pathDTO);
-        $classmapStats = ForAutoloadedClassMaps::check(base_path(), $checks, [$params], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, [$params], $pathDTO);
-        $bladeStats = ForBladeFiles::check($checks, [$params], $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, $pathDTO, [$params]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, [$params]);
+        $classmapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, [$params]);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, [$params]);
+        $bladeStats = ForBladeFiles::check($checks, $pathDTO, [$params]);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classmapStats, $autoloadedFilesStats);
         $lines->add(BladeReport::getBladeStats($bladeStats));

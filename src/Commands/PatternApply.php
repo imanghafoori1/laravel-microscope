@@ -49,14 +49,14 @@ trait PatternApply
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $check = CheckCollection::make([PatternRefactorings::class]);
+        $checks = CheckCollection::make([PatternRefactorings::class]);
 
-        $routeFiles = ForRouteFiles::check($check, [$parsedPatterns], $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [$parsedPatterns], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [$parsedPatterns], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [$parsedPatterns], $pathDTO);
+        $routeFiles = ForRouteFiles::check($checks, $pathDTO, [$parsedPatterns]);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, [$parsedPatterns]);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, [$parsedPatterns]);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, [$parsedPatterns]);
         CheckBladePaths::$readOnly = false;
-        $bladeStats = ForBladeFiles::check($check, [$parsedPatterns], $pathDTO);
+        $bladeStats = ForBladeFiles::check($checks, $pathDTO, [$parsedPatterns]);
 
         $messages = self::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats, $bladeStats);
         $messages->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
