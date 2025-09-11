@@ -27,8 +27,6 @@ class SubclassFinder
 
     protected function getPathFilter($folder)
     {
-        return function ($absFilePath, $fileName) use ($folder) {
-            return strpos(str_replace(base_path(), '', $absFilePath), $folder);
-        };
+        return fn ($absFilePath, $fileName) => strpos(str_replace(base_path(), '', $absFilePath), $folder);
     }
 }

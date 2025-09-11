@@ -35,11 +35,7 @@ class ListModelsArtisanCommand extends Command
             foreach ($classList as $list) {
                 foreach ($list as $class) {
                     $classPath = $class['currentNamespace'].'\\'.$class['class'];
-                    $models[$path][] = [
-                        'table' => $this->getTable($classPath),
-                        'class' => $classPath,
-                        'relative_path' => str_replace(base_path(), '', $class['absFilePath']),
-                    ];
+                    $models[$path][] = $this->getModelInfo($classPath, $class['absFilePath']);
                 }
             }
         }
@@ -47,8 +43,22 @@ class ListModelsArtisanCommand extends Command
         return $models;
     }
 
+    private function getModelInfo(string $classPath, string $absFilePath)
+    {
+        return [
+            'table' => $this->getTable($classPath),
+            'class' => $classPath,
+            'relative_path' => $this->getRelativePath($absFilePath),
+        ];
+    }
+
     private function getTable(string $classPath)
     {
         return (new ReflectionClass($classPath))->newInstanceWithoutConstructor()->getTable();
+    }
+
+    private function getRelativePath(string $absFilePath)
+    {
+        return str_replace(base_path(), '', $absFilePath);
     }
 }
