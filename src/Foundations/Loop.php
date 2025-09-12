@@ -90,4 +90,16 @@ class Loop
 
         return $result;
     }
+
+    public static function filter($iterable, $callback)
+    {
+        $items = [];
+        foreach ($iterable as $key => $item) {
+            if ($callback($item, $key)) {
+                $items[$key] = $item;
+            }
+        }
+
+        return $items;
+    }
 }

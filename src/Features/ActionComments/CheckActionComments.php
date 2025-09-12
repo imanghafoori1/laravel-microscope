@@ -31,11 +31,12 @@ class CheckActionComments extends Command
 
         $this->info('Commentify Route Actions...');
 
-        ActionsComments::$command = $this;
-
-        ActionsComments::$controllers = self::findDefinedRouteActions();
-        $checks = CheckCollection::make([ActionsComments::class]);
         $pathDTO = PathFilterDTO::makeFromOption($this);
+
+        ActionsComments::$command = $this;
+        ActionsComments::$controllers = self::findDefinedRouteActions();
+
+        $checks = CheckCollection::make([ActionsComments::class]);
 
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
 
