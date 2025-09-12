@@ -11,6 +11,26 @@ class Loop
         }
     }
 
+    public static function walkCount($iterable, callable $callback)
+    {
+        $count = 0;
+        foreach ($iterable as $key => $value) {
+            $callback($value, $key) && $count++;
+        }
+
+        return $count;
+    }
+
+    public static function countAll($iterable)
+    {
+        $count = 0;
+        foreach ($iterable as $v) {
+            $count++;
+        }
+
+        return $count;
+    }
+
     public static function map($iterable, callable $callback)
     {
         $result = [];

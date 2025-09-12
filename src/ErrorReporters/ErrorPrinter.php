@@ -164,15 +164,7 @@ class ErrorPrinter
     public function logErrors()
     {
         foreach ($this->errorsList as $list) {
-            foreach ($list as $error) {
-                $this->printHeader($error->getHeader());
-                $this->print($error->getErrorData());
-                $this->printLink(
-                    $error->getLinkPath(),
-                    $error->getLinkLineNumber()
-                );
-                $this->end();
-            }
+            Loop::over($list, fn ($error) => $this->printError($error));
         }
 
         foreach ($this->pended as $pend) {
@@ -248,5 +240,13 @@ class ErrorPrinter
     public static function lineSeparator(): string
     {
         return ' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 3).'</>';
+    }
+
+    private function printError($error): void
+    {
+        $this->printHeader($error->getHeader());
+        $this->print($error->getErrorData());
+        $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+        $this->end();
     }
 }

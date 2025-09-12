@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class LaravelFoldersReport
 {
@@ -34,11 +35,8 @@ class LaravelFoldersReport
         $sub = '';
         foreach ($stats->stats as $dir => $files) {
             $c++;
-            $filesCount = 0;
             // consume generator:
-            foreach ($files->files as $_file) {
-                $filesCount++;
-            }
+            $filesCount = Loop::countAll($files->files);
 
             $total += $filesCount;
             $filesCount && ($sub .= self::addLine($dir, $filesCount));
