@@ -36,7 +36,7 @@ class LaravelFoldersReport
             $c++;
             $filesCount = 0;
             // consume generator:
-            foreach ($files as $_file) {
+            foreach ($files->files as $_file) {
                 $filesCount++;
             }
 

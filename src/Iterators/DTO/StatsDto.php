@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators\DTO;
 class StatsDto
 {
     /**
-     * @var array<string, \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>>
+     * @var array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto>
      */
     public $stats = [];
 

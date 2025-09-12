@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
@@ -51,7 +52,7 @@ class ForFolderPaths extends BaseIterator
         return StatsDto::make(
             Loop::map(
                 $paths,
-                fn ($absPaths) => self::applyChecks($absPaths, $checks, $param)
+                fn ($absPaths) => FilesDto::make(self::applyChecks($absPaths, $checks, $param))
             )
         );
     }

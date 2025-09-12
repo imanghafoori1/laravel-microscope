@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
@@ -34,7 +35,7 @@ class ForAutoloadedClassMaps extends BaseIterator
     {
         return StatsDto::make(Loop::map(
             $classMap,
-            fn ($absFilePaths) => self::applyChecks($absFilePaths, $checks, $params)
+            fn ($absFilePaths) => FilesDto::make(self::applyChecks($absFilePaths, $checks, $params))
         ));
     }
 }

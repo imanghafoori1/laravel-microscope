@@ -16,7 +16,7 @@ class CheckImportReporter
     }
 
     /**
-     * @param  \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>  $routeFiles
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $routeFiles
      * @return string
      */
     #[Pure]

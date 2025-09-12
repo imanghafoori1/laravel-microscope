@@ -42,7 +42,7 @@ class Psr4Report
      * @param  string  $composerPath
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stat
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $classMapStat
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $filesStat
      * @return array<int, string|\Generator<int, string>>
      */
     #[Pure]
