@@ -24,6 +24,8 @@ class CheckPsr12Command extends Command
 
     protected $description = 'Applies psr-12 rules';
 
+    protected $customMsg = 'All the public methods are marked explicitly as public.';
+
     public function handle(ErrorPrinter $errorPrinter)
     {
         $errorPrinter->printer = $this->output;
