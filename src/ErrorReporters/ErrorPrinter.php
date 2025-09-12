@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 use Exception;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Symfony\Component\Console\Terminal;
 
 class ErrorPrinter
@@ -88,9 +89,7 @@ class ErrorPrinter
 
     public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
-        if (is_object($absPath)) {
-            $absPath = $absPath->getAbsolutePath();
-        }
+        is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
 
         $errorData = $pre.$this->color($yellowText).$rest;
 
