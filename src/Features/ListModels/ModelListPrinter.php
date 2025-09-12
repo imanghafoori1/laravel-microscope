@@ -16,14 +16,17 @@ class ModelListPrinter
                 $output->writeln(str_replace('\\', '/', ErrorPrinter::getLink($model['relative_path'])));
 
                 try {
-                    $msg = '<fg=gray>';
+                    $this->write($output, '<fg=gray>', $terminalWidth);
                 } catch (Exception $e) {
                     // for older version of laravel.
-                    $msg = '<fg=white>';
+                    $this->write($output, '<fg=white>', $terminalWidth);
                 }
-
-                $output->writeln($msg.str_repeat('_', $terminalWidth).'</>');
             }
         }
+    }
+
+    private function write($output, string $msg, $terminalWidth): void
+    {
+        $output->writeln($msg.str_repeat('_', $terminalWidth).'</>');
     }
 }
