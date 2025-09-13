@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ServiceProvider;
 
 use Imanghafoori\LaravelMicroscope\Commands;
+use Imanghafoori\LaravelMicroscope\Commands\CheckAbortIf;
 use Imanghafoori\LaravelMicroscope\Features;
 use Imanghafoori\LaravelMicroscope\SearchReplace;
 
@@ -42,6 +43,7 @@ trait CommandsRegistry
         Commands\EnforceArrowFunctions::class,
         Features\CheckExtraFQCN\CheckExtraFQCNCommand::class,
         Features\EnforceImports\EnforceImportsCommand::class,
+        CheckAbortIf::class,
     ];
 
     private function registerCommands()
