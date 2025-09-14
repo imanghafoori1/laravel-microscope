@@ -86,6 +86,7 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:fqcn`](#fqcn)
         1. [`php artisan list:models`](#models)
         1. [`php artisan enforce:imports`](#enforce_imports)
+        1. [`php artisan check:abort_if`](#check_abort_if)
      </details>
 
     - [Credits](#credits)
@@ -143,7 +144,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 <a name="less-use-commands"></a>
 ### Less Used Commands:
 
-| #  | Artisan Command                                               |
+| #  |                   Artisan Command                             |
 |----|---------------------------------------------------------------|
 | 1  | `php artisan check:views`                                     |
 | 2  | `php artisan check:routes`                                    |
@@ -168,7 +169,8 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 21 | `php artisan enforce:helper_functions`                        |
 | 22 | `php artisan enforce:imports`                                 |
 | 23 | `php artisan check:fqcn`                                      |
-| 24 | `php artisan list:models`                                     |
+| 24 | `php artisan check:abort_if`                                  |
+| 25 | `php artisan list:models`                                     |
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions:
@@ -421,7 +423,7 @@ $closure = function ($a) use ($b) {
 };
 
 // will become:
-$closure = fn($a) => $a + $hello;
+$closure = fn ($a) => $a + $hello;
 ```
 
 But this is not captured:
@@ -614,7 +616,7 @@ if ($cond1 && $cond2) {
 
 ```
 
-- It also supports the ruby-like if():/endif; syntax;
+- It also supports the ruby-like if():-/endif; syntax;
 
 ```php
 <?php
@@ -767,6 +769,32 @@ local.INFO: array ('$var1' , '$var2');
 
 Remember some variables are passed into your view from a `view composer` and not the controller.
 Those variables are also taken into consideration when detecting unused variables.
+
+<a name="enforce_imports"></a>
+### `php artisan enforce:imports`
+
+This command refactors your code by importing fully qualified class namespaces at the top as `use` statements.
+You may use `--class=MyCls1,MyCls2` flag to limit the imported class names.
+
+<a name="check_abort_if"></a>
+### `php artisan check:abort_if`
+
+This command refactors your code from:
+```php
+<?php
+
+if ($some === 'Condition') {
+    abort(404, 'optional message.');
+}
+```
+
+into this:
+
+```php
+<?php
+
+abort_if(404, 'optional message.');
+```
 
 <a name="events"></a>
 ### `php artisan check:events`
