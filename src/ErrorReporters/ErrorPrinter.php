@@ -59,6 +59,10 @@ class ErrorPrinter
      */
     public static function singleton($output = null)
     {
+        if (is_null(self::$basePath)) {
+            self::$basePath = base_path();
+        }
+
         is_null(self::$instance) && (self::$instance = new self);
 
         $output && (self::$instance->printer = $output);
@@ -138,7 +142,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $this->print(self::getLink(str_replace(base_path(), '', $path), $lineNumber), '');
+            $this->print(self::getLink(str_replace(self::$basePath, '', $path), $lineNumber), '');
         }
     }
 

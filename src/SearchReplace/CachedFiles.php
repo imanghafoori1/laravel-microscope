@@ -6,6 +6,8 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CachedFiles
 {
+    public static $folderPath;
+
     private static $cache = [];
 
     private static $cacheChange = [];
@@ -47,6 +49,10 @@ class CachedFiles
 
     public static function getFolderPath(): string
     {
+        if (self::$folderPath) {
+            return self::$folderPath;
+        }
+
         $ds = DIRECTORY_SEPARATOR;
 
         return storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);

@@ -34,11 +34,16 @@ class CheckExtraSemiColons extends Command
 
     public function getPatterns()
     {
+        return self::patterns($this->option('nofix'));
+    }
+
+    public static function patterns($noFix): array
+    {
         return [
             'remove_extra_semi_colons' => [
                 'cacheKey' => 'extra_semi_colons-v1',
                 'search' => ';;',
-                'replace' => $this->option('nofix') ? null : ';',
+                'replace' => $noFix ? null : ';',
             ],
         ];
     }

@@ -1,0 +1,22 @@
+<?php
+
+namespace He\R\T;
+
+use C\E;
+use H as Hh;
+use He\R\T\Hh as G;
+
+class A
+{
+	public function W()
+	{
+        $a = E::class;
+        $a2 = E::class;
+        $a3 = E::class; // \C\E\Y::class;
+        $b = C\E::class;
+
+		U2::class;
+		\He\R\T\Hh::class;
+        He\R\T\G::class;
+	}
+}

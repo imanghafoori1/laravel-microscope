@@ -12,6 +12,8 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class PostReplaceAndSave
 {
+    public static $forceSave = false;
+
     public static function replaceAndSave($pattern, $matchedValue, $postReplaces, $namedPatterns, $tokens, $lineNum, string $absFilePath, $newTokens): array
     {
         $to = Replacer::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $postReplaces, $namedPatterns);
@@ -32,7 +34,7 @@ class PostReplaceAndSave
         $from = Finder::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
-        if (self::askToRefactor($absFilePath)) {
+        if (self::$forceSave || self::askToRefactor($absFilePath)) {
             Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
             $tokens = $newTokens;
         }
