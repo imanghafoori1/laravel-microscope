@@ -43,7 +43,7 @@ class FacadeDocblocks
         $isClass = class_exists($accessor);
         // For the interfaces, we just skip the resolution step
         // We also skip if the class is not bound on the $app
-        if ((! $isClass && ! interface_exists($accessor)) || ($isClass && app()->bound($accessor))) {
+        if ((! $isClass && ! interface_exists($accessor)) || ($isClass && $fqcnFacade::getFacadeApplication()->bound($accessor))) {
             try {
                 $accessor = get_class($fqcnFacade::getFacadeRoot());
             } catch (Exception $e) {

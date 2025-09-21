@@ -10,7 +10,10 @@ class ComposerJson
 {
     public static $composer;
 
-    public static function make(): Composer
+    /**
+     * @return Composer
+     */
+    public static function make()
     {
         return (self::$composer)();
     }
