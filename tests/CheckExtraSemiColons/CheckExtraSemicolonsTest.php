@@ -26,7 +26,8 @@ class CheckExtraSemicolonsTest extends TestCase
     public function test_extra_semicolons_get_removed()
     {
         ErrorPrinter::$basePath = __DIR__;
-        ErrorPrinter::singleton()->printer = new class {
+        ErrorPrinter::singleton()->printer = new class
+        {
             public function confirm()
             {
                 return true;

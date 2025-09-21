@@ -23,7 +23,7 @@ class CheckFacadeDocblocksTest extends TestCase
     public function test_basic()
     {
         ComposerJson::$composer = function () {
-            return new class 
+            return new class
             {
                 public function getNamespacedClassFromPath()
                 {
@@ -33,7 +33,8 @@ class CheckFacadeDocblocksTest extends TestCase
         };
         $file = PhpFileDescriptor::make(__DIR__.'/SampleFacade.temp');
         SampleFacade::swap(new MySampleRoot());
-        SampleFacade::setFacadeApplication(new class {
+        SampleFacade::setFacadeApplication(new class
+        {
             public function bound()
             {
                 return true;
