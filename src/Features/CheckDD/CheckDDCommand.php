@@ -6,12 +6,9 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -41,13 +38,12 @@ class CheckDDCommand extends Command
             );
         };
         CheckDD::$onErrorCallback = $onErrorCallback;
-        $checks = CheckCollection::make([CheckDD::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $pathDTO, [$onErrorCallback]);
+        $checkSet = CheckSet::init([CheckDD::class], $pathDTO);
 
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
+
+        $foldersStats = ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig());
+
         $lines->add(LaravelFoldersReport::formatFoldersStats($foldersStats));
 
         Psr4ReportPrinter::printAll($lines, $this->getOutput());

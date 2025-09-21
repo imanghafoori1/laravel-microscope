@@ -8,15 +8,14 @@ abstract class BaseIterator
 {
     /**
      * @param  \Generator<int, string>|string[]  $absFilePaths
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
-     * @param  array  $params
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
      * @return \Generator<int, PhpFileDescriptor>
      */
-    public static function applyChecks($absFilePaths, $checks, $params)
+    public static function applyChecks($absFilePaths, $checker)
     {
         foreach ($absFilePaths as $absFilePath) {
             $fileDescriptor = PhpFileDescriptor::make($absFilePath);
-            $checks->applyOnFile($fileDescriptor, $params);
+            $checker->checks->applyOnFile($fileDescriptor, $checker->params);
 
             yield $fileDescriptor;
         }

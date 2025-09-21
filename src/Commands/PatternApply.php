@@ -6,12 +6,8 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -49,33 +45,17 @@ trait PatternApply
     {
         $parsedPatterns = PatternParser::parsePatterns($patterns);
 
-        $checks = CheckCollection::make([PatternRefactorings::class]);
-
-        $routeFiles = ForRouteFiles::check($checks, $pathDTO, [$parsedPatterns]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, [$parsedPatterns]);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, [$parsedPatterns]);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, [$parsedPatterns]);
+        $checkSet = CheckSet::init([PatternRefactorings::class], $pathDTO, [$parsedPatterns]);
+        $lines = Reporters\ForComposerJsonFiles::checkAndPrint($checkSet);
         CheckBladePaths::$readOnly = false;
-        $bladeStats = ForBladeFiles::check($checks, $pathDTO, [$parsedPatterns]);
+        $lines->add(Reporters\BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));
 
-        $messages = self::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats, $bladeStats);
-        $messages->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
+        $lines->add(PHP_EOL.CheckImportReporter::getRouteStats(ForRouteFiles::check($checkSet)));
         try {
-            Psr4ReportPrinter::printAll($messages, $this->getOutput());
+            Psr4ReportPrinter::printAll($lines, $this->getOutput());
         } finally {
             CachedFiles::writeCacheFiles();
         }
-    }
-
-    private static function getConsoleMessages($psr4Stats, $classMapStats, $filesStats, $bladeStats)
-    {
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
-
-        $lines->add(
-            Reporters\BladeReport::getBladeStats($bladeStats)
-        );
-
-        return $lines;
     }
 
     private function hasFoundPatterns(): bool

@@ -9,11 +9,11 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -53,14 +53,13 @@ class CheckRoutes extends Command
 
         $this->info('Checking route names exists...');
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        $checks = CheckCollection::make([CheckRouteCalls::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $bladeStats = ForBladeFiles::check($checks, $pathDTO);
+        $checkSet = CheckSet::init([CheckRouteCalls::class], $pathDTO);
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-        $this->getOutput()->writeln(
-            $this->getStatisticsMsg()
-        );
+        $bladeStats = ForBladeFiles::check($checkSet);
+
+        $this->getOutput()->writeln($this->getStatisticsMsg());
         $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
 
         event('microscope.finished.checks', [$this]);

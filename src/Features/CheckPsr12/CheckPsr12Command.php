@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -40,10 +40,10 @@ class CheckPsr12Command extends Command
 
         ActionsComments::$command = $this;
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-        $checks = CheckCollection::make([CurlyBracesCheck::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
+        $checkSet = CheckSet::init([CurlyBracesCheck::class], PathFilterDTO::makeFromOption($this));
+
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checkSet);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
         $this->finishCommand($errorPrinter);

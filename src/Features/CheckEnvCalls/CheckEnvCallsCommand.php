@@ -7,13 +7,10 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -48,15 +45,15 @@ class CheckEnvCallsCommand extends Command
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
         EnvCallsCheck::$onErrorCallback = $params;
 
-        $checks = CheckCollection::make([EnvCallsCheck::class]);
-        $routeFiles = ForRouteFiles::check($checks, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classmapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
-        $bladeStats = ForBladeFiles::check($checks, $pathDTO);
+        $checkSet = CheckSet::init([EnvCallsCheck::class], $pathDTO);
 
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classmapStats, $autoloadedFilesStats);
-        $lines->add(BladeReport::getBladeStats($bladeStats));
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
+
+        $bladeStats = ForBladeFiles::check($checkSet);
+        $bladeReport = BladeReport::getBladeStats($bladeStats);
+        $lines->add($bladeReport);
+
+        $routeFiles = ForRouteFiles::check($checkSet);
         $lines->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
@@ -71,7 +68,7 @@ class CheckEnvCallsCommand extends Command
     }
 
     /**
-     * @param  \Generator<int, string>|string[]  $paths
+     * @param  \Generator|string[]  $paths
      * @return void
      */
     private function checkPaths($paths, $params)

@@ -6,11 +6,8 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
 
@@ -37,9 +34,8 @@ class CheckEndIf extends Command
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        [$psr4Stats, $classMapStats, $filesStats] = self::applyRubySyntaxCheck($pathDTO);
-
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
+        $checkSet = CheckSet::init([CheckRubySyntax::class], $pathDTO);
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
@@ -51,15 +47,5 @@ class CheckEndIf extends Command
         $this->warn('This command is going to make changes to your files!');
 
         return $this->output->confirm('Do you have committed everything in git?');
-    }
-
-    public static function applyRubySyntaxCheck($pathDTO)
-    {
-        $checks = CheckCollection::make([CheckRubySyntax::class]);
-        $psr4stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
-
-        return [$psr4stats, $classMapStats, $autoloadedFilesStats];
     }
 }

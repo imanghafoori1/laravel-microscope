@@ -9,8 +9,8 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -52,13 +52,13 @@ class CheckExtraFQCNCommand extends Command
 
         $useStatementParser = [self::useStatementParser(), $fix, $class];
 
-        $checks = CheckCollection::make([ExtraFQCN::class]);
+        $checkSet = CheckSet::init([ExtraFQCN::class], $pathDTO, $useStatementParser);
 
-        $routeFiles = ForRouteFiles::check($checks, $pathDTO, $useStatementParser);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $useStatementParser);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $useStatementParser);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, $useStatementParser);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $pathDTO, $useStatementParser);
+        $routeFiles = ForRouteFiles::check($checkSet);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checkSet);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checkSet);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
+        $foldersStats = ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig());
 
         $messages = self::addOtherMessages(
             Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats),

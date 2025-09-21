@@ -6,12 +6,9 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
@@ -40,25 +37,20 @@ class EnforceImportsCommand extends Command
         $this->line('');
         $this->info('Checking class references...');
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-
         $noFix = $this->option('no-fix');
         $class = $this->option('class');
         EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
 
-        $checks = CheckCollection::make([EnforceImports::class]);
+        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checkSet = CheckSet::init([EnforceImports::class], $pathDTO);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
+
+        $lines = self::addOtherMessages($lines);
+
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
-
-        $messages = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
-
-        $messages = self::addOtherMessages($messages);
-
-        Psr4ReportPrinter::printAll($messages, $this->getOutput());
 
         $this->finishCommand($errorPrinter);
 

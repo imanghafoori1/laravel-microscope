@@ -7,12 +7,11 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -38,21 +37,18 @@ class CheckViewsCommand extends Command
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $errorPrinter->printer = $this->output;
-        $checks = CheckCollection::make([CheckView::class]);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $routeFiles = ForRouteFiles::check($checks, $pathDTO);
-        $bladeStats = ForBladeFiles::check(
-            CheckCollection::make([CheckViewFilesExistence::class]),
-            $pathDTO
-        );
+        $checkSet = CheckSet::init([CheckView::class], $pathDTO);
 
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
 
-        $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
+        $routeFiles = ForRouteFiles::check($checkSet);
+        $lines->add(PHP_EOL.CheckImportReporter::getRouteStats($routeFiles));
+
+        $bladeStats = ForBladeFiles::check(CheckSet::init([CheckViewFilesExistence::class], $pathDTO));
+        $lines->add(PHP_EOL.BladeReport::getBladeStats($bladeStats));
+
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
-
-        $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
 
         $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats(

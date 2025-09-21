@@ -4,10 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Throwable;
 
-class CheckSingleMapping
+class CheckSet
 {
     use FiltersFiles;
 
@@ -18,7 +19,7 @@ class CheckSingleMapping
     /**
      * @var \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection
      */
-    public $checksCollection;
+    public $checks;
 
     private $namespace;
 
@@ -29,16 +30,21 @@ class CheckSingleMapping
      */
     public $exceptions = [];
 
-    public static function init($checks, $params, PathFilterDTO $pathDTO): CheckSingleMapping
+    public static function init($checks, PathFilterDTO $pathDTO = null, $params = []): CheckSet
     {
         $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
-        $obj->checksCollection = $checks;
+        $obj->checks = CheckCollection::make($checks);
         $obj->params = $params;
         $obj->pathDTO = $pathDTO;
 
         return $obj;
+    }
+
+    public function setChecks(array $checks)
+    {
+        $this->checks = CheckCollection::make($checks);
     }
 
     /**
@@ -76,7 +82,7 @@ class CheckSingleMapping
 
         $params = $this->params;
 
-        foreach ($this->checksCollection->checks as $check) {
+        foreach ($this->checks->checks as $check) {
             try {
                 /**
                  * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>

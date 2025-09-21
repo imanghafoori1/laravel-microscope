@@ -6,12 +6,9 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use JetBrains\PhpStorm\ExpectedValues;
 
@@ -41,26 +38,13 @@ class CheckEarlyReturns extends Command
         }
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        $lines = self::applyCheckEarly($pathDTO, $this->option('nofix'));
+        $nofix = $this->option('nofix');
+        $checkSet = CheckSet::init([CheckEarlyReturn::class], $pathDTO, $this->getParams($nofix));
+
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
-    }
-
-    /**
-     * @param  PathFilterDTO  $pathDTO
-     * @param  bool  $nofix
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
-     */
-    private static function applyCheckEarly($pathDTO, $nofix)
-    {
-        $checks = CheckCollection::make([CheckEarlyReturn::class]);
-        $params = self::getParams($nofix);
-        $psr4stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, $params);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $params);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $params);
-
-        return Psr4Report::formatAutoloads($psr4stats, $classMapStats, $autoloadedFilesStats);
     }
 
     private function startWarning()
@@ -71,7 +55,7 @@ class CheckEarlyReturns extends Command
         return $this->output->confirm(' Do you have committed everything in git?');
     }
 
-    private static function getParams($nofix): array
+    private function getParams($nofix): array
     {
         return [
             'nofix' => $nofix,

@@ -17,8 +17,8 @@ use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -101,16 +101,21 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $checks = CheckCollection::make($checks);
-        $routeFiles = ForRouteFiles::check($checks, $pathDTO, $useStatementParser);
-        $psr4Stats = ForAutoloadedPsr4Classes::check(CheckCollection::make($this->checks), $pathDTO, $useStatementParser);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $useStatementParser);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $useStatementParser);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $pathDTO, $useStatementParser);
+        $checkSet = CheckSet::init($checks, $pathDTO, $useStatementParser);
+        $routeFiles = ForRouteFiles::check($checkSet);
+
+        $psr4Stats = ForAutoloadedPsr4Classes::check(
+            CheckSet::init($this->checks, $pathDTO, $useStatementParser)
+        );
+
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checkSet);
+        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checkSet);
+        $foldersStats = ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig());
 
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = ForBladeFiles::check(CheckCollection::make($checks), $pathDTO, $useStatementParser);
+        $checkSet->setChecks($checks);
+        $bladeStats = ForBladeFiles::check($checkSet);
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 

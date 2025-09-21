@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
@@ -50,6 +51,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ], 'microscope');
 
         ConsolePrinterInstaller::boot();
+        ForComposerJsonFiles::$basePath = base_path();
     }
 
     public function register()

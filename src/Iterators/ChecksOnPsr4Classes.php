@@ -19,12 +19,12 @@ class ChecksOnPsr4Classes
     public static $checkedFilesCount = 0;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping
+     * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSet
      */
     private static $check;
 
     /**
-     * @param  CheckSingleMapping  $check
+     * @param  CheckSet  $check
      * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>
      */
     public static function apply($check)

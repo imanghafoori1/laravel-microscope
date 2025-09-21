@@ -13,16 +13,14 @@ use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
 class ForBladeFiles implements Check
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
-     * @param  array  $params
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @return array<string, BladeStatDto>
      */
-    public static function check($checks, $pathDTO = null, $params = [])
+    public static function check($checker)
     {
         self::withoutComponentTags();
         $mapper = fn ($paths) => BladeStatDto::make(
-            BladeFiles\CheckBladePaths::checkPaths($paths, $checks, $params, $pathDTO)
+            BladeFiles\CheckBladePaths::checkPaths($paths, $checker)
         );
 
         return Loop::map(self::getViewsPaths(), $mapper);

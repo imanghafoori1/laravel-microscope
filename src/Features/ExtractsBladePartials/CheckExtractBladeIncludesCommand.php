@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ExtractsBladePartials;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
@@ -28,7 +28,7 @@ class CheckExtractBladeIncludesCommand extends Command
         $errorPrinter->printer = $this->output;
 
         $bladeStats = ForBladeFiles::check(
-            CheckCollection::make([ExtractBladePartial::class])
+            CheckSet::init([ExtractBladePartial::class])
         );
 
         $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));

@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -52,9 +52,9 @@ class CheckAliasesCommand extends Command
         self::setFacadeAliasCheckOptions($this->option('alias'));
         FacadeAliasesCheck::$importsProvider = $importsProvider;
 
-        $checks = CheckCollection::make([EnforceImports::class, FacadeAliasesCheck::class]);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
+        $checkSet = CheckSet::init([EnforceImports::class, FacadeAliasesCheck::class], $pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
+        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checkSet);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
 
