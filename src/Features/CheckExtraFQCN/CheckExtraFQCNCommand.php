@@ -58,7 +58,7 @@ class CheckExtraFQCNCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO, $useStatementParser);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO, $useStatementParser);
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO, $useStatementParser);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $pathDTO, $useStatementParser);
 
         $messages = self::addOtherMessages(
             Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats),

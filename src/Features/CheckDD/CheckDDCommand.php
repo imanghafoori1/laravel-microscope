@@ -45,7 +45,7 @@ class CheckDDCommand extends Command
         $psr4Stats = ForAutoloadedPsr4Classes::check($checks, $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $pathDTO);
         $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $checks, $pathDTO);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
+        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $pathDTO, [$onErrorCallback]);
 
         $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         $lines->add(LaravelFoldersReport::formatFoldersStats($foldersStats));
