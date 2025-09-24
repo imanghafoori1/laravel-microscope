@@ -17,8 +17,8 @@ class CheckBladePaths
     public static $readOnly = true;
 
     /**
-     * @param \Generator<int, string> $dirs
-     * @param $checker
+     * @param  \Generator<int, string>  $dirs
+     * @param  $checker
      * @return \Generator<string, int>
      */
     public static function checkPaths($dirs, CheckSet $checker)

@@ -30,7 +30,7 @@ class CheckSet
      */
     public $exceptions = [];
 
-    public static function init($checks, PathFilterDTO $pathDTO = null, $params = []): CheckSet
+    public static function init($checks, ?PathFilterDTO $pathDTO = null, $params = []): CheckSet
     {
         $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 

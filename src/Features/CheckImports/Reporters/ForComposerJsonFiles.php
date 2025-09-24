@@ -12,7 +12,7 @@ class ForComposerJsonFiles
     public static $basePath;
 
     /**
-     * @param $checkSet
+     * @param  $checkSet
      * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
      */
     public static function checkAndPrint($checkSet)
