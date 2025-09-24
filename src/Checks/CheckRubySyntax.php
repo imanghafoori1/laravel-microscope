@@ -14,6 +14,7 @@ class CheckRubySyntax implements Check
 {
     public static function check(PhpFileDescriptor $file)
     {
+        $tokens = $file->getTokens();
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
             return false;
         }
