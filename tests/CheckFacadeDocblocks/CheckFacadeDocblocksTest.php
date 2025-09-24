@@ -47,8 +47,8 @@ class CheckFacadeDocblocksTest extends TestCase
         FacadeDocblocks::check($file);
 
         $this->assertEquals(
-            file_get_contents(__DIR__.'/SampleFacade.temp'),
-            file_get_contents(__DIR__.'/SampleFacade-result.stub')
+            file_get_contents(__DIR__.'/SampleFacade-result.stub'),
+            file_get_contents(__DIR__.'/SampleFacade.temp')
         );
         $this->assertEquals(1, $_SESSION['facade_fix']);
     }

@@ -99,7 +99,7 @@ class FacadeDocblocks
         [$newVersion, $lines] = Searcher::searchReplace([
             'fix' => [
                 'search' => "'<white_space>?''<doc_block>''<white_space>?'".$class,
-                'replace' => "'<1>'$docblocks\n".$class,
+                'replace' => "'<1>'$docblocks".PHP_EOL.$class,
             ],
         ], $tokens);
 
@@ -107,7 +107,7 @@ class FacadeDocblocks
             [$newVersion] = Searcher::searchReplace([
                 'fix' => [
                     'search' => "'<white_space>?'".$class,
-                    'replace' => "'<1>'$docblocks\n".$class,
+                    'replace' => "'<1>'$docblocks".PHP_EOL.$class,
                 ],
             ], $tokens);
         }
