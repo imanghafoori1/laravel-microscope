@@ -91,12 +91,6 @@ class CheckDynamicWhereMethod extends Command
                 && ! method_exists(QueriesRelationships::class, $matchedToken[1]);
         };
 
-        $mutator = function ($matches) {
-            $matches[0][1] = $this->deriveColumnName($matches[0][1]);
-
-            return $matches;
-        };
-
         return [
             'pattern_name_1' => [
                 'search' => '<class_ref>::<name>(',
@@ -109,7 +103,11 @@ class CheckDynamicWhereMethod extends Command
                         [$dynamicWhere, null],
                     ],
                 ],
-                'mutator' => $mutator,
+                'mutator' => function ($matches) {
+                    $matches[1][1] = $this->deriveColumnName($matches[1][1]);
+
+                    return $matches;
+                },
             ],
             'pattern_name_2' => [
                 'search' => ')-><name>(<in_between>)',
@@ -118,8 +116,12 @@ class CheckDynamicWhereMethod extends Command
                     1 => [
                         [$dynamicWhere, null],
                     ],
-                ],
-                'mutator' => $mutator,
+                 ],
+                'mutator' => function ($matches) {
+                    $matches[0][1] = $this->deriveColumnName($matches[0][1]);
+
+                    return $matches;
+                },
             ],
 
         ];
