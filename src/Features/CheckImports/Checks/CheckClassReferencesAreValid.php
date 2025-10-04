@@ -52,7 +52,7 @@ class CheckClassReferencesAreValid implements Check
         if ($wrongClassRefs && self::$checkWrong && self::$wrongClassRefsHandler) {
             [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
                 $wrongClassRefs,
-                $absFilePath,
+                $file,
                 $hostNamespace,
                 $file->getTokens(),
             );
@@ -62,21 +62,21 @@ class CheckClassReferencesAreValid implements Check
             }
         }
 
-        self::handleExtraImports($absFilePath, $extraWrongImports, $extraCorrectImports);
+        self::handleExtraImports($file, $extraWrongImports, $extraCorrectImports);
 
         return $tokens;
     }
 
-    private static function handleExtraImports($absFilePath, $extraWrongImports, $extraCorrectImports)
+    private static function handleExtraImports($file, $extraWrongImports, $extraCorrectImports)
     {
         // Extra wrong imports:
         if (self::$extraWrongImportsHandler) {
-            self::$extraWrongImportsHandler::handle($extraWrongImports, $absFilePath);
+            self::$extraWrongImportsHandler::handle($extraWrongImports, $file);
         }
 
         // Extra correct imports:
         if (self::$checkExtra && self::$extraCorrectImportsHandler) {
-            self::$extraCorrectImportsHandler::handle($extraCorrectImports, $absFilePath);
+            self::$extraCorrectImportsHandler::handle($extraCorrectImports, $file);
         }
     }
 

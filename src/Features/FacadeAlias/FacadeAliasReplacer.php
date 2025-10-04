@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
-use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
@@ -18,14 +18,14 @@ class FacadeAliasReplacer
 
     public static $replacementsCount = 0;
 
-    public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens, $imports)
+    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias, $tokens, $imports)
     {
-        if (self::$forceReplace || self::ask($absFilePath, $usageInfo, $base, $alias)) {
+        if (self::$forceReplace || self::ask($file, $usageInfo, $base, $alias)) {
             $newVersion = self::searchReplace($usageInfo[0], $alias, $tokens, $base, $imports);
 
-            Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newVersion));
+            $file->putContents(Refactor::toString($newVersion));
 
-            $tokens = token_get_all(Filesystem::$fileSystem::file_get_contents($absFilePath));
+            $tokens = $file->getTokens(true);
 
             self::$replacementsCount++;
         }
@@ -33,9 +33,9 @@ class FacadeAliasReplacer
         return $tokens;
     }
 
-    private static function ask($absFilePath, $use, $base, $aliases)
+    private static function ask(PhpFileDescriptor $file, $use, $base, $aliases)
     {
-        $relativePath = FilePath::normalize(\trim(\str_replace(base_path(), '', $absFilePath), '\\/'));
+        $relativePath = FilePath::normalize($file->relativePath());
         self::$command->writeln('at '.$relativePath.':'.$use[1]);
         $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases.'</>';
 

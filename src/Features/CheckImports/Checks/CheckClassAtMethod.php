@@ -18,7 +18,7 @@ class CheckClassAtMethod implements Check
         $absFilePath = $file->getAbsolutePath();
 
         $replaced = self::$handler::handle(
-            $absFilePath,
+            $file,
             self::getAtSignTokens($tokens, $absFilePath)
         );
 

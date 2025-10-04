@@ -92,6 +92,8 @@ class ErrorPrinter
 
     public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
+        is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
+
         $errorData = $pre.$this->color($yellowText).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);

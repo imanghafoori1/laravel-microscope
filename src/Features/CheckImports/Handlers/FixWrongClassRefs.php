@@ -4,11 +4,12 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 class FixWrongClassRefs
 {
-    public static function handle(array $wrongClassRefs, $absFilePath, $hostNamespace, array $tokens): array
+    public static function handle(array $wrongClassRefs, PhpFileDescriptor $file, $hostNamespace, array $tokens): array
     {
         $printer = ErrorPrinter::singleton();
 
@@ -17,22 +18,22 @@ class FixWrongClassRefs
             $line = $classReference['line'];
 
             if (! Fixer::isInUserSpace($wrongClassRef)) {
-                self::wrongRef($printer, $wrongClassRef, $absFilePath, $line);
+                self::wrongRef($printer, $wrongClassRef, $file, $line);
                 continue;
             }
 
-            $beforeFix = file_get_contents($absFilePath);
-            [, $corrections] = self::fixClassReference($absFilePath, $wrongClassRef, $line, $hostNamespace);
+            $beforeFix = $file->getContent();
+            [, $corrections] = self::fixClassReference($file, $wrongClassRef, $line, $hostNamespace);
             // To make sure that the file is really changed,
             // and we do not end up in an infinite loop.
-            $afterFix = file_get_contents($absFilePath);
+            $afterFix = $file->getContent();
             $isFixed = $beforeFix !== $afterFix;
 
             // print
             if ($isFixed) {
-                self::printFixation($absFilePath, $wrongClassRef, $line, $corrections);
+                self::printFixation($file, $wrongClassRef, $line, $corrections);
             } else {
-                self::wrongUsedClassError($absFilePath, $wrongClassRef, $line);
+                self::wrongUsedClassError($file, $wrongClassRef, $line);
             }
 
             if ($isFixed) {
@@ -45,47 +46,47 @@ class FixWrongClassRefs
         return [$tokens, false];
     }
 
-    private static function fixClassReference($absFilePath, $class, $line, $namespace)
+    private static function fixClassReference($file, $class, $line, $namespace)
     {
         $baseClassName = self::removeFirst($namespace.'\\', $class);
 
         // Imports the correct namespace:
-        [$wasCorrected, $corrections] = Fixer::fixReference($absFilePath, $baseClassName, $line);
+        [$wasCorrected, $corrections] = Fixer::fixReference($file, $baseClassName, $line);
 
         if ($wasCorrected) {
             return [$wasCorrected, $corrections];
         }
 
-        return Fixer::fixReference($absFilePath, $class, $line);
+        return Fixer::fixReference($file, $class, $line);
     }
 
-    private static function wrongRef($printer, $wrongClassRef, $absFilePath, $line): void
+    private static function wrongRef($printer, $wrongClassRef, $file, $line): void
     {
         $printer->simplePendError(
             $wrongClassRef,
-            $absFilePath,
+            $file,
             $line,
             'wrongClassRef',
             'Inline class Ref does not exist:'
         );
     }
 
-    private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
+    private static function printFixation(PhpFileDescriptor $file, $wrongClass, $lineNumber, $correct)
     {
         ErrorPrinter::singleton()->simplePendError(
             'Fixed to:   '.substr($correct[0], 0, 55),
-            $absPath,
+            $file,
             $lineNumber,
             'ns_replacement',
             $wrongClass.'  <=== Did not exist'
         );
     }
 
-    private static function wrongUsedClassError($absPath, $class, $line)
+    private static function wrongUsedClassError(PhpFileDescriptor $file, $class, $line)
     {
         ErrorPrinter::singleton()->simplePendError(
             $class,
-            $absPath,
+            $file->getAbsolutePath(),
             $line,
             'wrongClassRef',
             'Class does not exist:'

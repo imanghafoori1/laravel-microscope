@@ -100,7 +100,7 @@ class EnforceImportsCommand extends Command
         }
 
         return function ($classRef, $file, $line) use ($header) {
-            ErrorPrinter::singleton()->simplePendError($classRef, $file->getAbsolutePath(), $line, 'enforce_imports', $header);
+            ErrorPrinter::singleton()->simplePendError($classRef, $file, $line, 'enforce_imports', $header);
         };
     }
 }

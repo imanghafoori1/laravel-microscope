@@ -4,12 +4,13 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\Analyzers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ClassAtMethodHandler
 {
     public static $fix = true;
 
-    public static function handle($absFilePath, $atSignTokens)
+    public static function handle($file, $atSignTokens)
     {
         $fix = false;
 
@@ -23,40 +24,40 @@ class ClassAtMethodHandler
                 $result = [false];
 
                 if (self::$fix && Analyzers\Fixer::isInUserSpace($class)) {
-                    $result = Analyzers\Fixer::fixReference($absFilePath, $class, $token[2]);
+                    $result = Analyzers\Fixer::fixReference($file, $class, $token[2]);
                 }
 
                 if ($result[0]) {
                     $fix = true;
-                    self::printFixation($absFilePath, $class, $token[2], $result[1]);
+                    self::printFixation($file, $class, $token[2], $result[1]);
                 } else {
-                    self::wrongUsedClassError($absFilePath, $token[1], $token[2]);
+                    self::wrongUsedClassError($file, $token[1], $token[2]);
                 }
             } elseif (! method_exists($class, $method)) {
-                self::wrongMethodError($absFilePath, $trimmed, $token[2]);
+                self::wrongMethodError($file, $trimmed, $token[2]);
             }
         }
 
         return $fix;
     }
 
-    private static function wrongMethodError($absPath, $class, $lineNumber)
+    private static function wrongMethodError(PhpFileDescriptor $file, $class, $lineNumber)
     {
         ErrorPrinter::singleton()->simplePendError(
-            $class, $absPath, $lineNumber, 'wrongMethodError', 'Method does not exist:'
+            $class, $file->getAbsolutePath(), $lineNumber, 'wrongMethodError', 'Method does not exist:'
         );
     }
 
-    private static function printFixation($absPath, $wrongClass, $lineNumber, $correct)
+    private static function printFixation(PhpFileDescriptor $file, $wrongClass, $lineNumber, $correct)
     {
         $header = $wrongClass.'  <=== Did not exist';
         $msg = 'Fixed to:  '.substr($correct[0], 0, 55);
 
-        ErrorPrinter::singleton()->simplePendError($msg, $absPath, $lineNumber, 'ns_replacement', $header);
+        ErrorPrinter::singleton()->simplePendError($msg, $file, $lineNumber, 'ns_replacement', $header);
     }
 
-    private static function wrongUsedClassError($absPath, $class, $lineNumber)
+    private static function wrongUsedClassError(PhpFileDescriptor $file, $class, $lineNumber)
     {
-        ErrorPrinter::singleton()->simplePendError($class, $absPath, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
+        ErrorPrinter::singleton()->simplePendError($class, $file, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
     }
 }

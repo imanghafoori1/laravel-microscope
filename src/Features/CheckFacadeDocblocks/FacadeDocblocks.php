@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 
 use Exception;
 use Illuminate\Support\Facades\Facade;
-use Imanghafoori\Filesystem\Filesystem;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\RealtimeFacades\SmartRealTimeFacadesProvider;
 use Imanghafoori\SearchReplace\Searcher;
@@ -27,8 +27,6 @@ class FacadeDocblocks
 
     public static function check(PhpFileDescriptor $file)
     {
-        $absFilePath = $file->getAbsolutePath();
-
         $fqcnFacade = $file->getNamespace();
 
         if (! self::isFacade($fqcnFacade)) {
@@ -42,46 +40,38 @@ class FacadeDocblocks
         $isClass = class_exists($accessor);
         // For the interfaces, we just skip the resolution step
         // We also skip if the class is not bound on the $app
-        if ((! $isClass && ! interface_exists($accessor)) || ($isClass && app()->bound($accessor))) {
+        if ((! $isClass && ! interface_exists($accessor)) || ($isClass && $fqcnFacade::getFacadeApplication()->bound($accessor))) {
             try {
                 $accessor = get_class($fqcnFacade::getFacadeRoot());
             } catch (Exception $e) {
-                (self::$onError)($accessor, $absFilePath);
+                (self::$onError)($accessor, $file);
 
                 return;
             }
         }
 
-        self::addDocBlocks($accessor, $fqcnFacade, $file->getTokens(), $absFilePath);
+        self::addDocBlocks($accessor, $fqcnFacade, $file);
     }
 
-    private static function addDocBlocks(string $accessor, $fqcnFacade, $tokens, $absFilePath)
+    private static function addDocBlocks(string $accessor, $fqcn, PhpFileDescriptor $file)
     {
-        $publicMethods = (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods = Loop::filter(
+            self::findPublicMethods($accessor),
+            fn ($method) => self::isNeed($fqcn, $method)
+        );
 
-        $_methods = [];
-        foreach ($publicMethods as $method) {
-            $methodName = $method->getName();
-
-            $magicMethods = ['__invoke', '__construct', '__destruct', '__toString', '__call', '__set', '__get'];
-            if (! method_exists($fqcnFacade, $methodName) && ! $method->isStatic() && ! in_array($methodName, $magicMethods)) {
-                $_methods[] = $method;
-            }
-        }
-
-        if ($_methods === []) {
+        if ($methods === []) {
             return;
         }
 
-        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($_methods).'/';
+        $docblocks = '/**'.PHP_EOL.SmartRealTimeFacadesProvider::getDocBlocks($methods).'/';
 
-        $parts = explode('\\', $fqcnFacade);
-        $className = array_pop($parts);
-        $newVersion = self::injectDocblocks($className, $docblocks, $tokens);
+        $className = basename(str_replace('\\', '/', $fqcn));
+        $newVersion = self::injectDocblocks($className, $docblocks, $file);
 
-        if (Filesystem::$fileSystem::file_get_contents($absFilePath) !== $newVersion) {
-            (self::$onFix)($fqcnFacade, $absFilePath);
-            Filesystem::$fileSystem::file_put_contents($absFilePath, $newVersion);
+        if ($file->getContent() !== $newVersion) {
+            (self::$onFix)($fqcn);
+            $file->putContents($newVersion);
         }
     }
 
@@ -99,26 +89,42 @@ class FacadeDocblocks
         return class_exists($class) && is_subclass_of($class, Facade::class);
     }
 
-    private static function injectDocblocks($className, $docblocks, $tokens)
+    private static function injectDocblocks($className, $docblocks, PhpFileDescriptor $file)
     {
         $class = "class $className extends";
 
         [$newVersion, $lines] = Searcher::searchReplace([
             'fix' => [
                 'search' => "'<white_space>?''<doc_block>''<white_space>?'".$class,
-                'replace' => "'<1>'$docblocks\n".$class,
+                'replace' => "'<1>'$docblocks".PHP_EOL.$class,
             ],
-        ], $tokens);
+        ], $file->getTokens());
 
         if (! $lines) {
             [$newVersion] = Searcher::searchReplace([
                 'fix' => [
                     'search' => "'<white_space>?'".$class,
-                    'replace' => "'<1>'$docblocks\n".$class,
+                    'replace' => "'<1>'$docblocks".PHP_EOL.$class,
                 ],
-            ], $tokens);
+            ], $file->getTokens());
         }
 
         return $newVersion;
+    }
+
+    private static function isNeed($fqcnFacade, ReflectionMethod $method): bool
+    {
+        $magicMethods = ['__invoke', '__construct', '__destruct', '__toString', '__call', '__set', '__get'];
+        $methodName = $method->getName();
+
+        return ! method_exists($fqcnFacade, $methodName) && ! $method->isStatic() && ! in_array($methodName, $magicMethods);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private static function findPublicMethods(string $accessor)
+    {
+        return (new ReflectionClass($accessor))->getMethods(ReflectionMethod::IS_PUBLIC);
     }
 }

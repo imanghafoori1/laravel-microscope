@@ -76,7 +76,7 @@ class EnforceImports implements Check
         $imports = array_values($imports)[0];
         $replacedRefs = [];
         $deletes = [];
-        $original = file_get_contents($file->getAbsolutePath());
+        $original = $file->getContent();
 
         foreach ($classRefs[0] as $classRef) {
             if (! self::shouldBeImported($classRef['class'], $imports, $namespace)) {

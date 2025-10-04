@@ -32,7 +32,7 @@ class RoutelessControllerActions implements Check
 
         $actions = self::findOrphanActions($file->getTokens(), $fullNamespace);
 
-        (self::$errors)::printErrors($actions, $file->getAbsolutePath());
+        (self::$errors)::printErrors($actions, $file);
     }
 
     public static function getControllerActions($methods)

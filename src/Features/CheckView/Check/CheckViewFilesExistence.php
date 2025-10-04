@@ -11,7 +11,6 @@ class CheckViewFilesExistence implements Check
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
-        $absPath = $file->getAbsolutePath();
 
         $tCount = count($tokens);
         for ($i = 0; $i < $tCount; $i++) {
@@ -22,7 +21,7 @@ class CheckViewFilesExistence implements Check
             $viewName = trim($tokens[$i + 4][1], '\'\"');
             CheckViewStats::$checkedCallsCount++;
             if (! View::exists($viewName)) {
-                self::error($tokens, $absPath, $i);
+                self::error($tokens, $file, $i);
             }
             $i = $i + 5;
         }
@@ -43,11 +42,11 @@ class CheckViewFilesExistence implements Check
             && ($tokens[$i + 5] ?? null) == ',';
     }
 
-    private static function error($tokens, $absPath, $i)
+    private static function error($tokens, $file, $i)
     {
         $viewName = $tokens[$i + 4][1];
         $viewName = str_replace('.', '/', trim($viewName, '\'\"'));
-        CheckView::viewError($absPath, $tokens[$i + 4][2], $viewName);
+        CheckView::viewError($file, $tokens[$i + 4][2], $viewName);
     }
 
     private static function isVariable($token, string $varName)
