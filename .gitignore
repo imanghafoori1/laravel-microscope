@@ -9,3 +9,4 @@ test.bat
 test8.bat
 .phpunit.result.cache
 phpunit.xml
+.phpunit.cache
