@@ -61,9 +61,8 @@ class ErrorPrinter
      */
     public static function singleton($output = null)
     {
-        if (! self::$instance) {
-            self::$instance = new self;
-        }
+        is_null(self::$instance) && (self::$instance = new self);
+
         $output && (self::$instance->printer = $output);
 
         return self::$instance;
