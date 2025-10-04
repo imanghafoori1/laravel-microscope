@@ -6,6 +6,8 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CachedFiles
 {
+    public static $folderPath;
+
     private static $cache = [];
 
     private static $cacheChange = [];
@@ -47,9 +49,7 @@ class CachedFiles
 
     public static function getFolderPath(): string
     {
-        $ds = DIRECTORY_SEPARATOR;
-
-        return storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
+        return self::$folderPath;
     }
 
     private static function checkIsInCache($patternKey, PhpFileDescriptor $file)
@@ -89,6 +89,8 @@ class CachedFiles
                 file_put_contents($path, self::getCacheFileContents($fileMd5));
             }
         }
+
+        self::$cache = self::$cacheChange = [];
     }
 
     private static function readFromMemoryCache($patternKey, $md5)
