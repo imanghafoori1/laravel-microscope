@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Refactor;
@@ -69,7 +70,7 @@ class ActionsComments implements Check
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $absPath = $callsite[0]['file'] ?? '';
-        $relativePath = trim(str_replace(base_path(), '', $absPath), '\\/');
+        $relativePath = trim(str_replace(BasePath::$path, '', $absPath), '\\/');
         $relativePath = str_replace('\\', '/', $relativePath);
 
         $line = $callsite[0]['line'] ?? '';

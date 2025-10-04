@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Console\Terminal;
 
 class CheckStringyMsg
 {
@@ -17,7 +17,7 @@ class CheckStringyMsg
     #[Pure(true)]
     public static function lineSeparator(): string
     {
-        return ' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', (new Terminal)->getWidth() - 4).'</>';
+        return ' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', ErrorPrinter::$terminalWidth - 4).'</>';
     }
 
     #[Pure]

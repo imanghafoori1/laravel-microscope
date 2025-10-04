@@ -5,6 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use ImanGhafoori\ComposerJson\ClassLists;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use ReflectionClass;
 use Symfony\Component\Console\Terminal;
 
@@ -23,7 +25,7 @@ class ListModelsArtisanCommand extends Command
         app(ModelListPrinter::class)->printList(
             $this->inspectModels($models),
             $this->getOutput(),
-            (new Terminal())->getWidth()
+            ErrorPrinter::$terminalWidth
         );
     }
 
@@ -50,5 +52,10 @@ class ListModelsArtisanCommand extends Command
     private function getTable(string $classPath)
     {
         return (new ReflectionClass($classPath))->newInstanceWithoutConstructor()->getTable();
+    }
+
+    private function getRelativePath(string $absFilePath)
+    {
+        return str_replace(BasePath::$path, '', $absFilePath);
     }
 }

@@ -43,7 +43,7 @@ class FilePath
     #[Pure]
     public static function getRelativePath($absFilePath)
     {
-        return trim(str_replace(PhpFinder::$basePath, '', $absFilePath), '/\\');
+        return trim(str_replace(BasePath::$path, '', $absFilePath), '/\\');
     }
 
     #[Pure]

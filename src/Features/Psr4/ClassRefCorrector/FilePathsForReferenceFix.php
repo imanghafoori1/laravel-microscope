@@ -56,7 +56,7 @@ class FilePathsForReferenceFix
      */
     private static function getClassMapList()
     {
-        foreach (ComposerJson::getClassMaps(base_path(), new PathFilterDTO) as $list) {
+        foreach (ComposerJson::getClassMaps(new PathFilterDTO) as $list) {
             foreach ($list as $paths) {
                 foreach ($paths as $path) {
                     yield $path;
@@ -70,7 +70,7 @@ class FilePathsForReferenceFix
      */
     private static function autoloadedFiles()
     {
-        foreach (ComposerJson::autoloadedFilesList(base_path()) as $files) {
+        foreach (ComposerJson::autoloadedFilesList() as $files) {
             foreach ($files as $file) {
                 yield $file;
             }

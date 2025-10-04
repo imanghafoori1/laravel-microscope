@@ -8,8 +8,6 @@ use Symfony\Component\Finder\Finder;
 
 class PhpFinder
 {
-    public static $basePath = '';
-
     public static $fileName = '*';
 
     /**
@@ -50,7 +48,7 @@ class PhpFinder
     private static function getDir($basePath, $path)
     {
         if ($basePath === '') {
-            $basePath = self::$basePath;
+            $basePath = BasePath::$path;
         }
 
         $basePath = rtrim($basePath, '/\\');

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use ImanGhafoori\ComposerJson\ComposerJson;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -50,7 +51,7 @@ class ClassListProvider
     private static function getCandidateSearchPaths()
     {
         $sp = DIRECTORY_SEPARATOR;
-        $path1 = base_path();
+        $path1 = BasePath::$path;
         $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
 
         return [

@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -46,7 +47,7 @@ trait Reporting
     #[Pure]
     public static function normalize($dirPath)
     {
-        $path = trim(FilePath::normalize(str_replace(base_path(), '', $dirPath)), DIRECTORY_SEPARATOR);
+        $path = trim(FilePath::normalize(str_replace(BasePath::$path, '', $dirPath)), DIRECTORY_SEPARATOR);
 
         return str_replace(DIRECTORY_SEPARATOR, '/', $path).'/';
     }

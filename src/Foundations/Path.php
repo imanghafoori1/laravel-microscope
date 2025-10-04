@@ -2,22 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+
 class Path
 {
-    private static $basePath;
-
     /**
      * @var string
      */
     private $path;
-
-    public static function setBasePath($basePath)
-    {
-        $basePath = self::normalizeDirectorySeparator($basePath);
-        $basePath = self::removeTrailingSlash($basePath);
-
-        self::$basePath = $basePath;
-    }
 
     public static function make($path): self
     {
@@ -39,7 +31,7 @@ class Path
 
     public function relativePath()
     {
-        $relPath = str_replace(self::$basePath, '', $this->path);
+        $relPath = str_replace(BasePath::$path, '', $this->path);
 
         return self::make(trim($relPath, DIRECTORY_SEPARATOR));
     }

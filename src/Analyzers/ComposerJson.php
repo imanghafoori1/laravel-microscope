@@ -4,13 +4,17 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 
 class ComposerJson
 {
     public static $composer;
 
-    public static function make(): Composer
+    /**
+     * @return Composer
+     */
+    public static function make()
     {
         return (self::$composer)();
     }
@@ -25,25 +29,23 @@ class ComposerJson
     }
 
     /**
-     * @param  string  $basePath
      * @return array<string, string[]>
      */
-    public static function autoloadedFilesList($basePath)
+    public static function autoloadedFilesList()
     {
-        return self::make()->autoloadedFilesList($basePath);
+        return self::make()->autoloadedFilesList(BasePath::$path);
     }
 
     /**
-     * @param  string  $basePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return array<string, \Generator<string, string[]>>
      */
-    public static function getClassMaps($basePath, $pathDTO)
+    public static function getClassMaps($pathDTO)
     {
         $classmaps = [];
 
         foreach (self::make()->readAutoloadClassMap() as $composerPath => $classMapPaths) {
-            $classmaps[$composerPath] = self::getFilteredClasses($composerPath, $classMapPaths, $basePath, $pathDTO);
+            $classmaps[$composerPath] = self::getFilteredClasses($composerPath, $classMapPaths, $pathDTO);
         }
 
         return $classmaps;
@@ -52,43 +54,40 @@ class ComposerJson
     /**
      * @param  string  $composerPath
      * @param  string[]  $classMapPaths
-     * @param  string  $basePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<string, string[]>
      */
-    private static function getFilteredClasses($composerPath, $classMapPaths, $basePath, $pathDTO)
+    private static function getFilteredClasses($composerPath, $classMapPaths, $pathDTO)
     {
         foreach ($classMapPaths as $classmapPath) {
-            $classes = self::getClasses($composerPath, $basePath, $classmapPath);
-            yield $classmapPath => self::filterClasses($classes, $basePath, $pathDTO);
+            $classes = self::getClasses($composerPath, $classmapPath);
+            yield $classmapPath => self::filterClasses($classes, $pathDTO);
         }
     }
 
     /**
      * @param  string  $compPath
-     * @param  string  $basePath
      * @param  string  $classmapPath
      * @return string[]
      */
-    private static function getClasses($compPath, $basePath, $classmapPath)
+    private static function getClasses($compPath, $classmapPath)
     {
         $compPath1 = trim($compPath, '/');
         $compPath1 = $compPath1 ? $compPath1.DIRECTORY_SEPARATOR : '';
-        $classmapFullPath = $basePath.DIRECTORY_SEPARATOR.$compPath1.$classmapPath;
+        $classmapFullPath = BasePath::$path.DIRECTORY_SEPARATOR.$compPath1.$classmapPath;
 
         return array_values(ClassMapGenerator::createMap($classmapFullPath));
     }
 
     /**
      * @param  string[]  $classes
-     * @param  string  $basePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return string[]
      */
-    private static function filterClasses(array $classes, $basePath, $pathDTO)
+    private static function filterClasses(array $classes, $pathDTO)
     {
         foreach ($classes as $i => $class) {
-            if (! FilePath::contains(str_replace($basePath, '', $class), $pathDTO)) {
+            if (! FilePath::contains(str_replace(BasePath::$path, '', $class), $pathDTO)) {
                 unset($classes[$i]);
             }
         }

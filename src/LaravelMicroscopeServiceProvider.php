@@ -11,13 +11,14 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
-use Imanghafoori\LaravelMicroscope\Foundations\Path;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\Str;
+use Symfony\Component\Console\Terminal;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ], 'microscope');
 
         ConsolePrinterInstaller::boot();
+        $ds = DIRECTORY_SEPARATOR;
+
+        CachedFiles::$folderPath = storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
+        BasePath::$path = base_path();
+        ErrorPrinter::$terminalWidth = (new Terminal())->getWidth();
     }
 
     public function register()
@@ -135,9 +141,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ComposerJson::$composer = function () {
             return Composer::make(base_path(), config('microscope.ignored_namespaces', []), config('microscope.additional_composer_paths', []));
         };
-
-        PhpFinder::$basePath = base_path();
-        Path::setBasePath(base_path());
     }
 
     private function addCacheStore()

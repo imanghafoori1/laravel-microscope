@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use ReflectionClass;
 use Throwable;
 
@@ -28,7 +29,7 @@ class SubclassFinder
     protected function getPathFilter($folder)
     {
         return function ($absFilePath, $fileName) use ($folder) {
-            return strpos(str_replace(base_path(), '', $absFilePath), $folder);
+            return strpos(str_replace(BasePath::$path, '', $absFilePath), $folder);
         };
     }
 }

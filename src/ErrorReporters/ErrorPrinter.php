@@ -3,9 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Exception;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Symfony\Component\Console\Terminal;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ErrorPrinter
 {
@@ -52,6 +53,8 @@ class ErrorPrinter
      * @var string
      */
     public static $basePath;
+
+    public static $terminalWidth = 100;
 
     /**
      * @return self
@@ -115,7 +118,7 @@ class ErrorPrinter
             $path = '';
         }
 
-        $width = (new Terminal)->getWidth() - 6;
+        $width = ErrorPrinter::$terminalWidth - 6;
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);
         PendingError::$maxLength = min(PendingError::$maxLength, $width);
         $this->print($this->color($msg, 'red'), $path);
@@ -136,7 +139,7 @@ class ErrorPrinter
     public function printLink($path, $lineNumber = 4)
     {
         if ($path) {
-            $this->print(self::getLink(str_replace(base_path(), '', $path), $lineNumber), '');
+            $this->print(self::getLink(str_replace(BasePath::$path, '', $path), $lineNumber), '');
         }
     }
 
