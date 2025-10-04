@@ -1,0 +1,10 @@
+<?php
+
+dd();
+dump();
+DUMP();
+DumP();
+Cls::dd();
+new dd();
+new dump();
+$obj->dd();

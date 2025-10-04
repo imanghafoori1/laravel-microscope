@@ -22,11 +22,12 @@ class CheckClassReferencesAreValidTest extends TestCase
 
         ImportsAnalyzer::$existenceChecker = AlwaysExistsMock::class;
 
-        CheckClassReferencesAreValid::check($file, [function (PhpFileDescriptor $file) {
+        CheckClassReferencesAreValid::$imports = function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
             return $imports[0] ?: [$imports[1]];
-        }]);
+        };
+        CheckClassReferencesAreValid::check($file);
 
         $extraImportHandler = MockHandlers\MockExtraImportsHandler::$calls;
         $unusedWrongImportsHandler = MockHandlers\MockerUnusedWrongImportsHandler::$calls;

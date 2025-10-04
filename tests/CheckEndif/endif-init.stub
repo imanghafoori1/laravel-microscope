@@ -1,0 +1,7 @@
+<?php
+
+if (isset($a)):
+    foreach ($a as $b):
+        $r = '';
+    endforeach;
+endif;
