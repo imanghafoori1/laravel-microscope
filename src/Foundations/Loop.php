@@ -11,6 +11,26 @@ class Loop
         }
     }
 
+    public static function walkCount($iterable, callable $callback)
+    {
+        $count = 0;
+        foreach ($iterable as $key => $value) {
+            $callback($value, $key) && $count++;
+        }
+
+        return $count;
+    }
+
+    public static function countAll($iterable)
+    {
+        $count = 0;
+        foreach ($iterable as $v) {
+            $count++;
+        }
+
+        return $count;
+    }
+
     public static function map($iterable, callable $callback)
     {
         $result = [];
@@ -31,6 +51,9 @@ class Loop
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public static function any($values, $condition)
     {
         foreach ($values as $value) {
@@ -66,5 +89,17 @@ class Loop
         }
 
         return $result;
+    }
+
+    public static function filter($iterable, $callback)
+    {
+        $items = [];
+        foreach ($iterable as $key => $item) {
+            if ($callback($item, $key)) {
+                $items[$key] = $item;
+            }
+        }
+
+        return $items;
     }
 }
