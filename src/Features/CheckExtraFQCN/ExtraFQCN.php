@@ -88,12 +88,7 @@ class ExtraFQCN implements Check
 
     private static function restructureImports(array $imports): array
     {
-        foreach ($imports as $key => $import) {
-            $imports['\\'.$import[0]] = [$import[1], $key];
-            unset($imports[$key]);
-        }
-
-        return $imports;
+        return Loop::mapKey($imports, fn ($import, $key) => ['\\'.$import[0] => [$import[1], $key]]);
     }
 
     public static function deleteFQCN($absFilePath, $classRef)

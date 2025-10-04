@@ -35,11 +35,8 @@ class LaravelFoldersReport
         $sub = '';
         foreach ($stats as $dir => $files) {
             $c++;
-            $filesCount = 0;
             // consume generator:
-            foreach ($files as $_file) {
-                $filesCount++;
-            }
+            $filesCount = Loop::countAll($files->files);
 
             $total += $filesCount;
             $filesCount && ($sub .= self::addLine($dir, $filesCount));
