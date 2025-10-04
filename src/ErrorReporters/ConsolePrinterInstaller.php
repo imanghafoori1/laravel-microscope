@@ -49,9 +49,10 @@ class ConsolePrinterInstaller
     {
         RouteOverrideInstaller::install();
 
-        Event::listen('microscope.finished.checks', function ($command) {
-            self::finishCommand($command);
-        });
+        Event::listen(
+            'microscope.finished.checks',
+            fn ($command) => self::finishCommand($command)
+        );
     }
 
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)

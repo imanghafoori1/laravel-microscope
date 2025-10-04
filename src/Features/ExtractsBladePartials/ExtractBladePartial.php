@@ -89,9 +89,9 @@ class ExtractBladePartial implements Check
 
     protected static function getPossibleViewFiles($name)
     {
-        return array_map(function ($extension) use ($name) {
-            return str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
-        }, ['blade.php']);
+        $cb = fn ($extension) => str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
+
+        return array_map($cb, ['blade.php']);
     }
 
     protected static function findNamespacedView($name)
