@@ -6,14 +6,14 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class ExtraWrongImports
 {
-    public static function handle($extraWrongImports, $absPath)
+    public static function handle($extraWrongImports, $file)
     {
         $printer = ErrorPrinter::singleton();
 
         foreach ($extraWrongImports as [$class, $lineNumber]) {
             $printer->simplePendError(
                 "use $class;",
-                $absPath,
+                $file,
                 $lineNumber,
                 'extraWrongImport',
                 'Unused & wrong import:'

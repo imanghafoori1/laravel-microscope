@@ -73,9 +73,9 @@ class LaravelPaths
         yield app()->databasePath('migrations');
     }
 
-    public static function getMigrationsFiles($pathFilter)
+    public static function getMigrationsFiles($pathDTO)
     {
-        return Paths::getAbsFilePaths(self::migrationDirs(), $pathFilter);
+        return Paths::getAbsFilePaths(self::migrationDirs(), $pathDTO);
     }
 
     /**
