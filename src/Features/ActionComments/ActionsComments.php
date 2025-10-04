@@ -15,6 +15,8 @@ class ActionsComments implements Check
 
     public static $controllers = [];
 
+    public static $allRoutes;
+
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
@@ -33,11 +35,10 @@ class ActionsComments implements Check
 
         $methods = RoutelessControllerActions::getControllerActions($methods);
         $shouldSave = false;
-        $allRoutes = app('router')->getRoutes()->getRoutes();
 
         foreach ($methods as $method) {
             $classAtMethod = RoutelessControllerActions::classAtMethod($fullNamespace, $method['name'][1]);
-            $routes = self::getActionRoutes($allRoutes, $classAtMethod);
+            $routes = self::getActionRoutes($classAtMethod);
 
             if (! $routes) {
                 continue;
@@ -78,10 +79,10 @@ class ActionsComments implements Check
         return [$relativePath, $line];
     }
 
-    private static function getActionRoutes($allRoutes, $method)
+    private static function getActionRoutes($method)
     {
         $routes = [];
-        foreach ($allRoutes as $route) {
+        foreach (self::$allRoutes as $route) {
             $method === $route->getAction('uses') && ($routes[] = $route);
         }
 

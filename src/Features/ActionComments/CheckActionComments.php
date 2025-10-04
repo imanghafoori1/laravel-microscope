@@ -33,6 +33,7 @@ class CheckActionComments extends Command
         ActionsComments::$command = $this;
 
         ActionsComments::$controllers = self::findDefinedRouteActions();
+        ActionsComments::$allRoutes = app('router')->getRoutes()->getRoutes();
 
         $psr4Stats = ForAutoloadedPsr4Classes::check(
             [ActionsComments::class],
