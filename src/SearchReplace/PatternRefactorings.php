@@ -89,16 +89,15 @@ class PatternRefactorings implements Check
     {
         [$message, $lineNum] = self::getShowMessage($matchedValue, $tokens);
 
-        self::print($message, $absFilePath, $lineNum);
+        $printer = ErrorPrinter::singleton();
+        $printer->addPendingError($absFilePath, $lineNum, 'pattern', 'Pattern Matched: ', $message);
     }
 
     #[Pure]
     private static function getShowMessage($matchedValue, $tokens): array
     {
         [$from, $lineNum] = self::getFrom($matchedValue, $tokens);
-        $message = 'Detected:
-<fg=yellow>'.Str::limit($from, 150).'</>
-<fg=red>Found at:</>';
+        $message = 'Matched Code: <fg=yellow>'.Str::limit($from, 150).'</>';
 
         return [$message, $lineNum];
     }
