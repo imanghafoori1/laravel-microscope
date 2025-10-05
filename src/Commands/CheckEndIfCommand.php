@@ -31,6 +31,9 @@ class CheckEndIfCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        $iterator->printAll($iterator->forComposerLoadedFiles());
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forRoutes(),
+        ]);
     }
 }

@@ -21,10 +21,14 @@ class ClassifyStrings extends BaseCommand
 
     public $customMsg = '';
 
-    public function handleCommand($command)
+    public function handleCommand($iterator)
     {
         CheckStringy::$command = $this;
 
-        $command->printAll($command->forComposerLoadedFiles());
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forRoutes(),
+            PHP_EOL.$iterator->forBladeFiles(),
+        ]);
     }
 }

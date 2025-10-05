@@ -21,18 +21,24 @@ class CheckDDCommand extends BaseCommand
 
     public $initialMsg = 'Checking dd...';
 
-    public function handleCommand()
+    public $customMsg = '';
+
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $onErrorCallback = function (PhpFileDescriptor $file, $token) {
+        CheckDD::$onErrorCallback = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
                 $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
-        CheckDD::$onErrorCallback = $onErrorCallback;
 
-        $this->printAll([
-            $this->forComposerLoadedFiles(),
-            $this->forMigrationsAndConfigs(),
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forRoutes(),
+            PHP_EOL.$iterator->forBladeFiles(),
         ]);
     }
 }
