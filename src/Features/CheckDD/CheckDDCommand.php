@@ -39,6 +39,7 @@ class CheckDDCommand extends Command
                 $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
             );
         };
+        CheckDD::$onErrorCallback = $onErrorCallback;
 
         $psr4Stats = ForAutoloadedPsr4Classes::check([CheckDD::class], [$onErrorCallback], $pathDTO);
         $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);

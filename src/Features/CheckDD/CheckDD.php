@@ -9,20 +9,18 @@ use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckDD implements Check
 {
-    public static function check(PhpFileDescriptor $file, $params)
+    public static $onErrorCallback;
+
+    public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('check_dd_command', $file)) {
             return;
         }
         $tokens = $file->getTokens();
-        $callback = $params[0];
+        $callback = self::$onErrorCallback;
         $hasError = false;
         foreach ($tokens as $i => $token) {
-            if (
-                ($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) ||
-                ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) ||
-                ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))
-            ) {
+            if (($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))) {
                 $callback($file, $tokens[$index]);
                 $hasError = true;
             }
