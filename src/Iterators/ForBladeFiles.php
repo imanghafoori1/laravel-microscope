@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
+use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -12,6 +13,8 @@ use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
 
 class ForBladeFiles implements Check
 {
+    public static $paths;
+
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @return array<string, BladeStatDto>
@@ -31,6 +34,10 @@ class ForBladeFiles implements Check
      */
     public static function getViewsPaths()
     {
+        if (self::$paths) {
+            return self::$paths;
+        }
+
         $hints = View::getFinder()->getHints();
         $hints['random_key_69471'] = View::getFinder()->getPaths();
         unset(
@@ -46,8 +53,12 @@ class ForBladeFiles implements Check
      */
     private static function withoutComponentTags()
     {
-        $compiler = app('microscope.blade.compiler');
-        method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
+        try {
+            $compiler = app('microscope.blade.compiler');
+            method_exists($compiler, 'withoutComponentTags') && $compiler->withoutComponentTags();
+        } catch (Exception $e) {
+            //
+        }
     }
 
     /**
