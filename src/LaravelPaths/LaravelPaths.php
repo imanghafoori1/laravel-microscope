@@ -12,6 +12,10 @@ use Throwable;
 
 class LaravelPaths
 {
+    public static $configPath = [];
+
+    public static $migrationDirs = null;
+
     /**
      * @return array<string, \Generator<int, string>>
      */
@@ -19,8 +23,8 @@ class LaravelPaths
     public static function getMigrationConfig()
     {
         return [
-            'config' => LaravelPaths::configDirs(),
-            'migrations' => LaravelPaths::migrationDirs(),
+            'config' => self::configDirs(),
+            'migrations' => self::getMigrationDirs(),
         ];
     }
 
@@ -29,7 +33,7 @@ class LaravelPaths
      */
     public static function configDirs()
     {
-        yield from array_merge([config_path()], config('microscope.additional_config_paths', []));
+        return self::$configPath;
     }
 
     /**
@@ -75,7 +79,7 @@ class LaravelPaths
 
     public static function getMigrationsFiles($pathDTO)
     {
-        return Paths::getAbsFilePaths(self::migrationDirs(), $pathDTO);
+        return Paths::getAbsFilePaths(self::getMigrationDirs(), $pathDTO);
     }
 
     /**
@@ -94,5 +98,16 @@ class LaravelPaths
                 }
             }
         }
+    }
+
+    private static function getMigrationDirs()
+    {
+        if (self::$migrationDirs) {
+            $dirs = (self::$migrationDirs)();
+        } else {
+            $dirs = self::migrationDirs();
+        }
+
+        return $dirs;
     }
 }

@@ -12,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
@@ -53,6 +54,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ConsolePrinterInstaller::boot();
         $ds = DIRECTORY_SEPARATOR;
 
+        LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
         CachedFiles::$folderPath = storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);
         BasePath::$path = base_path();
         ErrorPrinter::$terminalWidth = (new Terminal())->getWidth();
