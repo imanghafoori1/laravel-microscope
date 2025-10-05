@@ -3,10 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
-use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Symfony\Component\Finder\Finder;
 
 class CheckBladePaths
@@ -18,20 +17,18 @@ class CheckBladePaths
     public static $readOnly = true;
 
     /**
-     * @param  \Generator<int, string>  $dirs
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  PathFilterDTO  $pathDTO
-     * @param  array|callable  $params
+     * @param \Generator<int, string> $dirs
+     * @param $checker
      * @return \Generator<string, int>
      */
-    public static function checkPaths($dirs, $checks, $params, $pathDTO)
+    public static function checkPaths($dirs, CheckSet $checker)
     {
-        $includeFile = $pathDTO->includeFile;
+        $includeFile = $checker->pathDTO->includeFile;
 
         foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
             $finder = self::findFiles($dirPath, $includeFile);
-            $filteredFiles = self::filterFiles($finder, $pathDTO);
-            $count = self::applyChecks($filteredFiles, $params, $checks);
+            $filteredFiles = self::filterFiles($finder, $checker->pathDTO);
+            $count = self::applyChecks($filteredFiles, $checker->params, $checker->checks);
             if ($count > 0) {
                 yield $dirPath => $count;
             }
@@ -77,11 +74,11 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
-     * @param  callable|array  $paramsProvider
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
+     * @param  array  $params
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
      * @return int
      */
-    private static function applyChecks($files, $paramsProvider, $checks): int
+    private static function applyChecks($files, $params, $checks): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -96,7 +93,7 @@ class CheckBladePaths
                 $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
-            Loop::map($checks, fn ($check) => $check::check($file, $paramsProvider));
+            $checks->applyOnFile($file, $params);
         }
 
         return $count;
