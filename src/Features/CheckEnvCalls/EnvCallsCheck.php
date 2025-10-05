@@ -10,12 +10,15 @@ use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class EnvCallsCheck implements Check
 {
-    public static function check(PhpFileDescriptor $file, $params)
+    public static $onErrorCallback;
+
+    public static function check(PhpFileDescriptor $file)
     {
         if (CachedFiles::isCheckedBefore('env_calls_command', $file)) {
             return;
         }
-        $onErrorCallback = $params[0];
+
+        $onError = self::$onErrorCallback;
         $absPath = $file->getAbsolutePath();
         $tokens = $file->getTokens();
 
@@ -23,7 +26,7 @@ class EnvCallsCheck implements Check
         foreach ($tokens as $i => $token) {
             if ($index = FunctionCall::isGlobalCall('env', $tokens, $i)) {
                 if (! self::isLikelyConfigFile($absPath, $tokens)) {
-                    $onErrorCallback($tokens[$index][1], $absPath, $tokens[$index][2]);
+                    $onError($tokens[$index][1], $absPath, $tokens[$index][2]);
                     $hasError = true;
                 }
             }

@@ -38,6 +38,7 @@ class CheckEnvCallsCommand extends BaseCommand
 
         $this->excludeConfigFiles($pathDTO);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
+        EnvCallsCheck::$onErrorCallback = $params;
 
         $lines = $this->forComposerLoadedFiles();
         $lines->add($this->forBladeFiles());
@@ -57,7 +58,7 @@ class CheckEnvCallsCommand extends BaseCommand
     {
         foreach ($paths as $filePath) {
             if (is_string($filePath)) {
-                EnvCallsCheck::check(PhpFileDescriptor::make($filePath), [$params]);
+                EnvCallsCheck::check(PhpFileDescriptor::make($filePath));
             } else {
                 $this->checkPaths($filePath, $params);
             }
