@@ -11,11 +11,19 @@ use Throwable;
 
 class RoutePaths
 {
+    public static $paths = [];
+
     /**
      * @return \Generator<int, string>
      */
     public static function get()
     {
+        if (self::$paths) {
+            yield from self::$paths;
+
+            return;
+        }
+
         foreach (app('router')->routePaths as $path) {
             yield FilePath::normalize($path);
         }
