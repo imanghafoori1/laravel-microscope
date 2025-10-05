@@ -21,7 +21,7 @@ trait CommandsRegistry
         Commands\CheckAll::class,
         Features\CheckClassyStrings\ClassifyStrings::class,
         Features\CheckDD\CheckDDCommand::class,
-        Commands\CheckEarlyReturns::class,
+        Commands\CheckEarlyReturnsCommand::class,
         Commands\CheckCompact::class,
         Features\CheckBladeQueries\CheckBladeQueriesCommand::class,
         Features\ActionComments\CheckActionComments::class,

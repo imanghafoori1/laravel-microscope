@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEarlyReturns extends BaseCommand
+class CheckEarlyReturnsCommand extends BaseCommand
 {
     protected $signature = 'check:early_returns
     {--s|nofix}
