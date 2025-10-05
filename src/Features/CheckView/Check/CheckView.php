@@ -5,28 +5,27 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckView implements Check
 {
-    public static function check(PhpFileDescriptor $file)
-    {
-        if (CachedFiles::isCheckedBefore('check_view_command', $file)) {
-            return;
-        }
+    use CachedCheck;
 
+    /**
+     * @var string
+     */
+    private static $cacheKey ='check_view_command';
+
+    public static function performCheck(PhpFileDescriptor $file)
+    {
         $staticCalls = [
             'View' => ['make', 0],
             'Route' => ['view', 1],
         ];
 
-        $hasCalls = self::checkViewCalls($file, $staticCalls);
-
-        if ($hasCalls === false) {
-            CachedFiles::put('check_view_command', $file);
-        }
+        return self::checkViewCalls($file, $staticCalls);
     }
 
     private static function checkViewParams($file, &$tokens, $i, $index)

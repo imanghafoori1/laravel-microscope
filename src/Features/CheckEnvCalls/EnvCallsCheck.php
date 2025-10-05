@@ -3,21 +3,24 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 
 class EnvCallsCheck implements Check
 {
+    use CachedCheck;
+
     public static $onErrorCallback;
 
-    public static function check(PhpFileDescriptor $file)
-    {
-        if (CachedFiles::isCheckedBefore('env_calls_command', $file)) {
-            return;
-        }
+    /**
+     * @var string
+     */
+    private static $cacheKey = 'env_calls_command';
 
+    public static function performCheck(PhpFileDescriptor $file): bool
+    {
         $onError = self::$onErrorCallback;
         $absPath = $file->getAbsolutePath();
         $tokens = $file->getTokens();
@@ -32,9 +35,7 @@ class EnvCallsCheck implements Check
             }
         }
 
-        if ($hasError === false) {
-            CachedFiles::put('env_calls_command', $file);
-        }
+        return $hasError;
     }
 
     private static function isLikelyConfigFile($absPath, $tokens)

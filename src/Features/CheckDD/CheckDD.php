@@ -3,19 +3,20 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckDD implements Check
 {
+    use CachedCheck;
+
     public static $onErrorCallback;
 
-    public static function check(PhpFileDescriptor $file)
+    private static $cacheKey = 'check_dd_command';
+
+    public static function performCheck(PhpFileDescriptor $file)
     {
-        if (CachedFiles::isCheckedBefore('check_dd_command', $file)) {
-            return;
-        }
         $tokens = $file->getTokens();
         $callback = self::$onErrorCallback;
         $hasError = false;
@@ -26,8 +27,6 @@ class CheckDD implements Check
             }
         }
 
-        if ($hasError === false) {
-            CachedFiles::put('check_dd_command', $file);
-        }
+        return $hasError;
     }
 }

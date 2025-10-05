@@ -4,17 +4,22 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class ExtraFQCN implements Check
 {
-    public static function check(PhpFileDescriptor $file, $params = [])
+    use CachedCheck;
+
+    /**
+     * @var string
+     */
+    private static $cacheKey = 'extra_fqcn';
+
+    public static function performCheck(PhpFileDescriptor $file, $params): bool
     {
-        if (CachedFiles::isCheckedBefore('extra_fqcn', $file)) {
-            return;
-        }
         $fix = $params[1];
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
@@ -22,9 +27,7 @@ class ExtraFQCN implements Check
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
         $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, $params[2], $fix);
 
-        if ($hasError === false) {
-            CachedFiles::put('extra_fqcn', $file);
-        }
+        return $hasError;
     }
 
     private static function isDirectlyImported($class, $imports): bool

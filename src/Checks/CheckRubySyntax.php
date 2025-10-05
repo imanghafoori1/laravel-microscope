@@ -6,13 +6,18 @@ use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 
 class CheckRubySyntax implements Check
 {
-    public static function check(PhpFileDescriptor $file)
+    use CachedCheck;
+
+    public static $cacheKey = 'check_ruby_syntax';
+
+    public static function performCheck(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
