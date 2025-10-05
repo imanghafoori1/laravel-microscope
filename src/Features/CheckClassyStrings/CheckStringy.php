@@ -12,9 +12,12 @@ use Imanghafoori\TokenAnalyzer\Str;
 
 class CheckStringy implements Check
 {
+    public static $command = null;
+
     public static function check(PhpFileDescriptor $file)
     {
-        $errorPrinter = resolve(ErrorPrinter::class);
+        $errorPrinter = ErrorPrinter::singleton();
+
         foreach (ComposerJson::readPsr4() as $psr4) {
             $namespaces = array_keys($psr4);
             foreach ($file->getTokens() as $token) {
@@ -22,7 +25,8 @@ class CheckStringy implements Check
                     continue;
                 }
 
-                $classPath = trim($token[1], '\'\"');
+                $classPath = trim($token[1], $token[1][0] === "'" ? "'" : '"');
+                $classPath = str_replace('\\\\', '\\', $classPath);
 
                 if (! self::isPossiblyClassyString($namespaces, $classPath)) {
                     continue;
@@ -30,29 +34,35 @@ class CheckStringy implements Check
 
                 $lineNum = $token[2];
                 $absFilePath = $file->getAbsolutePath();
-                if (! class_exists(str_replace('\\\\', '\\', $classPath))) {
+                if (! class_exists($classPath)) {
                     if (self::refersToDir($classPath)) {
                         continue;
                     }
-                    $errorPrinter->wrongUsedClassError($absFilePath, $token[1], $lineNum);
+                    ErrorPrinter::singleton()->simplePendError(
+                        $token[1],
+                        $file,
+                        $lineNum,
+                        'wrongUsedClassError',
+                        'Class does not exist:'
+                    );
+
                     continue;
                 }
 
                 $errorPrinter->printLink($absFilePath, $lineNum);
-                $command = app('current.command');
 
                 if (! self::ask($errorPrinter->printer, $lineNum, $token[1], $file)) {
                     continue;
                 }
                 $replacement = self::getClassPath($classPath, $file);
-                self::performReplacementProcess($token[1], $replacement, $command, $file);
+                self::performReplacementProcess($token[1], $replacement, $file);
             }
         }
     }
 
     private static function isPossiblyClassyString($namespaces, $classPath)
     {
-        $chars = ['@', ' ', ',', ':', '/', '.', '-'];
+        $chars = ['@', ' ', ',', ':', '/', '.', '-', '\'', '"', '\\\\'];
 
         return Str::contains($classPath, $namespaces) &&
             ! in_array($classPath, $namespaces) &&
@@ -72,8 +82,9 @@ class CheckStringy implements Check
         return is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classPath)));
     }
 
-    private static function performReplacementProcess($classyString, $classPath, $command, PhpFileDescriptor $file)
+    private static function performReplacementProcess($classyString, $classPath, PhpFileDescriptor $file)
     {
+        $command = self::$command;
         $command->info(CheckStringyMsg::successfulReplacementMsg($classPath));
 
         // todo: should replace tokens not the file contents.

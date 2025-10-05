@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO;
 
 class ChecksOnPsr4Classes
 {
@@ -13,18 +14,18 @@ class ChecksOnPsr4Classes
     public static $errorExceptionHandler;
 
     /**
-     * @var int
+     * @var positive-int
      */
     public static $checkedFilesCount = 0;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSingleMapping
+     * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSet
      */
     private static $check;
 
     /**
-     * @param  CheckSingleMapping  $check
-     * @return array<string, array<string, array<string, (callable(): int)>>>
+     * @param  CheckSet  $check
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>
      */
     public static function apply($check)
     {
@@ -38,13 +39,24 @@ class ChecksOnPsr4Classes
     }
 
     /**
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>
+     */
+    private static function processAll()
+    {
+        return Loop::map(ComposerJson::readPsr4(), fn ($psr4) => self::processGetStats($psr4));
+    }
+
+    /**
      * @param  array<string, string|string[]>  $psr4
-     * @return array<string, array<string, (callable(): int)>>
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO
      */
     private static function processGetStats($psr4)
     {
-        return Loop::map(
-            $psr4, fn ($paths, $namespace) => self::checkFiles($namespace, $paths)
+        return Psr4StatsDTO::make(
+            Loop::map(
+                $psr4,
+                fn ($paths, $namespace) => self::checkFiles($namespace, $paths)
+            )
         );
     }
 
@@ -61,22 +73,6 @@ class ChecksOnPsr4Classes
         );
     }
 
-    private static function handleExceptions()
-    {
-        Loop::map(
-            self::$check->exceptions,
-            fn ($e) => self::$errorExceptionHandler::handle($e)
-        );
-    }
-
-    /**
-     * @return array<string, array<string, array<string, (callable(): int)>>>
-     */
-    private static function processAll()
-    {
-        return Loop::map(ComposerJson::readPsr4(), fn ($psr4) => self::processGetStats($psr4));
-    }
-
     /**
      * @param  string  $psr4Namespace
      * @param  string  $psr4Path
@@ -85,5 +81,13 @@ class ChecksOnPsr4Classes
     private static function getCounter($psr4Namespace, $psr4Path)
     {
         return fn () => self::$check->applyChecksInPath($psr4Namespace, $psr4Path);
+    }
+
+    private static function handleExceptions()
+    {
+        Loop::map(
+            self::$check->exceptions,
+            fn ($e) => self::$errorExceptionHandler::handle($e)
+        );
     }
 }

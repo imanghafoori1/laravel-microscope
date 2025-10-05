@@ -2,18 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Facade;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
 
-class EnforceHelpers extends Command
+class EnforceHelpers extends BaseCommand
 {
-    use LogsErrors;
     use PatternApply;
 
     protected $signature = 'enforce:helper_functions
@@ -27,16 +24,12 @@ class EnforceHelpers extends Command
 
     protected $customMsg = 'No facade was found to be replaced by helper functions.  \(^_^)/';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function __construct()
     {
-        event('microscope.start.command');
-        $this->info('Soaring like an eagle...');
-
+        parent::__construct();
         Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
         Filters::$filters['full_namespace_pattern'] = FullNamespaceIs::class;
         Filters::$filters['namespace_pattern'] = NamespaceIs::class;
-
-        return $this->patternCommand($errorPrinter);
     }
 
     private function getPatterns(): array

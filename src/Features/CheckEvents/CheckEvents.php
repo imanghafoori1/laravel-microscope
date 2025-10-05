@@ -2,34 +2,29 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEvents;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEvents extends Command
+class CheckEvents extends BaseCommand
 {
-    use LogsErrors;
-
     protected $signature = 'check:events';
 
     protected $description = 'Checks the validity of event listeners';
 
+    public $initialMsg = 'Checking events...';
+
+    public $checks = [];
+
+    public $customMsg = 'All the events are ok.';
+
     /**
      * Execute the console command.
      *
-     * @param  ErrorPrinter  $errorPrinter
      * @return int
      */
-    public function handle(ErrorPrinter $errorPrinter)
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking events...');
-
-        $errorPrinter->printer = $this->output;
-
-        event('microscope.finished.checks', [$this]);
         $this->getOutput()->writeln(' - '.SpyDispatcher::$listeningNum.' listenings were checked.');
 
-        return $errorPrinter->pended ? 1 : 0;
+        return $this->exitCode();
     }
 }

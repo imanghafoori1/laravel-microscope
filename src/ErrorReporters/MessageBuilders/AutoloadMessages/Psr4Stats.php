@@ -11,7 +11,7 @@ class Psr4Stats
     use Reporting;
 
     /**
-     * @param  array<string, array<string, (callable(): int)>>  $psr4Stats
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stats
      * @param  int  $max
      * @return \Generator<int, string>
      */
@@ -20,7 +20,7 @@ class Psr4Stats
     {
         $lines = [];
 
-        foreach ($psr4Stats as $psr4Namespace => $psr4Paths) {
+        foreach ($psr4Stats->stats as $psr4Namespace => $psr4Paths) {
             Psr4Report::$callback && (Psr4Report::$callback)();
             $lines[0] = PHP_EOL.self::getPsr4Head();
             $lines[1] = self::getPsr4($max, $psr4Namespace);

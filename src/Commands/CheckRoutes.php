@@ -3,24 +3,16 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckRoutes extends Command
+class CheckRoutes extends BaseCommand
 {
-    use LogsErrors;
-
     public static $checkedRoutesNum = 0;
 
     public static $skippedRoutesNum = 0;
@@ -34,36 +26,25 @@ class CheckRoutes extends Command
 
     protected $description = 'Checks the validity of route definitions';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public $initialMsg = 'Checking route definitions...';
+
+    public $checks = [CheckRouteCalls::class];
+
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking route definitions...');
-
-        $errorPrinter->printer = $this->output;
         app(Filesystem::class)->delete(app()->getCachedRoutesPath());
-
         $routes = app(Router::class)->getRoutes()->getRoutes();
 
         $this->checkRouteDefinitions($routes);
         // checks calls like this: route('admin.user')
-        $this->getOutput()->writeln(
-            $this->getRouteDefinitionStatistics()
-        );
+        $this->getOutput()->writeln($this->getRouteDefinitionStatistics());
 
         $this->info('Checking route names exists...');
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckRouteCalls::class], [], $pathDTO);
-        $bladeStats = ForBladeFiles::check([CheckRouteCalls::class], [], $pathDTO);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-        $this->getOutput()->writeln(
-            $this->getStatisticsMsg()
-        );
-        $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
-
-        event('microscope.finished.checks', [$this]);
-
-        return $errorPrinter->hasErrors() ? 1 : 0;
+        $this->printAll([
+            $this->forComposerLoadedFiles(),
+            $this->forBladeFiles(),
+            PHP_EOL.$this->getStatisticsMsg()
+        ]);
     }
 
     private function getRouteId($route)

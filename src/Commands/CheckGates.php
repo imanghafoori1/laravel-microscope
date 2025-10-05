@@ -2,30 +2,25 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
-class CheckGates extends Command
+class CheckGates extends BaseCommand
 {
-    use LogsErrors;
-
     protected $signature = 'check:gates';
 
     protected $description = 'Checks the validity of gate definitions';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public $initialMsg = 'Checking gates...';
+
+    public $checks = [];
+
+    public $customMsg = 'Gates are ok';
+
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking gates...');
-
-        $errorPrinter->printer = $this->output;
-
-        $this->finishCommand($errorPrinter);
         $this->getOutput()->writeln(' - '.SpyGate::$definedGatesNum.' gate definitions were checked.');
-        event('microscope.finished.checks', [$this]);
 
-        return $errorPrinter->pended ? 1 : 0;
+        return $this->exitCode();
     }
 }

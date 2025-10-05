@@ -2,17 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
-use JetBrains\PhpStorm\ExpectedValues;
 
-class EnforceQuery extends Command
+class EnforceQuery extends BaseCommand
 {
-    use LogsErrors;
     use PatternApply;
 
     protected $signature = 'enforce:query
@@ -29,15 +25,10 @@ class EnforceQuery extends Command
 
     protected $customMsg = 'No case was found to add ::query()-> to it.  \(^_^)/';
 
-    #[ExpectedValues(values: [0, 1])]
-    public function handle(ErrorPrinter $errorPrinter)
+    public function __construct()
     {
-        event('microscope.start.command');
-        $this->info('Soaring like an eagle...');
-
+        parent::__construct();
         Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
-
-        return $this->patternCommand($errorPrinter);
     }
 
     private function getPatterns()
@@ -59,7 +50,7 @@ class EnforceQuery extends Command
 
     private function getMethods()
     {
-        $methods = ltrim($this->option('methods'), '=');
+        $methods = ltrim($this->options->option('methods'), '=');
 
         if ($methods) {
             return explode(',', $methods);
@@ -74,7 +65,7 @@ class EnforceQuery extends Command
             'is_subclass_of' => Model::class,
         ];
 
-        $methods = ltrim($this->option('classes'), '=');
+        $methods = ltrim($this->options->option('classes'), '=');
         $methods && $modelConditions['in_array'] = explode(',', $methods);
 
         return $modelConditions;

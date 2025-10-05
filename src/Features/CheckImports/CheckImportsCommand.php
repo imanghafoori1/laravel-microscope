@@ -11,12 +11,14 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassRefere
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
@@ -100,23 +102,27 @@ class CheckImportsCommand extends Command
         $checks = $this->checks;
         unset($checks[1]);
 
-        $routeFiles = ForRouteFiles::check($checks, $useStatementParser, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $autoloadedFiles = ForAutoloadedFiles::check(base_path(), $checks, $useStatementParser, $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($this->checks, $useStatementParser, $pathDTO);
-        $foldersStats = ForFolderPaths::check($checks, LaravelPaths::getMigrationConfig(), $useStatementParser, $pathDTO);
+        $checkSet = CheckSet::init($checks, $pathDTO, $useStatementParser);
+        $routeFiles = RouteReport::getStats(ForRouteFiles::check($checkSet));
+        $psr4Stats = ForAutoloadedPsr4Classes::check(
+            CheckSet::init($this->checks, $pathDTO, $useStatementParser)
+        );
 
+        $classMapStats = ForAutoloadedClassMaps::check($checkSet);
+        $autoloadedFilesStats = ForAutoloadedFiles::check($checkSet);
+        $foldersStats = LaravelFoldersReport::formatFoldersStats(ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig()));
         $checks = $this->checks;
         unset($checks[3]); // avoid checking facades aliases in blade files.
-        $bladeStats = ForBladeFiles::check($checks, $useStatementParser, $pathDTO);
+        $checkSet->setChecks($checks);
+        $bladeStats = Reporters\BladeReport::getBladeStats(ForBladeFiles::check($checkSet));
 
         $errorPrinter = ErrorPrinter::singleton($this->output);
 
-        $consoleOutput = Reporters\Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFiles);
+        $messages = Reporters\Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
         /**
          * @var string[] $messages
          */
-        $messages = self::getMessages($consoleOutput, $bladeStats, $foldersStats, $routeFiles);
+        $messages = self::addOtherMessages($messages, $bladeStats, $foldersStats, $routeFiles);
 
         Psr4ReportPrinter::printAll($messages, $this->getOutput());
         // must be after other messages:
@@ -177,22 +183,22 @@ class CheckImportsCommand extends Command
     }
 
     /**
-     * @param  array<int, array<int, string|\Generator<int, string>>>  $autoloadStats
-     * @param  array<int, \Generator<string, int>>  $bladeStats
-     * @param  array<string, array<string, \Generator<int, PhpFileDescriptor>>>  $foldersStats
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats  $autoloadStats
+     * @param  array<string, \Generator<string, int>>  $bladeStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $foldersStats
      * @param  \Generator<int, PhpFileDescriptor>  $routeFiles
      * @return array
      */
-    private static function getMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
+    private static function addOtherMessages($autoloadStats, $bladeStats, $foldersStats, $routeFiles)
     {
         return [
             CheckImportReporter::totalImportsMsg(),
             $autoloadStats,
             PHP_EOL.CheckImportReporter::header(),
             PHP_EOL.self::getFilesStats(),
-            PHP_EOL.Reporters\BladeReport::getBladeStats($bladeStats).PHP_EOL,
-            LaravelFoldersReport::formatFoldersStats($foldersStats),
-            CheckImportReporter::getRouteStats($routeFiles),
+            PHP_EOL.$bladeStats.PHP_EOL,
+            $foldersStats,
+            $routeFiles,
         ];
     }
 }

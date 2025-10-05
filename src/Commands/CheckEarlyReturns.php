@@ -2,19 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use JetBrains\PhpStorm\ExpectedValues;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEarlyReturns extends Command
+class CheckEarlyReturns extends BaseCommand
 {
     protected $signature = 'check:early_returns
     {--s|nofix}
@@ -26,40 +18,23 @@ class CheckEarlyReturns extends Command
 
     protected $description = 'Applies the early return on the classes';
 
-    #[ExpectedValues(values: [0, 1])]
-    public function handle()
-    {
-        ErrorPrinter::singleton($this->output);
+    protected $checks = [CheckEarlyReturn::class];
 
-        if ($this->option('nofix')) {
+    public function handleCommand()
+    {
+        if ($this->options->option('nofix')) {
             $this->info(PHP_EOL.' Checking for possible code flattenings...'.PHP_EOL);
         }
 
-        if (! $this->option('nofix') && ! $this->startWarning()) {
+        if (! $this->options->option('nofix') && ! $this->startWarning()) {
             return 0;
         }
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-        $lines = self::applyCheckEarly($pathDTO, $this->option('nofix'));
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
-
-        return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
-    }
-
-    /**
-     * @param  PathFilterDTO  $pathDTO
-     * @param  bool  $nofix
-     * @return array
-     */
-    private static function applyCheckEarly($pathDTO, $nofix): array
-    {
-        $check = [CheckEarlyReturn::class];
-        $params = self::getParams($nofix);
-        $psr4stats = ForAutoloadedPsr4Classes::check($check, $params, $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, $params, $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), $check, $params, $pathDTO);
-
-        return Psr4Report::getConsoleMessages($psr4stats, $classMapStats, $filesStats);
+        $nofix = $this->options->option('nofix');
+        $this->params = $this->getParams($nofix);
+        $this->checkSet = $this->getCheckSet();
+        $lines = $this->forComposerLoadedFiles();
+        $this->printAll($lines);
     }
 
     private function startWarning()
@@ -70,7 +45,7 @@ class CheckEarlyReturns extends Command
         return $this->output->confirm(' Do you have committed everything in git?');
     }
 
-    private static function getParams($nofix): array
+    private function getParams($nofix): array
     {
         return [
             'nofix' => $nofix,

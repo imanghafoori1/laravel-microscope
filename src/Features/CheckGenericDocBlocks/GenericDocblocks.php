@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
@@ -39,10 +40,13 @@ class GenericDocblocks implements Check
             return null;
         }
 
-        [$hasReplacement, $tokens] = self::removeDocBlocks($tokens);
+        [$hasReplacement, $tokens, $token] = self::removeDocBlocks($tokens);
 
         $absFilePath = $file->getAbsolutePath();
         if ($hasReplacement && (self::$conformer)($absFilePath)) {
+            ErrorPrinter::singleton()->addPendingError(
+                $absFilePath, ($token[2] ?? 5) - 4, 'generic_docs', 'Docblock removed:', $token[1] ?? ''
+            );
             Refactor::saveTokens($absFilePath, $tokens);
         }
     }
@@ -70,18 +74,20 @@ class GenericDocblocks implements Check
     private static function removeDocBlocks(array $tokens): array
     {
         $hasReplacement = false;
+        $doc = [];
         foreach ($tokens as $i => $token) {
             if ($token[0] !== T_DOC_COMMENT) {
                 continue;
             }
 
             if (self::shouldBeRemoved($token[1])) {
+                $doc = $token;
                 self::$foundCount++;
                 $hasReplacement = true;
                 $tokens = self::removeDocblock($tokens, $i);
             }
         }
 
-        return [$hasReplacement, $tokens];
+        return [$hasReplacement, $tokens, $doc];
     }
 }

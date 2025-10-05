@@ -2,19 +2,16 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Concerns\QueriesRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\Filters;
 
-class CheckDynamicWhereMethod extends Command
+class CheckDynamicWhereMethod extends BaseCommand
 {
-    use LogsErrors;
     use PatternApply;
 
     protected $signature = 'check:dynamic_wheres
@@ -71,14 +68,10 @@ class CheckDynamicWhereMethod extends Command
         'whereNotInStrict',
     ];
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public function __construct()
     {
-        event('microscope.start.command');
-        $this->info('Soaring like an eagle...');
-
+        parent::__construct();
         Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
-
-        return $this->patternCommand($errorPrinter);
     }
 
     private function getPatterns(): array

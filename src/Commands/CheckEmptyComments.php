@@ -2,14 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
-use JetBrains\PhpStorm\ExpectedValues;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEmptyComments extends Command
+class CheckEmptyComments extends BaseCommand
 {
-    use LogsErrors;
     use PatternApply;
 
     protected $signature = 'check:empty_comments
@@ -23,22 +19,13 @@ class CheckEmptyComments extends Command
 
     protected $customMsg = 'No empty comments were found.  \(^_^)/';
 
-    #[ExpectedValues(values: [0, 1])]
-    public function handle(ErrorPrinter $errorPrinter)
-    {
-        event('microscope.start.command');
-        $this->info('Soaring like an eagle...');
-
-        return $this->patternCommand($errorPrinter);
-    }
-
     public function getPatterns()
     {
         return [
             'delete_empty_comments' => [
                 'cacheKey' => 'delete_empty_comments-v1',
                 'search' => '<comment>',
-                'replace' => $this->option('nofix') ? null : '',
+                'replace' => $this->options->option('nofix') ? null : '',
                 'predicate' => $this->getPredicate(),
             ],
         ];

@@ -3,17 +3,18 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ForAutoloadedFiles
 {
     /**
-     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     *
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
-    public static function check($basePath, $checks, $paramProvider, $pathDTO = null)
+    public static function check($checker)
     {
-        $autoloadFiles = ComposerJson::autoloadedFilesList($basePath);
+        $autoloadFiles = ComposerJson::autoloadedFilesList();
 
-        return ForFolderPaths::checkFilePaths($autoloadFiles, $checks, $paramProvider, $pathDTO);
+        return ForFolderPaths::checkFilePaths($autoloadFiles, $checker);
     }
 }

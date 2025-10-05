@@ -2,17 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
-class CheckDeadControllers extends Command
+class CheckDeadControllers extends BaseCommand
 {
-    use LogsErrors;
-
     protected $signature = 'check:dead_controllers
     {--f|file=}
     {--d|folder=}
@@ -24,21 +20,15 @@ class CheckDeadControllers extends Command
 
     protected $description = 'Checks that public controller methods have routes.';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public $initialMsg = 'Checking for route-less controllers...';
+
+    public $checks = [RoutelessControllerActions::class];
+
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking for route-less controllers...');
-
-        $errorPrinter->printer = $this->output;
-
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-        $psr4Stats = ForAutoloadedPsr4Classes::check([RoutelessControllerActions::class], [], $pathDTO);
+        $checkSet = CheckSet::initParam($this->checks);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
 
         Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-
-        $this->finishCommand($errorPrinter);
-        $errorPrinter->printTime();
-
-        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 }

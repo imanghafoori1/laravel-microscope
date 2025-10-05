@@ -2,21 +2,16 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\SearchReplace\PatternParser;
-use JetBrains\PhpStorm\ExpectedValues;
 use Symfony\Component\Finder\Finder;
 
-class AnonymizeMigrations extends Command
+class AnonymizeMigrations extends BaseCommand
 {
-    use LogsErrors;
-
     protected $signature = 'check:migrations {--s|nofix}
     {--f|file=}
     {--d|folder=}
@@ -26,8 +21,11 @@ class AnonymizeMigrations extends Command
 
     protected $description = 'Makes migration classes anonymous.';
 
-    #[ExpectedValues(values: [0, 1])]
-    public function handle()
+    public $customMsg = 'All the migration classes are anonymous.';
+
+    public $checks = [];
+
+    public function handleCommand()
     {
         if (version_compare('8.37.0', app()->version()) !== -1) {
             $this->info('Anonymous migrations are supported in laravel 8.37 and above.');
@@ -36,28 +34,14 @@ class AnonymizeMigrations extends Command
             return 0;
         }
 
-        event('microscope.start.command');
-
-        $errorPrinter = ErrorPrinter::singleton($this->output);
-
-        $this->patternCommand($errorPrinter);
-
-        return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
+        $this->patternCommand();
     }
 
-    private function patternCommand(ErrorPrinter $errorPrinter): int
+    private function patternCommand()
     {
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $errorPrinter->printer = $this->output;
-
         $this->appliesPatterns($this->parsePatterns(), $pathDTO);
-
-        $this->finishCommand($errorPrinter);
-
-        $errorPrinter->printTime();
-
-        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
     private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO): void
@@ -76,7 +60,7 @@ class AnonymizeMigrations extends Command
     {
         return [
             'anonymize_migrations' => [
-                'search' => 'class "<1:name>" extends "<2:class_ref>"{<3:in_between>}',
+                'search' => 'class <name> extends <class_ref> {<in_between>}',
                 'replace' => 'return new class extends <2>'.PHP_EOL.'{<3>};',
                 'filters' => [
                     2 => [

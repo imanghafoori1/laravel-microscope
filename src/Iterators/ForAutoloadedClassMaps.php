@@ -4,37 +4,33 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 
 class ForAutoloadedClassMaps extends BaseIterator
 {
     /**
-     * @param  string  $basePath
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  \Closure|null  $paramProvider
-     * @param  PathFilterDTO  $pathDTO
-     * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
-    public static function check($basePath, $checks, $paramProvider, PathFilterDTO $pathDTO)
+    public static function check(CheckSet $checkSet)
     {
         return Loop::map(
-            ComposerJson::getClassMaps($basePath, $pathDTO),
-            fn ($classMap) => self::getDirStats($classMap, $checks, $paramProvider)
+            ComposerJson::getClassMaps($checkSet->pathDTO),
+            fn ($classMap) => self::getDirStats($classMap, $checkSet)
         );
     }
 
     /**
      * @param  \Generator<string, string[]>  $classMap
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
-     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
-    private static function getDirStats($classMap, $checks, $paramProvider)
+    private static function getDirStats($classMap, $checker)
     {
-        return Loop::map(
+        return StatsDto::make(Loop::map(
             $classMap,
-            fn ($absFilePaths) => self::applyChecks($absFilePaths, $checks, $paramProvider)
-        );
+            fn ($absFilePaths) => FilesDto::make(self::applyChecks($absFilePaths, $checker))
+        ));
     }
 }

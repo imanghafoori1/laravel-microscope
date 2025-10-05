@@ -61,12 +61,12 @@ trait Reporting
     }
 
     /**
-     * @param  \Generator<int, PhpFileDescriptor>  $files
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $files
      * @return string[]
      */
     #[Pure]
-    private static function formatFiles($files)
+    public static function formatFiles($files)
     {
-        return Loop::map($files, fn ($file) => self::formatLine($file));
+        return Loop::map($files->files, fn ($file) => self::formatLine($file));
     }
 }

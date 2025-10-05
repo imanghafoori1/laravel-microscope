@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
 class ClassMapStats
@@ -11,7 +10,7 @@ class ClassMapStats
     use Reporting;
 
     /**
-     * @param  array<string, \Generator<int, PhpFileDescriptor>>  $stat
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $stat
      * @param  \Closure  $callback
      * @return string|void
      */
@@ -21,8 +20,8 @@ class ClassMapStats
         $lines = '';
         $c = $total = 0;
 
-        foreach ($stat as $path => $filePathsGen) {
-            $count = count(iterator_to_array($filePathsGen));
+        foreach ($stat->stats as $path => $files) {
+            $count = count(iterator_to_array($files->files));
             if (! $count) {
                 continue;
             }

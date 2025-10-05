@@ -2,19 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckActionComments extends Command
+class CheckActionComments extends BaseCommand
 {
-    use LogsErrors;
-
     protected $signature = 'check:action_comments
     {--f|file=}
     {--d|folder=}
@@ -24,29 +17,21 @@ class CheckActionComments extends Command
 
     protected $description = 'Adds route definition to the controller actions';
 
-    public function handle(ErrorPrinter $errorPrinter)
+    public $checks = [ActionsComments::class];
+
+    public $initialMsg = 'Commentify Route Actions...';
+
+    public function handleCommand()
     {
-        $errorPrinter->printer = $this->output;
-
-        $this->info('Commentify Route Actions...');
-
         ActionsComments::$command = $this;
-
         ActionsComments::$controllers = self::findDefinedRouteActions();
         ActionsComments::$allRoutes = app('router')->getRoutes()->getRoutes();
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check(
-            [ActionsComments::class],
-            [],
-            PathFilterDTO::makeFromOption($this)
-        );
 
-        Psr4ReportPrinter::printAll(
-            Psr4Report::getConsoleMessages($psr4Stats, []),
-            $this->getOutput()
-        );
+        $psr4Stats = $this->forPsr4();
+        $lines = Psr4Report::formatAutoloads($psr4Stats, []);
 
-        return 0;
+        $this->printAll($lines);
     }
 
     private static function findDefinedRouteActions()

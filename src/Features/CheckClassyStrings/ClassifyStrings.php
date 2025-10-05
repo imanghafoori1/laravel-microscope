@@ -4,10 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 
 class ClassifyStrings extends Command
 {
@@ -23,27 +24,20 @@ class ClassifyStrings extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $this->info('Checking stringy classes...');
-        app()->singleton('current.command', function () {
-            return $this;
-        });
+
         $errorPrinter->printer = $this->output;
+        CheckStringy::$command = $this;
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checkSet = CheckSet::initParams([CheckStringy::class], $this);
 
-        [$psr4Stats, $classMapStats] = self::classifyString($pathDTO);
+        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
+        $classMapStats = ForAutoloadedClassMaps::check($checkSet);
 
-        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats);
+        Psr4ReportPrinter::printAll($lines, $this->getOutput());
 
         $this->getOutput()->writeln(CheckStringyMsg::finished());
 
         return $errorPrinter->hasErrors() ? 1 : 0;
-    }
-
-    public static function classifyString(PathFilterDTO $pathFilterDTO): array
-    {
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckStringy::class], [], $pathFilterDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckStringy::class], [], $pathFilterDTO);
-
-        return [$psr4Stats, $classMapStats];
     }
 }

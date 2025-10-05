@@ -10,7 +10,7 @@ class AutoloadFiles
     use Reporting;
 
     /**
-     * @param  \Generator<int, PhpFileDescriptor>  $filesList
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $filesList
      * @return string
      */
     public static function getLines($filesList)

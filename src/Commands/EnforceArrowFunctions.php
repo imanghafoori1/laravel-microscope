@@ -2,13 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class EnforceArrowFunctions extends Command
+class EnforceArrowFunctions extends BaseCommand
 {
-    use LogsErrors;
     use PatternApply;
 
     protected $signature = 'check:arrow_functions
@@ -21,14 +18,6 @@ class EnforceArrowFunctions extends Command
     protected $description = 'Converts anonymous functions into arrow functions.';
 
     protected $customMsg = 'All the function are already converted into the arrow version.  \(^_^)/';
-
-    public function handle(ErrorPrinter $errorPrinter)
-    {
-        event('microscope.start.command');
-        $this->info('Soaring like an eagle...');
-
-        return $this->patternCommand($errorPrinter);
-    }
 
     private function getPatterns(): array
     {

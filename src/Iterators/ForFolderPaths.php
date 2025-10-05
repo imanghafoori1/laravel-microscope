@@ -5,52 +5,49 @@ namespace Imanghafoori\LaravelMicroscope\Iterators;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 
 class ForFolderPaths extends BaseIterator
 {
     /**
-     * @param  array<string, string[]>  $paths
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     * @param array<string, string[]> $paths
+     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
+     * @return StatsDto
      */
-    public static function checkFilePaths($paths, $checks, $paramProvider, $pathDTO = null)
+    public static function checkFilePaths($paths, CheckSet $checker)
     {
-        if ($pathDTO) {
-            $paths = Loop::map($paths, fn ($files) => FilePath::filter($files, $pathDTO));
+        if ($checker->pathDTO) {
+            $paths = Loop::map($paths, fn ($files) => FilePath::filter($files, $checker->pathDTO));
         }
 
-        return self::applyOnFiles($paths, $checks, $paramProvider);
+        return self::applyOnFiles($paths, $checker);
     }
 
     /**
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @param  array<string, \Generator<int, string>>  $dirsList
-     * @param  array|\Closure  $paramProvider
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathFilter
-     * @return array<string, array<string, \Generator<int, PhpFileDescriptor>>>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
-    public static function check($checks, $dirsList, $paramProvider, PathFilterDTO $pathFilter)
+    public static function check(CheckSet $checker, $dirsList)
     {
         return Loop::map($dirsList, fn ($dirs, $listName) => self::checkFilePaths(
-            Paths::getAbsFilePaths($dirs, $pathFilter), $checks, $paramProvider
+            Paths::getAbsFilePaths($dirs, $checker->pathDTO), $checker
         ));
     }
 
     /**
      * @param  $paths
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $paramProvider
-     * @return array<string, \Generator<int, PhpFileDescriptor>>
+     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
+     * @return StatsDto
      */
-    private static function applyOnFiles($paths, array $checks, $paramProvider)
+    private static function applyOnFiles($paths, $checker)
     {
-        return Loop::map(
-            $paths,
-            fn ($absPaths) => self::applyChecks($absPaths, $checks, $paramProvider)
+        return StatsDto::make(
+            Loop::map(
+                $paths,
+                fn ($absPaths) => FilesDto::make(self::applyChecks($absPaths, $checker))
+            )
         );
     }
 }

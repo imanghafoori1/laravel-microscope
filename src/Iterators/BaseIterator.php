@@ -2,22 +2,21 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 abstract class BaseIterator
 {
     /**
      * @param  \Generator<int, string>|string[]  $absFilePaths
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $params
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
      * @return \Generator<int, PhpFileDescriptor>
      */
-    public static function applyChecks($absFilePaths, $checks, $params)
+    public static function applyChecks($absFilePaths, $checker)
     {
         foreach ($absFilePaths as $absFilePath) {
             $fileDescriptor = PhpFileDescriptor::make($absFilePath);
-            Loop::over($checks, fn ($check) => $check::check($fileDescriptor, $params));
+            $checker->checks->applyOnFile($fileDescriptor, $checker->params);
+
             yield $fileDescriptor;
         }
     }

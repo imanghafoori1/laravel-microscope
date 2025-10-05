@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
-use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
@@ -23,15 +22,31 @@ class FacadeAliasesCheck implements Check
 
     public static $importsProvider;
 
+    /**
+     * @var array
+     */
+    public static $aliases = [];
+
     public static function check(PhpFileDescriptor $file)
     {
-        if (CachedFiles::isCheckedBefore('check_facade_aliad_command', $file)) {
+        if (CachedFiles::isCheckedBefore('check_facade_alias_command', $file)) {
             return;
         }
-        $tokens = $file->getTokens();
-        $absFilePath = $file->getAbsolutePath();
 
-        $aliases = AliasLoader::getInstance()->getAliases();
+        [$tokens, $hasError] = self::performCheck($file);
+
+        if ($hasError === false) {
+            CachedFiles::put('check_facade_alias_command', $file);
+        }
+
+        return $tokens;
+    }
+
+    public static function performCheck(PhpFileDescriptor $file): array
+    {
+        $tokens = $file->getTokens();
+
+        $aliases = self::$aliases;
         self::$handler::$command = self::$command;
 
         $imports = (self::$importsProvider)($file);
@@ -48,14 +63,10 @@ class FacadeAliasesCheck implements Check
                 }
                 $expandedAlias = $aliases[$shortAlias];
 
-                $tokens = self::$handler::handle($absFilePath, $usageInfo, $base, $expandedAlias, $tokens, $import);
+                $tokens = self::$handler::handle($file, $usageInfo, $base, $expandedAlias, $tokens, $import);
             }
         }
 
-        if ($hasError === false) {
-            CachedFiles::put('check_facade_aliad_command', $file);
-        }
-
-        return $tokens;
+        return [$tokens, $hasError];
     }
 }

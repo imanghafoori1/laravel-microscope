@@ -2,18 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use JetBrains\PhpStorm\ExpectedValues;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEndIf extends Command
+class CheckEndIf extends BaseCommand
 {
     protected $signature = 'check:endif
     {--f|file=}
@@ -25,40 +17,16 @@ class CheckEndIf extends Command
 
     protected $description = 'replaces ruby like syntax of php (endif) with curly brackets.';
 
-    #[ExpectedValues(values: [0, 1])]
-    public function handle(ErrorPrinter $errorPrinter)
+    public $checks = [CheckRubySyntax::class];
+
+    public $initialMsg = 'Checking for endif\'s...';
+
+    public $customMsg = 'No ruby syntax found. \(^_^)/';
+
+    public $gitConfirm = true;
+
+    public function handleCommand()
     {
-        if (! $this->startWarning()) {
-            return null;
-        }
-
-        $errorPrinter->printer = $this->output;
-
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-
-        [$psr4Stats, $classMapStats, $filesStats] = self::applyRubySyntaxCheck($pathDTO);
-
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStats);
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
-
-        return ErrorPrinter::singleton()->hasErrors() ? 1 : 0;
-    }
-
-    private function startWarning()
-    {
-        $this->info('Checking for endif\'s...');
-        $this->warn('This command is going to make changes to your files!');
-
-        return $this->output->confirm('Do you have committed everything in git?');
-    }
-
-    public static function applyRubySyntaxCheck($pathDTO)
-    {
-        $check = [CheckRubySyntax::class];
-        $psr4stats = ForAutoloadedPsr4Classes::check($check, [], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [], $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), $check, [], $pathDTO);
-
-        return [$psr4stats, $classMapStats, $filesStats];
+        $this->printAll($this->forComposerLoadedFiles());
     }
 }

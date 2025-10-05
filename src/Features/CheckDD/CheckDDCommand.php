@@ -2,21 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 
-use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
-class CheckDDCommand extends Command
+class CheckDDCommand extends BaseCommand
 {
     protected $signature = 'check:dd
     {--f|file=}
@@ -27,13 +17,12 @@ class CheckDDCommand extends Command
 
     protected $description = 'Checks the debug functions.';
 
-    public function handle()
+    public $checks = [CheckDD::class];
+
+    public $initialMsg = 'Checking dd...';
+
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking dd...');
-
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-
         $onErrorCallback = function (PhpFileDescriptor $file, $token) {
             ErrorPrinter::singleton()->simplePendError(
                 $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
@@ -41,22 +30,9 @@ class CheckDDCommand extends Command
         };
         CheckDD::$onErrorCallback = $onErrorCallback;
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckDD::class], [$onErrorCallback], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [CheckDD::class], [$onErrorCallback], $pathDTO);
-
-        $foldersStats = ForFolderPaths::check([CheckDD::class], LaravelPaths::getMigrationConfig(), [$onErrorCallback], $pathDTO);
-
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats);
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
-        $messages = LaravelFoldersReport::formatFoldersStats($foldersStats);
-        Psr4ReportPrinter::printAll($messages, $this->getOutput());
-        CachedFiles::writeCacheFiles();
-
-        $this->getOutput()->writeln(' - Finished looking for debug functions.');
-
-        event('microscope.finished.checks', [$this]);
-
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
+        $this->printAll([
+            $this->forComposerLoadedFiles(),
+            $this->forMigrationsAndConfigs(),
+        ]);
     }
 }

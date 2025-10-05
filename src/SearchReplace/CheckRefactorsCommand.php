@@ -6,11 +6,8 @@ use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 
@@ -61,15 +58,13 @@ class CheckRefactorsCommand extends Command
 
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
+        $params = [$parsedPatterns, $patterns];
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checkSet = CheckSet::initParams([PatternRefactorings::class], $this, $params);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
-        $filesStats = ForAutoloadedFiles::check(base_path(), [PatternRefactorings::class], [$parsedPatterns, $patterns], $pathDTO);
-
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $filesStats);
+        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
         Psr4ReportPrinter::printAll($lines, $this->getOutput());
+
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return PatternRefactorings::$patternFound ? 1 : 0;

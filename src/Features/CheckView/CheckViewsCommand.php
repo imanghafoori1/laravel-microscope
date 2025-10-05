@@ -2,22 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
-class CheckViewsCommand extends Command
+class CheckViewsCommand extends BaseCommand
 {
     protected $signature = 'check:views
         {--detailed : Show files being checked}
@@ -29,49 +22,30 @@ class CheckViewsCommand extends Command
 
     protected $description = 'Checks the validity of blade files';
 
-    public function handle(ErrorPrinter $errorPrinter): int
+    public $initialMsg = 'Checking views...';
+
+    public $customMsg = '...'.PHP_EOL.'- All view() calls are correct!';
+
+    public $checks = [CheckView::class];
+
+    public function handleCommand()
     {
-        event('microscope.start.command');
-        $this->info('Checking views...');
+        $lines = $this->forComposerLoadedFiles();
+        $lines->add(PHP_EOL.$this->forRoutes());
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $checkSet = CheckSet::initParams([CheckViewFilesExistence::class], $this);
+        $lines->add(PHP_EOL.BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));
 
-        $errorPrinter->printer = $this->output;
+        $this->printAll($lines);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([CheckView::class], [], $pathDTO);
-        $routeFiles = ForRouteFiles::check([CheckView::class], [], $pathDTO);
-        $bladeStats = ForBladeFiles::check([CheckViewFilesExistence::class], null, $pathDTO);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-
-        $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
-
-        $this->getOutput()->writeln(PHP_EOL.BladeReport::getBladeStats($bladeStats));
-
-        $this->logErrors($errorPrinter);
         $this->getOutput()->writeln($this->stats(
             CheckViewStats::$checkedCallsCount,
             CheckViewStats::$skippedCallsCount
         ));
-        CachedFiles::writeCacheFiles();
-
-        return $errorPrinter->hasErrors() ? 1 : 0;
     }
 
     private function stats($checkedCallsCount, $skippedCallsCount): string
     {
         return ' - '.$checkedCallsCount.' view references were checked to exist. ('.$skippedCallsCount.' skipped)';
-    }
-
-    private function logErrors(ErrorPrinter $errorPrinter)
-    {
-        if ($errorPrinter->hasErrors()) {
-            $errorPrinter->logErrors();
-        } else {
-            $this->info('...'.PHP_EOL.'- All views are correct!');
-        }
-
-        $errorPrinter->printTime();
     }
 }

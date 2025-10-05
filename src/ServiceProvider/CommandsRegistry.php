@@ -41,6 +41,7 @@ trait CommandsRegistry
         Commands\CheckEmptyComments::class,
         Commands\CheckExtraSemiColons::class,
         Commands\EnforceArrowFunctions::class,
+        Commands\AnonymizeMigrations::class,
         Features\CheckExtraFQCN\CheckExtraFQCNCommand::class,
         Features\EnforceImports\EnforceImportsCommand::class,
         CheckAbortIf::class,

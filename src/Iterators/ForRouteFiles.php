@@ -3,20 +3,19 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class ForRouteFiles
 {
     /**
-     * @param  array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>  $checks
-     * @param  array|\Closure  $params
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
-     * @return \Generator<int, \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor>
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto
      */
-    public static function check($checks, $params, $pathDTO)
+    public static function check(CheckSet $checker)
     {
-        $routeFiles = FilePath::filter(RoutePaths::get(), $pathDTO);
+        $routeFiles = FilePath::filter(RoutePaths::get(), $checker->pathDTO);
 
-        return ForFolderPaths::applyChecks($routeFiles, $checks, $params);
+        return FilesDto::make(ForFolderPaths::applyChecks($routeFiles, $checker));
     }
 }

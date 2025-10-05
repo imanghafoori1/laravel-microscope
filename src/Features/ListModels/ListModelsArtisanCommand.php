@@ -8,7 +8,6 @@ use ImanGhafoori\ComposerJson\ClassLists;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use ReflectionClass;
-use Symfony\Component\Console\Terminal;
 
 class ListModelsArtisanCommand extends Command
 {
@@ -16,11 +15,13 @@ class ListModelsArtisanCommand extends Command
 
     protected $description = 'Lists Eloquent Models';
 
+    public static $parentModel = Model::class;
+
     public function handle()
     {
         $folder = ltrim($this->option('folder'), '=');
 
-        $models = app(SubclassFinder::class)->getList($folder, Model::class);
+        $models = app(SubclassFinder::class)->getList($folder, self::$parentModel);
 
         app(ModelListPrinter::class)->printList(
             $this->inspectModels($models),
@@ -37,16 +38,21 @@ class ListModelsArtisanCommand extends Command
             foreach ($classList as $list) {
                 foreach ($list as $class) {
                     $classPath = $class['currentNamespace'].'\\'.$class['class'];
-                    $models[$path][] = [
-                        'table' => $this->getTable($classPath),
-                        'class' => $classPath,
-                        'relative_path' => str_replace(base_path(), '', $class['absFilePath']),
-                    ];
+                    $models[$path][] = $this->getModelInfo($classPath, $class['absFilePath']);
                 }
             }
         }
 
         return $models;
+    }
+
+    private function getModelInfo(string $classPath, string $absFilePath)
+    {
+        return [
+            'table' => $this->getTable($classPath),
+            'class' => $classPath,
+            'relative_path' => $this->getRelativePath($absFilePath),
+        ];
     }
 
     private function getTable(string $classPath)

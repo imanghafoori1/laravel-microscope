@@ -2,24 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
-use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
-class CheckEnvCallsCommand extends Command
+class CheckEnvCallsCommand extends BaseCommand
 {
     protected $signature = 'check:bad_practices
         {--f|file= : Pattern for file names to scan}
@@ -30,11 +20,14 @@ class CheckEnvCallsCommand extends Command
 
     protected $description = 'Checks for bad practices';
 
-    public function handle(): int
-    {
-        event('microscope.start.command');
-        $this->info('Checking for env() calls outside config files...');
+    public $checks = [EnvCallsCheck::class];
 
+    public $initialMsg = 'Checking for env() calls outside config files...';
+
+    public $customMsg = 'No env() function call was found.';
+
+    public function handleCommand()
+    {
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $params = function ($name, $absPath, $lineNumber) {
@@ -44,31 +37,20 @@ class CheckEnvCallsCommand extends Command
         };
 
         $this->excludeConfigFiles($pathDTO);
-        $routeFiles = ForRouteFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([EnvCallsCheck::class], [$params], $pathDTO);
-        $classmapStats = ForAutoloadedClassMaps::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), [EnvCallsCheck::class], [$params], $pathDTO);
-        $bladeStats = ForBladeFiles::check([EnvCallsCheck::class], [$params], $pathDTO);
+        $lines = $this->forComposerLoadedFiles();
+        $lines->add($this->forBladeFiles());
+        $lines->add(PHP_EOL.$this->forRoutes());
+        $this->printAll($lines);
 
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classmapStats, $autoloadedFilesStats);
-        $lines[] = BladeReport::getBladeStats($bladeStats);
-        $lines[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
-
-        CachedFiles::writeCacheFiles();
-
-        event('microscope.finished.checks', [$this]);
         $this->info('&It is recommended use env() calls, only and only in config files.');
         $this->info('Otherwise you can NOT cache your config files using "config:cache"');
         $this->info('https://laravel.com/docs/5.5/configuration#configuration-caching');
-
-        return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 
     /**
-     * @param  \Generator<int, string>|string[]  $paths
+     * @param  \Generator|string[]  $paths
      * @return void
      */
     private function checkPaths($paths, $params)

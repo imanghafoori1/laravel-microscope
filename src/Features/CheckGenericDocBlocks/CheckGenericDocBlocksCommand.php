@@ -2,12 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
-use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckGenericDocBlocksCommand extends Command
+class CheckGenericDocBlocksCommand extends BaseCommand
 {
     protected $signature = 'check:generic_docblocks
     {--f|file=}
@@ -19,26 +16,25 @@ class CheckGenericDocBlocksCommand extends Command
 
     protected $description = 'Removes generic doc-blocks from your controllers.';
 
-    public function handle()
+    public $initialMsg = 'Removing generic doc-blocks...';
+
+    public $checks = [GenericDocblocks::class];
+
+    public $customMsg = '';
+
+    public function handleCommand()
     {
-        $this->info('Removing generic doc-blocks...');
-
         GenericDocblocks::$conformer = $this->getConformer();
-        $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $psr4Stats = ForAutoloadedPsr4Classes::check([GenericDocblocks::class], [], $pathDTO);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
+        $this->formatPrintPsr4();
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
         $this->info(GenericDocblocks::$removedCount.' of them were removed.');
-
-        return GenericDocblocks::$foundCount > 0 ? 1 : 0;
     }
 
     private function getConformer()
     {
-        return $this->option('nofix') ? fn () => false : fn ($path) => $this->confirm($this->getQuestion($path), true);
+        return $this->options->option('nofix') ? fn () => false : fn ($path) => $this->options->confirm($this->getQuestion($path), true);
     }
 
     private function getQuestion($absFilePath)

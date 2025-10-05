@@ -2,83 +2,43 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
 
 trait PatternApply
 {
+    public $initialMsg = 'Soaring like an eagle...';
+
+    public $checks = [PatternRefactorings::class];
+
     abstract public function getPatterns();
 
-    private function patternCommand(ErrorPrinter $errorPrinter): int
+    public function handleCommand()
     {
-        $pathDTO = PathFilterDTO::makeFromOption($this);
-
-        $errorPrinter->printer = $this->output;
-
-        Reporters\Psr4Report::$callback = fn () => $errorPrinter->flushErrors();
+        Reporters\Psr4Report::$callback = fn () => $this->errorPrinter->flushErrors();
 
         $patterns = $this->getPatterns();
 
-        $this->appliesPatterns($patterns, $pathDTO);
-
-        $this->finishCommand($errorPrinter);
-
-        $errorPrinter->printTime();
-
-        return $this->hasFoundPatterns() ? 1 : 0;
+        $this->appliesPatterns($patterns);
     }
 
     /**
      * @return void
      */
-    private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO)
+    private function appliesPatterns(array $patterns)
     {
-        $parsedPatterns = PatternParser::parsePatterns($patterns);
-
-        $check = [PatternRefactorings::class];
-
-        $routeFiles = ForRouteFiles::check($check, [$parsedPatterns], $pathDTO);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($check, [$parsedPatterns], $pathDTO);
-        $classMapStats = ForAutoloadedClassMaps::check(base_path(), $check, [$parsedPatterns], $pathDTO);
-        $autoloadedFilesStats = ForAutoloadedFiles::check(base_path(), $check, [$parsedPatterns], $pathDTO);
         CheckBladePaths::$readOnly = false;
-        $bladeStats = ForBladeFiles::check($check, [$parsedPatterns], $pathDTO);
-
-        $messages = self::getConsoleMessages($psr4Stats, $classMapStats, $autoloadedFilesStats, $bladeStats);
-        $messages[] = PHP_EOL.CheckImportReporter::getRouteStats($routeFiles);
-        try {
-            Psr4ReportPrinter::printAll($messages, $this->getOutput());
-        } finally {
-            CachedFiles::writeCacheFiles();
-        }
-    }
-
-    private static function getConsoleMessages($psr4Stats, $classMapStats, $filesStats, $bladeStats)
-    {
-        $lines = Psr4Report::getConsoleMessages($psr4Stats, $classMapStats, $filesStats);
-
-        $lines[] = implode(PHP_EOL, [
-            Reporters\BladeReport::getBladeStats($bladeStats),
-        ]);
-
-        return $lines;
-    }
-
-    private function hasFoundPatterns(): bool
-    {
-        return PatternRefactorings::$patternFound;
+        $parsedPatterns = PatternParser::parsePatterns($patterns);
+        $this->params = [$parsedPatterns];
+        $this->checkSet = $this->getCheckSet();
+        $lines = [
+            $this->forComposerLoadedFiles(),
+            $this->forBladeFiles(),
+            PHP_EOL.$this->forRoutes(),
+        ];
+        $this->printAll($lines);
+        CheckBladePaths::$readOnly = true;
     }
 }
