@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
@@ -18,6 +17,7 @@ use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
+use Imanghafoori\TokenAnalyzer\Str;
 
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
@@ -71,11 +71,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         // We need to start spying before the boot process starts.
         $command = $_SERVER['argv'][1] ?? '';
         // We spy the router in order to have a list of route files.
-        $checkAll = Str::startsWith('check:all', $command);
-        ($checkAll || Str::startsWith('check:eve', $command)) && Installer::spyEvents();
-        ($checkAll || Str::startsWith('check:routes', $command)) && app('router')->spyRouteConflict();
-        Str::startsWith('check:action_comment', $command) && app('router')->spyRouteConflict();
-        ($checkAll || Str::startsWith('check:gates', $command)) && SpyGate::start();
+        $checkAll = Str::startsWith($command, 'check:all');
+        ($checkAll || Str::startsWith($command, 'check:eve')) && Installer::spyEvents();
+        ($checkAll || Str::startsWith($command, 'check:rout')) && app('router')->spyRouteConflict();
+        Str::startsWith($command, 'check:actio') && app('router')->spyRouteConflict();
+        ($checkAll || Str::startsWith($command, 'check:gat')) && SpyGate::start();
     }
 
     private function loadConfig()
