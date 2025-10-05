@@ -20,9 +20,11 @@ class CheckBladeQueriesCommand extends BaseCommand
 
     public $initialMsg = 'Checking blade files for db queries...';
 
-    public function handleCommand()
+    public $customMsg = 'No queries found in blade files.';
+
+    public function handleCommand($command)
     {
         // checks the blade files for database queries.
-        $this->printAll([$this->forBladeFiles()]);
+        $command->printAll([$command->forBladeFiles()]);
     }
 }
