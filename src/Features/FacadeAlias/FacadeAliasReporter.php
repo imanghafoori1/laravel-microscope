@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class FacadeAliasReporter
 {
@@ -13,19 +13,14 @@ class FacadeAliasReporter
      */
     public static $command;
 
-    public static function handle($absFilePath, $usageInfo, $base, $alias, $tokens)
+    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias, $tokens)
     {
-        self::report($absFilePath, $usageInfo, $base, $alias);
-    }
+        $relativePath = $file->relativePath();
 
-    private static function report($absFilePath, $use, $base, $aliases)
-    {
-        $relativePath = FilePath::normalize(FilePath::getRelativePath($absFilePath));
-
-        $message = '   <fg=red>Facade alias</>: <fg=yellow>'.$base.'</> for <fg=yellow>'.$aliases.'</>';
+        $message = '   <fg=red>Facade alias</>: <fg=yellow>'.$base.'</> for <fg=yellow>'.$alias.'</>';
         $output = self::$command->getOutput();
         $output->writeln($message);
-        $output->writeln('   at <fg=green>'.$relativePath.'</>:'.$use[1]);
+        $output->writeln('   at <fg=green>'.$relativePath.'</>:'.$usageInfo[1]);
         $output->writeln('   ');
 
         self::$errorCount++;
