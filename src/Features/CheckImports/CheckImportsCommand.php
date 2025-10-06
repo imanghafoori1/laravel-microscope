@@ -6,15 +6,10 @@ use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
-use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
-use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReplacer;
-use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasReporter;
 use Imanghafoori\LaravelMicroscope\Features\Thanks;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -29,15 +24,12 @@ use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 
 class CheckImportsCommand extends Command
 {
-    use LogsErrors;
-
     protected $signature = 'check:imports
         {--force : fixes without asking}
         {--w|wrong : Only reports wrong imports}
@@ -57,9 +49,7 @@ class CheckImportsCommand extends Command
      * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     private $checks = [
-        1 => CheckClassAtMethod::class,
-        2 => CheckClassReferencesAreValid::class,
-        3 => FacadeAliasesCheck::class,
+        CheckClassReferencesAreValid::class,
     ];
 
     public function handle()
@@ -68,11 +58,7 @@ class CheckImportsCommand extends Command
         $this->line('');
         $this->info('Checking imports and class references...');
 
-        FacadeAliasesCheck::$command = $this->getOutput();
-
         if ($this->option('nofix')) {
-            ClassAtMethodHandler::$fix = false;
-            FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
@@ -80,27 +66,19 @@ class CheckImportsCommand extends Command
             CheckClassReferencesAreValid::$cache = (require $path) ?: [];
         }
 
-        if ($this->option('force')) {
-            FacadeAliasReplacer::$forceReplace = true;
-        }
-
         if ($this->option('wrong')) {
             CheckClassReferencesAreValid::$checkExtra = false;
-            unset($this->checks[3]); // avoid checking facades
         }
 
         if ($this->option('extra')) {
             CheckClassReferencesAreValid::$checkWrong = false;
-            unset($this->checks[3]); // avoid checking facades
         }
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
         $useStatementParser = [self::useStatementParser()];
 
-        FacadeAliasesCheck::$importsProvider = self::useStatementParser();
         $checks = $this->checks;
-        unset($checks[1]);
 
         $checkSet = CheckSet::init($checks, $pathDTO, $useStatementParser);
         $routeFiles = RouteReport::getStats(ForRouteFiles::check($checkSet));
@@ -111,8 +89,6 @@ class CheckImportsCommand extends Command
         $classMapStats = ForAutoloadedClassMaps::check($checkSet);
         $autoloadedFilesStats = ForAutoloadedFiles::check($checkSet);
         $foldersStats = LaravelFoldersReport::formatFoldersStats(ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig()));
-        $checks = $this->checks;
-        unset($checks[3]); // avoid checking facades aliases in blade files.
         $checkSet->setChecks($checks);
         $bladeStats = Reporters\BladeReport::getBladeStats(ForBladeFiles::check($checkSet));
 
