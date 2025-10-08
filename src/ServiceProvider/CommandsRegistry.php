@@ -32,7 +32,7 @@ trait CommandsRegistry
         Features\CheckDeadControllers\CheckDeadControllers::class,
         Features\CheckGenericDocBlocks\CheckGenericDocBlocksCommand::class,
         Features\CheckPsr12\CheckPsr12Command::class,
-        Commands\CheckEndIf::class,
+        Commands\CheckEndIfCommand::class,
         Commands\EnforceQuery::class,
         Commands\EnforceHelpers::class,
         SearchReplace\CheckRefactorsCommand::class,

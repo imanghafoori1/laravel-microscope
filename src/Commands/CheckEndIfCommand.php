@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEndIf extends BaseCommand
+class CheckEndIfCommand extends BaseCommand
 {
     protected $signature = 'check:endif
     {--f|file=}
