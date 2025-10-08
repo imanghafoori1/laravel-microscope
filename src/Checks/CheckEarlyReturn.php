@@ -11,14 +11,16 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CheckEarlyReturn implements Check
 {
-    public static function check(PhpFileDescriptor $file, $params)
+    public static $params = [];
+
+    public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
 
-        $nofix = $params['nofix'];
-        $nofixCallback = $params['nofixCallback'];
-        $fixCallback = $params['fixCallback'];
+        $nofix = self::$params['nofix'];
+        $nofixCallback = self::$params['nofixCallback'];
+        $fixCallback = self::$params['fixCallback'];
 
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
             return;

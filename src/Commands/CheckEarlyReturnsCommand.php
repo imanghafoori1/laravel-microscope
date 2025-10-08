@@ -35,8 +35,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
         }
 
         $nofix = $this->options->option('nofix');
-        $this->params = $this->getParams($nofix);
-        $iterator->checkSet = $this->getCheckSet();
+        CheckEarlyReturn::$params = $this->getParams($nofix);
         $iterator->formatPrintForComposerLoadedFiles();
     }
 
