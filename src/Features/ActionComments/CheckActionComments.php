@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckActionComments extends BaseCommand
@@ -21,17 +20,17 @@ class CheckActionComments extends BaseCommand
 
     public $initialMsg = 'Commentify Route Actions...';
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         ActionsComments::$command = $this;
         ActionsComments::$controllers = self::findDefinedRouteActions();
         ActionsComments::$allRoutes = app('router')->getRoutes()->getRoutes();
 
-
-        $psr4Stats = $this->forPsr4();
-        $lines = Psr4Report::formatAutoloads($psr4Stats, []);
-
-        $this->printAll($lines);
+        $iterator->formatPrintPsr4();
     }
 
     private static function findDefinedRouteActions()

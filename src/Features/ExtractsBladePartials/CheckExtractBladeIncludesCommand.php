@@ -18,8 +18,12 @@ class CheckExtractBladeIncludesCommand extends BaseCommand
 
     public $customMsg = 'Blade files extracted.';
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $this->printAll(PHP_EOL.$this->forBladeFiles());
+        $iterator->printAll([PHP_EOL.$iterator->forBladeFiles()]);
     }
 }

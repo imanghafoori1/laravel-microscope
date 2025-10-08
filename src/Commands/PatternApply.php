@@ -15,30 +15,34 @@ trait PatternApply
 
     abstract public function getPatterns();
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         Reporters\Psr4Report::$callback = fn () => $this->errorPrinter->flushErrors();
 
         $patterns = $this->getPatterns();
 
-        $this->appliesPatterns($patterns);
+        $this->appliesPatterns($patterns, $iterator);
     }
 
     /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
      * @return void
      */
-    private function appliesPatterns(array $patterns)
+    private function appliesPatterns(array $patterns, $iterator)
     {
         CheckBladePaths::$readOnly = false;
         $parsedPatterns = PatternParser::parsePatterns($patterns);
         $this->params = [$parsedPatterns];
-        $this->checkSet = $this->getCheckSet();
-        $lines = [
-            $this->forComposerLoadedFiles(),
-            $this->forBladeFiles(),
-            PHP_EOL.$this->forRoutes(),
-        ];
-        $this->printAll($lines);
+        $iterator->checkSet = $this->getCheckSet();
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forBladeFiles(),
+            PHP_EOL.$iterator->forRoutes(),
+        ]);
         CheckBladePaths::$readOnly = true;
     }
 }

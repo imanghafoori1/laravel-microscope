@@ -25,8 +25,12 @@ class CheckEndIfCommand extends BaseCommand
 
     public $gitConfirm = true;
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $this->printAll($this->forComposerLoadedFiles());
+        $iterator->printAll($iterator->forComposerLoadedFiles());
     }
 }

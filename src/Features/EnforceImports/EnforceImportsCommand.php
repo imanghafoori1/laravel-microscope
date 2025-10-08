@@ -27,15 +27,19 @@ class EnforceImportsCommand extends BaseCommand
 
     public $checks = [EnforceImports::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         $noFix = $this->options->option('no-fix');
         $class = $this->options->option('class');
         EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
 
-        $this->printAll([
+        $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
-            $this->forComposerLoadedFiles(),
+            $iterator->forComposerLoadedFiles(),
         ]);
     }
 

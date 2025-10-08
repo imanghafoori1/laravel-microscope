@@ -33,7 +33,11 @@ class CheckExtraFQCNCommand extends BaseCommand
 
     public $checks = [ExtraFQCN::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         $fix = $this->options->option('fix');
         $class = $this->options->option('class');
@@ -41,17 +45,17 @@ class CheckExtraFQCNCommand extends BaseCommand
         $useStatementParser = [self::useStatementParser(), $fix, $class];
 
         $this->params = $useStatementParser;
-        $checkSet = $this->getCheckSet();
+        $iterator->checkSet = $this->getCheckSet();
         $lines = [
             CheckImportReporter::totalImportsMsg(),
-            ForComposerJsonFiles::checkAndPrint($checkSet),
+            $iterator->forComposerLoadedFiles(),
             PHP_EOL.CheckImportReporter::header(),
             PHP_EOL.self::getFilesStats(),
-            LaravelFoldersReport::formatFoldersStats(ForFolderPaths::check($checkSet, LaravelPaths::getMigrationConfig())),
-            RouteReport::getStats(ForRouteFiles::check($checkSet)),
+            $iterator->forMigrationsAndConfigs(),
+            $iterator->forRoutes(),
         ];
 
-        $this->printAll($lines);
+        $iterator->printAll($lines);
 
         ! $fix && $this->exitCode() === 1 && $this->printGuide();
     }

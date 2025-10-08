@@ -30,7 +30,11 @@ class CheckRoutes extends BaseCommand
 
     public $checks = [CheckRouteCalls::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         app(Filesystem::class)->delete(app()->getCachedRoutesPath());
         $routes = app(Router::class)->getRoutes()->getRoutes();
@@ -40,9 +44,9 @@ class CheckRoutes extends BaseCommand
         $this->getOutput()->writeln($this->getRouteDefinitionStatistics());
 
         $this->info('Checking route names exists...');
-        $this->printAll([
-            $this->forComposerLoadedFiles(),
-            $this->forBladeFiles(),
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forBladeFiles(),
             PHP_EOL.$this->getStatisticsMsg()
         ]);
     }

@@ -4,19 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
 class BaseCommand extends Command
@@ -57,9 +45,9 @@ class BaseCommand extends Command
             return;
         }
 
-        /*--------------------*/
-        $this->handleCommand($this);
-        /*--------------------*/
+        /*------------------------*/
+        $this->handleCommand(new Iterator($this->checkSet, $this->getOutput()));
+        /*------------------------*/
         CachedFiles::writeCacheFiles();
 
         if (! $this->errorPrinter->hasErrors()) {
@@ -90,63 +78,9 @@ class BaseCommand extends Command
         return $this->output->confirm('Do you have committed everything in git?', true);
     }
 
-    protected function forComposerLoadedFiles()
-    {
-        return ForComposerJsonFiles::checkAndPrint($this->checkSet);
-    }
-
-    protected function printAll($messages): void
-    {
-        Psr4ReportPrinter::printAll($messages, $this->getOutput());
-    }
-
     protected function getCheckSet(): CheckSet
     {
         return CheckSet::initParam($this->checks, $this->params);
-    }
-
-    /**
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO[]
-     */
-    protected function forPsr4()
-    {
-        return ForAutoloadedPsr4Classes::check($this->checkSet);
-    }
-
-    /**
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
-     */
-    protected function forClassmaps()
-    {
-        return ForAutoloadedClassMaps::check($this->checkSet);
-    }
-
-    protected function forBladeFiles(): string
-    {
-        $bladeStats = ForBladeFiles::check($this->checkSet);
-
-        return BladeReport::getBladeStats($bladeStats);
-    }
-
-    protected function formatPrintPsr4()
-    {
-        $psr4Stats = $this->forPsr4();
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
-    }
-
-    protected function forMigrationsAndConfigs()
-    {
-        $foldersStats = ForFolderPaths::check($this->checkSet, LaravelPaths::getMigrationConfig());
-
-        return LaravelFoldersReport::formatFoldersStats($foldersStats);
-    }
-
-    protected function forRoutes()
-    {
-        return RouteReport::getStats(
-            ForRouteFiles::check($this->checkSet)
-        );
     }
 
     public function output($output)

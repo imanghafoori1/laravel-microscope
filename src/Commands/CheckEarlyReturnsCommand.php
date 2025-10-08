@@ -20,7 +20,11 @@ class CheckEarlyReturnsCommand extends BaseCommand
 
     protected $checks = [CheckEarlyReturn::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         if ($this->options->option('nofix')) {
             $this->info(PHP_EOL.' Checking for possible code flattenings...'.PHP_EOL);
@@ -32,9 +36,8 @@ class CheckEarlyReturnsCommand extends BaseCommand
 
         $nofix = $this->options->option('nofix');
         $this->params = $this->getParams($nofix);
-        $this->checkSet = $this->getCheckSet();
-        $lines = $this->forComposerLoadedFiles();
-        $this->printAll($lines);
+        $iterator->checkSet = $this->getCheckSet();
+        $iterator->formatPrintForComposerLoadedFiles();
     }
 
     private function startWarning()

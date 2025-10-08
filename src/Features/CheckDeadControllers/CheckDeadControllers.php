@@ -2,10 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 
 class CheckDeadControllers extends BaseCommand
 {
@@ -24,11 +21,12 @@ class CheckDeadControllers extends BaseCommand
 
     public $checks = [RoutelessControllerActions::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $checkSet = CheckSet::initParam($this->checks);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, [], $this->getOutput());
+        $iterator->formatPrintPsr4();
     }
 }

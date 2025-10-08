@@ -8,8 +8,6 @@ use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 
 class ForComposerJsonFiles
 {
-    public static $basePath;
-
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats

@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Closure;
 use Illuminate\Foundation\AliasLoader;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -23,15 +22,17 @@ class CheckAliasesCommand extends BaseCommand
 
     protected $description = 'Replaces facade aliases with full namespace';
 
-    protected $finishMsg = '✅  Finished checking for facade aliases.';
+    public $customMsg = '✅  Finished checking for facade aliases.';
 
     public $initialMsg = ' 🔍 Looking Facade Aliases...';
 
     public $checks = [EnforceImports::class, FacadeAliasesCheck::class];
 
-    public $customMsg = '';
-
-    public function handleCommand()
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         FacadeAliasesCheck::$command = $this->getOutput();
 
@@ -44,13 +45,7 @@ class CheckAliasesCommand extends BaseCommand
         self::setFacadeAliasCheckOptions($this->option('alias'));
         FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
         FacadeAliasesCheck::$importsProvider = $importsProvider;
-
-        $psr4Stats = $this->forPsr4();
-        $classMapStats = $this->forClassmaps();
-
-        $lines = Psr4Report::formatAutoloads($psr4Stats, $classMapStats);
-        $this->printAll($lines);
-        $this->info(PHP_EOL.' '.$this->finishMsg);
+        $iterator->formatPrintPsr4Classmap();
 
         return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
     }

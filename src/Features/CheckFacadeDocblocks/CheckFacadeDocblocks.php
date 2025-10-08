@@ -3,11 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 
 class CheckFacadeDocblocks extends BaseCommand
 {
@@ -24,7 +20,11 @@ class CheckFacadeDocblocks extends BaseCommand
 
     public $checks = [FacadeDocblocks::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         FacadeDocblocks::$onFix = function ($class) {
             $this->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
@@ -34,10 +34,6 @@ class CheckFacadeDocblocks extends BaseCommand
             ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $file, 20, 'asd', 'The Facade Accessor Not Found.');
         };
 
-        $checkSet = CheckSet::initParam($this->checks);
-        $psr4Stats = ForAutoloadedPsr4Classes::check($checkSet);
-        $classMapStats = ForAutoloadedClassMaps::check($checkSet);
-
-        Psr4Report::formatAndPrintAutoload($psr4Stats, $classMapStats, $this->getOutput());
+        $iterator->formatPrintPsr4Classmap();
     }
 }

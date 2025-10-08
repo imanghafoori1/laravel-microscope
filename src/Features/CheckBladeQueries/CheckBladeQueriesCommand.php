@@ -22,9 +22,13 @@ class CheckBladeQueriesCommand extends BaseCommand
 
     public $customMsg = 'No queries found in blade files.';
 
-    public function handleCommand($command)
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         // checks the blade files for database queries.
-        $command->printAll([$command->forBladeFiles()]);
+        $iterator->printAll([$iterator->forBladeFiles()]);
     }
 }

@@ -26,7 +26,11 @@ class CheckEnvCallsCommand extends BaseCommand
 
     public $customMsg = 'No env() function call was found.';
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
@@ -40,10 +44,11 @@ class CheckEnvCallsCommand extends BaseCommand
         $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
         EnvCallsCheck::$onErrorCallback = $params;
 
-        $lines = $this->forComposerLoadedFiles();
-        $lines->add($this->forBladeFiles());
-        $lines->add(PHP_EOL.$this->forRoutes());
-        $this->printAll($lines);
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            $iterator->forBladeFiles(),
+            PHP_EOL.$iterator->forRoutes(),
+        ]);
 
         $this->info('&It is recommended use env() calls, only and only in config files.');
         $this->info('Otherwise you can NOT cache your config files using "config:cache"');
@@ -51,7 +56,7 @@ class CheckEnvCallsCommand extends BaseCommand
     }
 
     /**
-     * @param  \Generator|string[]  $paths
+     * @param  \Generator|string[]|\Generator[]  $paths
      * @return void
      */
     private function checkPaths($paths, $params)

@@ -22,11 +22,15 @@ class CheckGenericDocBlocksCommand extends BaseCommand
 
     public $customMsg = '';
 
-    public function handleCommand()
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
         GenericDocblocks::$conformer = $this->getConformer();
 
-        $this->formatPrintPsr4();
+        $iterator->formatPrintPsr4();
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
         $this->info(GenericDocblocks::$removedCount.' of them were removed.');

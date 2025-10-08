@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckPsr12;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckPsr12Command extends BaseCommand
@@ -24,11 +23,12 @@ class CheckPsr12Command extends BaseCommand
 
     public $gitConfirm = true;
 
-    public function handleCommand()
+    /**
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $this->printAll(Psr4Report::formatAutoloads(
-            $this->forPsr4(),
-            $this->forClassmaps()
-        ));
+        $iterator->formatPrintPsr4Classmap();
     }
 }

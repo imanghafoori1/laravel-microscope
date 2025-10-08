@@ -28,15 +28,19 @@ class CheckViewsCommand extends BaseCommand
 
     public $checks = [CheckView::class];
 
-    public function handleCommand()
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @return void
+     */
+    public function handleCommand($iterator)
     {
-        $lines = $this->forComposerLoadedFiles();
-        $lines->add(PHP_EOL.$this->forRoutes());
+        $lines = $iterator->forComposerLoadedFiles();
+        $lines->add(PHP_EOL.$iterator->forRoutes());
 
         $checkSet = CheckSet::initParams([CheckViewFilesExistence::class], $this);
         $lines->add(PHP_EOL.BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));
 
-        $this->printAll($lines);
+        $iterator->printAll($lines);
 
         $this->getOutput()->writeln($this->stats(
             CheckViewStats::$checkedCallsCount,

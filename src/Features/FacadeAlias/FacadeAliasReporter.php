@@ -20,12 +20,13 @@ class FacadeAliasReporter
 
     private static function report($absFilePath, $use, $base, $aliases)
     {
-        $relativePath = FilePath::normalize(trim(str_replace(base_path(), '', $absFilePath), '\\/'));
+        $relativePath = FilePath::normalize(FilePath::getRelativePath($absFilePath));
 
         $message = '   <fg=red>Facade alias</>: <fg=yellow>'.$base.'</> for <fg=yellow>'.$aliases.'</>';
-        self::$command->getOutput()->writeln($message);
-        self::$command->getOutput()->writeln('   at <fg=green>'.$relativePath.'</>:'.$use[1]);
-        self::$command->getOutput()->writeln('   ');
+        $output = self::$command->getOutput();
+        $output->writeln($message);
+        $output->writeln('   at <fg=green>'.$relativePath.'</>:'.$use[1]);
+        $output->writeln('   ');
 
         self::$errorCount++;
     }
