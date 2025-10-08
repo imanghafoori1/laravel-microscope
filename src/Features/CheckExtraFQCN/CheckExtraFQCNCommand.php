@@ -2,16 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 
@@ -42,20 +36,18 @@ class CheckExtraFQCNCommand extends BaseCommand
         $fix = $this->options->option('fix');
         $class = $this->options->option('class');
 
-        $useStatementParser = [self::useStatementParser(), $fix, $class];
+        ExtraFQCN::$class = $class;
+        ExtraFQCN::$fix = $fix;
+        ExtraFQCN::$imports = self::useStatementParser();
 
-        $this->params = $useStatementParser;
-        $iterator->checkSet = $this->getCheckSet();
-        $lines = [
+        $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
             $iterator->forComposerLoadedFiles(),
             PHP_EOL.CheckImportReporter::header(),
             PHP_EOL.self::getFilesStats(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),
-        ];
-
-        $iterator->printAll($lines);
+        ]);
 
         ! $fix && $this->exitCode() === 1 && $this->printGuide();
     }

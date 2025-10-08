@@ -18,14 +18,19 @@ class ExtraFQCN implements Check
      */
     private static $cacheKey = 'extra_fqcn';
 
-    public static function performCheck(PhpFileDescriptor $file, $params): bool
+    public static $fix;
+
+    public static $imports;
+
+    public static $class;
+
+    public static function performCheck(PhpFileDescriptor $file): bool
     {
-        $fix = $params[1];
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
-        $imports = ($params[0])($file);
+        $imports = (self::$imports)($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
-        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, $params[2], $fix);
+        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, self::$class, self::$fix);
 
         return $hasError;
     }
