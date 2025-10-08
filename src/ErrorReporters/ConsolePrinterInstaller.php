@@ -46,10 +46,7 @@ class ConsolePrinterInstaller
 
     public static function boot()
     {
-        Event::listen(
-            'microscope.finished.checks',
-            fn ($command) => self::finishCommand($command)
-        );
+        //
     }
 
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)

@@ -29,8 +29,6 @@ class CheckCompact extends Command
         $this->checkRoutePaths(RoutePaths::get());
         $this->checkPsr4Classes();
 
-        event('microscope.finished.checks', [$this]);
-
         return app(ErrorPrinter::class)->hasErrors() ? 1 : 0;
     }
 

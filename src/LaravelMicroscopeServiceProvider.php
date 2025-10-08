@@ -41,8 +41,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             ! defined('microscope_start') && define('microscope_start', microtime(true));
         });
 
-        $this->resetCountersOnFinish();
-
         $this->registerCommands();
 
         ErrorPrinter::$ignored = config('microscope.ignore');
@@ -115,19 +113,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     {
         $this->app->singleton('microscope.blade.compiler', function () {
             return new SpyBladeCompiler($this->app['files'], $this->app['config']['view.compiled']);
-        });
-    }
-
-    private function resetCountersOnFinish()
-    {
-        Event::listen('microscope.finished.checks', function () {
-            CheckViewStats::$checkedCallsCount = 0;
-            CheckViewStats::$skippedCallsCount = 0;
-        });
-
-        Event::listen('microscope.finished.checks', function () {
-            ImportsAnalyzer::$checkedRefCount = 0;
-            Iterators\ChecksOnPsr4Classes::$checkedFilesCount = 0;
         });
     }
 
