@@ -5,8 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\SearchReplace;
 use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -58,12 +57,12 @@ class CheckRefactorsCommand extends Command
 
         $patterns = $this->normalizePatterns($patterns);
         $parsedPatterns = PatternParser::parsePatterns($patterns);
-        $params = [$parsedPatterns, $patterns];
 
-        $checkSet = CheckSet::initParams([PatternRefactorings::class], $this, $params);
+        PatternRefactorings::$patterns = $parsedPatterns;
+        $checkSet = CheckSet::initParams([PatternRefactorings::class], $this);
+        $iterator = new Iterator($checkSet, $this->getOutput());
 
-        $lines = ForComposerJsonFiles::checkAndPrint($checkSet);
-        Psr4ReportPrinter::printAll($lines, $this->getOutput());
+        $iterator->printAll($iterator->forComposerLoadedFiles());
 
         $this->getOutput()->writeln(' - Finished search/replace');
 

@@ -80,7 +80,7 @@ class BaseCommand extends Command
 
     protected function getCheckSet(): CheckSet
     {
-        return CheckSet::initParam($this->checks, $this->params);
+        return CheckSet::initParam($this->checks);
     }
 
     public function output($output)

@@ -22,13 +22,17 @@ class CheckClassReferencesAreValid implements Check
 
     public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
-    public static function check(PhpFileDescriptor $file, $imports = [])
+    public static $imports;
+
+    public static function check(PhpFileDescriptor $file)
     {
+        $imports = self::$imports;
+
         loopStart:
 
         $refFinder = function () use ($file, $imports) {
             $tokens = $file->getTokens();
-            $imports = ($imports[0])($file);
+            $imports = $imports($file);
             $absFilePath = $file->getAbsolutePath();
 
             return ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);

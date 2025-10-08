@@ -14,11 +14,13 @@ class PatternRefactorings implements Check
 {
     public static $patternFound = false;
 
-    public static function check(PhpFileDescriptor $file, $patterns)
+    public static $patterns;
+
+    public static function check(PhpFileDescriptor $file)
     {
         $absFilePath = $file->getAbsolutePath();
 
-        foreach ($patterns[0] as $pattern) {
+        foreach (self::$patterns as $pattern) {
             $cacheKey = $pattern['cacheKey'] ?? null;
 
             if ($cacheKey && CachedFiles::isCheckedBefore($cacheKey, $file)) {

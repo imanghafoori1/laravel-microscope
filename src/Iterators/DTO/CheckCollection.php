@@ -11,9 +11,9 @@ class CheckCollection
      */
     public $checks = [];
 
-    public function applyOnFile($fileDescriptor, $params)
+    public function applyOnFile($fileDescriptor)
     {
-        Loop::over($this->checks, fn ($check) => $check::check($fileDescriptor, $params));
+        Loop::over($this->checks, fn ($check) => $check::check($fileDescriptor));
     }
 
     public static function make($stats)

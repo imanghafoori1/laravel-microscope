@@ -28,7 +28,7 @@ class CheckBladePaths
         foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
             $finder = self::findFiles($dirPath, $includeFile);
             $filteredFiles = self::filterFiles($finder, $checker->pathDTO);
-            $count = self::applyChecks($filteredFiles, $checker->params, $checker->checks);
+            $count = self::applyChecks($filteredFiles, $checker->checks);
             if ($count > 0) {
                 yield $dirPath => $count;
             }
@@ -74,11 +74,10 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
-     * @param  array  $params
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
      * @return int
      */
-    private static function applyChecks($files, $params, $checks): int
+    private static function applyChecks($files, $checks): int
     {
         $count = 0;
         foreach ($files as $blade) {
@@ -93,7 +92,7 @@ class CheckBladePaths
                 $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
-            $checks->applyOnFile($file, $params);
+            $checks->applyOnFile($file);
         }
 
         return $count;

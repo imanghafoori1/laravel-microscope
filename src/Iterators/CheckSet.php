@@ -14,8 +14,6 @@ class CheckSet
 
     public $pathDTO;
 
-    public $params;
-
     /**
      * @var \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection
      */
@@ -32,25 +30,24 @@ class CheckSet
 
     public static $options;
 
-    public static function initParams($checks, $command, $params = [])
+    public static function initParams($checks, $command)
     {
-        return CheckSet::init($checks, PathFilterDTO::makeFromOption($command), $params);
+        return CheckSet::init($checks, PathFilterDTO::makeFromOption($command));
     }
 
-    public static function initParam($checks, $params = [])
+    public static function initParam($checks)
     {
         $pathDTO = PathFilterDTO::makeFromOption(self::$options);
 
-        return CheckSet::init($checks, $pathDTO, $params);
+        return CheckSet::init($checks, $pathDTO);
     }
 
-    public static function init($checks, PathFilterDTO $pathDTO = null, $params = []): CheckSet
+    public static function init($checks, PathFilterDTO $pathDTO = null): CheckSet
     {
         $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
         $obj->checks = CheckCollection::make($checks);
-        $obj->params = $params;
         $obj->pathDTO = $pathDTO;
 
         return $obj;
@@ -94,17 +91,14 @@ class CheckSet
 
         $file = PhpFileDescriptor::make($absFilePath);
 
-        $params = $this->params;
-
         foreach ($this->checks->checks as $check) {
             try {
                 /**
                  * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>
                  */
-                $newTokens = $check::check($file, $params, $this->path, $this->namespace);
+                $newTokens = $check::check($file, $this->path, $this->namespace);
                 if ($newTokens) {
                     $file->setTokens($newTokens);
-                    $params = $this->params;
                 }
             } catch (Throwable $exception) {
                 $this->exceptions[] = $exception;

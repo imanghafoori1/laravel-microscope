@@ -35,9 +35,8 @@ trait PatternApply
     private function appliesPatterns(array $patterns, $iterator)
     {
         CheckBladePaths::$readOnly = false;
-        $parsedPatterns = PatternParser::parsePatterns($patterns);
-        $this->params = [$parsedPatterns];
-        $iterator->checkSet = $this->getCheckSet();
+        PatternRefactorings::$patterns = PatternParser::parsePatterns($patterns);
+
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             $iterator->forBladeFiles(),

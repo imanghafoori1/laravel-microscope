@@ -46,11 +46,12 @@ class AnonymizeMigrations extends BaseCommand
 
     private function appliesPatterns(array $patterns, PathFilterDTO $pathDTO): void
     {
+        PatternRefactorings::$patterns = $patterns;
+
         foreach ($this->filterVendorFolders($this->getMigrationFolders()) as $migrationFolder) {
             foreach ($this->getMigrationFiles($migrationFolder, $pathDTO->includeFile) as $migration) {
                 PatternRefactorings::check(
                     PhpFileDescriptor::make($migration->getRealPath()),
-                    $patterns
                 );
             }
         }
@@ -99,6 +100,6 @@ class AnonymizeMigrations extends BaseCommand
 
     private function parsePatterns()
     {
-        return [PatternParser::parsePatterns($this->getPatterns())];
+        return PatternParser::parsePatterns($this->getPatterns());
     }
 }
