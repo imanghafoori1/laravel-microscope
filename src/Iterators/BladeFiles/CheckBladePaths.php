@@ -18,7 +18,7 @@ class CheckBladePaths
 
     /**
      * @param \Generator<int, string> $dirs
-     * @param $checker
+     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
      * @return \Generator<string, int>
      */
     public static function checkPaths($dirs, CheckSet $checker)

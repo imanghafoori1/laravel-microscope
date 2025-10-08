@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Features\RouteOverride\Installer as RouteOverrideInstaller;
 
 class ConsolePrinterInstaller
 {
@@ -47,8 +46,6 @@ class ConsolePrinterInstaller
 
     public static function boot()
     {
-        RouteOverrideInstaller::install();
-
         Event::listen(
             'microscope.finished.checks',
             fn ($command) => self::finishCommand($command)

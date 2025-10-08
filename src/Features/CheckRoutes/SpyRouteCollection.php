@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Illuminate\Routing\RouteCollection;
-use Imanghafoori\LaravelMicroscope\Features\RouteOverride\RouteDefinitionConflict;
+use Imanghafoori\LaravelMicroscope\Features\RouteOverride\RouteDefinitionPrinter;
 
 class SpyRouteCollection extends RouteCollection
 {
@@ -29,7 +29,7 @@ class SpyRouteCollection extends RouteCollection
         foreach ($route->methods() as $method) {
             if (isset($this->routes[$method][$domainAndUri])) {
                 if (! $this->isItSelf($this->routesInfo[$method][$domainAndUri])) {
-                    event(new RouteDefinitionConflict($this->routes[$method][$domainAndUri], $route, $this->routesInfo[$method][$domainAndUri]));
+                    $this->reportDefinitionConflict($method, $domainAndUri, $route);
                 }
             }
         }
@@ -50,5 +50,14 @@ class SpyRouteCollection extends RouteCollection
         }
 
         return $route->$getDomain().$route->uri();
+    }
+
+    private function reportDefinitionConflict($method, string $domainAndUri, $route)
+    {
+        RouteDefinitionPrinter::routeDefinitionConflict(
+            $this->routes[$method][$domainAndUri],
+            $route,
+            $this->routesInfo[$method][$domainAndUri]
+        );
     }
 }
