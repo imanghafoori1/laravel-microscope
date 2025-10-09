@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
@@ -15,19 +14,6 @@ class Psr4Report
     use Reporting;
 
     public static $callback;
-
-    /**
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
-     * @param  \Illuminate\Console\OutputStyle  $console
-     * @return void
-     */
-    public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
-    {
-        $lines = self::formatAutoloads($psr4Stats, $classMapStats);
-
-        Psr4ReportPrinter::printAll($lines, $console);
-    }
 
     #[Pure]
     public static function formatComposerPath($composerPath)
