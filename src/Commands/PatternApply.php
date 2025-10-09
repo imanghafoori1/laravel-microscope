@@ -21,7 +21,7 @@ trait PatternApply
      */
     public function handleCommand($iterator)
     {
-        Reporters\Psr4Report::$callback = fn () => $this->errorPrinter->flushErrors();
+        Reporters\ComposerJsonReport::$callback = fn () => $this->errorPrinter->flushErrors();
 
         $patterns = $this->getPatterns();
 

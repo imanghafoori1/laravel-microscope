@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
 use JetBrains\PhpStorm\Pure;
 
-class Psr4Report
+class ComposerJsonReport
 {
     use Reporting;
 
