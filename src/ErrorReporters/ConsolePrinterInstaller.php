@@ -43,11 +43,6 @@ class ConsolePrinterInstaller
         return "__microscope__$commandType-count";
     }
 
-    public static function boot()
-    {
-        //
-    }
-
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)
     {
         $lastTimeError = $commandType.' errors, compared to the last run.';
