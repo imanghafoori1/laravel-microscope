@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 class ConsolePrinterInstaller
@@ -42,11 +41,6 @@ class ConsolePrinterInstaller
     protected static function getKey($commandType)
     {
         return "__microscope__$commandType-count";
-    }
-
-    public static function boot()
-    {
-        //
     }
 
     protected static function printErrorCount($lastTimeCount, $commandType, $errorCount)

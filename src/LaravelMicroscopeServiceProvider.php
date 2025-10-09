@@ -6,18 +6,15 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
-use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
-use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\Str;
 use Symfony\Component\Console\Terminal;
 
@@ -49,7 +46,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             __DIR__.'/../templates' => base_path('resources/views/vendor/microscope'),
         ], 'microscope');
 
-        ConsolePrinterInstaller::boot();
         $ds = DIRECTORY_SEPARATOR;
 
         LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
