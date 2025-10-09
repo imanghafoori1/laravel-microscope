@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckFacadeDocblocks extends BaseCommand
+class CheckFacadeDocblocksCommand extends BaseCommand
 {
     protected $signature = 'check:facades
     {--f|file=}

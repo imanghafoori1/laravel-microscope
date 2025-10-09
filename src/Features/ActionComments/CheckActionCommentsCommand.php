@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckActionComments extends BaseCommand
+class CheckActionCommentsCommand extends BaseCommand
 {
     protected $signature = 'check:action_comments
     {--f|file=}

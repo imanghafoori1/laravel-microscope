@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEvents;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckEvents extends BaseCommand
+class CheckEventsCommand extends BaseCommand
 {
     protected $signature = 'check:events';
 

@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckDeadControllers extends BaseCommand
+class CheckDeadControllersCommand extends BaseCommand
 {
     protected $signature = 'check:dead_controllers
     {--f|file=}

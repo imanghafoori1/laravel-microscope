@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class ClassifyStrings extends BaseCommand
+class ClassifyStringsCommand extends BaseCommand
 {
     protected $signature = 'check:stringy_classes
     {--f|file=}
