@@ -18,6 +18,6 @@ class ForComposerJsonFiles
         $classMapStats = ForAutoloadedClassMaps::check($checkSet);
         $autoloadedFilesStats = ForAutoloadedFiles::check($checkSet);
 
-        return Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
+        return ComposerJsonReport::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
     }
 }

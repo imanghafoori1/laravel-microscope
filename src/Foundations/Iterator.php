@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ComposerJsonReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
@@ -72,9 +72,7 @@ class Iterator
 
     public function forRoutes()
     {
-        return RouteReport::getStats(
-            ForRouteFiles::check($this->checkSet)
-        );
+        return RouteReport::getStats(ForRouteFiles::check($this->checkSet));
     }
 
     public function forComposerLoadedFiles()
@@ -89,6 +87,6 @@ class Iterator
 
     public function printAll($messages): void
     {
-        Psr4ReportPrinter::printAll($messages, $this->output);
+        ReportPrinter::printAll($messages, $this->output);
     }
 }

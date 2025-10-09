@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\ForFolderPaths;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -20,7 +20,7 @@ class ForFolderPathsCheckTest extends TestCase
 
         $_SESSION['test_ms'] = [];
         $_SESSION['files'] = [];
-        Psr4ReportPrinter::printAll($lines, new class
+        ReportPrinter::printAll($lines, new class
         {
             public function write($msg)
             {

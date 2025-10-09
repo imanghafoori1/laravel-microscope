@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\Psr4Report;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ComposerJsonReport;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Stats
@@ -21,7 +21,7 @@ class Psr4Stats
         $lines = [];
 
         foreach ($psr4Stats->stats as $psr4Namespace => $psr4Paths) {
-            Psr4Report::$callback && (Psr4Report::$callback)();
+            ComposerJsonReport::$callback && (ComposerJsonReport::$callback)();
             $lines[0] = PHP_EOL.self::getPsr4Head();
             $lines[1] = self::getPsr4($max, $psr4Namespace);
 
