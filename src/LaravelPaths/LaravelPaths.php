@@ -8,7 +8,6 @@ use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use JetBrains\PhpStorm\Pure;
-use Throwable;
 
 class LaravelPaths
 {
@@ -29,33 +28,11 @@ class LaravelPaths
     }
 
     /**
-     * @return \Generator<int, string>
+     * @return string[]
      */
     public static function configDirs()
     {
         return self::$configPath;
-    }
-
-    /**
-     * @return string|null
-     */
-    public static function seedersDir()
-    {
-        $dir = app()->databasePath('seeds');
-        if (! is_dir($dir)) {
-            $dir = app()->databasePath('seeders');
-        }
-
-        return is_dir($dir) ? $dir : null;
-    }
-
-    public static function factoryDirs()
-    {
-        try {
-            return app()->make('Illuminate\Database\Eloquent\Factory')->loadedPaths;
-        } catch (Throwable $e) {
-            return [];
-        }
     }
 
     /**
