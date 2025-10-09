@@ -31,7 +31,7 @@ class CheckRoutes extends BaseCommand
     public $checks = [CheckRouteCalls::class];
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     public function handleCommand($iterator)
@@ -47,7 +47,7 @@ class CheckRoutes extends BaseCommand
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             $iterator->forBladeFiles(),
-            PHP_EOL.$this->getStatisticsMsg()
+            PHP_EOL.$this->getStatisticsMsg(),
         ]);
     }
 

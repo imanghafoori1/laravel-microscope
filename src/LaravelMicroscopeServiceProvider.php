@@ -10,14 +10,12 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
-use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
-use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\Str;
 use Symfony\Component\Console\Terminal;
 

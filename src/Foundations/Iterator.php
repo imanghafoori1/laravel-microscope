@@ -91,5 +91,4 @@ class Iterator
     {
         Psr4ReportPrinter::printAll($messages, $this->output);
     }
-
 }

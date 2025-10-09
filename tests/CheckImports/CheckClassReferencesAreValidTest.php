@@ -33,11 +33,11 @@ class CheckClassReferencesAreValidTest extends TestCase
         $unusedWrongImportsHandler = MockHandlers\MockerUnusedWrongImportsHandler::$calls;
         $wrongClassRefsHandler = MockHandlers\MockWrongClassRefsHandler::$calls;
 
-        $this->assertEquals(['doo' => ['doo', 5], 'Foooo' => ['Foooo', 6],], $extraImportHandler[0][0]);
-        $this->assertEquals(__DIR__.'/wrongImport.stub', ($extraImportHandler[0][1])->getAbsolutePath());
+        $this->assertEquals(['doo' => ['doo', 5], 'Foooo' => ['Foooo', 6]], $extraImportHandler[0][0]);
+        $this->assertEquals(__DIR__.'/wrongImport.stub', $extraImportHandler[0][1]->getAbsolutePath());
 
         $this->assertEquals([], $unusedWrongImportsHandler[0][0]);
-        $this->assertEquals(__DIR__.'/wrongImport.stub', ($unusedWrongImportsHandler[0][1])->getAbsolutePath());
+        $this->assertEquals(__DIR__.'/wrongImport.stub', $unusedWrongImportsHandler[0][1]->getAbsolutePath());
 
         $this->assertEquals([
         ], $wrongClassRefsHandler);

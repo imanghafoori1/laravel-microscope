@@ -16,7 +16,7 @@ class CheckView implements Check
     /**
      * @var string
      */
-    private static $cacheKey ='check_view_command';
+    private static $cacheKey = 'check_view_command';
 
     public static function performCheck(PhpFileDescriptor $file)
     {

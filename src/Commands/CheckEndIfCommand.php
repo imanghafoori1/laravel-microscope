@@ -26,7 +26,7 @@ class CheckEndIfCommand extends BaseCommand
     public $gitConfirm = true;
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     public function handleCommand($iterator)
