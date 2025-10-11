@@ -24,7 +24,5 @@ class CheckEventsCommand extends BaseCommand
     public function handleCommand()
     {
         $this->getOutput()->writeln(' - '.SpyDispatcher::$listeningNum.' listenings were checked.');
-
-        return $this->exitCode();
     }
 }
