@@ -24,10 +24,10 @@ class CheckFacadeDocblocksCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
-    public function handleCommand($iterator)
+    public function handleCommand($iterator, $command)
     {
-        FacadeDocblocks::$onFix = function ($class) {
-            $this->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
+        FacadeDocblocks::$onFix = function ($class) use ($command) {
+            $command->line('- Fixed doc-blocks for: "'.$class.'"', 'fg=yellow');
         };
 
         FacadeDocblocks::$onError = function ($accessor, $file) {

@@ -46,7 +46,7 @@ class BaseCommand extends Command
         }
 
         /*------------------------*/
-        $this->handleCommand(new Iterator($this->checkSet, $this->getOutput()));
+        $this->handleCommand(new Iterator($this->checkSet, $this->getOutput()), $this);
         /*------------------------*/
         CachedFiles::writeCacheFiles();
 

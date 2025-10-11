@@ -32,7 +32,7 @@ class CheckAliasesCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
-    public function handleCommand($iterator)
+    public function handleCommand($iterator, $command)
     {
         FacadeAliasesCheck::$command = $this->getOutput();
 
@@ -42,7 +42,7 @@ class CheckAliasesCommand extends BaseCommand
 
         $importsProvider = self::getParamProvider();
         self::setEnforceImportsOptions($importsProvider);
-        self::setFacadeAliasCheckOptions($this->option('alias'));
+        self::setFacadeAliasCheckOptions($command->option('alias'));
         FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
         FacadeAliasesCheck::$importsProvider = $importsProvider;
         $iterator->formatPrintPsr4Classmap();
