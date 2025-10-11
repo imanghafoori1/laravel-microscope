@@ -16,14 +16,14 @@ class ForBladeFiles implements Check
     public static $paths;
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return array<string, BladeStatDto>
      */
-    public static function check($checker)
+    public static function check($checkSet)
     {
         self::withoutComponentTags();
         $mapper = fn ($paths) => BladeStatDto::make(
-            BladeFiles\CheckBladePaths::checkPaths($paths, $checker)
+            BladeFiles\CheckBladePaths::checkPaths($paths, $checkSet)
         );
 
         return Loop::map(self::getViewsPaths(), $mapper);
@@ -35,15 +35,15 @@ class ForBladeFiles implements Check
     public static function getViewsPaths()
     {
         if (self::$paths) {
-            return self::$paths;
+            $hints = self::$paths;
+        } else {
+            $hints = View::getFinder()->getHints();
+            $hints['random_key_69471'] = View::getFinder()->getPaths();
+            unset(
+                $hints['notifications'],
+                $hints['pagination']
+            );
         }
-
-        $hints = View::getFinder()->getHints();
-        $hints['random_key_69471'] = View::getFinder()->getPaths();
-        unset(
-            $hints['notifications'],
-            $hints['pagination']
-        );
 
         return self::normalizeAndFilterVendorPaths($hints);
     }

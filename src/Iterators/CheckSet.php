@@ -30,9 +30,9 @@ class CheckSet
 
     public static $options;
 
-    public static function initParams($checks, $command)
+    public static function initParams($checks, $options)
     {
-        return CheckSet::init($checks, PathFilterDTO::makeFromOption($command));
+        return CheckSet::init($checks, PathFilterDTO::makeFromOption($options));
     }
 
     public static function initParam($checks)

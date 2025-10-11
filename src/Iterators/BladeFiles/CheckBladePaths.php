@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
@@ -18,17 +19,17 @@ class CheckBladePaths
 
     /**
      * @param  \Generator<int, string>  $dirs
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return \Generator<string, int>
      */
-    public static function checkPaths($dirs, CheckSet $checker)
+    public static function checkPaths($dirs, CheckSet $checkSet)
     {
-        $includeFile = $checker->pathDTO->includeFile;
+        $includeFile = $checkSet->pathDTO->includeFile;
 
         foreach (self::filterUnwantedBlades($dirs) as $dirPath) {
             $finder = self::findFiles($dirPath, $includeFile);
-            $filteredFiles = self::filterFiles($finder, $checker->pathDTO);
-            $count = self::applyChecks($filteredFiles, $checker->checks);
+            $filteredFiles = self::filterFiles($finder, $checkSet->pathDTO);
+            $count = self::applyChecks($filteredFiles, $checkSet->checks);
             if ($count > 0) {
                 yield $dirPath => $count;
             }
@@ -58,7 +59,7 @@ class CheckBladePaths
             return true;
         }
 
-        if (strpos($path, base_path('vendor')) !== false) {
+        if (strpos($path, BasePath::$path.DIRECTORY_SEPARATOR.'vendor') !== false) {
             return true;
         }
 
