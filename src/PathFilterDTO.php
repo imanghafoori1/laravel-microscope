@@ -25,19 +25,19 @@ class PathFilterDTO
         return $object;
     }
 
-    public static function makeFromOption($command): self
+    public static function makeFromOption($options): self
     {
         try {
-            $excludeFile = ltrim($command->option('except-file'), '=');
-            $excludeFolder = ltrim($command->option('except-folder'), '=');
+            $excludeFile = ltrim($options->option('except-file'), '=');
+            $excludeFolder = ltrim($options->option('except-folder'), '=');
         } catch (Exception $e) {
             $excludeFile = null;
             $excludeFolder = null;
         }
 
         try {
-            $includeFileName = ltrim($command->option('file'), '=');
-            $includeFolderName = ltrim($command->option('folder'), '=');
+            $includeFileName = ltrim($options->option('file'), '=');
+            $includeFolderName = ltrim($options->option('folder'), '=');
         } catch (Exception $e) {
             $includeFileName = null;
             $includeFolderName = null;
