@@ -69,6 +69,7 @@ class CachedFiles
 
     public static function put($patternKey, PhpFileDescriptor $file)
     {
+        self::$fileExists[$patternKey] = true;
         self::$cacheChange[$patternKey] = true;
         self::$cache[$patternKey][$file->getMd5()] = $file->getFileName();
     }
