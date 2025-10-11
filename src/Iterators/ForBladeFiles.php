@@ -3,10 +3,10 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Exception;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
@@ -69,7 +69,7 @@ class ForBladeFiles implements Check
     {
         foreach ($paths as $path) {
             $path = FilePath::normalize($path);
-            if (! Str::startsWith($path, Container::getInstance()->basePath().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
+            if (! Str::startsWith($path, BasePath::$path.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
                 yield $path;
             }
         }
