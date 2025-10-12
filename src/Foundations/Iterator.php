@@ -4,10 +4,10 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ForComposerJsonFiles;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ComposerJsonReport;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\RouteReport;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\ForComposerJsonFiles;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\RouteReport;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;

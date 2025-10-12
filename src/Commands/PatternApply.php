@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -21,7 +20,7 @@ trait PatternApply
      */
     public function handleCommand($iterator)
     {
-        Reporters\ComposerJsonReport::$callback = fn () => $this->errorPrinter->flushErrors();
+        \Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport::$callback = fn () => $this->errorPrinter->flushErrors();
 
         $patterns = $this->getPatterns();
 

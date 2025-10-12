@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use JetBrains\PhpStorm\Pure;
 
 class RouteReport

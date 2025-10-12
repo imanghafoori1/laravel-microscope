@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckImports;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ComposerJsonReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use PHPUnit\Framework\TestCase;
 
 class CheckImportReporterTest extends TestCase
