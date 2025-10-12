@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\ComposerJsonReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Stats

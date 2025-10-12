@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
