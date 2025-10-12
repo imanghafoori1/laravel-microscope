@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;

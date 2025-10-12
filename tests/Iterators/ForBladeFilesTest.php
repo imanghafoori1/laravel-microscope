@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
