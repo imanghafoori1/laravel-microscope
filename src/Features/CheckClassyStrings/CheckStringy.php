@@ -6,6 +6,7 @@ use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
 use Imanghafoori\TokenAnalyzer\Str;
@@ -79,7 +80,7 @@ class CheckStringy implements Check
 
     private static function refersToDir($classPath)
     {
-        return is_dir(base_path(ComposerJson::make()->getRelativePathFromNamespace($classPath)));
+        return is_dir(BasePath::$path.DIRECTORY_SEPARATOR.ComposerJson::make()->getRelativePathFromNamespace($classPath));
     }
 
     private static function performReplacementProcess($classyString, $classPath, PhpFileDescriptor $file)
