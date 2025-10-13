@@ -28,7 +28,8 @@ class CheckPsr12CommandTest extends TestCase
     {
         // arrange:
         $command = new CheckPsr12Command();
-        $iterator = new class {
+        $iterator = new class
+        {
             public function formatPrintPsr4Classmap()
             {
                 $_SESSION['msg']++;

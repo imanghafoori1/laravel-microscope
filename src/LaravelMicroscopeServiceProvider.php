@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
@@ -114,7 +115,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     {
         [$major] = explode('.', app()->version());
         $color = (int) $major >= 9 ? 'gray' : 'blue';
-        config()->set('microscope.colors.line_separator', $color);
+        LineSeperator::$color = $color;
     }
 
     private function setBasePath()

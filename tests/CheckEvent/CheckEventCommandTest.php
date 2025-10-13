@@ -17,6 +17,7 @@ class CheckEventCommandTest extends TestCase
     {
         unset($_SESSION['msg']);
     }
+
     #[Test]
     public function basic()
     {
