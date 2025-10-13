@@ -1,0 +1,5 @@
+<?php
+
+'Imanghafoori\LaravelMicroscope\Tests\CheckClassyStrings\CheckClassyStringTest';
+
+'App\Models\User2';

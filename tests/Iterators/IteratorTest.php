@@ -27,7 +27,7 @@ class IteratorTest extends TestCase
                 public function readAutoload()
                 {
                     return [
-                        '/' => ['App\\' => 'app']
+                        '/' => ['App\\' => 'app'],
                     ];
                 }
             };
@@ -36,7 +36,6 @@ class IteratorTest extends TestCase
         {
             public static function check()
             {
-
             }
         }, new class
         {
