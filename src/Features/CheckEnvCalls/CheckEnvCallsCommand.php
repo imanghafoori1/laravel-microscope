@@ -74,7 +74,7 @@ class CheckEnvCallsCommand extends BaseCommand
     {
         $configs = Paths::getAbsFilePaths(LaravelPaths::configDirs(), PathFilterDTO::make());
 
-        $configs = trim(implode(',', array_keys(iterator_to_array($configs))), ',');
+        $configs = trim(implode(',', array_keys($configs)), ',');
         if ($pathDTO->excludeFolder) {
             $pathDTO->excludeFolder = $pathDTO->excludeFolder.','.$configs;
         } else {
