@@ -91,7 +91,7 @@ class EnforceImports implements Check
                 continue;
             }
 
-            $className = basename($classRef['class']);
+            $className = self::className($classRef['class']);
 
             if ($namespace && ! self::refIsDeleted($deletes, $className, $classRef['class'])) {
                 $absFilePath = $file->getAbsolutePath();
@@ -144,7 +144,7 @@ class EnforceImports implements Check
 
     private static function isDirectlyImported($class, $imports): bool
     {
-        return isset($imports[basename($class)]);
+        return isset($imports[self::className($class)]);
     }
 
     private static function isInSameNamespace($namespace, $ref)
@@ -210,12 +210,19 @@ class EnforceImports implements Check
                     return true;
                 }
             } else {
-                if ($only === basename($class)) {
+                if ($only === self::className($class)) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    private static function className($class)
+    {
+        $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+
+        return self::className($class);
     }
 }

@@ -37,12 +37,12 @@ class ExtraFQCN implements Check
 
     private static function isDirectlyImported($class, $imports): bool
     {
-        return isset($imports[basename($class)]) && $imports[basename($class)][0] === ltrim($class, '\\');
+        return isset($imports[self::className($class)]) && $imports[self::className($class)][0] === ltrim($class, '\\');
     }
 
     private static function conflictingAlias($class, $imports)
     {
-        return isset($imports[basename($class)]);
+        return isset($imports[self::className($class)]);
     }
 
     private static function isInSameNamespace($namespace, $ref)
@@ -67,11 +67,11 @@ class ExtraFQCN implements Check
                 continue;
             }
 
-            $shouldBeSkipped = $class && strpos(basename($classRef['class']), $class) === false;
+            $shouldBeSkipped = $class && strpos(self::className($classRef['class']), $class) === false;
             if (self::isDirectlyImported($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
-                    $line = $imports[basename($classRef['class'])][1]; // <== get the line number of the import
+                    $line = $imports[self::className($classRef['class'])][1]; // <== get the line number of the import
                     self::report($classRef, $absFilePath, $line);
                     $fix && self::deleteFQCN($absFilePath, $classRef);
                 }
@@ -106,14 +106,14 @@ class ExtraFQCN implements Check
         $lines = file($absFilePath);
         $count = 0;
 
-        $new = str_replace([$classRef], basename($classRef), $lines[$line - 1], $count);
+        $new = str_replace([$classRef], self::className($classRef), $lines[$line - 1], $count);
         if ($count === 1) {
             $lines[$line - 1] = $new;
             file_put_contents($absFilePath, implode('', $lines));
 
             return true;
         } elseif ($count > 1) {
-            $className = basename($classRef);
+            $className = self::className($classRef);
             $search = [$classRef.' ', $classRef.'(', $classRef.'::', $classRef.')', $classRef.';'];
             $replace = [$className.' ', $className.'(', $className.'::', $className.')', $className.';'];
 
@@ -155,5 +155,12 @@ class ExtraFQCN implements Check
         ErrorPrinter::singleton()->simplePendError(
             $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
         );
+    }
+
+    private static function className($class)
+    {
+        $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+
+        return basename($class);
     }
 }
