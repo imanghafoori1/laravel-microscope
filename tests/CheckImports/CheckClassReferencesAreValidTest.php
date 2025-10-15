@@ -11,8 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class CheckClassReferencesAreValidTest extends TestCase
 {
-    /** @test */
-    public function check()
+    public function test_check()
     {
         $absPath = __DIR__.'/wrongImport.stub';
         $file = PhpFileDescriptor::make($absPath);
@@ -39,7 +38,6 @@ class CheckClassReferencesAreValidTest extends TestCase
         $this->assertEquals([], $unusedWrongImportsHandler[0][0]);
         $this->assertEquals(__DIR__.'/wrongImport.stub', $unusedWrongImportsHandler[0][1]->getAbsolutePath());
 
-        $this->assertEquals([
-        ], $wrongClassRefsHandler);
+        $this->assertEquals([], $wrongClassRefsHandler);
     }
 }
