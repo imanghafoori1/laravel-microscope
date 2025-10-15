@@ -223,6 +223,6 @@ class EnforceImports implements Check
     {
         $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
 
-        return self::className($class);
+        return basename($class);
     }
 }
