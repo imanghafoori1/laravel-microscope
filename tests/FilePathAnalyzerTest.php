@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class FilePathAnalyzerTest extends TestCase
 {
-    /** @test */
-    public function method_normalize_test()
+    public function test_method_normalize_test()
     {
         $path = '/usr/laravel\\\\framework/app\Http\..\..\\..//database';
         $path2 = '\usr\laravel\framework/app\Http\..\..\\..//database';
