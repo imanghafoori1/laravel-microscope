@@ -14,22 +14,21 @@ class RoutePaths
 {
     public static $paths = [];
 
+    public static $providers = [];
+
+    public static $additionalFiles = [];
+
     /**
      * @return \Generator<int, string>
      */
     public static function get()
     {
-        if (self::$paths) {
-            yield from self::$paths;
-
-            return;
-        }
-
-        foreach (app('router')->routePaths as $path) {
+        foreach (self::$paths as $path) {
             yield FilePath::normalize($path);
         }
+
         $autoloads = ComposerJson::readPsr4();
-        foreach (config('app.providers') as $providerClass) {
+        foreach (self::$providers as $providerClass) {
             // we exclude the core or package service providers here.
             foreach ($autoloads as $autoload) {
                 if (! Str::contains($providerClass, array_keys($autoload))) {
@@ -54,7 +53,7 @@ class RoutePaths
             }
         }
 
-        foreach (config('microscope.additional_route_files', []) as $routeFilePath) {
+        foreach (self::$additionalFiles as $routeFilePath) {
             if (is_file($routeFilePath)) {
                 yield $routeFilePath;
             }
@@ -68,7 +67,7 @@ class RoutePaths
         foreach ($calls[0] as $token) {
             if ($token[0] == T_DIR) {
                 // remove class name from the end of string.
-                $relativeDirPath = trim(Str::replaceLast(class_basename($providerClass), '', $path), '\\/');
+                $relativeDirPath = trim(Str::replaceLast(self::className($providerClass), '', $path), '\\/');
 
                 $fullPath .= $relativeDirPath;
             } elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
@@ -89,5 +88,10 @@ class RoutePaths
                 yield FunctionCall::readParameters($tokens, $i);
             }
         }
+    }
+
+    private static function className($class)
+    {
+        return basename(str_replace('\\', '/', $class));
     }
 }

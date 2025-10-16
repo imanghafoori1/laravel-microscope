@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -11,14 +12,19 @@ use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\TokenAnalyzer\Str;
 use Symfony\Component\Console\Terminal;
 
+/**
+ * @codeCoverageIgnore
+ */
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     use CommandsRegistry;
@@ -42,6 +48,18 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->registerCommands();
 
         ErrorPrinter::$ignored = config('microscope.ignore');
+
+        app()->booted(function () {
+            RoutePaths::$paths = app('router')->routePaths;
+
+            $hints = View::getFinder()->getHints();
+            $hints['random_key_69471'] = View::getFinder()->getPaths();
+            unset($hints['notifications'], $hints['pagination']);
+            ForBladeFiles::$paths = $hints;
+        });
+
+        RoutePaths::$providers = config('app.providers');
+        RoutePaths::$additionalFiles = config('microscope.additional_route_files', []);
 
         $this->publishes([
             __DIR__.'/../templates' => base_path('resources/views/vendor/microscope'),
