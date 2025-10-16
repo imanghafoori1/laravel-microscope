@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
@@ -53,7 +53,7 @@ class AnonymizeMigrations extends BaseCommand
     {
         PatternRefactorings::$patterns = $patterns;
 
-        foreach ($this->filterVendorFolders($this->getMigrationFolders()) as $migrationFolder) {
+        foreach (LaravelPaths::migrationDirs() as $migrationFolder) {
             foreach ($this->getMigrationFiles($migrationFolder, $pathDTO->includeFile) as $migration) {
                 PatternRefactorings::check(
                     PhpFileDescriptor::make($migration->getRealPath()),
@@ -83,24 +83,6 @@ class AnonymizeMigrations extends BaseCommand
             ->name(($fileName ?: '*').'.php')
             ->files()
             ->in($folder);
-    }
-
-    private function filterVendorFolders(array $paths): array
-    {
-        foreach ($paths as $key => $path) {
-            if (Str::startsWith($path, base_path('vendor'))) {
-                unset($paths[$key]);
-            }
-        }
-
-        return $paths;
-    }
-
-    private function getMigrationFolders(): array
-    {
-        $paths = array_merge(app('migrator')->paths(), [database_path('migrations')]);
-
-        return array_unique($paths);
     }
 
     private function parsePatterns()
