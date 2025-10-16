@@ -56,6 +56,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             $hints['random_key_69471'] = View::getFinder()->getPaths();
             unset($hints['notifications'], $hints['pagination']);
             ForBladeFiles::$paths = $hints;
+
+            LaravelPaths::$migrationDirs = app('migrator')->paths();
+            LaravelPaths::$defaultPath = app()->databasePath('migrations');
         });
 
         RoutePaths::$providers = config('app.providers');
