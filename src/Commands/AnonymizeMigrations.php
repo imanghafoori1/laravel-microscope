@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -25,11 +26,15 @@ class AnonymizeMigrations extends BaseCommand
 
     public $checks = [];
 
+    public static $laravelVersion;
+
     public function handleCommand()
     {
-        if (version_compare('8.37.0', app()->version()) !== -1) {
+        $version = self::$laravelVersion ?: app()->version();
+
+        if (version_compare('8.37.0', $version) !== -1) {
             $this->info('Anonymous migrations are supported in laravel 8.37 and above.');
-            $this->info('You are currently on laravel version: '.app()->version());
+            $this->info('You are currently on laravel version: '.$version);
 
             return 0;
         }
@@ -65,7 +70,7 @@ class AnonymizeMigrations extends BaseCommand
                 'replace' => 'return new class extends <2>'.PHP_EOL.'{<3>};',
                 'filters' => [
                     2 => [
-                        'is_sub_class_of' => \Illuminate\Database\Migrations\Migration::class,
+                        'is_sub_class_of' => Migration::class,
                     ],
                 ],
             ],
