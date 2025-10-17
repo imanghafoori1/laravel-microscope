@@ -4,8 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use PHPUnit\Framework\TestCase;
 
-class FilePathAnalyzerTest extends BaseTestClass
+class FilePathAnalyzerTest extends TestCase
 {
     /** @test */
     public function method_normalize_test()
