@@ -27,7 +27,7 @@ class PatternRefactorings implements Check
                 continue;
             }
 
-            $tokens = $file->getTokens();
+            $tokens = $file->getTokens(true);
 
             if (isset($pattern['file']) && ! Str::endsWith($absFilePath, $pattern['file'])) {
                 continue;

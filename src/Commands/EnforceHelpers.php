@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Facades\Facade;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
 use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
@@ -34,37 +33,29 @@ class EnforceHelpers extends BaseCommand
 
     private function getPatterns(): array
     {
-        $mutator = function ($matches) {
-            $matches[0][1] = strtolower($matches[0][1]);
-
-            return $matches;
-        };
+        $n = '\\Illuminate\\Support\\Facades\\';
 
         return [
-            'full_facade_paths' => [
-                'cache_key' => 'full_facade_paths-v1',
-                'search' => '<class_ref>::',
-                'replace' => '<1>()->',
-                'filters' => [
-                    1 => [
-                        'full_namespace_pattern' => 'Illuminate\\Support\\*',
-                        'is_subclass_of' => Facade::class,
-                        'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
-                    ],
-                ],
-                'mutator' => $mutator,
-            ],
             'facade_aliases' => [
-                'cache_key' => 'facade_aliases-v1',
+                'cache_key' => 'facade_aliases-v2',
                 'search' => '<class_ref>::',
                 'replace' => '<1>()->',
                 'filters' => [
                     1 => [
-                        'namespace_pattern' => '',
-                        'in_array' => ['Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request'],
+                        'in_array' => [
+                            'Auth', 'Session', 'Config', 'Cache', 'Redirect', 'Request',
+                            '\\Auth', '\\Session', '\\Config', '\\Cache', '\\Redirect', '\\Request',
+                            $n.'Auth', $n.'Session', $n.'Config', $n.'Cache', $n.'Redirect', $n.'Request',
+                        ],
+                        'namespace_pattern' => ['', '\\Illuminate\\Support\\Facades', 'Illuminate\\Support\\Facades'],
                     ],
                 ],
-                'mutator' => $mutator,
+                'mutator' => function ($matches) {
+                    $value = trim(strtolower($matches[0][1]), '\\');
+                    $matches[0][1] = str_replace('illuminate\\support\\facades\\', '', $value);
+
+                    return $matches;
+                },
             ],
         ];
     }

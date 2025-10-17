@@ -16,8 +16,12 @@ class NamespaceIs
         if ($placeholderVal[1] === 'self') {
             [$namespace] = GetClassProperties::readClassDefinition($tokens);
         } else {
-            $namespaceClass = ParseUseStatement::getExpandedRef($tokens, $placeholderVal[1]);
-            $segments = explode('\\', $namespaceClass);
+            if ($placeholderVal[1][0] !== '\\') {
+                $namespaceClass = ParseUseStatement::getExpandedRef($tokens, $placeholderVal[1]);
+                $segments = explode('\\', $namespaceClass);
+            } else {
+                $segments = explode('\\', $placeholderVal[1]);
+            }
             array_pop($segments);
             $namespace = implode('\\', $segments);
         }
