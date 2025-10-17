@@ -20,7 +20,8 @@ class ForFolderPathsCheckTest extends TestCase
 
         $_SESSION['test_ms'] = [];
         $_SESSION['files'] = [];
-        ReportPrinter::printAll($lines, new class {
+        ReportPrinter::printAll($lines, new class
+        {
             public function write($msg)
             {
                 $_SESSION['test_ms'][] = $msg;

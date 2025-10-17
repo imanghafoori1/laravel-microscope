@@ -18,8 +18,8 @@ class CheckBladePaths
     public static $readOnly = true;
 
     /**
-     * @param \Generator<int, string> $dirs
-     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checkSet
+     * @param  \Generator<int, string>  $dirs
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return \Generator<string, int>
      */
     public static function checkPaths($dirs, CheckSet $checkSet)

@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 class ForAutoloadedFiles
 {
     /**
-     *
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
