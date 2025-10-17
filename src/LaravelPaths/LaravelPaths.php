@@ -49,9 +49,11 @@ class LaravelPaths
                 continue;
             }
             // Excludes the migrations within "vendor" folder:
-            if (! Str::startsWith($path, [BasePath::$path.DIRECTORY_SEPARATOR.'vendor'])) {
-                yield FilePath::normalize($path);
+            if (Str::startsWith($path, [BasePath::$path.DIRECTORY_SEPARATOR.'vendor'])) {
+                continue;
             }
+
+            yield FilePath::normalize($path);
         }
 
         yield self::$defaultPath;
