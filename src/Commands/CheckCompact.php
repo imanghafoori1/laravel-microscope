@@ -14,6 +14,9 @@ use Imanghafoori\TokenAnalyzer\Ifs;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 use JetBrains\PhpStorm\ExpectedValues;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CheckCompact extends Command
 {
     protected $signature = 'check:compact';
