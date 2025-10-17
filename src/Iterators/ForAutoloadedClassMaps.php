@@ -23,14 +23,14 @@ class ForAutoloadedClassMaps extends BaseIterator
 
     /**
      * @param  \Generator<string, string[]>  $classMap
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
      */
-    private static function getDirStats($classMap, $checker)
+    private static function getDirStats($classMap, $checkSet)
     {
         return StatsDto::make(Loop::map(
             $classMap,
-            fn ($absFilePaths) => FilesDto::make(self::applyChecks($absFilePaths, $checker))
+            fn ($absFilePaths) => FilesDto::make(self::applyChecks($absFilePaths, $checkSet))
         ));
     }
 }
