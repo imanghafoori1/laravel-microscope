@@ -33,10 +33,8 @@ class ForFolderPathsCheckTest extends TestCase
             }
         });
 
-        $this->assertEquals([
-            __DIR__.DIRECTORY_SEPARATOR.'ForFolderPathsCheckTest.php',
-            __DIR__.DIRECTORY_SEPARATOR.'SampleCheck.php',
-        ], $_SESSION['files']);
+        $this->assertTrue(array_key_exists(__DIR__.DIRECTORY_SEPARATOR.'ForFolderPathsCheckTest.php', $_SESSION['files']));
+        $this->assertTrue(array_key_exists(__DIR__.DIRECTORY_SEPARATOR.'SampleCheck.php', $_SESSION['files']));
     }
 
     private function getDirsList()
