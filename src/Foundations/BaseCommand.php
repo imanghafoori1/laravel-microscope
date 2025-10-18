@@ -78,7 +78,7 @@ class BaseCommand extends Command
         return $this->output->confirm('Do you have committed everything in git?', true);
     }
 
-    protected function getCheckSet(): CheckSet
+    public function getCheckSet(): CheckSet
     {
         return CheckSet::initParam($this->checks);
     }
