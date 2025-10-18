@@ -10,12 +10,15 @@ use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
+use Imanghafoori\LaravelMicroscope\Tests\SampleComposerJson;
+use Imanghafoori\LaravelMicroscope\Tests\SamplePrinter;
 use PHPUnit\Framework\TestCase;
 
 class EnforceHelpersTest extends TestCase
 {
     public function setUp(): void
     {
+        ErrorPrinter::$instance = null;
         BasePath::$path = __DIR__;
         mkdir(__DIR__.'/app');
         copy(__DIR__.'/MyClass.stub', __DIR__.'/app/MyClass.php');
@@ -38,28 +41,9 @@ class EnforceHelpersTest extends TestCase
     {
         ForBladeFiles::$paths = [];
         ComposerJson::$composer = function () {
-            return new class
+            return new class extends SampleComposerJson
             {
-                public function readAutoload()
-                {
-                    return [
-                        '/' => ['App\\' => 'app'],
-                    ];
-                }
-
-                public function readAutoloadClassMap()
-                {
-                    return [
-                        '/' => [],
-                    ];
-                }
-
-                public function autoloadedFilesList()
-                {
-                    return [
-                        '/' => [],
-                    ];
-                }
+                //
             };
         };
 
@@ -71,20 +55,12 @@ class EnforceHelpersTest extends TestCase
                 $_SESSION['printAll'][] = $msg;
             }
         });
-        $helpers = new EnforceHelpers();
-        ErrorPrinter::singleton()->printer = new class 
+        ErrorPrinter::singleton()->printer = new class extends SamplePrinter
         {
-            public function writeln($msg)
-            {
-                $_SESSION['writeln'][] = $msg;
-            }  
-            public function confirm($msg)
-            {
-                $_SESSION['confirm'][] = $msg;
-
-                return true;
-            }
+            //
         };
+
+        $helpers = new EnforceHelpers();
         $helpers->errorPrinter = ErrorPrinter::singleton();
         $helpers->handleCommand($iterator);
 
