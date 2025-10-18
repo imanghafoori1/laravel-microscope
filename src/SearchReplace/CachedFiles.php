@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CachedFiles
 {
-    public static $folderPath;
+    public static $folderPath = '';
 
     private static $cache = [];
 
