@@ -1,0 +1,6 @@
+<?php
+
+use Imanghafoori\LaravelMicroscope\Tests\EnforceQuery\User;
+
+User::where('sdfv', 'sdfv')->get;
+User::orderBy('sdfv', 'desc')->get;
