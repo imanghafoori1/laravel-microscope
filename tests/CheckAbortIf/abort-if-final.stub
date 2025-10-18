@@ -1,0 +1,3 @@
+<?php
+
+abort_if($a > 1, 401, 'adscas');
