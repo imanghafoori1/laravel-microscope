@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests\ForFolderPaths;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -13,6 +14,7 @@ class ForFolderPathsCheckTest extends TestCase
 {
     public function test_basic()
     {
+        BasePath::$path = __DIR__;
         $pathDTO = PathFilterDTO::make();
         $checkSet = CheckSet::init([SampleCheck::class], $pathDTO);
         $foldersStats = ForFolderPaths::check($checkSet, ['config' => $this->getDirsList()]);
