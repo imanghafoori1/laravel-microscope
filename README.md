@@ -156,7 +156,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 9  | `php artisan check:blade_queries`                             |
 | 10 | `php artisan check:action_comments`                           |
 | 11 | `php artisan check:extract_blades`                            |
-| 12 | `php artisan pp:route`                                        |
+| 12 | `php artisan list:models`                                     |
 | 13 | `php artisan check:generate`                                  |
 | 14 | `php artisan check:endif`                                     |
 | 15 | `php artisan check:events`                                    |
@@ -168,11 +168,11 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 21 | `php artisan enforce:helper_functions`                        |
 | 22 | `php artisan enforce:imports`                                 |
 | 23 | `php artisan check:fqcn`                                      |
-| 24 | `php artisan list:models`                                     |
+
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions:
->Also, You will have access to some global helper functions
+>Also, you will have access to some global helper functions
 
 ```php 
 microscope_dd_listeners($event);
@@ -818,7 +818,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 2 - It checks the `UserPolicy` classpath to be valid.
 
-3 - It checks the `someMethod` method to exist.
+3 - It checks whether the `someMethod` method exists.
 
 <a name="dynamic_where"></a>
 
@@ -868,7 +868,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 ### `php artisan check:fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}`
 
-- It searches for unnecessary FQCN that are already imported at the top.
+- It searches for unnecessary FQCNs that are already imported at the top.
 - You can use `--class=` option to only fix references to a certain class. 
 
 And more features will be added soon. ;)
@@ -881,9 +881,7 @@ And more features will be added soon. ;)
 
 <a name="license"></a>
 ## License
-
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
 
 <a name="contributing"></a>
 
