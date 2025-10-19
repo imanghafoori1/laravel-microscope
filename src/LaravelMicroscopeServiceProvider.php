@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
@@ -12,6 +13,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInsta
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
@@ -51,6 +53,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         ], 'microscope');
 
         $ds = DIRECTORY_SEPARATOR;
+
+        app()->booted(function () {
+            $hints = View::getFinder()->getHints();
+            $hints['random_key_69471'] = View::getFinder()->getPaths();
+            unset($hints['notifications'], $hints['pagination']);
+            ForBladeFiles::$paths = $hints;
+        });
 
         LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
         CachedFiles::$folderPath = storage_path('framework'.$ds.'cache'.$ds.'microscope'.$ds);

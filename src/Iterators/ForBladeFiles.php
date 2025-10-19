@@ -3,8 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Exception;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
@@ -35,18 +33,7 @@ class ForBladeFiles implements Check
      */
     public static function getViewsPaths()
     {
-        if (self::$paths) {
-            return self::$paths;
-        }
-
-        $hints = View::getFinder()->getHints();
-        $hints['random_key_69471'] = View::getFinder()->getPaths();
-        unset(
-            $hints['notifications'],
-            $hints['pagination']
-        );
-
-        return self::normalizeAndFilterVendorPaths($hints);
+        return self::normalizeAndFilterVendorPaths(self::$paths);
     }
 
     /**
