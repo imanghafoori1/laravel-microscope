@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
@@ -18,6 +18,6 @@ class ForComposerJsonFiles
         $classMapStats = ForAutoloadedClassMaps::check($checkSet);
         $autoloadedFilesStats = ForAutoloadedFiles::check($checkSet);
 
-        return Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
+        return ComposerJsonReport::formatAutoloads($psr4Stats, $classMapStats, $autoloadedFilesStats);
     }
 }

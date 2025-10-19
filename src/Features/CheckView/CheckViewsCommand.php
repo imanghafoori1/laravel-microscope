@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\BladeReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
