@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
@@ -58,7 +59,7 @@ class CheckBladePaths
             return true;
         }
 
-        if (strpos($path, base_path('vendor')) !== false) {
+        if (strpos($path, BasePath::$path.DIRECTORY_SEPARATOR.'vendor') !== false) {
             return true;
         }
 
