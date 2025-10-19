@@ -21,11 +21,8 @@ class CheckExtraSemiColons extends BaseCommand
 
     public function getPatterns()
     {
-        return self::patterns($this->options->option('nofix'));
-    }
+        $noFix = $this->options->option('nofix');
 
-    public static function patterns($noFix): array
-    {
         return [
             'remove_extra_semi_colons' => [
                 'cacheKey' => 'extra_semi_colons-v1',
