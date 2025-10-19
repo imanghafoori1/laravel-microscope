@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 
 class ErrorPrinter
 {
@@ -239,7 +240,7 @@ class ErrorPrinter
 
     public static function lineSeparator(): string
     {
-        return ' <fg='.config('microscope.colors.line_separator').'>'.str_repeat('_', ErrorPrinter::$terminalWidth - 3).'</>';
+        return ' <fg='.LineSeperator::$color.'>'.str_repeat('_', ErrorPrinter::$terminalWidth - 3).'</>';
     }
 
     private function printError($error): void
