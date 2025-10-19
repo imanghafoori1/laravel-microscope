@@ -16,19 +16,6 @@ class Psr4Report
 
     public static $callback;
 
-    /**
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
-     * @param  \Illuminate\Console\OutputStyle  $console
-     * @return void
-     */
-    public static function formatAndPrintAutoload($psr4Stats, $classMapStats, $console)
-    {
-        $lines = self::formatAutoloads($psr4Stats, $classMapStats);
-
-        Psr4ReportPrinter::printAll($lines, $console);
-    }
-
     #[Pure]
     public static function formatComposerPath($composerPath)
     {

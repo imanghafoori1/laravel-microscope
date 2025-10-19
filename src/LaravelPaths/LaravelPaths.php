@@ -37,28 +37,6 @@ class LaravelPaths
     }
 
     /**
-     * @return string|null
-     */
-    public static function seedersDir()
-    {
-        $dir = app()->databasePath('seeds');
-        if (! is_dir($dir)) {
-            $dir = app()->databasePath('seeders');
-        }
-
-        return is_dir($dir) ? $dir : null;
-    }
-
-    public static function factoryDirs()
-    {
-        try {
-            return app()->make('Illuminate\Database\Eloquent\Factory')->loadedPaths;
-        } catch (Throwable $e) {
-            return [];
-        }
-    }
-
-    /**
      * @return \Generator<int, string>
      */
     public static function migrationDirs()
