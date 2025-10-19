@@ -25,14 +25,14 @@ class ForFolderPaths extends BaseIterator
     }
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @param  array<string, \Generator<int, string>>  $dirsList
      * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
      */
-    public static function check(CheckSet $checker, $dirsList)
+    public static function check(CheckSet $checkSet, $dirsList)
     {
         return Loop::map($dirsList, fn ($dirs, $listName) => self::checkFilePaths(
-            Paths::getAbsFilePaths($dirs, $checker->pathDTO), $checker
+            Paths::getAbsFilePaths($dirs, $checkSet->pathDTO), $checkSet
         ));
     }
 
