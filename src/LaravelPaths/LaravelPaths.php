@@ -2,19 +2,21 @@
 
 namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 
-use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
+use Imanghafoori\TokenAnalyzer\Str;
 use JetBrains\PhpStorm\Pure;
-use Throwable;
 
 class LaravelPaths
 {
     public static $configPath = [];
 
-    public static $migrationDirs = null;
+    public static $migrationDirs = [];
+
+    public static $defaultPath = '';
 
     /**
      * @return array<string, \Generator<int, string>>
@@ -29,7 +31,7 @@ class LaravelPaths
     }
 
     /**
-     * @return \Generator<int, string>
+     * @return string[]
      */
     public static function configDirs()
     {
@@ -42,17 +44,17 @@ class LaravelPaths
     public static function migrationDirs()
     {
         // normalize the migration paths
-        foreach (app('migrator')->paths() as $path) {
+        foreach (self::$migrationDirs as $path) {
             if (! is_dir($path)) {
                 continue;
             }
             // Excludes the migrations within "vendor" folder:
-            if (! Str::startsWith($path, [base_path('vendor')])) {
+            if (! Str::startsWith($path, [BasePath::$path.DIRECTORY_SEPARATOR.'vendor'])) {
                 yield FilePath::normalize($path);
             }
         }
 
-        yield app()->databasePath('migrations');
+        yield self::$defaultPath;
     }
 
     public static function getMigrationsFiles($pathDTO)
@@ -80,12 +82,6 @@ class LaravelPaths
 
     private static function getMigrationDirs()
     {
-        if (self::$migrationDirs) {
-            $dirs = (self::$migrationDirs)();
-        } else {
-            $dirs = self::migrationDirs();
-        }
-
-        return $dirs;
+        return self::migrationDirs();
     }
 }

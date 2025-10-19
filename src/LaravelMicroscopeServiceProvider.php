@@ -47,6 +47,8 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
         app()->booted(function () {
             RoutePaths::$paths = app('router')->routePaths;
+            LaravelPaths::$migrationDirs = app('migrator')->paths();
+            LaravelPaths::$defaultPath = app()->databasePath('migrations');
         });
         RoutePaths::$providers = config('app.providers');
         RoutePaths::$additionalFiles = config('microscope.additional_route_files', []);
