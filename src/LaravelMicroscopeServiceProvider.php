@@ -19,6 +19,9 @@ use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\TokenAnalyzer\Str;
 use Symfony\Component\Console\Terminal;
 
+/**
+ * @codeCoverageIgnore
+ */
 class LaravelMicroscopeServiceProvider extends ServiceProvider
 {
     use CommandsRegistry;
