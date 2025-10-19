@@ -16,6 +16,7 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
+use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyBladeCompiler;
 use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 use Imanghafoori\TokenAnalyzer\Str;
@@ -44,6 +45,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             ! defined('microscope_start') && define('microscope_start', microtime(true));
         });
 
+        app()->booted(function () {
+            RoutePaths::$paths = app('router')->routePaths;
+        });
+        RoutePaths::$providers = config('app.providers');
+        RoutePaths::$additionalFiles = config('microscope.additional_route_files', []);
         $this->registerCommands();
 
         ErrorPrinter::$ignored = config('microscope.ignore');
