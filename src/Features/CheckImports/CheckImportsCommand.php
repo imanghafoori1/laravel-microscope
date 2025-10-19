@@ -45,9 +45,9 @@ class CheckImportsCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return int
      */
-    public function handleCommand($iterator)
+    public function handleCommand($iterator, $command)
     {
-        if ($this->option('nofix')) {
+        if ($command->option('nofix')) {
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
@@ -55,15 +55,15 @@ class CheckImportsCommand extends BaseCommand
             CheckClassReferencesAreValid::$cache = (require $path) ?: [];
         }
 
-        if ($this->option('wrong')) {
+        if ($command->option('wrong')) {
             CheckClassReferencesAreValid::$checkExtra = false;
         }
 
-        if ($this->option('extra')) {
+        if ($command->option('extra')) {
             CheckClassReferencesAreValid::$checkWrong = false;
         }
 
-        $pathDTO = PathFilterDTO::makeFromOption($this);
+        $pathDTO = PathFilterDTO::makeFromOption($command);
 
         CheckClassReferencesAreValid::$imports = self::useStatementParser();
 
@@ -86,16 +86,14 @@ class CheckImportsCommand extends BaseCommand
 
         if (! ImportsAnalyzer::$checkedRefCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
-            $this->getOutput()->writeln($messages);
+            $command->getOutput()->writeln($messages);
         }
 
         if ($cache = CheckClassReferencesAreValid::$cache) {
             self::writeCacheContent($cache);
         }
 
-        $this->line('');
-
-        return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
+        $command->line('');
     }
 
     #[Pure]

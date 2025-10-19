@@ -21,9 +21,9 @@ class ClassifyStringsCommand extends BaseCommand
 
     public $customMsg = '';
 
-    public function handleCommand($iterator)
+    public function handleCommand($iterator, $command)
     {
-        CheckStringy::$command = $this;
+        CheckStringy::$command = $command;
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),

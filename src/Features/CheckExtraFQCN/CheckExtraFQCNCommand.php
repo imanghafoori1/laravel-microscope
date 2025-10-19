@@ -31,7 +31,7 @@ class CheckExtraFQCNCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
-    public function handleCommand($iterator)
+    public function handleCommand($iterator, $command)
     {
         $fix = $this->options->option('fix');
         $class = $this->options->option('class');
@@ -49,7 +49,7 @@ class CheckExtraFQCNCommand extends BaseCommand
             $iterator->forRoutes(),
         ]);
 
-        ! $fix && $this->exitCode() === 1 && $this->printGuide();
+        ! $fix && $this->exitCode() === 1 && $this->printGuide($command);
     }
 
     #[Pure]
@@ -70,9 +70,9 @@ class CheckExtraFQCNCommand extends BaseCommand
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
     }
 
-    private function printGuide()
+    private function printGuide($command)
     {
-        $this->line('<fg=yellow> You may use `--fix` option to delete extra code:</>');
-        $this->line('<fg=yellow> php artisan check:fqcn --fix</>');
+        $command->line('<fg=yellow> You may use `--fix` option to delete extra code:</>');
+        $command->line('<fg=yellow> php artisan check:fqcn --fix</>');
     }
 }

@@ -25,7 +25,8 @@ class AnonymizeMigrations extends BaseCommand
 
     public $checks = [];
 
-    public function handleCommand()
+
+    public function handleCommand($iterator, $command)
     {
         if (version_compare('8.37.0', app()->version()) !== -1) {
             $this->info('Anonymous migrations are supported in laravel 8.37 and above.');
