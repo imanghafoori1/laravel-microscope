@@ -1,0 +1,8 @@
+<?php
+
+namespace Wrong\App;
+
+class MyClass
+{
+
+}

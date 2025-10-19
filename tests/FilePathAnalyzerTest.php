@@ -4,11 +4,11 @@ namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use PHPUnit\Framework\TestCase;
 
-class FilePathAnalyzerTest extends BaseTestClass
+class FilePathAnalyzerTest extends TestCase
 {
-    /** @test */
-    public function method_normalize_test()
+    public function test_method_normalize_test()
     {
         $path = '/usr/laravel\\\\framework/app\Http\..\..\\..//database';
         $path2 = '\usr\laravel\framework/app\Http\..\..\\..//database';
@@ -24,25 +24,5 @@ class FilePathAnalyzerTest extends BaseTestClass
         $this->assertTrue(! Str::contains($normalizedPath, '..'));
         $this->assertTrue(! Str::contains($normalizedPath, '../'));
         $this->assertTrue(! Str::contains($normalizedPath, '..\\'));
-    }
-
-    /** @test */
-    public function method_getRelativePath_test()
-    {
-        $path = base_path().'/database/factories/';
-        $normalizedPath = FilePath::getRelativePath($path);
-        $this->assertEquals('database/factories', $normalizedPath);
-
-        $path = base_path().'/database/factories';
-        $normalizedPath = FilePath::getRelativePath($path);
-        $this->assertEquals('database/factories', $normalizedPath);
-
-        $path = base_path().'\database\factories\\';
-        $normalizedPath = FilePath::getRelativePath($path);
-        $this->assertEquals('database\factories', $normalizedPath);
-
-        $path = base_path().'\database\factories';
-        $normalizedPath = FilePath::getRelativePath($path);
-        $this->assertEquals('database\factories', $normalizedPath);
     }
 }

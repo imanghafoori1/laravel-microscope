@@ -2,17 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
-use Imanghafoori\LaravelMicroscope\LaravelMicroscopeServiceProvider;
-use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class BaseTestClass extends TestCase
 {
     use CallsPrivateMethods;
-
-    protected function getPackageProviders($app)
-    {
-        return [LaravelMicroscopeServiceProvider::class];
-    }
 
     /**
      * get tokens of stubs classes.

@@ -1,0 +1,8 @@
+<?php
+
+namespace App;
+
+use He;
+use useless;
+
+class Hello {}

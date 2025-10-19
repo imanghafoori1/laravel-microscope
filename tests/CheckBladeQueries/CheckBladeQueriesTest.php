@@ -2,8 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckBladeQueries;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\CheckDeadControllersCommand;
-use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckBladeQueries\CheckBladeQueriesCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -16,15 +17,31 @@ class CheckBladeQueriesTest extends TestCase
         {
             public $count = 0;
 
-            public function formatPrintPsr4()
+            public $printAllInput;
+
+            public function forBladeFiles()
             {
                 $this->count++;
+
+                return '123';
+            }
+
+            public function printAll($input)
+            {
+                $this->printAllInput = $input;
             }
         };
 
-        $command = new CheckDeadControllersCommand();
+        $command = new CheckBladeQueriesCommand();
         $command->handleCommand($iterator);
-        $this->assertEquals([RoutelessControllerActions::class], $command->checks);
+        $this->assertEquals(['123'], $iterator->printAllInput);
         $this->assertEquals(1, $iterator->count);
+
+        $check = $command->checks[0];
+        $file = PhpFileDescriptor::make(__DIR__.DIRECTORY_SEPARATOR.'query_in_blade.stub');
+        $check::check($file);
+
+        $errors = ErrorPrinter::singleton()->errorsList['queryInBlade'];
+        $this->assertCount(1, $errors);
     }
 }

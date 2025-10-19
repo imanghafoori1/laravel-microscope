@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckPsr4ArtisanCommand extends Command
+class CheckPsr4ArtisanCommand extends BaseCommand
 {
     protected $signature = 'check:psr4
         {--d|detailed : Show classes being checked}
@@ -66,7 +66,7 @@ class CheckPsr4ArtisanCommand extends Command
         $classListStatistics = self::countClasses($classLists);
         $errorPrinter->logErrors();
 
-        if (! $this->option('watch') && Str::startsWith(request()->server('argv')[1] ?? '', 'check:psr4')) {
+        if (! $this->option('watch') && Str::startsWith($_SERVER['argv'][1] ?? '', 'check:psr4')) {
             $this->write(ReportMessages::reportResult($autoload, $duration, $classListStatistics));
             $this->printMessages(ReportMessages::getErrorsCount($errorPrinter->total));
         } else {

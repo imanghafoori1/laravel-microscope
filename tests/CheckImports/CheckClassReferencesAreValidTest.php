@@ -3,7 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ExtraCorrectImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ExtraWrongImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\FixWrongClassRefs;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Tests\CheckImports\MockExistenceChecker\AlwaysExistsMock;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -11,14 +16,32 @@ use PHPUnit\Framework\TestCase;
 
 class CheckClassReferencesAreValidTest extends TestCase
 {
-    /** @test */
-    public function check()
+    public function setUp(): void
     {
-        $absPath = __DIR__.'/wrongImport.stub';
-        $file = PhpFileDescriptor::make($absPath);
         CheckClassReferencesAreValid::$extraCorrectImportsHandler = MockHandlers\MockExtraImportsHandler::class;
         CheckClassReferencesAreValid::$extraWrongImportsHandler = MockHandlers\MockerUnusedWrongImportsHandler::class;
         CheckClassReferencesAreValid::$wrongClassRefsHandler = MockHandlers\MockWrongClassRefsHandler::class;
+
+        ForBladeFiles::$paths = [
+            'hint' => [],
+        ];
+        BasePath::$path = __DIR__;
+    }
+
+    public function tearDown(): void
+    {
+        CheckClassReferencesAreValid::$extraCorrectImportsHandler = ExtraCorrectImports::class;
+        CheckClassReferencesAreValid::$extraWrongImportsHandler = ExtraWrongImports::class;
+        CheckClassReferencesAreValid::$wrongClassRefsHandler = FixWrongClassRefs::class;
+
+        ForBladeFiles::$paths = [];
+        BasePath::$path = null;
+    }
+
+    public function test_check()
+    {
+        $absPath = __DIR__.'/wrongImport.stub';
+        $file = PhpFileDescriptor::make($absPath);
 
         ImportsAnalyzer::$existenceChecker = AlwaysExistsMock::class;
 
@@ -39,7 +62,6 @@ class CheckClassReferencesAreValidTest extends TestCase
         $this->assertEquals([], $unusedWrongImportsHandler[0][0]);
         $this->assertEquals(__DIR__.'/wrongImport.stub', $unusedWrongImportsHandler[0][1]->getAbsolutePath());
 
-        $this->assertEquals([
-        ], $wrongClassRefsHandler);
+        $this->assertEquals([], $wrongClassRefsHandler);
     }
 }

@@ -11,8 +11,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class NamespaceCorrectorTest extends BaseTestClass
 {
-    /** @test */
-    public function derive()
+    public function test_derive()
     {
         $psr4Path = 'branding_manager/app/';
         $namespace = 'Branding\\';
@@ -31,8 +30,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals("Branding\Cert\DNS", $result[1]);
     }
 
-    /** @test */
-    public function fix_namespace()
+    public function test_fix_namespace()
     {
         // arrange
         FileManipulator::fake();
@@ -46,8 +44,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
 
-    /** @test */
-    public function fix_namespace_declare()
+    public function test_fix_namespace_declare()
     {
         // arrange
         FileManipulator::fake();
@@ -62,8 +59,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertTrue(in_array('namespace '.$to.';', FakeFilesystem::$files[$filePath]));
     }
 
-    /** @test */
-    public function fix_namespace_class_with_no_namespace()
+    public function test_fix_namespace_class_with_no_namespace()
     {
         // arrange
         FileManipulator::fake();
@@ -78,8 +74,7 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertTrue(preg_match($pattern, FakeFilesystem::$files[$filePath][0]) == 1);
     }
 
-    /** @test */
-    public function fix_namespace_class_with_bad_namespace()
+    public function test_fix_namespace_class_with_bad_namespace()
     {
         // arrange
         FileManipulator::fake();

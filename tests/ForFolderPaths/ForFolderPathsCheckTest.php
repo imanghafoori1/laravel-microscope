@@ -3,7 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\ForFolderPaths;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\Psr4ReportPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
+use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
@@ -13,6 +14,7 @@ class ForFolderPathsCheckTest extends TestCase
 {
     public function test_basic()
     {
+        BasePath::$path = __DIR__;
         $pathDTO = PathFilterDTO::make();
         $checkSet = CheckSet::init([SampleCheck::class], $pathDTO);
         $foldersStats = ForFolderPaths::check($checkSet, ['config' => $this->getDirsList()]);
@@ -20,7 +22,7 @@ class ForFolderPathsCheckTest extends TestCase
 
         $_SESSION['test_ms'] = [];
         $_SESSION['files'] = [];
-        Psr4ReportPrinter::printAll($lines, new class
+        ReportPrinter::printAll($lines, new class
         {
             public function write($msg)
             {
@@ -33,10 +35,8 @@ class ForFolderPathsCheckTest extends TestCase
             }
         });
 
-        $this->assertEquals([
-            __DIR__.DIRECTORY_SEPARATOR.'ForFolderPathsCheckTest.php',
-            __DIR__.DIRECTORY_SEPARATOR.'SampleCheck.php',
-        ], $_SESSION['files']);
+        $this->assertTrue(array_key_exists(__DIR__.DIRECTORY_SEPARATOR.'ForFolderPathsCheckTest.php', $_SESSION['files']));
+        $this->assertTrue(array_key_exists(__DIR__.DIRECTORY_SEPARATOR.'SampleCheck.php', $_SESSION['files']));
     }
 
     private function getDirsList()

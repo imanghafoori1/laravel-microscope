@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use App\User;
+use App\Product;
+use App\Product2;
+
+route('rrr');
+route($a);

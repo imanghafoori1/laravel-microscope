@@ -1,0 +1,19 @@
+<?php
+
+namespace App;
+
+use App\Facades\DB;
+use App\Facades\Session as S;
+use App\Facades\Artisan as A;
+use App\Facades\Cache;
+use  Mache;
+use Muth, App\Facades\Auth;
+use Bonfig;
+use App\Facades\Config;
+use Ronfig;
+use App\Facades\Log;
+
+class hello extends SomeParentClass
+{
+	\DB::class;
+}

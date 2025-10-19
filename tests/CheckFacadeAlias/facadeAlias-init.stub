@@ -1,0 +1,16 @@
+<?php
+
+namespace App;
+
+use DB;
+use Session as S;
+use \Artisan as A;
+use Cache, Mache;
+use Muth, Auth;
+use Bonfig,Config,Ronfig;
+use \Log;
+
+class hello extends SomeParentClass
+{
+	\DB::class;
+}

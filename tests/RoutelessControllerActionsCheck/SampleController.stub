@@ -1,0 +1,13 @@
+<?php
+
+namespace Imanghafoori\LaravelMicroscope\Tests\RoutelessControllerActionsCheck;
+
+use RuntimeException;
+
+class SampleController extends RuntimeException {
+	public function __construct () {}
+	public function __invoke () {}
+	public function hello () {}
+	public static function hello3 () {}
+	private function hello2 () {}
+}
