@@ -24,6 +24,6 @@ class ReportPrinter
                 self::printAll($message, $output);
             }
         }
-        $output->writeln('');
+        $output->write(PHP_EOL);
     }
 }
