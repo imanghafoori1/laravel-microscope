@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ConsolePrinterInstaller;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
@@ -47,7 +46,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             __DIR__.'/../templates' => base_path('resources/views/vendor/microscope'),
         ], 'microscope');
 
-        ConsolePrinterInstaller::boot();
         $ds = DIRECTORY_SEPARATOR;
 
         LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
