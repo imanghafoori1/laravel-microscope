@@ -68,11 +68,11 @@ class RoutePaths
         foreach ($calls[0] as $token) {
             if ($token[0] == T_DIR) {
                 // remove class name from the end of string.
-                $relativeDirPath = \trim(Str::replaceLast(class_basename($providerClass), '', $path), '\\');
+                $relativeDirPath = trim(Str::replaceLast(self::className($providerClass), '', $path), '\\/');
 
                 $fullPath .= $relativeDirPath;
             } elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
-                $firstParam = \trim($token[1], '\'\"');
+                $firstParam = trim($token[1], '\'\"');
                 $fullPath .= $firstParam;
             }
         }
