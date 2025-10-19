@@ -2,11 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Commands;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Migrations\Migration;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\SearchReplace\IsEqualOrSub;
 use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
+use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 use Symfony\Component\Finder\Finder;
 
@@ -23,14 +26,19 @@ class AnonymizeMigrations extends BaseCommand
 
     public $customMsg = 'All the migration classes are anonymous.';
 
+    public static $laravelVersion;
+
     public $checks = [];
 
 
     public function handleCommand($iterator, $command)
     {
-        if (version_compare('8.37.0', app()->version()) !== -1) {
-            $this->info('Anonymous migrations are supported in laravel 8.37 and above.');
-            $this->info('You are currently on laravel version: '.app()->version());
+        Filters::$filters['is_a'] = IsEqualOrSub::class;
+        $version = self::$laravelVersion ?: app()->version();
+
+        if (version_compare('8.37.0', $version) !== -1) {
+            $command->info('Anonymous migrations are supported in laravel 8.37 and above.');
+            $command->info('You are currently on laravel version: '.$version);
 
             return 0;
         }
@@ -49,7 +57,7 @@ class AnonymizeMigrations extends BaseCommand
     {
         PatternRefactorings::$patterns = $patterns;
 
-        foreach ($this->filterVendorFolders($this->getMigrationFolders()) as $migrationFolder) {
+        foreach (LaravelPaths::migrationDirs() as $migrationFolder) {
             foreach ($this->getMigrationFiles($migrationFolder, $pathDTO->includeFile) as $migration) {
                 PatternRefactorings::check(
                     PhpFileDescriptor::make($migration->getRealPath()),
@@ -66,7 +74,7 @@ class AnonymizeMigrations extends BaseCommand
                 'replace' => 'return new class extends <2>'.PHP_EOL.'{<3>};',
                 'filters' => [
                     2 => [
-                        'is_sub_class_of' => \Illuminate\Database\Migrations\Migration::class,
+                        'is_a' => Migration::class,
                     ],
                 ],
             ],
@@ -79,24 +87,6 @@ class AnonymizeMigrations extends BaseCommand
             ->name(($fileName ?: '*').'.php')
             ->files()
             ->in($folder);
-    }
-
-    private function filterVendorFolders(array $paths): array
-    {
-        foreach ($paths as $key => $path) {
-            if (Str::startsWith($path, base_path('vendor'))) {
-                unset($paths[$key]);
-            }
-        }
-
-        return $paths;
-    }
-
-    private function getMigrationFolders(): array
-    {
-        $paths = array_merge(app('migrator')->paths(), [database_path('migrations')]);
-
-        return array_unique($paths);
     }
 
     private function parsePatterns()
