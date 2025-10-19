@@ -12,7 +12,8 @@ class CheckEndifCommandTest extends TestCase
     #[Test]
     public function basic_command()
     {
-        ErrorPrinter::singleton()->printer = new class {
+        ErrorPrinter::singleton()->printer = new class
+        {
             public $isConfirmed = 0;
 
             public function confirm()

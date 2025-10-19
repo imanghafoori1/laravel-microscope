@@ -21,7 +21,7 @@ class CheckActionCommentsCommand extends BaseCommand
     public $initialMsg = 'Commentify Route Actions...';
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     public function handleCommand($iterator)

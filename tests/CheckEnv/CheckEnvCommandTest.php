@@ -32,7 +32,8 @@ class CheckEnvCommandTest extends TestCase
             }
         });
 
-        $command->input(new class {
+        $command->input(new class
+        {
             public function getOption()
             {
                 return null;

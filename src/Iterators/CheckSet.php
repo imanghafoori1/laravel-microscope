@@ -42,7 +42,7 @@ class CheckSet
         return CheckSet::init($checks, $pathDTO);
     }
 
-    public static function init($checks, PathFilterDTO $pathDTO = null): CheckSet
+    public static function init($checks, ?PathFilterDTO $pathDTO = null): CheckSet
     {
         $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 

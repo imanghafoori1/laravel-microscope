@@ -16,7 +16,7 @@ trait PatternApply
     abstract public function getPatterns();
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     public function handleCommand($iterator)
@@ -29,7 +29,7 @@ trait PatternApply
     }
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     private function appliesPatterns(array $patterns, $iterator)

@@ -11,8 +11,8 @@ use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 class ForFolderPaths extends BaseIterator
 {
     /**
-     * @param array<string, string[]> $paths
-     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
+     * @param  array<string, string[]>  $paths
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @return StatsDto
      */
     public static function checkFilePaths($paths, CheckSet $checker)
@@ -38,7 +38,7 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param  $paths
-     * @param \Imanghafoori\LaravelMicroscope\Iterators\CheckSet $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
      * @return StatsDto
      */
     private static function applyOnFiles($paths, $checker)

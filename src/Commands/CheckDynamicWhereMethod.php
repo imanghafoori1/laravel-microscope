@@ -109,7 +109,7 @@ class CheckDynamicWhereMethod extends BaseCommand
                     1 => [
                         [$dynamicWhere, null],
                     ],
-                 ],
+                ],
                 'mutator' => function ($matches) {
                     $matches[0][1] = $this->deriveColumnName($matches[0][1]);
 

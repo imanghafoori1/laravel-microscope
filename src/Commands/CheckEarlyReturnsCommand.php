@@ -21,7 +21,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
     protected $checks = [CheckEarlyReturn::class];
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
     public function handleCommand($iterator)
