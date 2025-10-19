@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CachedFiles
 {
-    public static $folderPath;
+    public static $folderPath = '';
 
     private static $cache = [];
 
@@ -69,6 +69,7 @@ class CachedFiles
 
     public static function put($patternKey, PhpFileDescriptor $file)
     {
+        self::$fileExists[$patternKey] = true;
         self::$cacheChange[$patternKey] = true;
         self::$cache[$patternKey][$file->getMd5()] = $file->getFileName();
     }
