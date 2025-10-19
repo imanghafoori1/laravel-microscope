@@ -44,7 +44,7 @@ class CheckSet
 
     public static function init($checks, ?PathFilterDTO $pathDTO = null): CheckSet
     {
-        $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
+        $pathDTO && $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
         $obj->checks = CheckCollection::make($checks);
