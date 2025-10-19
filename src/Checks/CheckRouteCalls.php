@@ -9,6 +9,8 @@ use Imanghafoori\TokenAnalyzer\FunctionCall;
 
 class CheckRouteCalls implements Check
 {
+    public static $router;
+
     public static $checkedRouteCallsNum = 0;
 
     public static $skippedRouteCallsNum = 0;
@@ -21,7 +23,7 @@ class CheckRouteCalls implements Check
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
 
-        $total = \count($tokens) - 3;
+        $total = count($tokens) - 3;
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('route', $tokens, $i);
             $index = $index ?: self::checkForRedirectRoute($tokens, $i);
@@ -69,9 +71,7 @@ class CheckRouteCalls implements Check
 
     public static function checkRouteExists($line, $routeName, $absPath)
     {
-        $matchedRoute = app('router')->getRoutes()->getByName(
-            trim($routeName, '\'\"')
-        );
+        $matchedRoute = (self::$router)->getByName(trim($routeName, '\'\"'));
         is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
     }
 

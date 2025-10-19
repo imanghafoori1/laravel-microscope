@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
@@ -67,6 +68,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             $hints['random_key_69471'] = View::getFinder()->getPaths();
             unset($hints['notifications'], $hints['pagination']);
             ForBladeFiles::$paths = $hints;
+            CheckRouteCalls::$router = app('router')->getRoutes();
         });
 
         LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
