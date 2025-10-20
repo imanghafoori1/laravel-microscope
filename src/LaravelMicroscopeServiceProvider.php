@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -11,6 +12,7 @@ use Imanghafoori\LaravelMicroscope\Checks\CheckRouteCalls;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
+use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -69,6 +71,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
             unset($hints['notifications'], $hints['pagination']);
             ForBladeFiles::$paths = $hints;
             CheckRouteCalls::$router = app('router')->getRoutes();
+            FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
         });
 
         LaravelPaths::$configPath = array_merge([config_path()], config('microscope.additional_config_paths', []));
