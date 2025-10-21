@@ -5,6 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEvents;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * @codeCoverageIgnore
+ */
 class Installer
 {
     public static function spyEvents()
