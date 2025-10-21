@@ -12,7 +12,7 @@ Built with :heart: for lazy Laravel developers ;)
 </h4>
 
 <h3 align="center">
-Why repeat the old errors, if there are so many new errors to commit?
+Why repeat the old errors if there are so many new errors to commit?
 </h3>
 <h3 align="center">
 (Bertrand Russel)
@@ -69,11 +69,9 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:imports`](#imports)
         1. [`php artisan check:bad_practices`](#bad_practices)
         1. [`php artisan check:routes`](#routes)
-        1. [`php artisan check:compact`](#compact)
         1. [`php artisan check:blade_queries`](#blade_queries)
         1. [`php artisan check:extract_blades`](#extract_blades)
         1. [`php artisan check:action_comments`](#action_comments)
-        1. [`php artisan pp:route`](#route)
         1. [`php artisan check:views`](#views)
         1. [`php artisan check:events`](#events)
         1. [`php artisan check:gates`](#gates)
@@ -100,7 +98,7 @@ Give your eyes a rest, we will detect and fix them for you.
 - It is created to be **smarter than phpstorm** and other IDEs in finding errors.
 - It is created to **understand laravel run-time** and magic.
 - It does **not show you stupid false errors**, all the reported cases are really errors.
-- Even If you have written a lot of tests for your app, **you may still need this**.
+- Even if you have written a lot of tests for your app, **you may still need this**.
 - **It can refactor your code**, by applying `early returns` automatically.
 - It is written from scratch to yield the **maximum performance** possible.
 
@@ -434,7 +432,7 @@ $closure = function ($a) {
 
 :six: **Difference between `<statement>` and `<until>;`**
 
-They seem to be very similar but there is an important case in which you can not use `<until>;` to cover it properly!
+They seem to be very similar, but there is an important case in which you can not use `<until>;` to cover it properly!
 
 ```php
 $first = $a + $b;
@@ -455,9 +453,9 @@ return [
     ]
 ];
 ```
-For `$c = $a + $b;` they act the same way, but for the second one `"<until>";` will not capture the whole closure and will stop as soon as it reaches `$a++;` and that is a problem.
+For `$c = $a + $b;` they act the same way, but for the second one, `"<until>";` will not capture the whole closure and will stop as soon as it reaches `$a++;` and that is a problem.
 
-But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semicolon at the end of the closure definition and the whole close would be captured.
+But if you define your pattern as: `'<var> = <statement>'` it would be smart enough to capture the correct semicolon at the end of the closure definition and the whole closure would be captured.
 
 <a name="capturing-global" ></a>
 :seven: **Capturing global function calls:**
@@ -661,7 +659,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
 - It autocorrects some references, no ambiguity is around the class name.
-- It can understand the laravel aliased classes so `use Request;` would be valid.
+- It can understand the Laravel aliased classes, so `use Request;` would be valid.
 
 
 <a name="bad_practices"></a>
@@ -686,7 +684,7 @@ If you create an empty `.php` file which ends with `ServiceProvider.php` after r
 ### `php artisan check:compact`
 
 
-- In php 7.3 if you "compact" a non-existent variable you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you which parameters should be removed.
+- In PHP 7.3, if you "compact" a non-existent variable, you will get an error, so this command checks the entire project for wrong `compact()` calls and reports to you which parameters should be removed.
 
 <a name="blade_queries"></a>
 
@@ -718,7 +716,7 @@ You can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to
  </html>
 ```
 
-After you execute `php artisan check:extract_blades` it will become:
+After you execute `php artisan check:extract_blades`, it will become:
 
 ```html
 <html>
@@ -759,7 +757,7 @@ So this syntax will work: `'MyMod::myPartials.body'`
 
 
 Also, it can detect `unused variables` which are passed into your view from the controller like this: `view('hello', [...]);`
-For that you must open up the page in the browser and then visit the log file to see a message like this:
+For that, you must open up the page in the browser and then visit the log file to see a message like this:
 ```
 local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
 local.INFO: array ('$var1' , '$var2');
