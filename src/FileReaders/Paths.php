@@ -14,13 +14,13 @@ class Paths
      * @param  PathFilterDTO  $pathFilter
      * @return array<string, \Generator<int, \Symfony\Component\Finder\SplFileInfo>>
      */
-    public static function getAbsFilePaths($dirs, PathFilterDTO $pathFilter)
+    public static function getAbsFilePaths($dirs, ?PathFilterDTO $pathFilter = null)
     {
         if (! $dirs) {
             return [];
         }
 
-        $fileName = $pathFilter->includeFile;
+        $fileName = $pathFilter ? $pathFilter->includeFile : '';
         is_string($dirs) && ($dirs = [$dirs]);
 
         $files = [];
