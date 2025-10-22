@@ -30,7 +30,6 @@ class AnonymizeMigrations extends BaseCommand
 
     public $checks = [];
 
-
     public function handleCommand($iterator, $command)
     {
         Filters::$filters['is_a'] = IsEqualOrSub::class;

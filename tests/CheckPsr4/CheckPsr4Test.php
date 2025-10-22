@@ -40,7 +40,8 @@ class CheckPsr4Test extends TestCase
                 return '';
             }
         });
-        $command->output(new class{
+        $command->output(new class
+        {
             public function writeln($msg)
             {
                 $_SERVER['write'][] = $msg;
@@ -58,7 +59,8 @@ class CheckPsr4Test extends TestCase
 
             public function getFormatter()
             {
-                return new class{
+                return new class
+                {
                     public function hasStyle()
                     {
                         return true;

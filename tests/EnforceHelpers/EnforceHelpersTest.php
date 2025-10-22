@@ -41,8 +41,7 @@ class EnforceHelpersTest extends TestCase
     {
         ForBladeFiles::$paths = [];
         ComposerJson::$composer = function () {
-            return new class extends SampleComposerJson
-            {
+            return new class extends SampleComposerJson {
                 //
             };
         };
@@ -55,8 +54,7 @@ class EnforceHelpersTest extends TestCase
                 $_SESSION['printAll'][] = $msg;
             }
         });
-        ErrorPrinter::singleton()->printer = new class extends SamplePrinter
-        {
+        ErrorPrinter::singleton()->printer = new class extends SamplePrinter {
             //
         };
 

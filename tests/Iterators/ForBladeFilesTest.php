@@ -18,8 +18,7 @@ class ForBladeFilesTest extends TestCase
 
         BasePath::$path = __DIR__;
         ForBladeFiles::$paths = [
-            'hint1' =>
-                [__DIR__.'/views']
+            'hint1' => [__DIR__.'/views'],
         ];
         mkdir($dir.$ds.'a');
         copy($dir.$ds.'a.blade', $dir.$ds.'a'.$ds.'a.blade.php');

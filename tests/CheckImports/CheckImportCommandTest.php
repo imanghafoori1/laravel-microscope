@@ -56,12 +56,14 @@ class CheckImportCommandTest extends TestCase
         };
         $iterator = new Iterator(CheckSet::init([
             CheckClassReferencesAreValid::class,
-        ], PathFilterDTO::make()), new class{
+        ], PathFilterDTO::make()), new class
+        {
             public function write()
             {
             }
         });
-        $command->handleCommand($iterator, new class{
+        $command->handleCommand($iterator, new class
+        {
             public function option()
             {
                 return '';

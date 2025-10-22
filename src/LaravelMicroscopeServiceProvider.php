@@ -15,8 +15,8 @@ use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInsta
 use Imanghafoori\LaravelMicroscope\Features\FacadeAlias\FacadeAliasesCheck;
 use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
-use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
+use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\ServiceProvider\CommandsRegistry;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;

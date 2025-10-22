@@ -42,10 +42,10 @@ class CheckExtraFqcnTest extends TestCase
 
         $command->errorPrinter = ErrorPrinter::singleton();
 
-        $iterator = new Iterator(CheckSet::init(new class {
+        $iterator = new Iterator(CheckSet::init(new class
+        {
             public static function handle(PhpFileDescriptor $file)
             {
-
             }
         }), new class
         {

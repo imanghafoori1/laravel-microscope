@@ -36,8 +36,10 @@ class CheckEarlyReturnTest extends TestCase
         };
         $file = PhpFileDescriptor::make(__DIR__.'/test.php');
         CheckEarlyReturn::$params['nofix'] = false;
-        CheckEarlyReturn::$params['nofixCallback'] = function () {};
-        CheckEarlyReturn::$params['fixCallback'] = function () {};
+        CheckEarlyReturn::$params['nofixCallback'] = function () {
+        };
+        CheckEarlyReturn::$params['fixCallback'] = function () {
+        };
         CheckEarlyReturn::check($file);
 
         $actual = file_get_contents(__DIR__.'/test.php');
