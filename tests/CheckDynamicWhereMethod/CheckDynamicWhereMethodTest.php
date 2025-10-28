@@ -44,8 +44,7 @@ class CheckDynamicWhereMethodTest extends TestCase
     {
         ForBladeFiles::$paths = [];
         ComposerJson::$composer = function () {
-            return new class extends SampleComposerJson
-            {
+            return new class extends SampleComposerJson {
                 //
             };
         };
@@ -59,15 +58,15 @@ class CheckDynamicWhereMethodTest extends TestCase
             }
         });
         $helpers = new CheckDynamicWhereMethod();
-        $helpers->options = new class {
+        $helpers->options = new class
+        {
             public function option()
             {
                 return '';
             }
         };
 
-        ErrorPrinter::singleton()->printer = new class extends SamplePrinter
-        {
+        ErrorPrinter::singleton()->printer = new class extends SamplePrinter {
             //
         };
         $helpers->errorPrinter = ErrorPrinter::singleton();
