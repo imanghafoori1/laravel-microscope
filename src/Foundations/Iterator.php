@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\RouteReport;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;

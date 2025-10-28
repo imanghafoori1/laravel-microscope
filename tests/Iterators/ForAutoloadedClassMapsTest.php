@@ -41,7 +41,7 @@ class ForAutoloadedClassMapsTest extends TestCase
                 public function readAutoloadClassMap()
                 {
                     return [
-                        '/' => ['app']
+                        '/' => ['app'],
                     ];
                 }
             };
@@ -80,7 +80,7 @@ class ForAutoloadedClassMapsTest extends TestCase
                 public function autoloadedFilesList()
                 {
                     return [
-                        '/' => ['app/MyClass.php']
+                        '/' => ['app/MyClass.php'],
                     ];
                 }
             };
