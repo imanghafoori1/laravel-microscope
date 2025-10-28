@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\RouteReport;
 use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
@@ -59,7 +60,7 @@ class Iterator
 
     public function formatAutoloads($psr4Stats, $classMapStats = [], $filesStat = [])
     {
-        return Psr4Report::formatAutoloads($psr4Stats, $classMapStats, $filesStat);
+        return ComposerJsonReport::formatAutoloads($psr4Stats, $classMapStats, $filesStat);
     }
 
     public function forMigrationsAndConfigs()
