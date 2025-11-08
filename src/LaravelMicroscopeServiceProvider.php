@@ -67,9 +67,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->registerCompiler();
         $this->loadConfig();
 
-        app()->singleton(ErrorPrinter::class, function () {
-            return ErrorPrinter::singleton();
-        });
+        app()->singleton(ErrorPrinter::class, fn () => ErrorPrinter::singleton());
         Features\CheckRoutes\Installer::spyRouter();
 
         // We need to start spying before the boot process starts.
