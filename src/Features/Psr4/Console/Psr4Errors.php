@@ -4,6 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 use Illuminate\Console\Command;
 use ImanGhafoori\ComposerJson\NamespaceErrors\NamespaceError;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\AfterRefFix;
+use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\BeforeRefFix;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\ClassRefCorrector;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForReferenceFix;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixerMessages;
@@ -44,7 +46,12 @@ class Psr4Errors
     private static function updateOldRefs($from, $to, $class)
     {
         if ($from && ! self::$command->option('no-ref-fix')) {
-            self::$refCorrector::fixOldRefs($from, $class, $to, FilePathsForReferenceFix::getFiles());
+            $before = BeforeRefFix::getCallback(self::$command);
+            $after = AfterRefFix::getCallback();
+
+            self::$refCorrector::fixOldRefs(
+                $from, $class, $to, FilePathsForReferenceFix::getFiles(), $before, $after
+            );
         }
     }
 

@@ -6,9 +6,9 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ClassRefCorrector
 {
-    private static $afterFix = [AfterRefFix::class, 'getCallback'];
+    private static $afterFix;
 
-    private static $beforeFix = [BeforeRefFix::class, 'getCallback'];
+    private static $beforeFix;
 
     public static function fixOldRefs($from, $class, $to, $paths, $beforeFix = null, $afterFix = null)
     {
