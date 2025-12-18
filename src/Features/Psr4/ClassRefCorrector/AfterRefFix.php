@@ -7,6 +7,9 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class AfterRefFix
 {
+    /**
+     * @return \Closure
+     */
     public static function getCallback()
     {
         return function (PhpFileDescriptor $file, $changedLineNums, $content) {
