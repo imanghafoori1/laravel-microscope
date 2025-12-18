@@ -36,7 +36,7 @@ class ClassRefCorrector
     private static function fixAllRefs($changes, $allPaths)
     {
         foreach ($allPaths as $paths) {
-            Loop::over($paths, fn ($path) => self::fix($path, $changes));
+            Loop::over($paths, static fn ($path) => self::fix($path, $changes));
         }
     }
 
@@ -115,6 +115,6 @@ class ClassRefCorrector
      */
     private static function strContains($haystack, $needles)
     {
-        return Loop::any($needles, fn ($needle) => mb_strpos($haystack, $needle) !== false);
+        return Loop::any($needles, static fn ($needle) => mb_strpos($haystack, $needle) !== false);
     }
 }
