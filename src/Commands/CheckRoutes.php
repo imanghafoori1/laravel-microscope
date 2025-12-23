@@ -77,7 +77,7 @@ class CheckRoutes extends BaseCommand
                 $ctrlObj = app()->make($ctrlClass);
             } catch (Exception $e) {
                 // Starts with: "SQLSTATE"
-                if (substr($e->getMessage(), 0, strlen('SQLSTATE')) === 'SQLSTATE') {
+                if (strpos($e->getMessage(), 'SQLSTATE') === 0) {
                     dump($ctrlClass.'  -  '.$e->getMessage());
                     continue;
                 }
