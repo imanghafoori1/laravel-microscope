@@ -9,7 +9,7 @@ class BeforeRefFix
 {
     /**
      * @param $command
-     * @return \Closure
+     * @return \Closure(): bool
      */
     public static function getCallback($command)
     {

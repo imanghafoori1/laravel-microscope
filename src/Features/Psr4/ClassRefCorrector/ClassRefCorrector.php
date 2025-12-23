@@ -30,7 +30,7 @@ class ClassRefCorrector
 
     /**
      * @param  array<string, string>  $changes
-     * @param  array<string, \Generator<int, string>>  $allPaths
+     * @param  array<string, \iterable<int, string>>  $allPaths
      * @return void
      */
     private static function fixAllRefs($changes, $allPaths)
