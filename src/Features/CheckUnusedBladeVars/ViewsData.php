@@ -30,7 +30,7 @@ class ViewsData
         $allVars = [];
         foreach ($this->all as $view) {
             $vars = [];
-            $tokens = token_get_all(app('blade.compiler')->compileString(file_get_contents($view->getPath())));
+            $tokens = $this->tokenize($view);
             foreach ($tokens as $i => $token) {
                 // we collect only vars which are not being declared.
                 if (
@@ -41,7 +41,7 @@ class ViewsData
                     $vars[$token[1]] = null;
                 }
             }
-            $allVars = $allVars + $vars;
+            $allVars += $vars;
         }
 
         return $allVars;
@@ -50,5 +50,10 @@ class ViewsData
     public static function getBladeTokens($path)
     {
         return token_get_all(app('microscope.blade.compiler')->compileString(file_get_contents($path)));
+    }
+
+    private function tokenize($view)
+    {
+        return token_get_all(app('blade.compiler')->compileString(file_get_contents($view->getPath())));
     }
 }
