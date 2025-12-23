@@ -31,7 +31,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
         }
 
         if (! $this->options->option('nofix') && ! $this->startWarning()) {
-            return 0;
+            return;
         }
 
         $nofix = $this->options->option('nofix');

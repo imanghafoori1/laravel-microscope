@@ -46,7 +46,7 @@ class ExtractBladePartial implements Check
             return;
         }
 
-        $file = file($absPath);
+        $file = file($absPath) ?: [];
 
         $callsOrder = array_reverse($callsOrder);
         foreach ($callsOrder as $paramName) {
