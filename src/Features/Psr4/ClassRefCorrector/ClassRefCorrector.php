@@ -35,9 +35,7 @@ class ClassRefCorrector
      */
     private static function fixAllRefs($changes, $allPaths)
     {
-        foreach ($allPaths as $paths) {
-            Loop::over($paths, static fn ($path) => self::fix($path, $changes));
-        }
+        Loop::deepOver($allPaths, static fn ($path) => self::fix($path, $changes));
     }
 
     /**

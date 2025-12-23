@@ -11,6 +11,15 @@ class Loop
         }
     }
 
+    public static function deepOver($iterable, callable $callback)
+    {
+        foreach ($iterable as $key1 => $value1) {
+            foreach ($value1 as $key2 => $value2) {
+                $callback($value2, $key2, $key1);
+            }
+        }
+    }
+
     public static function walkCount($iterable, callable $callback)
     {
         $count = 0;
