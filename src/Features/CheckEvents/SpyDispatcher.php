@@ -135,7 +135,7 @@ class SpyDispatcher extends Dispatcher
             $typeHint = $ref->getType();
             if ($typeHint) {
                 if (method_exists($typeHint, 'getTypes')) {
-                    $names = Loop::list($typeHint->getTypes(), fn ($t) => $t->getName());
+                    $names = Loop::mapToList($typeHint->getTypes(), fn ($t) => $t->getName());
                 } else {
                     $names = [$typeHint->getName()];
                 }
