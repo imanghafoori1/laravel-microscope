@@ -13,12 +13,18 @@ class CheckBladePaths
 {
     use FiltersFiles;
 
+    /**
+     * @var string[]
+     */
     public static $scanned = [];
 
+    /**
+     * @var bool
+     */
     public static $readOnly = true;
 
     /**
-     * @param  \Generator<int, string>  $dirs
+     * @param  \iterable<int, string>  $dirs
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
      * @return \Generator<string, int>
      */
@@ -64,7 +70,7 @@ class CheckBladePaths
         }
 
         // Avoid duplicate scans
-        if (in_array($path, self::$scanned)) {
+        if (in_array($path, self::$scanned, true)) {
             return true;
         }
 
@@ -74,7 +80,7 @@ class CheckBladePaths
     }
 
     /**
-     * @param  \Generator<int, \Symfony\Component\Finder\SplFileInfo>  $files
+     * @param  \iterable<int, \Symfony\Component\Finder\SplFileInfo>  $files
      * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
      * @return int
      */
@@ -83,9 +89,6 @@ class CheckBladePaths
         $count = 0;
         foreach ($files as $blade) {
             $count++;
-            /**
-             * @var \Symfony\Component\Finder\SplFileInfo $blade
-             */
             $absFilePath = $blade->getPathname();
 
             $file = PhpFileDescriptor::make($absFilePath);
@@ -100,11 +103,11 @@ class CheckBladePaths
     }
 
     /**
-     * @param  \Generator<int, string>  $paths
+     * @param  \iterable<int, string>  $paths
      * @return \Generator<int, string>
      */
     private static function filterUnwantedBlades($paths)
     {
-        return self::filterItems($paths, fn ($path) => ! self::shouldSkip($path));
+        return self::filterItems($paths, static fn ($path) => ! self::shouldSkip($path));
     }
 }
