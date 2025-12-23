@@ -1,8 +1,7 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEndIf;
 
-use Imanghafoori\LaravelMicroscope\Checks\CheckRubySyntax;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckEndIfCommand extends BaseCommand

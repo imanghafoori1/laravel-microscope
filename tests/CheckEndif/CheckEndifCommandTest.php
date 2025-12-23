@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckEndif;
 
-use Imanghafoori\LaravelMicroscope\Commands\CheckEndIfCommand;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckEndIf\CheckEndIfCommand;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

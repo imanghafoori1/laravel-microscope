@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEndIf;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
