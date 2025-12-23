@@ -10,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 use InvalidArgumentException;
+use RuntimeException;
 
 class ExtractBladePartial implements Check
 {
@@ -36,7 +37,7 @@ class ExtractBladePartial implements Check
             $params = FunctionCall::readParameters($tokens, $i);
 
             $partialName = $params[0][0][1] ?? $partialName;
-            ! in_array($partialName, $callsOrder) && $callsOrder[] = $partialName;
+            ! in_array($partialName, $callsOrder, true) && $callsOrder[] = $partialName;
             $calls[$partialName][] = $params[0][0] ?? $tokens[$i - 1];
 
             $i++;
@@ -139,13 +140,18 @@ class ExtractBladePartial implements Check
             $isInFolder = preg_match("/^(.*)\/([^\/]+)$/", $filepath, $filepathMatches);
             if ($isInFolder) {
                 $folderName = $filepathMatches[1];
-                if (! is_dir($folderName)) {
-                    mkdir($folderName, 0777, true);
-                }
+                self::ensureDirExists($folderName);
             }
             file_put_contents($filepath, $message);
         } catch (Exception $e) {
             echo "ERR: error writing '$message' to '$filepath', ".$e->getMessage();
+        }
+    }
+
+    private static function ensureDirExists(string $folderName)
+    {
+        if (! is_dir($folderName) && ! mkdir($folderName, 0777, true) && ! is_dir($folderName)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $folderName));
         }
     }
 }
