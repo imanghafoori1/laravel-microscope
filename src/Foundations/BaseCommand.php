@@ -46,7 +46,7 @@ class BaseCommand extends Command
         }
 
         /*------------------------*/
-        $this->handleCommand(new Iterator($this->checkSet, $this->getOutput()), $this);
+        $this->handleCommand($this->getIterator(), $this);
         /*------------------------*/
         CachedFiles::writeCacheFiles();
 
@@ -91,5 +91,10 @@ class BaseCommand extends Command
     public function input($input)
     {
         $this->input = $input;
+    }
+
+    private function getIterator(): Iterator
+    {
+        return new Iterator($this->checkSet, $this->getOutput());
     }
 }
