@@ -1,8 +1,7 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
-use Imanghafoori\LaravelMicroscope\Checks\CheckEarlyReturn;
 use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
