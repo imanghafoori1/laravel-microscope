@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\FileReaders;
+namespace Imanghafoori\LaravelMicroscope\Foundations\FileReaders;
 
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;

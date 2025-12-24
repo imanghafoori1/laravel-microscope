@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;

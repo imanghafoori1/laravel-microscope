@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\Refactor;

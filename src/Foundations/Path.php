@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 
 class Path
 {

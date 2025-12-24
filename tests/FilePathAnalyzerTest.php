@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Tests;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use PHPUnit\Framework\TestCase;
 
 class FilePathAnalyzerTest extends TestCase

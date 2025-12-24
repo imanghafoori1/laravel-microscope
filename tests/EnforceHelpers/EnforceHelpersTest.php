@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests\EnforceHelpers;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Commands\EnforceHelpers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;

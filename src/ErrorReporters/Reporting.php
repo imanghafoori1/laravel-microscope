@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;

@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use Imanghafoori\TokenAnalyzer\FunctionCall;

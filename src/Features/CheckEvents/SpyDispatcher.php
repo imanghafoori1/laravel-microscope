@@ -7,7 +7,7 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use ReflectionException;
 use ReflectionFunction;

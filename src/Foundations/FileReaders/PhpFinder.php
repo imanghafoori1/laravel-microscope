@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\FileReaders;
+namespace Imanghafoori\LaravelMicroscope\Foundations\FileReaders;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;

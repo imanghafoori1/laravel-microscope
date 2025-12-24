@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Tests\CheckClassyStrings;
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\ClassifyStringsCommand;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 use PHPUnit\Framework\TestCase;

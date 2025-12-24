@@ -10,7 +10,7 @@ use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;

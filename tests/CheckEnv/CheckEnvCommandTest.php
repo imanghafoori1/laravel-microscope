@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckEndif;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls\CheckEnvCallsCommand;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

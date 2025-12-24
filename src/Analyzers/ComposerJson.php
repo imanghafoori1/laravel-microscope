@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Analyzers;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 class ComposerJson
 {
