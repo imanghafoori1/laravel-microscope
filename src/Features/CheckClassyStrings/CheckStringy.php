@@ -3,9 +3,9 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FileManipulator;

@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 
 class ForAutoloadedFiles
 {

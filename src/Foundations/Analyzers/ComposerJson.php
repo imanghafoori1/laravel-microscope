@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzers;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Analyzers;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;

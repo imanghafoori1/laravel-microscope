@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;

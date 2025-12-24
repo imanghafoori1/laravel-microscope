@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use ReflectionClass;
 use Throwable;

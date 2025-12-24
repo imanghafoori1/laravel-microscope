@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;

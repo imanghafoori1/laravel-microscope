@@ -5,10 +5,10 @@ namespace Imanghafoori\LaravelMicroscope\Commands;
 use Illuminate\Console\Command;
 use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\ReportMessages;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\TypeStatistics;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 
 class CheckStatsCommand extends Command
 {

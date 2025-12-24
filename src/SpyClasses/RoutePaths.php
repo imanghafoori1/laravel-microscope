@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\SpyClasses;
 
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;

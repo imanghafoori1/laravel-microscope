@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 use Closure;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Throwable;
 
 class SpyRouter extends Router

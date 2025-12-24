@@ -23,8 +23,8 @@ class ClassAtMethodHandler
             if (! class_exists($class)) {
                 $result = [false];
 
-                if (self::$fix && Analyzers\Fixer::isInUserSpace($class)) {
-                    $result = Analyzers\Fixer::fixReference($file, $class, $token[2]);
+                if (self::$fix && \Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer::isInUserSpace($class)) {
+                    $result = \Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer::fixReference($file, $class, $token[2]);
                 }
 
                 if ($result[0]) {

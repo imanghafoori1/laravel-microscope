@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 

@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;

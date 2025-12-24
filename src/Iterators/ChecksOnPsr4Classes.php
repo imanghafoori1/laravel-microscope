@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO;
 

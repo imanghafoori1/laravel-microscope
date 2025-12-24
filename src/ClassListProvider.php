@@ -55,7 +55,7 @@ class ClassListProvider
         $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
 
         return [
-            $path1 => Analyzers\ComposerJson::make()->readAutoload(),
+            $path1 => Foundations\Analyzers\ComposerJson::make()->readAutoload(),
             $path2 => ComposerJson::make($path2)->readAutoload(),
         ];
     }

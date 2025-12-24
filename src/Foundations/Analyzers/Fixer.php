@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Analyzers;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Analyzers;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;

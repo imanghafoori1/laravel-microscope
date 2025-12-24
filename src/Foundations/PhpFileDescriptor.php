@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\Filesystem\Filesystem;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
 
 class PhpFileDescriptor
@@ -167,6 +167,9 @@ class PhpFileDescriptor
         return FileManipulator::insertNewLine($this->getAbsolutePath(), $newLine, $atLine);
     }
 
+    /**
+     * @return string
+     */
     public function getFileName()
     {
         return basename($this->getAbsolutePath());

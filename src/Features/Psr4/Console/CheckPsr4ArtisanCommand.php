@@ -7,8 +7,8 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 
 class CheckPsr4ArtisanCommand extends Command
 {

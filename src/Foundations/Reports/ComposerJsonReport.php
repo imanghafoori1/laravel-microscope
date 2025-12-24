@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
 use JetBrains\PhpStorm\Pure;

@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 
 use Illuminate\Console\Command;
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 
 class CheckCodeGeneration extends Command

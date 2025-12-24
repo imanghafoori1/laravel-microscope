@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckFacadeDocblocks;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks\FacadeDocblocks;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use PHPUnit\Framework\TestCase;
 

@@ -2,10 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckExtraSemiColons;
 
-use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands\CheckExtraSemiColons;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternRefactorings;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
