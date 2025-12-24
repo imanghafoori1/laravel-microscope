@@ -15,10 +15,10 @@ class Loop
      * @template TKey of array-key
      * @template TValue
      *
-     * @param \iterable<TKey, TValue> $iterable The collection to iterate over
-     * @param callable(TValue, TKey): void $callback Function to execute for each element.
-     *                          Receives the value and key of each element.
-     *                          Should not return meaningful values.
+     * @param  \iterable<TKey, TValue>  $iterable  The collection to iterate over
+     * @param  callable(TValue, TKey): void  $callback  Function to execute for each element.
+     *                                                  Receives the value and key of each element.
+     *                                                  Should not return meaningful values.
      * @return void
      *
      * @example Updating external state
@@ -45,13 +45,12 @@ class Loop
      * @template TInnerKey of array-key
      * @template TValue
      *
-     * @param iterable<TOuterKey, iterable<TInnerKey, TValue>> $iterable
-     * @param callable(TValue, TInnerKey, TOuterKey): mixed $callback
+     * @param  iterable<TOuterKey, iterable<TInnerKey, TValue>>  $iterable
+     * @param  callable(TValue, TInnerKey, TOuterKey): mixed  $callback
      * @return void
      *
      * @throws \TypeError If any inner value is not iterable
      * @throws \Exception If inner iteration fails
-     *
      */
     public static function deepOver($iterable, callable $callback)
     {
@@ -63,8 +62,8 @@ class Loop
     }
 
     /**
-     * @param $iterable
-     * @param callable $callback
+     * @param  $iterable
+     * @param  callable  $callback
      * @return positive-int
      */
     public static function walkCount($iterable, callable $callback)
@@ -78,7 +77,7 @@ class Loop
     }
 
     /**
-     * @param \iterable $iterable
+     * @param  \iterable  $iterable
      * @return positive-int
      */
     public static function countAll($iterable)
@@ -105,15 +104,14 @@ class Loop
      * @template TValue
      * @template TReturn
      *
-     * @param iterable<TKey, TValue> $iterable The input collection to transform
-     * @param callable(TValue, TKey): TReturn $callback Transformation function applied to each item.
-     *                           Receives the value and its key, returns the new value.
+     * @param  iterable<TKey, TValue>  $iterable  The input collection to transform
+     * @param  callable(TValue, TKey): TReturn  $callback  Transformation function applied to each item.
+     *                                                     Receives the value and its key, returns the new value.
      * @return array<TKey, TReturn> Array with same keys as input, but transformed values
      *
      * @example Basic value transformation
      * $result = map([1, 2, 3], fn($n) => $n * 2);
      * // Returns: [0 => 2, 1 => 4, 2 => 6]
-     *
      * @example With associative array
      * $result = map(['a' => 1, 'b' => 2], fn($v, $k) => "$k:$v");
      * // Returns: ['a' => 'a:1', 'b' => 'b:2'] (keys preserved)
@@ -137,8 +135,8 @@ class Loop
      * @template TValue
      * @template TReturn
      *
-     * @param iterable<TKey, TValue> $iterable
-     * @param callable(TValue, TKey): TReturn $callback
+     * @param  iterable<TKey, TValue>  $iterable
+     * @param  callable(TValue, TKey): TReturn  $callback
      * @return array<int, TReturn>
      */
     public static function mapToList($iterable, callable $callback)
@@ -180,9 +178,9 @@ class Loop
      * @template TMapKey of array-key
      * @template TMapValue
      *
-     * @param iterable<TKey, TValue> $iterable The input collection to transform
-     * @param callable(TValue, TKey): array<TMapKey, TMapValue> $callback Transformation function
-     *                           that returns an array of key-value pairs to merge
+     * @param  iterable<TKey, TValue>  $iterable  The input collection to transform
+     * @param  callable(TValue, TKey): array<TMapKey, TMapValue>  $callback  Transformation function
+     *                                                                       that returns an array of key-value pairs to merge
      * @return array<TMapKey, TMapValue> Merged array from all transformed items
      *
      * @example Basic key transformation
@@ -191,14 +189,12 @@ class Loop
      *     fn($v, $k) => ["{$k}_squared" => $v * $v]
      * );
      * // Returns: ['a_squared' => 1, 'b_squared' => 4]
-     *
      * @example One-to-many mapping
      * $result = mapKey(
      *     [1, 2],
      *     fn($v) => ["num_{$v}" => $v, "double_{$v}" => $v * 2]
      * );
      * // Returns: ['num_1' => 1, 'double_1' => 2, 'num_2' => 2, 'double_2' => 4]
-     *
      * @example Key collisions (later overwrites earlier)
      * $result = mapKey(
      *     ['a' => 1, 'b' => 2],
@@ -231,9 +227,9 @@ class Loop
      * @template TMapKey of array-key
      * @template TMapValue
      *
-     * @param iterable<TKey, TValue> $iterable Input collection (array, Traversable, etc.)
-     * @param callable(TValue, TKey): bool $if Condition predicate
-     * @param callable(TValue, TKey): array<TMapKey, TMapValue> $callback Transformation function
+     * @param  iterable<TKey, TValue>  $iterable  Input collection (array, Traversable, etc.)
+     * @param  callable(TValue, TKey): bool  $if  Condition predicate
+     * @param  callable(TValue, TKey): array<TMapKey, TMapValue>  $callback  Transformation function
      * @return array<TMapKey, TMapValue> Combined array from all transformed items
      *
      * @example
@@ -264,8 +260,8 @@ class Loop
      * @template TKey of array-key
      * @template TValue
      *
-     * @param iterable<TKey, TValue> $iterable The iterable to filter
-     * @param callable(TValue, TKey): bool $callback The filter callback that returns true to keep item
+     * @param  iterable<TKey, TValue>  $iterable  The iterable to filter
+     * @param  callable(TValue, TKey): bool  $callback  The filter callback that returns true to keep item
      * @return array<TKey, TValue> Filtered results preserving original keys
      */
     public static function filter($iterable, $callback): array

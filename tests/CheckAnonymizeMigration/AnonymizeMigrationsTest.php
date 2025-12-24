@@ -2,8 +2,8 @@
 
 namespace CheckAnonymizeMigration;
 
-use Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands\AnonymizeMigrations;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands\AnonymizeMigrations;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use PHPUnit\Framework\TestCase;

@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 class BeforeRefFix
 {
     /**
-     * @param $command
+     * @param  $command
      * @return \Closure(): bool
      */
     public static function getCallback($command)

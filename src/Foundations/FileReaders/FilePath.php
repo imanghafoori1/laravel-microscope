@@ -104,8 +104,8 @@ class FilePath
     }
 
     /**
-     * @param string $needles
-     * @param string $haystack
+     * @param  string  $needles
+     * @param  string  $haystack
      * @return bool
      */
     private static function has($needles, $haystack): bool
