@@ -1,18 +1,18 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SearchReplace;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
-class IsSubClassOf implements Check
+class IsEqualOrSub implements Check
 {
     public static function check($placeholderVal, $parameter, $tokens)
     {
         $fullClassPath = self::getFullClassPath($placeholderVal[1], $tokens);
 
-        return is_subclass_of($fullClassPath, $parameter);
+        return ($fullClassPath === $parameter) || is_subclass_of($fullClassPath, $parameter);
     }
 
     private static function getFullClassPath($classRef, $tokens): string

@@ -3,13 +3,13 @@
 namespace Imanghafoori\LaravelMicroscope\Tests\CheckDynamicWhereMethod;
 
 use Imanghafoori\LaravelMicroscope\Analyzers\ComposerJson;
-use Imanghafoori\LaravelMicroscope\Commands\CheckDynamicWhereMethod;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands\CheckDynamicWhereMethod;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Tests\SampleComposerJson;
 use Imanghafoori\LaravelMicroscope\Tests\SamplePrinter;
 use PHPUnit\Framework\Attributes\Test;

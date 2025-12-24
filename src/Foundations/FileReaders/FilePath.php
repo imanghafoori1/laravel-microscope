@@ -90,7 +90,7 @@ class FilePath
     }
 
     /**
-     * @param  \Generator<int, string>|string[]  $paths
+     * @param  \iterable<int, string>|string[]  $paths
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return \Generator<int, string>
      */
@@ -103,6 +103,11 @@ class FilePath
         }
     }
 
+    /**
+     * @param string $needles
+     * @param string $haystack
+     * @return bool
+     */
     private static function has($needles, $haystack): bool
     {
         return Loop::any(

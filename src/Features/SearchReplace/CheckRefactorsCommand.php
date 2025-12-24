@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SearchReplace;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use ErrorException;
 use Illuminate\Console\Command;

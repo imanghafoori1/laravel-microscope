@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckAbortIf extends BaseCommand

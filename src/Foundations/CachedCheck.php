@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 
 trait CachedCheck
 {
