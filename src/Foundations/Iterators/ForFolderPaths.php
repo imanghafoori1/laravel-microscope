@@ -1,18 +1,18 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 
 class ForFolderPaths extends BaseIterator
 {
     /**
      * @param  array<string, string[]>  $paths
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checker
      * @return StatsDto
      */
     public static function checkFilePaths($paths, CheckSet $checker)
@@ -25,9 +25,9 @@ class ForFolderPaths extends BaseIterator
     }
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checker
      * @param  array<string, \Generator<int, string>>  $dirsList
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto>
      */
     public static function check(CheckSet $checker, $dirsList)
     {
@@ -38,7 +38,7 @@ class ForFolderPaths extends BaseIterator
 
     /**
      * @param  $paths
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checker
      * @return StatsDto
      */
     private static function applyOnFiles($paths, $checker)

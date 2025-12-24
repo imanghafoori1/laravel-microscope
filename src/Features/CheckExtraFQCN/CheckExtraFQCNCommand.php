@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 

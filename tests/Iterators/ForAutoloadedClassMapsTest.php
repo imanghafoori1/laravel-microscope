@@ -5,9 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\Tests\Iterators;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
 use PHPUnit\Framework\TestCase;
 
 class ForAutoloadedClassMapsTest extends TestCase

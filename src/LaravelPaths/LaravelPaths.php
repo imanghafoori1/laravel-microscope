@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\Paths;
-use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForBladeFiles;
 use Imanghafoori\TokenAnalyzer\Str;
 use JetBrains\PhpStorm\Pure;
 

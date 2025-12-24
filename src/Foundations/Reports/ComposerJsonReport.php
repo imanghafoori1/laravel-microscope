@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
 use JetBrains\PhpStorm\Pure;
 
 class ComposerJsonReport
@@ -26,9 +26,9 @@ class ComposerJsonReport
 
     /**
      * @param  string  $composerPath
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stat
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $classMapStat
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $filesStat
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO  $psr4Stat
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto  $classMapStat
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $filesStat
      * @return array<int, string|\Generator<int, string>>
      */
     #[Pure]
@@ -55,10 +55,10 @@ class ComposerJsonReport
     }
 
     /**
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $classMapStats
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $filesStat
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO>  $psr4Stats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto>  $classMapStats
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto  $filesStat
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats
      */
     public static function formatAutoloads($psr4Stats, $classMapStats, $filesStat = [])
     {

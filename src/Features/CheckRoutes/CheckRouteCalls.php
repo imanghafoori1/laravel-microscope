@@ -21,7 +21,7 @@ class CheckRouteCalls implements Check
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
 
-        $total = \count($tokens) - 3;
+        $total = count($tokens) - 3;
         while ($i < $total) {
             $index = FunctionCall::isGlobalCall('route', $tokens, $i);
             $index = $index ?: self::checkForRedirectRoute($tokens, $i);

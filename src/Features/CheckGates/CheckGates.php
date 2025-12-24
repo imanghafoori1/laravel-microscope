@@ -1,9 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckGates;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\SpyClasses\SpyGate;
 
 class CheckGates extends BaseCommand
 {

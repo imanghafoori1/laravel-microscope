@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
@@ -8,7 +8,7 @@ abstract class BaseIterator
 {
     /**
      * @param  \Generator<int, string>|string[]  $absFilePaths
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
      * @return \Generator<int, PhpFileDescriptor>
      */
     public static function applyChecks($absFilePaths, $checkSet)

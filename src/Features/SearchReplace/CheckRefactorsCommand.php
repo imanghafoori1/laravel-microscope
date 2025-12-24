@@ -6,7 +6,7 @@ use ErrorException;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 

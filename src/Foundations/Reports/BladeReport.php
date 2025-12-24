@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\BladeStatDto;
 use JetBrains\PhpStorm\Pure;
 
 class BladeReport

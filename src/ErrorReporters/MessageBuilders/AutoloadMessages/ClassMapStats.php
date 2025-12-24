@@ -10,7 +10,7 @@ class ClassMapStats
     use Reporting;
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $stat
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto  $stat
      * @param  \Closure  $callback
      * @return string|void
      */

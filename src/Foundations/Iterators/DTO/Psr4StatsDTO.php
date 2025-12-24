@@ -1,11 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators\DTO;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO;
 
-class StatsDto
+class Psr4StatsDTO
 {
     /**
-     * @var array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto>
+     * @var array<string, array<string, (callable(): int)>>
      */
     public $stats = [];
 

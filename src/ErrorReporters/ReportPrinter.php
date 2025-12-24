@@ -2,12 +2,12 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats;
 
 class ReportPrinter
 {
     /**
-     * @param  array|\Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats  $messages
+     * @param  array|\Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats  $messages
      * @param  $output
      * @return void
      */

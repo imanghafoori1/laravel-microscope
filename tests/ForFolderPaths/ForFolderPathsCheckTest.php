@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Tests\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForFolderPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use PHPUnit\Framework\TestCase;
 

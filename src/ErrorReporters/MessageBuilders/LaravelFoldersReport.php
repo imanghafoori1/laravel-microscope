@@ -10,7 +10,7 @@ class LaravelFoldersReport
     use Reporting;
 
     /**
-     * @param  array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>  $foldersStats
+     * @param  array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto>  $foldersStats
      * @return \Generator<int, string>
      */
     public static function formatFoldersStats($foldersStats)
@@ -26,7 +26,7 @@ class LaravelFoldersReport
     }
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto  $stats
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto  $stats
      * @return array
      */
     private static function subDirs($stats)

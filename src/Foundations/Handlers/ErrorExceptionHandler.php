@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Handlers;
 
 use Illuminate\Support\Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;

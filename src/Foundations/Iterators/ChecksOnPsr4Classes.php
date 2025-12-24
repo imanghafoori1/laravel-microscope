@@ -1,10 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO;
 
 class ChecksOnPsr4Classes
 {
@@ -19,13 +19,13 @@ class ChecksOnPsr4Classes
     public static $checkedFilesCount = 0;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Iterators\CheckSet
+     * @var \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet
      */
     private static $check;
 
     /**
      * @param  CheckSet  $check
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO>
      */
     public static function apply($check)
     {
@@ -39,7 +39,7 @@ class ChecksOnPsr4Classes
     }
 
     /**
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO>
      */
     private static function processAll()
     {
@@ -48,7 +48,7 @@ class ChecksOnPsr4Classes
 
     /**
      * @param  array<string, string|string[]>  $psr4
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO
      */
     private static function processGetStats($psr4)
     {

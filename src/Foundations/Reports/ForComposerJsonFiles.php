@@ -2,15 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedClassMaps;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedFiles;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedPsr4Classes;
 
 class ForComposerJsonFiles
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\AutoloadStats
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats
      */
     public static function checkAndPrint($checkSet)
     {

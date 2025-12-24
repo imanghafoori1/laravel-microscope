@@ -1,17 +1,17 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;
 
 class ForAutoloadedClassMaps extends BaseIterator
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto>
      */
     public static function check(CheckSet $checkSet)
     {
@@ -23,8 +23,8 @@ class ForAutoloadedClassMaps extends BaseIterator
 
     /**
      * @param  \Generator<string, string[]>  $classMap
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto
      */
     private static function getDirStats($classMap, $checkSet)
     {

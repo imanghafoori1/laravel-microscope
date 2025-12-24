@@ -10,7 +10,7 @@ class AutoloadFiles
     use Reporting;
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $filesList
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $filesList
      * @return string
      */
     public static function getLines($filesList)

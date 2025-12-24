@@ -1,28 +1,28 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Exception;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\BladeStatDto;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\BladeStatDto;
 
 class ForBladeFiles implements Check
 {
     public static $paths;
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
      * @return array<string, BladeStatDto>
      */
     public static function check($checkSet)
     {
         self::withoutComponentTags();
         $mapper = fn ($paths) => BladeStatDto::make(
-            BladeFiles\CheckBladePaths::checkPaths($paths, $checkSet)
+            \Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths::checkPaths($paths, $checkSet)
         );
 
         return Loop::map(self::getViewsPaths(), $mapper);

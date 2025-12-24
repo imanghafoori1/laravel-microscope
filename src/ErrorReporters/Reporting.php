@@ -61,7 +61,7 @@ trait Reporting
     }
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $files
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $files
      * @return string[]
      */
     #[Pure]

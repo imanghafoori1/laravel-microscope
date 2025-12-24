@@ -1,10 +1,10 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Throwable;
 
@@ -15,7 +15,7 @@ class CheckSet
     public $pathDTO;
 
     /**
-     * @var \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection
+     * @var \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\CheckCollection
      */
     public $checks;
 

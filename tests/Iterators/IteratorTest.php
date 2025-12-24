@@ -5,8 +5,8 @@ namespace Imanghafoori\LaravelMicroscope\Tests\Iterators;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterator;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 use PHPUnit\Framework\TestCase;
 

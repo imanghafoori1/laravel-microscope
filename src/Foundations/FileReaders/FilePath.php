@@ -56,7 +56,7 @@ class FilePath
     }
 
     /**
-     * @param  $filePath
+     * @param  string  $filePath
      * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
      * @return bool
      */

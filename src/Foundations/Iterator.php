@@ -4,15 +4,15 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedClassMaps;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedPsr4Classes;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForBladeFiles;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForFolderPaths;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ForComposerJsonFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\RouteReport;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedClassMaps;
-use Imanghafoori\LaravelMicroscope\Iterators\ForAutoloadedPsr4Classes;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
-use Imanghafoori\LaravelMicroscope\Iterators\ForFolderPaths;
-use Imanghafoori\LaravelMicroscope\Iterators\ForRouteFiles;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class Iterator
@@ -28,7 +28,7 @@ class Iterator
     }
 
     /**
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO[]
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO[]
      */
     public function forPsr4()
     {
@@ -36,7 +36,7 @@ class Iterator
     }
 
     /**
-     * @return array<string, \Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto>
+     * @return array<string, \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto>
      */
     public function forClassmaps()
     {

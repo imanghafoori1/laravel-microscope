@@ -8,7 +8,7 @@ use JetBrains\PhpStorm\Pure;
 class RouteReport
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto  $routeFiles
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $routeFiles
      * @return string
      */
     #[Pure]

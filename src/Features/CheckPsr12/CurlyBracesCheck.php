@@ -22,7 +22,7 @@ class CurlyBracesCheck implements Check
     {
         $level = 0;
         $isInSideClass = false;
-        $ct = \count($tokens);
+        $ct = count($tokens);
         $i = 0;
         while ($i < $ct - 1) {
             $i++;

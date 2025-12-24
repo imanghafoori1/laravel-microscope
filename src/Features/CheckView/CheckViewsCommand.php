@@ -6,9 +6,9 @@ use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForBladeFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\BladeReport;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\ForBladeFiles;
 
 class CheckViewsCommand extends BaseCommand
 {

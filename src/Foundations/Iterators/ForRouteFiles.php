@@ -1,16 +1,16 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class ForRouteFiles
 {
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checker
-     * @return \Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checker
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto
      */
     public static function check(CheckSet $checker)
     {

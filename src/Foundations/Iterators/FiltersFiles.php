@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Closure;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;

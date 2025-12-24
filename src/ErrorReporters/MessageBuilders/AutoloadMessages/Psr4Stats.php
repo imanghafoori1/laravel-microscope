@@ -11,7 +11,7 @@ class Psr4Stats
     use Reporting;
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\Psr4StatsDTO  $psr4Stats
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO  $psr4Stats
      * @param  int  $max
      * @return \Generator<int, string>
      */

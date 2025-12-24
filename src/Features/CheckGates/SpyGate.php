@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SpyClasses;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckGates;
 
 use Exception;
 use Illuminate\Auth\Access\Gate;
@@ -16,9 +16,7 @@ class SpyGate extends Gate
     public static function start()
     {
         app()->singleton(GateContract::class, function ($app) {
-            return new self($app, function () use ($app) {
-                return call_user_func($app['auth']->userResolver());
-            });
+            return new self($app, fn () => call_user_func($app['auth']->userResolver()));
         });
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators\DTO;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO;
 
 class BladeStatDto
 {

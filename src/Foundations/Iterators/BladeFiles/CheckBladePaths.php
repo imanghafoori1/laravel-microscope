@@ -1,12 +1,12 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
+namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\FiltersFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;
 use Symfony\Component\Finder\Finder;
 
 class CheckBladePaths
@@ -25,7 +25,7 @@ class CheckBladePaths
 
     /**
      * @param  \iterable<int, string>  $dirs
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\CheckSet  $checkSet
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet  $checkSet
      * @return \Generator<string, int>
      */
     public static function checkPaths($dirs, CheckSet $checkSet)
@@ -81,7 +81,7 @@ class CheckBladePaths
 
     /**
      * @param  \iterable<int, \Symfony\Component\Finder\SplFileInfo>  $files
-     * @param  \Imanghafoori\LaravelMicroscope\Iterators\DTO\CheckCollection  $checks
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\CheckCollection  $checks
      * @return int
      */
     private static function applyChecks($files, $checks): int
