@@ -1,10 +1,11 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
 use Illuminate\Database\Eloquent\Model;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsSubClassOf;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\SearchReplace\Filters;
 
 class EnforceQuery extends BaseCommand

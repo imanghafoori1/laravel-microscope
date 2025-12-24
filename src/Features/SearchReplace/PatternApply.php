@@ -1,10 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use Imanghafoori\LaravelMicroscope\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\PatternParser;
 
 trait PatternApply

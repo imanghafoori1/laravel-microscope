@@ -1,11 +1,12 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\FullNamespaceIs;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsSubClassOf;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\NamespaceIs;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\SearchReplace\FullNamespaceIs;
-use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
-use Imanghafoori\LaravelMicroscope\SearchReplace\NamespaceIs;
 use Imanghafoori\SearchReplace\Filters;
 
 class EnforceHelpers extends BaseCommand

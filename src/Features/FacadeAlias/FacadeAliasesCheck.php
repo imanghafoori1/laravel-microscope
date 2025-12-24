@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
 class FacadeAliasesCheck implements Check
 {

@@ -1,13 +1,14 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
 use Illuminate\Database\Eloquent\Concerns\QueriesRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsSubClassOf;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\SearchReplace\IsSubClassOf;
 use Imanghafoori\SearchReplace\Filters;
 
 class CheckDynamicWhereMethod extends BaseCommand

@@ -2,9 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Tests\CachedFileCheckTrait;
 
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

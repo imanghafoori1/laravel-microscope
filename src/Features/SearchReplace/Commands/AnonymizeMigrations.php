@@ -1,14 +1,14 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Commands;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
 use Illuminate\Database\Migrations\Migration;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsEqualOrSub;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use Imanghafoori\LaravelMicroscope\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\SearchReplace\IsEqualOrSub;
-use Imanghafoori\LaravelMicroscope\SearchReplace\PatternRefactorings;
 use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 use Symfony\Component\Finder\Finder;

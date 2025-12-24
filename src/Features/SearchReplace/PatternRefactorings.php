@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\SearchReplace;
+namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;

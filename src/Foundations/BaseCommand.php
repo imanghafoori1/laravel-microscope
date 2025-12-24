@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\SearchReplace\CachedFiles;
 
 class BaseCommand extends Command
 {

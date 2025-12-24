@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\ServiceProvider;
 
 use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\Features;
-use Imanghafoori\LaravelMicroscope\SearchReplace;
 
 trait CommandsRegistry
 {
@@ -31,19 +30,19 @@ trait CommandsRegistry
         Features\CheckGenericDocBlocks\CheckGenericDocBlocksCommand::class,
         Features\CheckPsr12\CheckPsr12Command::class,
         Features\CheckEndIf\CheckEndIfCommand::class,
-        Commands\EnforceQuery::class,
-        Commands\EnforceHelpers::class,
-        SearchReplace\CheckRefactorsCommand::class,
-        Commands\CheckDynamicWhereMethod::class,
+        Features\SearchReplace\Commands\EnforceQuery::class,
+        Features\SearchReplace\Commands\EnforceHelpers::class,
+        Features\SearchReplace\CheckRefactorsCommand::class,
+        Features\SearchReplace\Commands\CheckDynamicWhereMethod::class,
         Features\ListModels\ListModelsArtisanCommand::class,
-        Commands\CheckEmptyComments::class,
-        Commands\CheckExtraSemiColons::class,
-        Commands\EnforceArrowFunctions::class,
-        Commands\AnonymizeMigrations::class,
+        Features\SearchReplace\Commands\CheckEmptyComments::class,
+        Features\SearchReplace\Commands\CheckExtraSemiColons::class,
+        Features\SearchReplace\Commands\EnforceArrowFunctions::class,
+        Features\SearchReplace\Commands\AnonymizeMigrations::class,
         Features\CheckExtraFQCN\CheckExtraFQCNCommand::class,
         Features\EnforceImports\EnforceImportsCommand::class,
         Commands\CheckStatsCommand::class,
-        Commands\CheckAbortIf::class,
+        Features\SearchReplace\Commands\CheckAbortIf::class,
     ];
 
     private function registerCommands()
