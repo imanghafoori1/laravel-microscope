@@ -20,9 +20,9 @@ class PhpFileDescriptor
     private $tokens = [];
 
     /**
-     * @var \Closure
+     * @var \Closure|null
      */
-    private $tokenizer = null;
+    private $tokenizer;
 
     public static function make($absolutePath)
     {

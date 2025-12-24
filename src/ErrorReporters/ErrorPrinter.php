@@ -164,9 +164,7 @@ class ErrorPrinter
 
     public function logErrors()
     {
-        foreach ($this->errorsList as $list) {
-            Loop::over($list, fn ($error) => $this->printError($error));
-        }
+        Loop::deepOver($this->errorsList, fn ($error) => $this->printError($error));
 
         foreach ($this->pended as $pend) {
             $this->print($pend);
