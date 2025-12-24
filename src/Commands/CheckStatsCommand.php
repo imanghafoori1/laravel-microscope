@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\ReportMessages;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\TypeStatistics;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class CheckStatsCommand extends Command
 {
@@ -16,6 +17,9 @@ class CheckStatsCommand extends Command
 
     protected $description = 'Get statistics of your laravel application.';
 
+    /**
+     * @throws \Exception
+     */
     public function handle()
     {
         $this->info('Your Laravel app consists of:');
@@ -29,24 +33,21 @@ class CheckStatsCommand extends Command
         $stats = $this->prepareStats($types);
 
         $events = resolve('events')->getRawListeners();
-        foreach ($classLists->getAllLists() as $list) {
-            foreach ($list as $entities) {
-                foreach ($entities as $entity) {
-                    /**
-                     * @var \ImanGhafoori\ComposerJson\Entity $entity
-                     */
-                    $namespace = $entity->getClassDefinition()->getNamespace();
-                    $class1 = $namespace.'\\'.$entity->getEntityName();
+        Loop::deepOver($classLists->getAllLists(), static function ($entities) use ($types, &$stats) {
+            foreach ($entities as $entity) {
+                /**
+                 * @var \ImanGhafoori\ComposerJson\Entity $entity
+                 */
+                $namespace = $entity->getClassDefinition()->getNamespace();
+                $class1 = $namespace.'\\'.$entity->getEntityName();
 
-                    foreach ($types as $type => $id) {
-                        is_subclass_of($class1, $type) && $stats[$id]['counts']++ && $stats[$id]['namespaces'][$namespace] = null;
-                    }
-                    if (isset($events[$class1])) {
-                        $stats['Events']['counts']++;
-                    }
+                foreach ($types as $type => $id) {
+                    is_subclass_of($class1, $type) && $stats[$id]['counts']++ && $stats[$id]['namespaces'][$namespace] = null;
                 }
+
+                isset($events[$class1]) && $stats['Events']['counts']++;
             }
-        }
+        });
 
         foreach ($stats as $id => $int) {
             $this->info(' <fg=white> - </><fg=yellow>'.$int['counts'].' '.$id.'</> found.');
@@ -83,14 +84,10 @@ class CheckStatsCommand extends Command
     {
         $type = new TypeStatistics();
 
-        foreach ($classLists->getAllLists() as $composerPath => $classList) {
-            foreach ($classList as $namespace => $entities) {
-                $type->namespaceFiles($namespace, count($entities));
-                foreach ($entities as $entity) {
-                    $type->increment($entity->getType());
-                }
-            }
-        }
+        Loop::deepOver($classLists, function ($entities, $namespace) use ($type) {
+            $type->namespaceFiles($namespace, count($entities));
+            Loop::over($entities, static fn ($entity) => $type->increment($entity->getType()));
+        });
 
         return $type;
     }
@@ -126,14 +123,13 @@ class CheckStatsCommand extends Command
 
     private function getListenersCount(array $events): array
     {
-        $liteners = 0;
+        $listenersCount = 0;
         $eventsCount = 0;
         foreach ($events as $event => $listeners) {
-            $eventsCount++;
-            $liteners += count($listeners);
+            $eventsCount++ && $listenersCount += count($listeners);
         }
 
-        return [$liteners, $eventsCount];
+        return [$listenersCount, $eventsCount];
     }
 
     private function prepareStats(array $types): array
