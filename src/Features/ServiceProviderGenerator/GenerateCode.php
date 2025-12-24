@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ServiceProviderGenerator;
 
 use Illuminate\Support\Str;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\TokenManager;
 

@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
 use Closure;
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 trait FiltersFiles
 {

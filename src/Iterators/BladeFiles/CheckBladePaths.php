@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Iterators\BladeFiles;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\ViewsData;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Iterators\FiltersFiles;

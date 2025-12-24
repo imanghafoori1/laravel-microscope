@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\Paths;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\StatsDto;

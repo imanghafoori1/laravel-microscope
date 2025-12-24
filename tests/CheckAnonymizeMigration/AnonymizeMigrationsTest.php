@@ -4,7 +4,7 @@ namespace CheckAnonymizeMigration;
 
 use Imanghafoori\LaravelMicroscope\Commands\AnonymizeMigrations;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 use PHPUnit\Framework\TestCase;
 

@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope;
 
 use ImanGhafoori\ComposerJson\ComposerJson;
-use Imanghafoori\LaravelMicroscope\FileReaders\BasePath;
-use Imanghafoori\LaravelMicroscope\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\TokenAnalyzer\Str;
 
 class ClassListProvider

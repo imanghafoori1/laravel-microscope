@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Iterators;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Iterators\DTO\FilesDto;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 

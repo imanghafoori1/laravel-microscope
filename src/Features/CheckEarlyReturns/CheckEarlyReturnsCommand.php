@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
-use Imanghafoori\LaravelMicroscope\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 class CheckEarlyReturnsCommand extends BaseCommand
 {
