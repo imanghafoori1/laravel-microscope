@@ -16,11 +16,15 @@ class CheckCollection
         Loop::over($this->checks, fn ($check) => $check::check($fileDescriptor));
     }
 
-    public static function make($stats)
+    /**
+     * @param $checks
+     * @return self
+     */
+    public static function make($checks)
     {
         $obj = new self();
 
-        $obj->checks = $stats;
+        $obj->checks = $checks;
 
         return $obj;
     }
