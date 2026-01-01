@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\Filesystem\FileManipulator;
-use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
 
@@ -118,7 +117,7 @@ class PhpFileDescriptor
     {
         $this->tokens = [];
 
-        return Filesystem::$fileSystem::file_put_contents($this->getAbsolutePath(), $newVersion);
+        return file_put_contents($this->getAbsolutePath(), $newVersion);
     }
 
     public function replaceFirst($search, $replace)

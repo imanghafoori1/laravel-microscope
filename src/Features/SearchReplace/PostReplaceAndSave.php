@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Illuminate\Support\Str;
-use Imanghafoori\Filesystem\Filesystem;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
@@ -35,7 +34,7 @@ class PostReplaceAndSave
         self::printLinks($lineNum, $absFilePath, $from, $to);
 
         if (self::$forceSave || self::askToRefactor($absFilePath)) {
-            Filesystem::$fileSystem::file_put_contents($absFilePath, Refactor::toString($newTokens));
+            file_put_contents($absFilePath, Refactor::toString($newTokens));
             $tokens = $newTokens;
         }
 
