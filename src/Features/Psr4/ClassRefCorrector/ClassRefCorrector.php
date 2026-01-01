@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ClassRefCorrector
 {
@@ -35,11 +36,11 @@ class ClassRefCorrector
      */
     private static function fixAllRefs($changes, $allPaths)
     {
-        Loop::deepOver($allPaths, static fn ($path) => self::fix($path, $changes));
+        Loop::deepOver($allPaths, static fn ($path) => self::fix(PhpFileDescriptor::make($path), $changes));
     }
 
     /**
-     * @param  string  $path
+     * @param  PhpFileDescriptor  $path
      * @param  array<string, string>  $changes
      * @return void
      */
@@ -54,13 +55,13 @@ class ClassRefCorrector
     }
 
     /**
-     * @param  string  $path
+     * @param  PhpFileDescriptor  $path
      * @param  array<string, string>  $changes
      * @return array
      */
     private static function fixRefs($path, $changes)
     {
-        $lines = file($path);
+        $lines = file($path->getAbsolutePath());
         $changedLineNums = [];
         $beforeFix = self::$beforeFix;
         $olds = array_keys($changes);
