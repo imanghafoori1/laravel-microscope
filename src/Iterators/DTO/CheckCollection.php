@@ -17,7 +17,7 @@ class CheckCollection
     }
 
     /**
-     * @param $checks
+     * @param  $checks
      * @return self
      */
     public static function make($checks)
