@@ -34,8 +34,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, sqlite3, gd, zip, curl, dom, fileinfo, libxml, bcmath, openssl, tokenizer, json
-          coverage: none
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, sqlite3, gd, zip, curl, dom, fileinfo, libxml, bcmath, openssl, tokenizer, json, xdebug
+          coverage: xdebug
 
       - name: Get composer cache directory
         id: composer-cache
@@ -151,16 +151,10 @@ jobs:
           echo "=== Looking for microscope tests ==="
           
           # Check if there are test files mentioning microscope
-          if find tests -name "*[Mm]icroscope*.php" -type f | grep -q "."; then
-            echo "Running microscope-specific tests..."
-            for test_file in $(find tests -name "*[Mm]icroscope*.php" -type f); do
-              echo "Running: $test_file"
-              php artisan test "$test_file" --colors=always 2>/dev/null || true
-            done
-          else
-            echo "No microscope-specific tests found, running all tests..."
-            php artisan test --colors=always 2>/dev/null || true
-          fi
+          echo "No microscope-specific tests found, running all tests..."
+          php artisan test --coverage-clover ./../laravel-microscope/clover.xml --colors=always 2>/dev/null || true
+        env:
+          XDEBUG_MODE: coverage
 
       - name: Run PHPUnit directly (fallback)
         if: failure()
@@ -177,6 +171,13 @@ jobs:
           echo "=== Dependency Status ==="
           composer outdated --direct --format=json 2>/dev/null | jq -r '.installed[] | "\(.name): \(.version) -> \(.latest)"' 2>/dev/null || echo "Could not check dependencies"
 
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd laravel-microscope
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=clover.xml --json_path=coverall.xml -v
 #      - name: Upload test artifacts on failure
 #        if: failure()
 #        uses: actions/upload-artifact@v3
