@@ -102,7 +102,7 @@ class Psr4Errors
             if ($i >= $lines) {
                 break;
             }
-            usleep(self::$pause);
+            usleep(70000);
         }
     }
 
