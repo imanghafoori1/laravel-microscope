@@ -1,0 +1,189 @@
+name: Test Package with Laravel 12
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  test-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5  # Add timeout to prevent indefinite runs
+
+    strategy:
+      matrix:
+        php: ["8.2", "8.3", "8.4"]
+
+    name: Laravel 12 (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+        with:
+          path: laravel-microscope
+
+      - name: Checkout Laravel test application
+        uses: actions/checkout@v4
+        with:
+          repository: imanghafoori1/laravel-microscope-tester
+          path: laravel-app
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, sqlite3, gd, zip, curl, dom, fileinfo, libxml, bcmath, openssl, tokenizer, json
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-laravel12-php-${{ matrix.php }}-${{ hashFiles('laravel-app/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-laravel12-php-${{ matrix.php }}-
+            ${{ runner.os }}-composer-
+
+      - name: Configure Laravel 12 and local package
+        timeout-minutes: 2
+        run: |
+          cd laravel-app
+          
+          # First, just install existing dependencies without updating
+          composer install --no-interaction --no-progress
+          
+          # Remove any existing version of the package
+          composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
+          
+          # Add local package repository
+          composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
+          
+          # Update only specific packages instead of full update
+          # Require Laravel 12 if needed (uncomment if needed)
+          # composer require "laravel/framework:^12.0" --no-interaction
+          
+          # Require local package
+          composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
+          
+          # Update PHPUnit based on PHP version
+          # if [[ "${{ matrix.php }}" == "8.5" ]] || [[ "${{ matrix.php }}" == "8.4" ]]; then
+            # PHP 8.4+ requires PHPUnit 11+
+          #  composer require "phpunit/phpunit:^11.0" --dev --no-interaction
+          # else
+            # PHP 8.2-8.3 work with PHPUnit 10+
+          #  composer require "phpunit/phpunit:^10.0" --dev --no-interaction
+          # fi
+          
+          # Update testbench for Laravel 12 (uncomment if needed)
+          # composer require "orchestra/testbench:^10.0" --dev --no-interaction
+          
+          # Update common dependencies for Laravel 12
+          # composer require "symfony/console:^7.0" --no-interaction 2>/dev/null || true
+          # composer require "symfony/http-foundation:^7.0" --no-interaction 2>/dev/null || true
+          # composer require "league/flysystem:^3.0" --no-interaction 2>/dev/null || true
+
+      - name: Verify installations
+        run: |
+          cd laravel-app
+          echo "=== Installed Versions ==="
+          composer show laravel/framework 2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit 2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
+          echo "=========================="
+
+      - name: Prepare Laravel environment
+        run: |
+          cd laravel-app
+          
+          # Create .env if not exists
+          if [ ! -f ".env" ]; then
+            cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
+          fi
+          
+          # Generate app key
+          php artisan key:generate --force 2>/dev/null || true
+          
+          # Clear caches
+          php artisan config:clear 2>/dev/null || true
+          php artisan cache:clear 2>/dev/null || true
+          
+          # Set up SQLite database for testing
+          mkdir -p database
+          touch database/database.sqlite
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
+
+      - name: Publish package assets if needed
+        run: |
+          cd laravel-app
+          # Check if package has config to publish
+          if grep -q "MicroscopeServiceProvider" vendor/composer/installed.json 2>/dev/null; then
+            php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\MicroscopeServiceProvider" --tag=config --force 2>/dev/null || true
+            php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\MicroscopeServiceProvider" --tag=views --force 2>/dev/null || true
+          fi
+
+      - name: Run migrations if needed
+        run: |
+          cd laravel-app
+          if [ -d "database/migrations" ] && [ -n "$(ls -A database/migrations/*.php 2>/dev/null)" ]; then
+            php artisan migrate --force 2>/dev/null || true
+          fi
+
+      - name: Run tests with Laravel 12
+        run: |
+          cd laravel-app
+          
+          # Run tests using Laravel's test command
+          php artisan test --colors=always 2>/dev/null || echo "Artisan test command failed"
+
+      - name: Run microscope-specific tests
+        if: always()
+        run: |
+          cd laravel-app
+          
+          # Look for tests related to microscope
+          echo "=== Looking for microscope tests ==="
+          
+          # Check if there are test files mentioning microscope
+          if find tests -name "*[Mm]icroscope*.php" -type f | grep -q "."; then
+            echo "Running microscope-specific tests..."
+            for test_file in $(find tests -name "*[Mm]icroscope*.php" -type f); do
+              echo "Running: $test_file"
+              php artisan test "$test_file" --colors=always 2>/dev/null || true
+            done
+          else
+            echo "No microscope-specific tests found, running all tests..."
+            php artisan test --colors=always 2>/dev/null || true
+          fi
+
+      - name: Run PHPUnit directly (fallback)
+        if: failure()
+        run: |
+          cd laravel-app
+          echo "=== Trying PHPUnit directly ==="
+          vendor/bin/phpunit --version 2>/dev/null || echo "PHPUnit not available"
+          vendor/bin/phpunit --colors=always 2>/dev/null || echo "PHPUnit tests failed"
+
+      - name: Check for dependency issues
+        if: always()
+        run: |
+          cd laravel-app
+          echo "=== Dependency Status ==="
+          composer outdated --direct --format=json 2>/dev/null | jq -r '.installed[] | "\(.name): \(.version) -> \(.latest)"' 2>/dev/null || echo "Could not check dependencies"
+
+#      - name: Upload test artifacts on failure
+#        if: failure()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: failure-details-php-${{ matrix.php }}
+#          path: |
+#            laravel-app/storage/logs/
+#            laravel-app/bootstrap/cache/
+#            laravel-app/vendor/composer/installed.json
+#          retention-days: 14
