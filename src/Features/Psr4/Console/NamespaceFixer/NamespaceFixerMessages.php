@@ -8,16 +8,18 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class NamespaceFixerMessages
 {
+    public static $pause = 250000;
+
     public static function warnIncorrectNamespace($path, $currentNamespace, $className)
     {
         $printer = ErrorPrinter::singleton();
         $msg = self::getHeader($currentNamespace, $className);
-        usleep(250000);
+        usleep(self::$pause);
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg) - 12);
 
         $printer->printHeader($msg, false);
-        usleep(250000);
+        usleep(self::$pause);
 
         $printer->printLink($path, 3);
     }

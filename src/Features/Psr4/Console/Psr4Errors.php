@@ -23,6 +23,8 @@ class Psr4Errors
 
     public static $confirm = Confirm::class;
 
+    public static $pause = 70_000;
+
     public static function handle(array $errorsLists, $command)
     {
         self::$command = $command;
@@ -100,7 +102,7 @@ class Psr4Errors
             if ($i >= $lines) {
                 break;
             }
-            usleep(70000);
+            usleep(self::$pause);
         }
     }
 
