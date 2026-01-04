@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\ServiceProvider;
 
-use Imanghafoori\LaravelMicroscope\Commands;
 use Imanghafoori\LaravelMicroscope\Features;
 
 trait CommandsRegistry
