@@ -37,7 +37,7 @@ class ComposerJson
     }
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return array<string, \Generator<string, string[]>>
      */
     public static function getClassMaps($pathDTO)
@@ -54,7 +54,7 @@ class ComposerJson
     /**
      * @param  string  $composerPath
      * @param  string[]  $classMapPaths
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return \Generator<string, string[]>
      */
     private static function getFilteredClasses($composerPath, $classMapPaths, $pathDTO)
@@ -81,7 +81,7 @@ class ComposerJson
 
     /**
      * @param  string[]  $classes
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return string[]
      */
     private static function filterClasses(array $classes, $pathDTO)

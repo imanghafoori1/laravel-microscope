@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
+use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
 
 class FilePathsForReferenceFix

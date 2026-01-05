@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\FileReaders;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\FiltersFiles;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 
 class Paths
 {

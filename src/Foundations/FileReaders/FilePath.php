@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\FileReaders;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use JetBrains\PhpStorm\Pure;
 
 class FilePath
@@ -57,7 +57,7 @@ class FilePath
 
     /**
      * @param  string  $filePath
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return bool
      */
     #[Pure]
@@ -91,7 +91,7 @@ class FilePath
 
     /**
      * @param  \iterable<int, string>|string[]  $paths
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return \Generator<int, string>
      */
     public static function filter($paths, $pathDTO)

@@ -9,7 +9,7 @@ trait FiltersFiles
 {
     /**
      * @param  \Symfony\Component\Finder\Finder|array  $files
-     * @param  \Imanghafoori\LaravelMicroscope\PathFilterDTO  $pathDTO
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return \Generator<int, \Symfony\Component\Finder\SplFileInfo>
      */
     private static function filterFiles($files, $pathDTO)

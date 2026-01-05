@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\CheckCollection;
+use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
 use Throwable;
 
 class CheckSet

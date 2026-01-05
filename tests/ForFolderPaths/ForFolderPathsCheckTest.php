@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForFolderPaths;
-use Imanghafoori\LaravelMicroscope\PathFilterDTO;
+use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use PHPUnit\Framework\TestCase;
 
 class ForFolderPathsCheckTest extends TestCase
