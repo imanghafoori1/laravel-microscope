@@ -110,6 +110,7 @@ class EnforceImports implements Check
                 // in case we are not able to insert imports at the top:
                 if (count($replacements) === 0) {
                     file_put_contents($file->getAbsolutePath(), $original);
+                    $file->getTokens(true);
                     $hasError = $reverted = true;
                     break;
                 }
@@ -138,6 +139,7 @@ class EnforceImports implements Check
             ],
         ], $file->getTokens(true));
         file_put_contents($file->getAbsolutePath(), $string);
+        $file->getTokens(true);
 
         return $replacements;
     }
