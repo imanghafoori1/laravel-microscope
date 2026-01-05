@@ -24,7 +24,6 @@ trait CommandsRegistry
         Features\ActionComments\CheckActionCommentsCommand::class,
         Features\CheckEnvCalls\CheckEnvCallsCommand::class,
         Features\ExtractsBladePartials\CheckExtractBladeIncludesCommand::class,
-        Features\ServiceProviderGenerator\CheckCodeGeneration::class,
         Features\CheckDeadControllers\CheckDeadControllersCommand::class,
         Features\CheckGenericDocBlocks\CheckGenericDocBlocksCommand::class,
         Features\CheckPsr12\CheckPsr12Command::class,

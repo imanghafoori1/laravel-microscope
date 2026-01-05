@@ -66,7 +66,6 @@ Give your eyes a rest, we will detect and fix them for you.
 
         1. [`php artisan check:early_returns`](#early_returns)
         1. [`php artisan check:psr4`](#psr4)
-        1. [`php artisan check:generate`](#generate)
         1. [`php artisan check:imports`](#imports)
         1. [`php artisan check:bad_practices`](#bad_practices)
         1. [`php artisan check:routes`](#routes)
@@ -145,7 +144,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 <a name="less-use-commands"></a>
 ### Less Used Commands:
 
-| #  |                   Artisan Command                             |
+| #  | Artisan Command                                               |
 |----|---------------------------------------------------------------|
 | 1  | `php artisan check:views`                                     |
 | 2  | `php artisan check:routes`                                    |
@@ -159,7 +158,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 10 | `php artisan check:action_comments`                           |
 | 11 | `php artisan check:extract_blades`                            |
 | 12 | `php artisan pp:route`                                        |
-| 13 | `php artisan check:generate`                                  |
+| 13 | `php artisan list:models`                                     |
 | 14 | `php artisan check:endif`                                     |
 | 15 | `php artisan check:events`                                    |
 | 16 | `php artisan check:gates`                                     |
@@ -171,7 +170,6 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 22 | `php artisan enforce:imports`                                 |
 | 23 | `php artisan check:fqcn`                                      |
 | 24 | `php artisan check:abort_if`                                  |
-| 25 | `php artisan list:models`                                     |
 
 <a name="global-helper-functions"></a>
 ## Global Helper Functions:
@@ -644,17 +642,6 @@ if ($var1 > 1)
 - It checks for all the psr4 autoload defined in the composer.json file and goes through all the classes to have the right namespace, according to PSR-4 standard.
 - It automatically corrects namespaces (according to PSR-4 rules)
 - It also checks for references to the old namespace with the system and replaces them with the new one.
-
-
-<a name="generate"></a>
-
-### `php artisan check:generate`
-
-You make an empty file, and we fill it, based on naming conventions.
-
-If you create an empty `.php` file which ends with `ServiceProvider.php` after running this command: </br>
-- It will be filled with a boilerplate and correct Psr-4 namespace. </br>
-- It will be appended to the `providers` array in the `config/app.php`
 
 
 <a name="imports"></a>
