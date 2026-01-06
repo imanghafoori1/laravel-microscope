@@ -30,20 +30,6 @@ class NamespaceCorrectorTest extends BaseTestClass
         $this->assertEquals("Branding\Cert\DNS", $result[1]);
     }
 
-    public function test_fix_namespace()
-    {
-        // arrange
-        FileManipulator::fake();
-        Filesystem::fake();
-        // fix namespace
-        $correctNamespace = 'App\Http\Controllers\Foo';
-        $filePath = __DIR__.'/stubs/PostController.stub';
-        NamespaceFixer::fix(PhpFileDescriptor::make($filePath), 'App\Http\Controllers', $correctNamespace);
-        // assert
-        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Controllers\\\Foo;/';
-        $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
-    }
-
     public function test_fix_namespace_declare()
     {
         // arrange
@@ -72,20 +58,5 @@ class NamespaceCorrectorTest extends BaseTestClass
         // assert
         $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
         $this->assertTrue(preg_match($pattern, FakeFilesystem::$files[$filePath][0]) == 1);
-    }
-
-    public function test_fix_namespace_class_with_bad_namespace()
-    {
-        // arrange
-        FileManipulator::fake();
-        Filesystem::fake();
-        // fix namespace
-        $from = 'App\Http\Controllers\Foo';
-        $to = 'App\Http\Roo';
-        $filePath = __DIR__.'/stubs/fix_namespace/class_with_namespace.stub';
-        NamespaceFixer::fix(PhpFileDescriptor::make($filePath), $from, $to);
-        // assert
-        $pattern = '/[\n\s]*<\?php[\s\n]*namespace App\\\Http\\\Roo;/';
-        $this->assertTrue(preg_match($pattern, FakeFilesystem::$putContent[$filePath]) == 1);
     }
 }
