@@ -50,6 +50,9 @@ class CheckRubySyntax implements Check
         return ErrorPrinter::singleton()->printer->confirm('Replacing endif in: '.$filePath);
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     private static function requestIssue($path)
     {
         dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
