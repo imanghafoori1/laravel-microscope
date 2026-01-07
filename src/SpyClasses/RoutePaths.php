@@ -90,8 +90,8 @@ class RoutePaths
         }
     }
 
-    private static function className($class)
+    private static function className($_class)
     {
-        return basename(str_replace('\\', '/', $class));
+        return basename(str_replace('\\', '/', $_class));
     }
 }
