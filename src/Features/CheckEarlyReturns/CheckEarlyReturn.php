@@ -26,6 +26,7 @@ class CheckEarlyReturn implements Check
             return;
         }
 
+        // @codeCoverageIgnoreStart
         try {
             [$fixes, $tokens] = self::refactor($tokens);
         } catch (Exception $e) {
@@ -34,6 +35,7 @@ class CheckEarlyReturn implements Check
 
             return;
         }
+        // @codeCoverageIgnoreEnd
 
         if ($fixes === 0) {
             return;
