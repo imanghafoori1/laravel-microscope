@@ -3,6 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -16,7 +18,7 @@ class UnusedVarsInstaller
 
         app()->singleton('microscope.views', ViewsData::class);
 
-        \View::creator('*', function (View $view) {
+        ViewFacade::creator('*', function (View $view) {
             resolve('microscope.views')->add($view);
         });
 
@@ -40,7 +42,7 @@ class UnusedVarsInstaller
 
     private static function getActionName()
     {
-        $cRoute = \Route::getCurrentRoute();
+        $cRoute = Route::getCurrentRoute();
 
         return $cRoute ? $cRoute->getActionName() : '';
     }
