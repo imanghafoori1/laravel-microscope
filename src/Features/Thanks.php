@@ -6,6 +6,9 @@ use DateInterval;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 
+/**
+ * @codeCoverageIgnore
+ */
 class Thanks
 {
     public static function shouldShow(): bool

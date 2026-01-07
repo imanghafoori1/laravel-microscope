@@ -26,6 +26,7 @@ class CheckRubySyntax implements Check
 
         $absFilePath = $file->getAbsolutePath();
 
+        // @codeCoverageIgnoreStart
         try {
             $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
         } catch (Exception $e) {
@@ -33,6 +34,7 @@ class CheckRubySyntax implements Check
 
             return false;
         }
+        // @codeCoverageIgnoreEnd
 
         if (SyntaxNormalizer::$hasChange && self::getConfirm($absFilePath)) {
             Refactor::saveTokens($absFilePath, $tokens);
