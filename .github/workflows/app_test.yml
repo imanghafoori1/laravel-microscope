@@ -136,33 +136,15 @@ jobs:
           fi
 
       - name: Run tests with Laravel 12
-        run: |
-          cd laravel-app
-          
-          # Run tests using Laravel's test command
-          php artisan test --colors=always 2>/dev/null || echo "Artisan test command failed"
-
-      - name: Run microscope-specific tests
         if: always()
         run: |
           cd laravel-app
           
-          # Look for tests related to microscope
-          echo "=== Looking for microscope tests ==="
-          
           # Check if there are test files mentioning microscope
-          echo "No microscope-specific tests found, running all tests..."
-          php artisan test --coverage-clover ./../laravel-microscope/clover.xml --colors=always 2>/dev/null || true
+          echo "running tests..."
+          php artisan test --coverage-clover ./../laravel-microscope/clover.xml --colors=always 2>/dev/null || false
         env:
           XDEBUG_MODE: coverage
-
-      - name: Run PHPUnit directly (fallback)
-        if: failure()
-        run: |
-          cd laravel-app
-          echo "=== Trying PHPUnit directly ==="
-          vendor/bin/phpunit --version 2>/dev/null || echo "PHPUnit not available"
-          vendor/bin/phpunit --colors=always 2>/dev/null || echo "PHPUnit tests failed"
 
       - name: Check for dependency issues
         if: always()
