@@ -32,10 +32,4 @@ class CheckStringyMsg
     {
         return $lineNumber.' |'.$file->getLine($lineNumber);
     }
-
-    #[Pure(true)]
-    public static function finished()
-    {
-        return ' <fg='.LineSeperator::$color.'> ✔ - Finished looking for stringy classes.</>';
-    }
 }
