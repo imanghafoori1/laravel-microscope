@@ -4,12 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\Features;
 
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Traits\LogsErrors;
 
 class CheckAll extends Command
 {
-    use LogsErrors;
-
     protected $signature = 'check:all {--d|detailed : Show files being checked} {--f|force} {--s|nofix : avoids the automatic fixes}';
 
     protected $description = 'Run all checks with one command';
@@ -38,7 +35,6 @@ class CheckAll extends Command
         // turns on error logging.
         $errorPrinter->logErrors = true;
 
-        $this->finishCommand($errorPrinter);
         $duration = microtime(true) - $t1;
         $errorPrinter->printer->writeln(self::getTimeMsg($duration), 2);
 
