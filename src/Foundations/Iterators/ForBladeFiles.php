@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\BladeStatDto;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
@@ -21,9 +22,7 @@ class ForBladeFiles implements Check
     public static function check($checkSet)
     {
         self::withoutComponentTags();
-        $mapper = fn ($paths) => BladeStatDto::make(
-            \Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths::checkPaths($paths, $checkSet)
-        );
+        $mapper = fn ($paths) => BladeStatDto::make(CheckBladePaths::checkPaths($paths, $checkSet));
 
         return Loop::map(self::getViewsPaths(), $mapper);
     }
