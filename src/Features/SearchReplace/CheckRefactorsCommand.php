@@ -62,7 +62,10 @@ class CheckRefactorsCommand extends Command
         $checkSet = CheckSet::initParams([PatternRefactorings::class], $this);
         $iterator = new Iterator($checkSet, $this->getOutput());
 
-        $iterator->printAll($iterator->forComposerLoadedFiles());
+        $iterator->printAll([
+            $iterator->forComposerLoadedFiles(),
+            PHP_EOL.$iterator->forRoutes(),
+        ]);
 
         $this->getOutput()->writeln(' - Finished search/replace');
 
