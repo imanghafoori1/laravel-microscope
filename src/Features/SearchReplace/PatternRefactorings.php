@@ -107,8 +107,8 @@ class PatternRefactorings implements Check
     public static function print(string $message, $absFilePath, $lineNum): void
     {
         $printer = ErrorPrinter::singleton();
-        $printer->print($message, '', 0);
-        $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
+        $printer->print($message, '');
+        $lineNum && $printer->printLink($absFilePath, $lineNum);
     }
 
     private static function getFrom($matchedValue, $tokens): array

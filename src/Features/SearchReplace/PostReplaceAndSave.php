@@ -56,13 +56,13 @@ class PostReplaceAndSave
         $printer = ErrorPrinter::singleton();
         // Print Replacement Links
         $printer->print('Replacing:
-<fg=yellow>'.Str::limit($startingCode, 150).'</>', '', 0);
+<fg=yellow>'.Str::limit($startingCode, 150).'</>', '');
         $printer->print('With:
-<fg=yellow>'.Str::limit($endResult, 150).'</>', '', 0);
+<fg=yellow>'.Str::limit($endResult, 150).'</>', '');
 
-        $printer->print('<fg=red>Replacement will occur at:</>', '', 0);
+        $printer->print('<fg=red>Replacement will occur at:</>', '');
 
-        $lineNum && $printer->printLink($absFilePath, $lineNum, 0);
+        $lineNum && $printer->printLink($absFilePath, $lineNum);
     }
 
     private static function askToRefactor($absFilePath)
