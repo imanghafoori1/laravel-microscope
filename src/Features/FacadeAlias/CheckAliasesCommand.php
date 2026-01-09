@@ -37,6 +37,7 @@ class CheckAliasesCommand extends BaseCommand
         FacadeAliasesCheck::$command = $this->getOutput();
 
         if ($this->option('nofix')) {
+            $this->checkSet->checks->checks = [FacadeAliasesCheck::class];
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 

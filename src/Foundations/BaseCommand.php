@@ -18,6 +18,9 @@ class BaseCommand extends Command
 
     public $options;
 
+    /**
+     * @var CheckSet
+     */
     public $checkSet;
 
     public $gitConfirm = false;
