@@ -94,12 +94,12 @@ class CheckRefactorsCommand extends Command
 
         if ($tag) {
             $filteredPatterns = [];
-            foreach ($patterns as $name => $pattern) {
+            foreach ($patterns as $key => $pattern) {
                 if (isset($pattern['tags'])) {
                     $tags = $pattern['tags'];
                     is_string($tags) && $tags = explode(',', $tags);
                     if (in_array($tag, $tags)) {
-                        $filteredPatterns[$name] = $pattern;
+                        $filteredPatterns[$key] = $pattern;
                     }
                 }
             }
