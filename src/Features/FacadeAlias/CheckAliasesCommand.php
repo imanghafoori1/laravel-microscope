@@ -47,6 +47,8 @@ class CheckAliasesCommand extends BaseCommand
         FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
         FacadeAliasesCheck::$importsProvider = $importsProvider;
         $iterator->formatPrintPsr4Classmap();
+        $iterator->forComposerLoadedFiles();
+        $iterator->forRoutes();
 
         return FacadeAliasReporter::$errorCount > 0 ? 1 : 0;
     }
