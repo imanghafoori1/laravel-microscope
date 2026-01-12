@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
@@ -50,9 +51,7 @@ class PatternRefactorings implements Check
             $postReplaces = $pattern['post_replace'] ?? [];
             self::$patternFound = true;
             if (! isset($pattern['replace'])) {
-                foreach ($matchedValues as $matchedValue) {
-                    self::show($matchedValue, $tokens, $absFilePath);
-                }
+                Loop::over($matchedValues, fn ($value) => self::show($value, $tokens, $absFilePath));
                 continue;
             }
 
