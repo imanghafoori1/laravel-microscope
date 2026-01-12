@@ -33,7 +33,6 @@ class CheckGenericDocBlocksCommand extends BaseCommand
         $iterator->formatPrintPsr4();
 
         $this->info(GenericDocblocks::$foundCount.' generic doc-blocks were found.');
-        $this->info(GenericDocblocks::$removedCount.' of them were removed.');
     }
 
     private function getConformer()

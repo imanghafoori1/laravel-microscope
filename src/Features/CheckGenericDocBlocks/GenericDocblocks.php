@@ -26,10 +26,6 @@ class GenericDocblocks implements Check
 
     public static $foundCount = 0;
 
-    public static $removedCount = 0;
-
-    public static $controllers = [];
-
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
