@@ -33,12 +33,13 @@ class CheckExtraFQCNCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        $fix = $this->options->option('fix');
-        $class = $this->options->option('class');
+        $options = $this->options;
 
-        ExtraFQCN::$class = $class;
-        ExtraFQCN::$fix = $fix;
-        ExtraFQCN::$imports = self::useStatementParser();
+        ExtraFQCN::configure(
+            $options->option('class'),
+            $options->option('fix'),
+            self::useStatementParser()
+        );
 
         $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
@@ -49,7 +50,7 @@ class CheckExtraFQCNCommand extends BaseCommand
             $iterator->forRoutes(),
         ]);
 
-        ! $fix && $this->exitCode() === 1 && $this->printGuide();
+        ! $options->option('fix') && ($this->exitCode() === 1) && $this->printGuide();
     }
 
     #[Pure]

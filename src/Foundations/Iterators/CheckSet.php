@@ -47,7 +47,7 @@ class CheckSet
         $pathDTO && $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
 
         $obj = new self;
-        $obj->checks = CheckCollection::make($checks);
+        $obj->setChecks($checks);
         $obj->pathDTO = $pathDTO;
 
         return $obj;
@@ -93,10 +93,8 @@ class CheckSet
 
         foreach ($this->checks->checks as $check) {
             try {
-                /**
-                 * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>
-                 */
-                $newTokens = $check::check($file, $this->path, $this->namespace);
+                $newTokens = $this->performCheck($check, $file);
+
                 if ($newTokens) {
                     $file->setTokens($newTokens);
                 }
@@ -104,5 +102,17 @@ class CheckSet
                 $this->exceptions[] = $exception;
             }
         }
+    }
+
+    private function performCheck($check, PhpFileDescriptor $file)
+    {
+        if (is_string($check)) {
+            /**
+             * @var $check class-string<\Imanghafoori\LaravelMicroscope\Check>
+             */
+            return $check::check($file, $this->path, $this->namespace);
+        }
+
+        return $check->check($file, $this->path, $this->namespace);
     }
 }

@@ -92,7 +92,10 @@ class Fixer
             return [false, []];
         }
 
-        return [FileManipulator::insertNewLine($file->getAbsolutePath(), "use $fullClassPath;", $lineNum), $correct];
+        return [
+            FileManipulator::insertNewLine($file->getAbsolutePath(), "use $fullClassPath;", $lineNum),
+            $correct,
+        ];
     }
 
     public static function fixImport($absPath, $import, $lineNum, $isAliased)

@@ -163,4 +163,11 @@ class ExtraFQCN implements Check
 
         return basename($class);
     }
+
+    public static function configure($class, $fix, $imports): void
+    {
+        self::$class = $class;
+        self::$fix = $fix;
+        self::$imports = $imports;
+    }
 }

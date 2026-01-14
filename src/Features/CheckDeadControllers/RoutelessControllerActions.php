@@ -50,7 +50,7 @@ class RoutelessControllerActions implements Check
             }
 
             // we exclude __construct
-            if ($method['name'][1] == '__construct') {
+            if ($method['name'][1] === '__construct') {
                 continue;
             }
 
@@ -65,8 +65,10 @@ class RoutelessControllerActions implements Check
         try {
             return is_subclass_of($fullNamespace, self::$baseController);
         } catch (Throwable $r) {
+            // @codeCoverageIgnoreStart
             // it means the file does not contain a class or interface.
             return false;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -101,7 +103,9 @@ class RoutelessControllerActions implements Check
                 ],
             ], $tokens);
         } catch (Throwable $e) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
 
         return (bool) $result[1];
