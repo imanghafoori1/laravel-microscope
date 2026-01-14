@@ -1,5 +1,6 @@
 <?php
 
+// @codeCoverageIgnoreStart
 if (! function_exists('extractBlade')) {
     function extractBlade()
     {
@@ -20,3 +21,4 @@ if (! function_exists('microscope_write_route')) {
         config()->push('microscope.write.routes', debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 1)[0]);
     }
 }
+// @codeCoverageIgnoreEnd
