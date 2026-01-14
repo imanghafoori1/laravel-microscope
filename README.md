@@ -48,7 +48,6 @@ Give your eyes a rest, we will detect and fix them for you.
     - [Usage](#usage)
         - [Useful Commands](#useful-commands)
         - [Fewer Use Commands](#less-use-commands)
-        - [Global Helper Functions](#global-helper-functions)
     - [What The Commands Do?](#what-the-commands-do)
 
       <details>
@@ -170,17 +169,6 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 22 | `php artisan enforce:imports`                                 |
 | 23 | `php artisan check:fqcn`                                      |
 | 24 | `php artisan check:abort_if`                                  |
-
-<a name="global-helper-functions"></a>
-## Global Helper Functions:
->Also, You will have access to some global helper functions
-
-```php 
-microscope_dd_listeners($event);
- ```
-In case you wonder what the listeners are and where they are,
-you can call `microscope_dd_listeners(MyEvent::class);` within either the `boot` or `register` methods.
-It works like a normal `dd(...);` meaning that the program stops running at that point.
 
 <a name="what-the-commands-do"></a>
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What do the Commands do?
