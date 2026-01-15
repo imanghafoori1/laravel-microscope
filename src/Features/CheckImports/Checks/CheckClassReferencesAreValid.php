@@ -12,11 +12,7 @@ class CheckClassReferencesAreValid implements Check
 {
     public static $checkWrong = true;
 
-    public static $checkExtra = true;
-
     public static $cache = [];
-
-    public static $extraCorrectImportsHandler = Handlers\ExtraCorrectImports::class;
 
     public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
 
@@ -49,7 +45,7 @@ class CheckClassReferencesAreValid implements Check
         $absFilePath = $file->getAbsolutePath();
         [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);
         [$wrongDocblockRefs] = ImportsAnalyzer::filterWrongClassRefs($docblockRefs, $absFilePath);
-        [$extraWrongImports, $extraCorrectImports] = ImportsAnalyzer::filterWrongClassRefs($extraImports, $absFilePath);
+        [$extraWrongImports] = ImportsAnalyzer::filterWrongClassRefs($extraImports, $absFilePath);
 
         $wrongClassRefs = array_merge($wrongClassRefs, $wrongDocblockRefs);
         $tokens = null;
@@ -66,21 +62,16 @@ class CheckClassReferencesAreValid implements Check
             }
         }
 
-        self::handleExtraImports($file, $extraWrongImports, $extraCorrectImports);
+        self::handleExtraImports($file, $extraWrongImports);
 
         return $tokens;
     }
 
-    private static function handleExtraImports($file, $extraWrongImports, $extraCorrectImports)
+    private static function handleExtraImports($file, $extraWrongImports)
     {
         // Extra wrong imports:
         if (self::$extraWrongImportsHandler) {
             self::$extraWrongImportsHandler::handle($extraWrongImports, $file);
-        }
-
-        // Extra correct imports:
-        if (self::$checkExtra && self::$extraCorrectImportsHandler) {
-            self::$extraCorrectImportsHandler::handle($extraCorrectImports, $file);
         }
     }
 

@@ -1,23 +1,18 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 
-class CheckImportsCommand extends BaseCommand
+class CheckExtraImportsCommand extends BaseCommand
 {
-    protected $signature = 'check:imports
+    protected $signature = 'check:extra_imports
         {--force : fixes without asking}
         {--f|file= : Pattern for file names to scan}
         {--F|except-file= : Pattern for file names to avoid}
@@ -34,28 +29,20 @@ class CheckImportsCommand extends BaseCommand
      * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     protected $checks = [
-        CheckClassReferencesAreValid::class,
+        CheckImportsAreUsed::class,
     ];
 
     public $initialMsg = 'Checking imports and class references...';
 
     /**
-     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
      * @return int
      */
     public function handleCommand($iterator)
     {
-        if ($this->option('nofix')) {
-            CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
-        }
-
-        if (file_exists($path = CachedFiles::getFolderPath().'check_imports.php')) {
-            CheckClassReferencesAreValid::$cache = (require $path) ?: [];
-        }
-
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        CheckClassReferencesAreValid::$imports = self::useStatementParser();
+        CheckImportsAreUsed::setImports();
 
         /**
          * @var string[] $messages
@@ -74,28 +61,15 @@ class CheckImportsCommand extends BaseCommand
         // must be after other messages:
         $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery(ErrorPrinter::singleton()->errorsList)]);
 
-        if (! ImportsAnalyzer::$checkedRefCount) {
+        if (! CheckImportsAreUsed::$importsCount) {
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
         }
 
-        if ($cache = CheckClassReferencesAreValid::$cache) {
-            self::writeCacheContent($cache);
-        }
-
         $this->line('');
+        CheckImportsAreUsed::$importsCount = 0;
 
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
-    }
-
-    #[Pure]
-    private static function useStatementParser()
-    {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
     }
 
     #[Pure]
@@ -104,15 +78,5 @@ class CheckImportsCommand extends BaseCommand
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
-    }
-
-    private static function writeCacheContent(array $cache): void
-    {
-        $folder = CachedFiles::getFolderPath();
-        ! is_dir($folder) && mkdir($folder);
-        $content = CachedFiles::getCacheFileContents($cache);
-        $path = $folder.'check_imports.php';
-        file_exists($path) && chmod($path, 0777);
-        file_put_contents($path, $content);
     }
 }

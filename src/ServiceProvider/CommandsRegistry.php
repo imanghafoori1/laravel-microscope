@@ -14,6 +14,7 @@ trait CommandsRegistry
         Features\CheckView\CheckViewsCommand::class,
         Features\Psr4\Console\CheckPsr4ArtisanCommand::class,
         Features\CheckImports\CheckImportsCommand::class,
+        Features\CheckExtraImports\CheckExtraImportsCommand::class,
         Features\FacadeAlias\CheckAliasesCommand::class,
         Features\CheckAll::class,
         Features\CheckClassyStrings\ClassifyStringsCommand::class,
