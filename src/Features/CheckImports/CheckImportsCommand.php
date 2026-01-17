@@ -6,7 +6,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
-use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
@@ -49,9 +48,7 @@ class CheckImportsCommand extends BaseCommand
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
-        if (file_exists($path = CachedFiles::getFolderPath().'check_imports.php')) {
-            ImportCache::$cache = (require $path) ?: [];
-        }
+        ImportCache::loadToMemory();
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
