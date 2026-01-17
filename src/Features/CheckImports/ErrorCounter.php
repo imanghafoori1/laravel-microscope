@@ -8,7 +8,7 @@ class ErrorCounter
 {
     public static function calculateErrors($errorsList)
     {
-        foreach (['extraWrongImport', 'wrongClassRef', 'extraCorrectImport'] as $item) {
+        foreach (['extraWrongImport', 'wrongClassRef'] as $item) {
             self::$errors[$item] = count($errorsList[$item] ?? []);
         }
     }
@@ -33,7 +33,7 @@ class ErrorCounter
     #[Pure(true)]
     public static function getExtraImportsCount(): int
     {
-        return self::getCount('extraCorrectImport') + self::getExtraWrongCount();
+        return self::getExtraWrongCount();
     }
 
     #[Pure(true)]

@@ -50,7 +50,7 @@ class CheckImportsCommand extends BaseCommand
         }
 
         if (file_exists($path = CachedFiles::getFolderPath().'check_imports.php')) {
-            CheckClassReferencesAreValid::$cache = (require $path) ?: [];
+            ImportCache::$cache = (require $path) ?: [];
         }
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
@@ -75,12 +75,14 @@ class CheckImportsCommand extends BaseCommand
         $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery(ErrorPrinter::singleton()->errorsList)]);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
-            $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
+            $msg = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"';
+            $filterName = $pathDTO->includeFile ?: $pathDTO->includeFolder;
+            $messages = $msg.$filterName.'"</>';
             $this->getOutput()->writeln($messages);
         }
 
-        if ($cache = CheckClassReferencesAreValid::$cache) {
-            self::writeCacheContent($cache);
+        if ($cache = ImportCache::$cache) {
+            ImportCache::writeCacheContent($cache);
         }
 
         $this->line('');
@@ -104,15 +106,5 @@ class CheckImportsCommand extends BaseCommand
         $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
 
         return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
-    }
-
-    private static function writeCacheContent(array $cache): void
-    {
-        $folder = CachedFiles::getFolderPath();
-        ! is_dir($folder) && mkdir($folder);
-        $content = CachedFiles::getCacheFileContents($cache);
-        $path = $folder.'check_imports.php';
-        file_exists($path) && chmod($path, 0777);
-        file_put_contents($path, $content);
     }
 }

@@ -2,17 +2,15 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
-use Closure;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportCache;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid implements Check
 {
     public static $checkWrong = true;
-
-    public static $cache = [];
 
     public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
 
@@ -40,7 +38,7 @@ class CheckClassReferencesAreValid implements Check
             $extraImports,
             $docblockRefs,
             $attributeReferences,
-        ] = self::getForever($file->getMd5(), $refFinder);
+        ] = ImportCache::getForever($file->getMd5(), $refFinder);
 
         $absFilePath = $file->getAbsolutePath();
         [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);
@@ -73,10 +71,5 @@ class CheckClassReferencesAreValid implements Check
         if (self::$extraWrongImportsHandler) {
             self::$extraWrongImportsHandler::handle($extraWrongImports, $file);
         }
-    }
-
-    public static function getForever($md5, Closure $refFinder)
-    {
-        return self::$cache[$md5] ?? (self::$cache[$md5] = $refFinder());
     }
 }

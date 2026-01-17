@@ -13,7 +13,6 @@ class SummeryReport
 
         $messages = [
             self::formatErrorSummary(ErrorCounter::getTotalErrors(), ImportsAnalyzer::$checkedRefCount),
-            self::format('unused import', ErrorCounter::getExtraImportsCount()),
             self::format('wrong import', ErrorCounter::getExtraWrongCount()),
             self::format('wrong class reference', ErrorCounter::getWrongUsedClassCount()),
         ];
