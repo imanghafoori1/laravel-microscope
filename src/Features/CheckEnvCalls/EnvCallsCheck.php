@@ -27,12 +27,20 @@ class EnvCallsCheck implements Check
 
         $hasError = false;
         foreach ($tokens as $i => $token) {
-            if ($index = FunctionCall::isGlobalCall('env', $tokens, $i)) {
-                if (! self::isLikelyConfigFile($absPath, $tokens)) {
-                    $onError($tokens[$index][1], $absPath, $tokens[$index][2]);
-                    $hasError = true;
-                }
+            if (strtolower($token[1] ?? '') === 'env') {
+                $tokens[$i][1] = 'env';
+                continue;
             }
+
+            $index = FunctionCall::isGlobalCall('env', $tokens, $i);
+            if (! $index) {
+                continue;
+            }
+            if (self::isLikelyConfigFile($absPath, $tokens)) {
+                continue;
+            }
+            $onError($tokens[$index][1], $absPath, $tokens[$index][2]);
+            $hasError = true;
         }
 
         return $hasError;
