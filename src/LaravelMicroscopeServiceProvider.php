@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckEvents\Installer;
 use Imanghafoori\LaravelMicroscope\Features\CheckGates\SpyGate;
 use Imanghafoori\LaravelMicroscope\Features\CheckUnusedBladeVars\UnusedVarsInstaller;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
@@ -94,7 +93,6 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $command = $_SERVER['argv'][1] ?? '';
         // We spy the router in order to have a list of route files.
         $checkAll = Str::startsWith($command, 'check:all');
-        ($checkAll || Str::startsWith($command, 'check:eve')) && Installer::spyEvents();
         ($checkAll || Str::startsWith($command, 'check:rout')) && app('router')->spyRouteConflict();
         Str::startsWith($command, 'check:actio') && app('router')->spyRouteConflict();
         ($checkAll || Str::startsWith($command, 'check:gat')) && SpyGate::start();

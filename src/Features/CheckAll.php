@@ -23,7 +23,6 @@ class CheckAll extends Command
 
         $this->call('check:psr4', ['--nofix' => $this->option('nofix'), '--force' => $this->option('force')]);
         $this->call('check:imports', ['--nofix' => $this->option('nofix')]);
-        $this->call('check:events');
         $this->call('check:gates');
         $this->call('check:views');
         $this->call('check:routes');

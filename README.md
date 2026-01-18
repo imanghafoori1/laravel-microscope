@@ -72,7 +72,6 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:extract_blades`](#extract_blades)
         1. [`php artisan check:action_comments`](#action_comments)
         1. [`php artisan check:views`](#views)
-        1. [`php artisan check:events`](#events)
         1. [`php artisan check:gates`](#gates)
         1. [`php artisan check:aliases`](#aliases)
         1. [`php artisan check:dead_controllers`](#dead_controllers)
@@ -158,7 +157,6 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 12 | `php artisan pp:route`                                        |
 | 13 | `php artisan list:models`                                     |
 | 14 | `php artisan check:endif`                                     |
-| 15 | `php artisan check:events`                                    |
 | 16 | `php artisan check:gates`                                     |
 | 17 | `php artisan check:dynamic_where`                             |
 | 18 | `php artisan check:aliases`                                   |
@@ -762,39 +760,6 @@ into this:
 
 abort_if(404, 'optional message.');
 ```
-
-<a name="events"></a>
-### `php artisan check:events`
-
-
-For example, consider:
-
-```php
-Event::listen(MyEvent::class, '\App\Listeners\MyListener@myMethod');
-```
-
-1 - It checks the `\App\Listeners\MyListener` classpath to be valid.
-
-2 - It checks the `myMethod` method to exist on the `MyListener` class
-
-3 - It checks the `myMethod` method to have the right type-hint (if any) in its signature, for example:
-```php
-public function myMethod(OtherEvent $e) // <---- notice type-hint here
-{
-    //
-}
-```
-This is a valid but wrong type-hint, and will be reported to you. Very cool, isn't it ??!
-
-
-- Note that it does not matter how you are setting your event listener, 
-
-1- in the `EventServiceProvider`, 
-
-2- By `Event::listen` facade, 
-
-3- By Subscriber class... or any other way. The error would be found. :)
-
 
 <a name="gates"></a>
 ### `php artisan check:gates`
