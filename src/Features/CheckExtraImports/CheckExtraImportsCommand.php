@@ -6,12 +6,13 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
-use JetBrains\PhpStorm\Pure;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 
 class CheckExtraImportsCommand extends BaseCommand
 {
+    use FilesStats;
+
     protected $signature = 'check:extra_imports
         {--force : fixes without asking}
         {--f|file= : Pattern for file names to scan}
@@ -70,13 +71,5 @@ class CheckExtraImportsCommand extends BaseCommand
         CheckImportsAreUsed::$importsCount = 0;
 
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
-    }
-
-    #[Pure]
-    private static function getFilesStats(): string
-    {
-        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-
-        return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
     }
 }

@@ -4,13 +4,15 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 
 class CheckExtraFQCNCommand extends BaseCommand
 {
+    use FilesStats;
+
     protected $signature = 'check:fqcn
         {--fix : Fix references}
         {--class= : Fix references of the specified class}
@@ -61,14 +63,6 @@ class CheckExtraFQCNCommand extends BaseCommand
 
             return $imports[0] ?: [$imports[1]];
         };
-    }
-
-    #[Pure]
-    private static function getFilesStats(): string
-    {
-        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-
-        return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
     }
 
     private function printGuide()

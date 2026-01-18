@@ -7,15 +7,17 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassRefere
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ChecksOnPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use JetBrains\PhpStorm\Pure;
 
 class CheckImportsCommand extends BaseCommand
 {
+    use FilesStats;
+
     protected $signature = 'check:imports
         {--force : fixes without asking}
         {--f|file= : Pattern for file names to scan}
@@ -95,13 +97,5 @@ class CheckImportsCommand extends BaseCommand
 
             return $imports[0] ?: [$imports[1]];
         };
-    }
-
-    #[Pure]
-    private static function getFilesStats(): string
-    {
-        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
-
-        return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
     }
 }
