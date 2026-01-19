@@ -7,6 +7,9 @@ use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FixWrongClassRefs
 {
     public static function handle(array $wrongClassRefs, PhpFileDescriptor $file, $hostNamespace, array $tokens): array
