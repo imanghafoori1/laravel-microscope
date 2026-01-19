@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportCache;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
@@ -38,7 +38,7 @@ class CheckClassReferencesAreValid implements Check
             $extraImports,
             $docblockRefs,
             $attributeReferences,
-        ] = ImportCache::getForever($file->getMd5(), $refFinder);
+        ] = Cache::getForever($file->getMd5(), $refFinder);
 
         $absFilePath = $file->getAbsolutePath();
         [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);

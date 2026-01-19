@@ -5,9 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 use Closure;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 
-class ImportCache
+class Cache
 {
-    const cacheFileName = 'check_imports.php';
+    public static $cacheFileName = 'check_imports.php';
 
     public static $cache = [];
 
@@ -27,19 +27,21 @@ class ImportCache
         $folder = CachedFiles::getFolderPath();
         ! is_dir($folder) && mkdir($folder);
         $content = CachedFiles::getCacheFileContents($cache);
-        $path = $folder.self::cacheFileName;
+        $path = $folder.self::$cacheFileName;
         file_exists($path) && chmod($path, 0777);
         file_put_contents($path, $content);
+        self::$cache = [];
     }
 
-    public static function loadToMemory()
+    public static function loadToMemory($cacheFileName)
     {
+        self::$cacheFileName = $cacheFileName;
         if (self::$cache) {
             // is already loaded
             return;
         }
 
-        $path = CachedFiles::getFolderPath().self::cacheFileName;
+        $path = CachedFiles::getFolderPath().$cacheFileName;
 
         if (file_exists($path)) {
             self::$cache = (require $path) ?: [];

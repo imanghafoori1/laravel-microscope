@@ -52,7 +52,7 @@ class CheckImportsCommand extends BaseCommand
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
-        ImportCache::loadToMemory();
+        Cache::loadToMemory('check_imports.php');
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
@@ -82,7 +82,7 @@ class CheckImportsCommand extends BaseCommand
             $this->getOutput()->writeln($messages);
         }
 
-        ImportCache::writeCacheContent();
+        Cache::writeCacheContent();
 
         $this->line('');
 
