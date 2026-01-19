@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks;
 
-use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use RuntimeException;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers;
@@ -13,10 +13,6 @@ use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 
 class CheckImportsAreUsed implements Check
 {
-    use CachedCheck;
-
-    private static $cacheKey = 'check_extra_imports';
-
     public static $imports;
 
     public static $importsCount = 0;
@@ -30,14 +26,16 @@ class CheckImportsAreUsed implements Check
         };
     }
 
-    public static function performCheck(PhpFileDescriptor $file)
+    public static function check(PhpFileDescriptor $file)
     {
         $imports = self::$imports;
-        $extraImports = self::findClassRefs($file->getTokens(), $imports($file));
-        Handlers\ExtraImports::handle($extraImports, $file);
-        self::$importsCount += count($extraImports);
+        $extraImports = Cache::getForever($file->getMd5(), function () use ($file, $imports) {
+            $uses = $imports($file);
 
-        return count($extraImports) !== 0;
+            return [self::findClassRefs($file->getTokens(), $uses), count($uses[array_key_first($uses)])];
+        });
+        Handlers\ExtraImports::handle($extraImports[0], $file);
+        self::$importsCount += $extraImports[1];
     }
 
     public static function findClassRefs($tokens, $imports)

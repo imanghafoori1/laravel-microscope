@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
@@ -42,6 +43,7 @@ class CheckExtraImportsCommand extends BaseCommand
     public function handleCommand($iterator)
     {
         $pathDTO = PathFilterDTO::makeFromOption($this);
+        Cache::loadToMemory('check_extra_imports.php');
 
         CheckImportsAreUsed::setImports();
 
@@ -66,6 +68,7 @@ class CheckExtraImportsCommand extends BaseCommand
             $messages = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"'.($pathDTO->includeFile ?: $pathDTO->includeFolder).'"</>';
             $this->getOutput()->writeln($messages);
         }
+        Cache::writeCacheContent();
 
         $this->line('');
         CheckImportsAreUsed::$importsCount = 0;

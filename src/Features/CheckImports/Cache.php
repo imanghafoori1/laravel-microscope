@@ -7,7 +7,7 @@ use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 
 class Cache
 {
-    public static $cacheFileName = 'check_imports.php';
+    public static $cacheFileName;
 
     public static $cache = [];
 
