@@ -15,11 +15,10 @@ class CheckClassAtMethod implements Check
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
-        $absFilePath = $file->getAbsolutePath();
 
         $replaced = self::$handler::handle(
             $file,
-            self::getAtSignTokens($tokens, $absFilePath)
+            self::getAtSignTokens($tokens)
         );
 
         if ($replaced) {
@@ -28,7 +27,7 @@ class CheckClassAtMethod implements Check
     }
 
     #[Pure]
-    private static function getAtSignTokens($tokens, $onlyAbsClassPath)
+    private static function getAtSignTokens($tokens)
     {
         $atSignTokens = [];
 
@@ -40,11 +39,11 @@ class CheckClassAtMethod implements Check
 
             $trimmed = trim($token[1], '\'\"');
 
-            if ($onlyAbsClassPath && $trimmed[0] !== '\\') {
+            [$class, $method] = explode('@', $trimmed);
+
+            if ($method === '' || is_numeric($method[0]) || self::contains($method, ['-', '/', '[', '*', '+', '.', '(', '$', '^', '\\'])) {
                 continue;
             }
-
-            [$class] = explode('@', $trimmed);
 
             if (substr_count($class, '\\') <= 0) {
                 continue;

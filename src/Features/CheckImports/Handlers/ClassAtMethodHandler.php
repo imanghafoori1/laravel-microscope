@@ -3,11 +3,12 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ClassAtMethodHandler
 {
-    public static $fix = true;
+    public static $fix = false;
 
     public static function handle($file, $atSignTokens)
     {
@@ -22,8 +23,8 @@ class ClassAtMethodHandler
             if (! class_exists($class)) {
                 $result = [false];
 
-                if (self::$fix && \Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer::isInUserSpace($class)) {
-                    $result = \Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer::fixReference($file, $class, $token[2]);
+                if (self::$fix && Fixer::isInUserSpace($class)) {
+                    $result = Fixer::fixReference($file, $class, $token[2]);
                 }
 
                 if ($result[0]) {

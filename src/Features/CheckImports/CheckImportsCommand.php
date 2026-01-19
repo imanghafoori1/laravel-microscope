@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
@@ -36,6 +37,7 @@ class CheckImportsCommand extends BaseCommand
      */
     protected $checks = [
         CheckClassReferencesAreValid::class,
+        CheckClassAtMethod::class,
     ];
 
     public $initialMsg = 'Checking imports and class references...';
