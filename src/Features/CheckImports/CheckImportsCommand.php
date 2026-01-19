@@ -80,9 +80,7 @@ class CheckImportsCommand extends BaseCommand
             $this->getOutput()->writeln($messages);
         }
 
-        if ($cache = ImportCache::$cache) {
-            ImportCache::writeCacheContent($cache);
-        }
+        ImportCache::writeCacheContent();
 
         $this->line('');
 

@@ -16,8 +16,14 @@ class ImportCache
         return self::$cache[$md5] ?? (self::$cache[$md5] = $refFinder());
     }
 
-    public static function writeCacheContent(array $cache): void
+    public static function writeCacheContent(): void
     {
+        $cache = self::$cache;
+
+        if (! $cache) {
+            return;
+        }
+
         $folder = CachedFiles::getFolderPath();
         ! is_dir($folder) && mkdir($folder);
         $content = CachedFiles::getCacheFileContents($cache);
