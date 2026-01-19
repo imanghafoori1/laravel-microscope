@@ -21,6 +21,13 @@ class CheckDD implements Check
         $callback = self::$onErrorCallback;
         $hasError = false;
         foreach ($tokens as $i => $token) {
+            $name = strtolower($token[1] ?? '');
+            if ($name === 'dump' || $name === 'dd') {
+                $tokens[$i][1] = $name;
+
+                continue;
+            }
+
             if (($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))) {
                 $callback($file, $tokens[$index]);
                 $hasError = true;
