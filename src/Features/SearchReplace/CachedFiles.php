@@ -91,7 +91,7 @@ class CachedFiles
             }
         }
 
-        self::$cache = self::$cacheChange = [];
+        self::$fileExists = self::$cache = self::$cacheChange = [];
     }
 
     private static function readFromMemoryCache($patternKey, $md5)
