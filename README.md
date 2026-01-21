@@ -72,7 +72,6 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan check:blade_queries`](#blade_queries)
         1. [`php artisan check:extract_blades`](#extract_blades)
         1. [`php artisan check:action_comments`](#action_comments)
-        1. [`php artisan pp:route`](#route)
         1. [`php artisan check:views`](#views)
         1. [`php artisan check:events`](#events)
         1. [`php artisan check:gates`](#gates)
@@ -719,14 +718,6 @@ So this syntax will work: `'MyMod::myPartials.body'`
 
 - This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
 - You can use the `--file=` option to narrow down the scanned files.
-
-<a name="route"></a>
-### `php artisan pp:route`
-
-
-- First, you have to put this in your route file: `microscope_pretty_print_route('my.route.name');` 
-- You can also pass the Controller@method syntax to the function.
-- You can call it multiple times to pretty-print multiple routes.
 
 <a name="views"></a>
 ### `php artisan check:views`
