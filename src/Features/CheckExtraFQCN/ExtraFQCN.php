@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class ExtraFQCN implements Check
@@ -28,6 +29,7 @@ class ExtraFQCN implements Check
     {
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
+        ! self::$imports && (self::$imports = UseStatementParser::get());
         $imports = (self::$imports)($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
         $hasError = self::checkClassRef($classRefs, $imports, $file);

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
@@ -23,7 +24,10 @@ class EnforceImportsCommand extends BaseCommand
 
     public $initialMsg = 'Checking class references...';
 
-    public $checks = [EnforceImports::class];
+    public $checks = [
+        ExtraFQCN::class,
+        EnforceImports::class,
+    ];
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
