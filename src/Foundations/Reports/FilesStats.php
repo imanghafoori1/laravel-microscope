@@ -11,9 +11,13 @@ trait FilesStats
     #[Pure]
     private static function getFilesStats(): string
     {
-        $filesCount = ChecksOnPsr4Classes::$checkedFilesCount;
+        $count = ChecksOnPsr4Classes::$checkedFilesCount;
         ChecksOnPsr4Classes::$checkedFilesCount = 0;
 
-        return $filesCount ? CheckImportReporter::getFilesStats($filesCount) : '';
+        if ($count) {
+            return CheckImportReporter::blue($count).'class'.($count <= 1 ? '' : 'es');
+        } else {
+            return '';
+        }
     }
 }

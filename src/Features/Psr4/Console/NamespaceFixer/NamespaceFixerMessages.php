@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class NamespaceFixerMessages
@@ -14,12 +15,12 @@ class NamespaceFixerMessages
     {
         $printer = ErrorPrinter::singleton();
         $msg = self::getHeader($currentNamespace, $className);
-        usleep(self::$pause);
+        self::$pause && usleep(self::$pause);
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg) - 12);
 
         $printer->printHeader($msg, false);
-        usleep(self::$pause);
+        self::$pause && usleep(self::$pause);
 
         $printer->printLink($file, 3);
     }
@@ -27,25 +28,20 @@ class NamespaceFixerMessages
     private static function getHeader($currentNamespace, $className): string
     {
         if ($currentNamespace) {
-            $namespace = self::colorizer("$currentNamespace", 'blue');
+            $namespace = Color::blue($currentNamespace);
             $header = "Incorrect namespace: '$namespace'";
         } else {
-            $header = 'Namespace Not Found for class: "'.self::colorizer($className, 'blue').'"';
+            $header = 'Namespace Not Found for class: '.Color::blue($className);
         }
 
         return $header;
-    }
-
-    private static function colorizer($str, $color)
-    {
-        return '<fg='.$color.'>'.$str.'</>';
     }
 
     public static function wrongFileName($path, $class, $file)
     {
         $key = 'badFileName';
         $header = 'The file name and the class name are different.';
-        $errorData = 'Class name: <fg=blue>'.$class.'</>'.PHP_EOL.'   File name:  <fg=blue>'.$file.'</>';
+        $errorData = 'Class name: '.Color::blue($class).PHP_EOL.'   File name:  '.Color::blue($file);
 
         ErrorPrinter::singleton()->addPendingError($path, 1, $key, $header, $errorData);
     }
@@ -56,9 +52,9 @@ class NamespaceFixerMessages
         $key = 'badNamespace';
         $printer = ErrorPrinter::singleton();
 
-        $errorData = ' Namespace of class "'.$printer->color($class, 'yellow').'" fixed to:';
+        $errorData = ' Namespace of class "'.Color::yellow($class).'" fixed to:';
 
-        $printer->addPendingError($path, $lineNumber, $key, $errorData, $printer->color($correct));
+        $printer->addPendingError($path, $lineNumber, $key, $errorData, Color::blue($correct));
     }
 
     public static function wrongNamespace(PhpFileDescriptor $file, $wrong, $correct, $class, $lineNumber = 4)
@@ -67,8 +63,8 @@ class NamespaceFixerMessages
         $key = 'badNamespace';
         $printer = ErrorPrinter::singleton();
 
-        $errorData = ' Namespace of class "'.$printer->color($wrong.'\\'.$class, 'yellow').'" should be:';
+        $errorData = ' Namespace of class "'.Color::yellow($wrong.'\\'.$class).'" should be:';
 
-        $printer->addPendingError($path, $lineNumber, $key, $errorData, $printer->color($correct));
+        $printer->addPendingError($path, $lineNumber, $key, $errorData, Color::blue($correct));
     }
 }

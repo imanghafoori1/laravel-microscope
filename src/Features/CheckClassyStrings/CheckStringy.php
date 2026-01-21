@@ -91,7 +91,7 @@ class CheckStringy implements Check
         // todo: should replace tokens not the file contents.
         FileManipulator::replaceFirst($file->getAbsolutePath(), $classyString, $classPath);
 
-        $command->info(CheckStringyMsg::lineSeparator());
+        $command->info(ErrorPrinter::lineSeparator());
     }
 
     public static function getClassPath(string $classPath, PhpFileDescriptor $file)

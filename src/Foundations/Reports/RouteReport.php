@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use JetBrains\PhpStorm\Pure;
 
 class RouteReport
@@ -17,7 +18,8 @@ class RouteReport
         $linesArr = CheckImportReporter::formatFiles($routeFiles);
         $count = count($linesArr);
         $lines = implode('', $linesArr);
+        $count = Color::white('('.$count.' files)');
 
-        return CheckImportReporter::hyphen().'route'.($count <= 1 ? '' : 's').' <fg=white>('.$count.' files)</>'.$lines;
+        return CheckImportReporter::hyphen().'route'.($count <= 1 ? '' : 's').' '.$count.$lines;
     }
 }

@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
@@ -56,7 +57,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 
     private function printGuide()
     {
-        $this->line('<fg=yellow> You may use `--fix` option to delete extra code:</>');
-        $this->line('<fg=yellow> php artisan check:extra_fqcn --fix</>');
+        $this->line(Color::yellow(' You may use `--fix` option to delete extra code, run:'));
+        $this->line(Color::yellow(' php artisan check:extra_fqcn --fix'));
     }
 }

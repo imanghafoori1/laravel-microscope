@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 class CheckEarlyReturnsCommand extends BaseCommand
@@ -52,7 +53,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
         return [
             'nofix' => $nofix,
             'nofixCallback' => function ($absPath) {
-                $this->line('<fg=red>    - '.FilePath::getRelativePath($absPath).'</fg=red>');
+                $this->line('    - '.Color::red(FilePath::getRelativePath($absPath)));
             },
             'fixCallback' => function ($filePath, $tries) {
                 $this->warn(PHP_EOL.$tries.' fixes applied to: '.class_basename($filePath));

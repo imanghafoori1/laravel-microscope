@@ -3,7 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
+use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
@@ -33,11 +34,11 @@ class ActionsComments implements Check
     {
         $methods = ClassMethods::read($tokens)['methods'];
 
-        $methods = RoutelessControllerActions::getControllerActions($methods);
+        $methods = DeadControllerActions::getControllerActions($methods);
         $shouldSave = false;
 
         foreach ($methods as $method) {
-            $classAtMethod = RoutelessControllerActions::classAtMethod($fullNamespace, $method['name'][1]);
+            $classAtMethod = DeadControllerActions::classAtMethod($fullNamespace, $method['name'][1]);
             $routes = self::getActionRoutes($classAtMethod);
 
             if (! $routes) {
@@ -61,7 +62,7 @@ class ActionsComments implements Check
             }
         }
 
-        $question = 'Add route definition into the: <fg=yellow>'.$fullNamespace.'</>';
+        $question = 'Add route definition into the: '.Color::yellow($fullNamespace);
         if ($shouldSave && self::$command->confirm($question, true)) {
             Refactor::saveTokens($absFilePath, $tokens);
         }

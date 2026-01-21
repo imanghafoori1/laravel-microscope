@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
@@ -13,7 +14,7 @@ trait Reporting
     #[Pure]
     public static function green(string $string)
     {
-        return '<fg=green>'.$string.'</>';
+        return Color::green($string);
     }
 
     #[Pure]
@@ -25,7 +26,7 @@ trait Reporting
     #[Pure]
     public static function files($count)
     {
-        return '<fg=white> ('.$count.' file'.($count == 1 ? '' : 's').')</>';
+        return Color::white(' ('.$count.' file'.($count === 1 ? '' : 's').')');
     }
 
     #[Pure]
@@ -41,7 +42,7 @@ trait Reporting
     #[Pure]
     public static function blue($filesCount)
     {
-        return self::hyphen().'<fg=blue>'.$filesCount.'</> ';
+        return self::hyphen().Color::blue($filesCount).' ';
     }
 
     #[Pure]
@@ -57,7 +58,7 @@ trait Reporting
     {
         $relPath = $file->path()->relativePath()->getWithUnixDirectorySeprator();
 
-        return PHP_EOL.'    '.self::hyphen('<fg=green>'.$relPath.'</>');
+        return PHP_EOL.'    '.self::hyphen(Color::green($relPath));
     }
 
     /**

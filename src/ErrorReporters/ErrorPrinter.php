@@ -2,12 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Exception;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 
 class ErrorPrinter
 {
@@ -90,18 +88,13 @@ class ErrorPrinter
             ->link($path, $lineNumber);
     }
 
-    public function simplePendError($yellowText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
+    public function simplePendError($text, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
         is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
 
-        $errorData = $pre.$this->color($yellowText).$rest;
+        $errorData = $pre.Color::blue($text).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
-    }
-
-    public function color($msg, $color = 'blue')
-    {
-        return "<fg=$color>$msg</>";
     }
 
     public function print($msg, $path = '   ')
@@ -114,7 +107,7 @@ class ErrorPrinter
         if ($counted) {
             $number = ++$this->total;
             ($number < 10) && $number = " $number";
-            $number = $this->color($number, 'cyan');
+            $number = Color::cyan($number);
             $path = "  $number ";
         } else {
             $path = '';
@@ -123,19 +116,13 @@ class ErrorPrinter
         $width = ErrorPrinter::$terminalWidth - 6;
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg), $width);
         PendingError::$maxLength = min(PendingError::$maxLength, $width);
-        $this->print($this->color($msg, 'red'), $path);
+        $this->print(Color::red($msg), $path);
     }
 
     public function end()
     {
-        $line = function ($color) {
-            $this->printer->writeln(' <fg='.$color.'>'.str_repeat('_', 3 + PendingError::$maxLength).'</> ');
-        };
-        try {
-            $line('gray');
-        } catch (Exception $e) {
-            $line('blue'); // for older versions of laravel
-        }
+        $line = str_repeat('_', 3 + PendingError::$maxLength);
+        $this->printer->writeln(Color::gray($line));
     }
 
     public function printLink($file, $lineNumber = 4)
@@ -147,7 +134,7 @@ class ErrorPrinter
     {
         $relativePath = FilePath::normalize(trim($path, '\\/'));
 
-        return 'at <fg=green>'.$relativePath.'</>'.':<fg=green>'.$lineNumber.'</>';
+        return 'at '.Color::green($relativePath).':'.Color::green($lineNumber);
     }
 
     /**
@@ -231,12 +218,12 @@ class ErrorPrinter
         $duration = microtime(true) - microscope_start;
         $duration = round($duration, 3);
 
-        return " ⏰ Finished in: {$duration} (sec)";
+        return " ⏰ Finished in: $duration (sec)";
     }
 
     public static function lineSeparator(): string
     {
-        return ' <fg='.LineSeperator::$color.'>'.str_repeat('_', ErrorPrinter::$terminalWidth - 3).'</>';
+        return ' '.Color::gray(str_repeat('_', ErrorPrinter::$terminalWidth - 3));
     }
 
     private function printError($error): void

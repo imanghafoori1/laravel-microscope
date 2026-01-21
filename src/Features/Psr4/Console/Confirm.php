@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
+
 class Confirm
 {
     public static $askTime = 0;
@@ -18,6 +20,8 @@ class Confirm
 
     private static function getQuestion($replacement)
     {
-        return "Do you want to change it to: <fg=blue>$replacement</>";
+        $replacement = Color::blue($replacement);
+
+        return "Do you want to change it to: $replacement";
     }
 }

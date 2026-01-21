@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\RoutelessControllerActions;
+use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\Str;
@@ -32,7 +32,7 @@ class GenericDocblocks implements Check
 
         $fullNamespace = $file->getNamespace();
 
-        if (! RoutelessControllerActions::isLaravelController($fullNamespace)) {
+        if (! DeadControllerActions::isLaravelController($fullNamespace)) {
             return null;
         }
 

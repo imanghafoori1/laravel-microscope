@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\ReportMessages;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\TypeStatistics;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class CheckStatsCommand extends Command
@@ -50,15 +51,19 @@ class CheckStatsCommand extends Command
         });
 
         foreach ($stats as $id => $int) {
-            $this->info(' <fg=white> - </><fg=yellow>'.$int['counts'].' '.$id.'</> found.');
+            $stat = Color::yellow($int['counts'].' '.$id);
+            $this->info('  - '.$stat.' found.');
             //foreach ($int['namespaces'] as $namespace => $_) {
             //    $this->warn('       '.$namespace);
             //}
         }
 
-        [$liteners, $eventsCount] = $this->getListenersCount($events);
+        [$listeners, $eventsCount] = $this->getListenersCount($events);
 
-        $this->info(' - <fg=yellow>'.$liteners.' listeners</> are listening to <fg=yellow>'.$eventsCount.' events</>.');
+        $listeners = Color::yellow($listeners.' listeners');
+        $eventsCount = Color::yellow($eventsCount.' events.');
+
+        $this->info(' - '.$listeners.' are listening to '.$eventsCount);
         $this->line('');
 
         $duration = round(microtime(true) - $time, 5);

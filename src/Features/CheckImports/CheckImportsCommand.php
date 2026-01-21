@@ -8,6 +8,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassRefere
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
@@ -74,9 +75,9 @@ class CheckImportsCommand extends BaseCommand
         $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery(ErrorPrinter::singleton()->errorsList)]);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
-            $msg = '<options=bold;fg=yellow>No imports were found!</> with filter: <fg=red>"';
+            $msg = Color::boldYellow('No imports were found!');
             $filterName = $pathDTO->includeFile ?: $pathDTO->includeFolder;
-            $messages = $msg.$filterName.'"</>';
+            $messages = $msg.' with filter: "'.Color::red($filterName).'"';
             $this->getOutput()->writeln($messages);
         }
 

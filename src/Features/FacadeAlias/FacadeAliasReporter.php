@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class FacadeAliasReporter
@@ -17,10 +18,10 @@ class FacadeAliasReporter
     {
         $relativePath = $file->relativePath();
 
-        $message = '   <fg=red>Facade alias</>: <fg=yellow>'.$base.'</> for <fg=yellow>'.$alias.'</>';
+        $message = '   '.Color::red('Facade alias').': '.Color::yellow($base).' for '.Color::yellow($alias);
         $output = self::$command->getOutput();
         $output->writeln($message);
-        $output->writeln('   at <fg=green>'.$relativePath.'</>:'.$usageInfo[1]);
+        $output->writeln('   at '.Color::green($relativePath).':'.$usageInfo[1]);
         $output->writeln('   ');
 
         self::$errorCount++;

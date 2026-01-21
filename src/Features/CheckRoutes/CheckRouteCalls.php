@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
@@ -52,8 +53,9 @@ class CheckRouteCalls implements Check
 
     public static function printError($value, $absPath, $lineNumber)
     {
+        $value = Color::blue($value);
         self::route(
-            "route(<fg=yellow>$value</>)",
+            "route('$value')",
             'route name does not exist: ',
             '  <=== is wrong',
             $absPath,

@@ -9,7 +9,7 @@ use Imanghafoori\TokenAnalyzer\ClassMethods;
 use ReflectionClass;
 use Throwable;
 
-class RoutelessControllerActions implements Check
+class DeadControllerActions implements Check
 {
     public static $routes = Dependencies\RouteChecker::class;
 
@@ -64,12 +64,12 @@ class RoutelessControllerActions implements Check
     {
         try {
             return is_subclass_of($fullNamespace, self::$baseController);
+        // @codeCoverageIgnoreStart
         } catch (Throwable $r) {
-            // @codeCoverageIgnoreStart
             // it means the file does not contain a class or interface.
             return false;
-            // @codeCoverageIgnoreEnd
         }
+        // @codeCoverageIgnoreEnd
     }
 
     public static function findOrphanActions($tokens, $fullNamespace)
@@ -83,7 +83,7 @@ class RoutelessControllerActions implements Check
 
     public static function classAtMethod($fullNamespace, $methodName)
     {
-        $methodName = $methodName === '__invoke' ? '' : '@'.$methodName;
+        $methodName = ($methodName === '__invoke' ? '' : '@'.$methodName);
 
         return trim($fullNamespace, '\\').$methodName;
     }
@@ -102,11 +102,11 @@ class RoutelessControllerActions implements Check
                     'replace' => '$this->'.$methodName,
                 ],
             ], $tokens);
+        // @codeCoverageIgnoreStart
         } catch (Throwable $e) {
-            // @codeCoverageIgnoreStart
             return false;
-            // @codeCoverageIgnoreEnd
         }
+        // @codeCoverageIgnoreEnd
 
         return (bool) $result[1];
     }

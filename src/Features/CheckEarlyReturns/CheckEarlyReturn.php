@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
@@ -51,8 +52,9 @@ class CheckEarlyReturn implements Check
     private static function getConfirm($absFilePath)
     {
         $relFilePath = FilePath::getRelativePath($absFilePath);
+        $question = ' Do you want to flatten: '.Color::yellow($relFilePath);
 
-        return ErrorPrinter::singleton()->printer->confirm(' Do you want to flatten: <fg=yellow>'.$relFilePath.'</>');
+        return ErrorPrinter::singleton()->printer->confirm($question);
     }
 
     private static function refactor($tokens)

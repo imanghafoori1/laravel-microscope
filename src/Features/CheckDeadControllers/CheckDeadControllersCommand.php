@@ -19,7 +19,7 @@ class CheckDeadControllersCommand extends BaseCommand
 
     public $initialMsg = 'Checking for route-less controllers...';
 
-    public $checks = [RoutelessControllerActions::class];
+    public $checks = [DeadControllerActions::class];
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator

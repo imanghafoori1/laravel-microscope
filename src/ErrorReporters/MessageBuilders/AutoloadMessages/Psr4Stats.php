@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use JetBrains\PhpStorm\Pure;
 
@@ -23,7 +24,7 @@ class Psr4Stats
         foreach ($psr4Stats->stats as $psr4Namespace => $psr4Paths) {
             ComposerJsonReport::$callback && (ComposerJsonReport::$callback)();
             $lines[0] = PHP_EOL.self::getPsr4Head();
-            $lines[1] = self::getPsr4($max, $psr4Namespace);
+            $lines[1] = Color::red(self::getPsr4($max, $psr4Namespace));
 
             yield implode('', $lines);
 
@@ -48,7 +49,7 @@ class Psr4Stats
     #[Pure]
     private static function getPsr4(int $maxLen, string $namespace)
     {
-        return self::paddedNamespace($maxLen + 1, $namespace.':').' </>';
+        return self::paddedNamespace($maxLen + 1, $namespace.':').' ';
     }
 
     #[Pure]
@@ -62,6 +63,6 @@ class Psr4Stats
     #[Pure]
     private static function getPsr4Head()
     {
-        return '    '.self::hyphen().'<fg=red>';
+        return '    '.self::hyphen();
     }
 }

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class CheckGenericDocBlocksCommand extends BaseCommand
 {
@@ -42,6 +43,6 @@ class CheckGenericDocBlocksCommand extends BaseCommand
 
     private function getQuestion($absFilePath)
     {
-        return 'Do you want to remove doc-blocks from: <fg=yellow>'.basename($absFilePath).'</>';
+        return 'Do you want to remove doc-blocks from: '.Color::yellow(basename($absFilePath));
     }
 }

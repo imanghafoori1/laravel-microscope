@@ -135,7 +135,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     private function setLineSeparatorColor()
     {
         [$major] = explode('.', app()->version());
-        $color = (int) $major >= 9 ? 'gray' : 'blue';
+        $color = (int) $major >= 10 ? 'gray' : 'blue';
         LineSeperator::$color = $color;
     }
 

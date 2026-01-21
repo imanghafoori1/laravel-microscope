@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations\Reports;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use JetBrains\PhpStorm\Pure;
@@ -21,7 +22,7 @@ class ComposerJsonReport
         $composerPath = trim($composerPath, '/');
         $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
 
-        return ' <fg=blue>./'.$composerPath.'composer.json'.'</>';
+        return Color::blue(' ./'.$composerPath.'composer.json');
     }
 
     /**
@@ -38,7 +39,7 @@ class ComposerJsonReport
 
         $lines = [];
         $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
-        $lines[] = PHP_EOL.self::hyphen('<options=bold;fg=white>PSR-4 </>');
+        $lines[] = PHP_EOL.self::hyphen(Color::boldYellow('PSR-4 '));
         $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4Stat, $max);
 
         if ($classMapStat) {

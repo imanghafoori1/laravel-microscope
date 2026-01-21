@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class ModelListPrinter
 {
@@ -12,21 +13,19 @@ class ModelListPrinter
         foreach ($models as $path => $modelList) {
             $output->writeln(' - '.$path);
             foreach ($modelList as $model) {
-                $output->writeln('    <fg=yellow>'.$model['class'].'</>   (<fg=blue>\''.$model['table'].'\'</>)');
+                $table = Color::blue($model['table']);
+                $class = Color::yellow($model['class']);
+                $output->writeln("    $class   ('$table')");
                 $output->writeln(str_replace('\\', '/', ErrorPrinter::getLink($model['relative_path'])));
 
+                $line = str_repeat('_', $terminalWidth);
                 try {
-                    $this->write($output, '<fg=gray>', $terminalWidth);
+                    $output->writeln(Color::gray($line));
                 } catch (Exception $e) {
                     // for older version of laravel.
-                    $this->write($output, '<fg=white>', $terminalWidth);
+                    $output->writeln(Color::white($line));
                 }
             }
         }
-    }
-
-    private function write($output, string $msg, $terminalWidth): void
-    {
-        $output->writeln($msg.str_repeat('_', $terminalWidth).'</>');
     }
 }

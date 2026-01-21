@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\RouteOverride;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\PendingError;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class RouteDefinitionPrinter
 {
@@ -15,24 +16,24 @@ class RouteDefinitionPrinter
 
         $printer = ErrorPrinter::singleton();
 
-        $msg = self::getMsg($route1, $route2, $printer, $info);
+        $msg = self::getMsg($route1, $route2, $info);
         $methods = self::getMethods($route1);
         $key = 'routeDefinitionConflict';
 
         $printer->errorsList[$key][$methods] = (new PendingError($key))
-            ->header('Route with uri: '.$printer->color($methods.': /'.$route1->uri()).' is overridden.')
+            ->header('Route with uri: '.Color::blue($methods.': /'.$route1->uri()).' is overridden.')
             ->errorData($msg);
     }
 
-    private static function getMsg($route1, $route2, ErrorPrinter $printer, $info): string
+    private static function getMsg($route1, $route2, $info): string
     {
         $routeName = $route1->getName();
         if ($routeName) {
-            $routeName = $printer->color($routeName);
+            $routeName = Color::blue($routeName);
             $msg = 'Route name: '.$routeName;
         } else {
             $routeUri = $route1->uri();
-            $routeUri = $printer->color($routeUri);
+            $routeUri = Color::blue($routeUri);
             $msg = 'Route uri: '.$routeUri;
         }
 
@@ -41,7 +42,7 @@ class RouteDefinitionPrinter
 
         $routeName = $route2->getName();
         if ($routeName) {
-            $routeName = $printer->color($routeName);
+            $routeName = Color::blue($routeName);
             $msg .= 'route name: '.$routeName;
         } else {
             $msg .= 'an other route with same uri.';

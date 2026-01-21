@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Finder;
@@ -98,7 +99,7 @@ class PatternRefactorings implements Check
     private static function getShowMessage($matchedValue, $tokens): array
     {
         [$from, $lineNum] = self::getFrom($matchedValue, $tokens);
-        $message = 'Matched Code: <fg=yellow>'.Str::limit($from, 150).'</>';
+        $message = 'Matched Code: '.Color::yellow(Str::limit($from, 150));
 
         return [$message, $lineNum];
     }

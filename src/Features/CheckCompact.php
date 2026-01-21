@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\SpyClasses\RoutePaths;
@@ -95,7 +96,7 @@ class CheckCompact extends Command
             [, $compactedVars] = Ifs::readCondition($methodBody, $pp);
             $compactVars = [];
             foreach ($compactedVars as $uu => $var) {
-                $var[0] == T_CONSTANT_ENCAPSED_STRING && $compactVars[] = '$'.\trim($var[1], '\'\"');
+                $var[0] == T_CONSTANT_ENCAPSED_STRING && $compactVars[] = '$'.trim($var[1], '\'\"');
             }
             $compactVars = array_flip($compactVars);
 
@@ -114,7 +115,8 @@ class CheckCompact extends Command
     private static function compactError($path, $lineNumber, $absent, $key, $header)
     {
         $p = ErrorPrinter::singleton();
-        $errorData = $p->color(implode(', ', array_keys($absent))).' does not exist';
+        $absent = implode(', ', array_keys($absent));
+        $errorData = Color::blue($absent).' does not exist';
 
         $p->addPendingError($path, $lineNumber, $key, $header, $errorData);
     }

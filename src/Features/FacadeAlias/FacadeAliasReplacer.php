@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
@@ -37,7 +38,7 @@ class FacadeAliasReplacer
     {
         $relativePath = FilePath::normalize($file->relativePath());
         self::$command->writeln('at '.$relativePath.':'.$use[1]);
-        $question = 'Do you want to replace <fg=yellow>'.$base.'</> with <fg=yellow>'.$aliases.'</>';
+        $question = 'Do you want to replace '.Color::yellow($base).' with '.Color::yellow($aliases);
 
         return self::$command->confirm($question, true);
     }

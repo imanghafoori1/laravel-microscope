@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
@@ -58,18 +59,18 @@ class PostReplaceAndSave
         $printer = ErrorPrinter::singleton();
         // Print Replacement Links
         $printer->print('Replacing:
-<fg=yellow>'.Str::limit($startingCode, 150).'</>', '');
+'.Color::yellow(Str::limit($startingCode, 150)), '');
         $printer->print('With:
-<fg=yellow>'.Str::limit($endResult, 150).'</>', '');
+'.Color::yellow(Str::limit($endResult, 150)), '');
 
-        $printer->print('<fg=red>Replacement will occur at:</>', '');
+        $printer->print(Color::red('Replacement will occur at:'), '');
 
         $lineNum && $printer->printLink($file, $lineNum);
     }
 
     private static function askToRefactor(PhpFileDescriptor $file)
     {
-        $text = 'Do you want to replace '.$file->getFileName().' with new version of it?';
+        $text = 'Do you want to replace '.Color::yellow($file->getFileName()).' with new version of it?';
 
         return ErrorPrinter::singleton()->printer->confirm($text);
     }
