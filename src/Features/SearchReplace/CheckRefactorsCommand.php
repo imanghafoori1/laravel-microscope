@@ -67,6 +67,8 @@ class CheckRefactorsCommand extends Command
             PHP_EOL.$iterator->forRoutes(),
         ]);
 
+        $errorPrinter->hasErrors() && $errorPrinter->logErrors();
+
         $this->getOutput()->writeln(' - Finished search/replace');
 
         return PatternRefactorings::$patternFound ? 1 : 0;
