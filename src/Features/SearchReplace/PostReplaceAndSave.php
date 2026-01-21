@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
 use Imanghafoori\SearchReplace\Stringify;
@@ -13,11 +14,11 @@ class PostReplaceAndSave
 {
     public static $forceSave = false;
 
-    public static function replaceAndSave($pattern, $matchedValue, $postReplaces, $namedPatterns, $tokens, $lineNum, string $absFilePath, $newTokens): array
+    public static function replaceAndSave($pattern, $matchedValue, $postReplaces, $namedPatterns, $tokens, $lineNum, $file, $newTokens): array
     {
         $to = Replacer::applyWithPostReplacements($pattern['replace'], $matchedValue['values'], $postReplaces, $namedPatterns);
         $countOldTokens = count($tokens);
-        $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens);
+        $tokens = self::save($matchedValue, $tokens, $to, $lineNum, $file, $newTokens);
 
         $tokens = token_get_all(Stringify::fromTokens($tokens));
         $diff = count($tokens) - $countOldTokens;
@@ -28,13 +29,14 @@ class PostReplaceAndSave
         return [$tokens, $i];
     }
 
-    private static function save($matchedValue, $tokens, $to, $lineNum, $absFilePath, $newTokens)
+    private static function save($matchedValue, $tokens, $to, $lineNum, PhpFileDescriptor $file, $newTokens)
     {
         $from = Finder::getPortion($matchedValue['start'] + 1, $matchedValue['end'] + 1, $tokens);
-        self::printLinks($lineNum, $absFilePath, $from, $to);
+        self::printLinks($lineNum, $file, $from, $to);
 
-        if (self::$forceSave || self::askToRefactor($absFilePath)) {
-            file_put_contents($absFilePath, Refactor::toString($newTokens));
+        if (self::$forceSave || self::askToRefactor($file)) {
+            $file->putContents(Refactor::toString($newTokens));
+            $file->setTokens($newTokens);
             $tokens = $newTokens;
         }
 
@@ -51,7 +53,7 @@ class PostReplaceAndSave
         return $count;
     }
 
-    private static function printLinks($lineNum, $absFilePath, $startingCode, $endResult)
+    private static function printLinks($lineNum, PhpFileDescriptor $file, $startingCode, $endResult)
     {
         $printer = ErrorPrinter::singleton();
         // Print Replacement Links
@@ -62,12 +64,12 @@ class PostReplaceAndSave
 
         $printer->print('<fg=red>Replacement will occur at:</>', '');
 
-        $lineNum && $printer->printLink($absFilePath, $lineNum);
+        $lineNum && $printer->printLink($file, $lineNum);
     }
 
-    private static function askToRefactor($absFilePath)
+    private static function askToRefactor(PhpFileDescriptor $file)
     {
-        $text = 'Do you want to replace '.basename($absFilePath).' with new version of it?';
+        $text = 'Do you want to replace '.$file->getFileName().' with new version of it?';
 
         return ErrorPrinter::singleton()->printer->confirm($text);
     }

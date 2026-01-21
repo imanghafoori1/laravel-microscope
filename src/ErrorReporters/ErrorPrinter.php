@@ -138,11 +138,9 @@ class ErrorPrinter
         }
     }
 
-    public function printLink($path, $lineNumber = 4)
+    public function printLink($file, $lineNumber = 4)
     {
-        if ($path) {
-            $this->print(self::getLink(str_replace(BasePath::$path, '', $path), $lineNumber), '');
-        }
+        $this->print(self::getLink($file->relativePath(), $lineNumber), '');
     }
 
     public static function getLink($path, $lineNumber = 4)
@@ -245,7 +243,10 @@ class ErrorPrinter
     {
         $this->printHeader($error->getHeader());
         $this->print($error->getErrorData());
-        $this->printLink($error->getLinkPath(), $error->getLinkLineNumber());
+        $this->printLink(
+            PhpFileDescriptor::make($error->getLinkPath()),
+            $error->getLinkLineNumber()
+        );
         $this->end();
     }
 }

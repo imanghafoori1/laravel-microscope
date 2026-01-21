@@ -113,7 +113,7 @@ class Psr4Errors
         } elseif (self::$command->option('force')) {
             $answer = true;
         } else {
-            NamespaceFixerMessages::warnIncorrectNamespace($file->relativePath(), $from, $class);
+            NamespaceFixerMessages::warnIncorrectNamespace($file, $from, $class);
             $answer = self::$confirm::ask(self::$command, $to);
             self::deleteLine(9);
         }

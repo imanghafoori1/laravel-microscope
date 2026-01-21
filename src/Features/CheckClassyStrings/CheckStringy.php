@@ -50,7 +50,7 @@ class CheckStringy implements Check
                     continue;
                 }
 
-                $errorPrinter->printLink($absFilePath, $lineNum);
+                $errorPrinter->printLink($file, $lineNum);
 
                 if (! self::ask($errorPrinter->printer, $lineNum, $token[1], $file)) {
                     continue;

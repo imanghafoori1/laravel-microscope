@@ -77,7 +77,7 @@ class PatternRefactorings implements Check
                     $namedPatterns,
                     $tokens,
                     $lineNum,
-                    $absFilePath,
+                    $file,
                     $newTokens
                 );
 
@@ -103,12 +103,14 @@ class PatternRefactorings implements Check
         return [$message, $lineNum];
     }
 
+    /*
     public static function print(string $message, $absFilePath, $lineNum): void
     {
         $printer = ErrorPrinter::singleton();
         $printer->print($message, '');
         $lineNum && $printer->printLink($absFilePath, $lineNum);
     }
+    */
 
     private static function getFrom($matchedValue, $tokens): array
     {

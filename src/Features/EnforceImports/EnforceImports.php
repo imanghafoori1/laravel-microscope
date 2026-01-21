@@ -108,8 +108,7 @@ class EnforceImports implements Check
                 $replacements = self::insertImport($file, $classRef);
                 // in case we are not able to insert imports at the top:
                 if (count($replacements) === 0) {
-                    file_put_contents($file->getAbsolutePath(), $original);
-                    $file->getTokens(true);
+                    $file->putContents($original);
                     $hasError = $reverted = true;
                     break;
                 }
@@ -137,8 +136,7 @@ class EnforceImports implements Check
                 'replace' => 'namespace <1>;'.PHP_EOL.PHP_EOL.'use '.$classRef.';'.PHP_EOL,
             ],
         ], $file->getTokens(true));
-        file_put_contents($file->getAbsolutePath(), $string);
-        $file->getTokens(true);
+        $file->putContents($string);
 
         return $replacements;
     }

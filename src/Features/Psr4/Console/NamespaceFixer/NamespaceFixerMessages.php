@@ -10,7 +10,7 @@ class NamespaceFixerMessages
 {
     public static $pause = 250000;
 
-    public static function warnIncorrectNamespace($path, $currentNamespace, $className)
+    public static function warnIncorrectNamespace(PhpFileDescriptor $file, $currentNamespace, $className)
     {
         $printer = ErrorPrinter::singleton();
         $msg = self::getHeader($currentNamespace, $className);
@@ -21,7 +21,7 @@ class NamespaceFixerMessages
         $printer->printHeader($msg, false);
         usleep(self::$pause);
 
-        $printer->printLink($path, 3);
+        $printer->printLink($file, 3);
     }
 
     private static function getHeader($currentNamespace, $className): string
