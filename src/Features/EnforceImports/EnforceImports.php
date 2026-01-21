@@ -94,9 +94,8 @@ class EnforceImports implements Check
             $className = self::className($classRef['class']);
 
             if ($namespace && ! self::refIsDeleted($deletes, $className, $classRef['class'])) {
-                $absFilePath = $file->getAbsolutePath();
                 if ($file->getFileName() !== $className.'.php') {
-                    self::$fix && ExtraFQCN::deleteFQCN($absFilePath, $classRef);
+                    self::$fix && ExtraFQCN::deleteFQCN($file, $classRef);
                     $deletes[$className] = $classRef['class'];
                     $replacedRefs[$classRef['class']] = $classRef['line'];
                 }

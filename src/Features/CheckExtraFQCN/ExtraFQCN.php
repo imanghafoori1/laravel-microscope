@@ -30,7 +30,7 @@ class ExtraFQCN implements Check
         $absFilePath = $file->getAbsolutePath();
         $imports = (self::$imports)($file);
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
-        $hasError = self::checkClassRef($classRefs, $imports, $absFilePath, self::$class, self::$fix);
+        $hasError = self::checkClassRef($classRefs, $imports, $file);
 
         return $hasError;
     }
@@ -57,8 +57,11 @@ class ExtraFQCN implements Check
         return mb_substr($subject, 0, $pos, 'UTF-8');
     }
 
-    private static function checkClassRef($classRefs, $imports, $absFilePath, $class, $fix = true): bool
+    private static function checkClassRef($classRefs, $imports, PhpFileDescriptor $file): bool
     {
+        $fix = self::$fix;
+        $class = self::$class;
+        $absFilePath = $file->getAbsolutePath();
         $hasError = false;
         $namespace = $classRefs[1];
         $imports = array_values($imports)[0];
@@ -73,13 +76,13 @@ class ExtraFQCN implements Check
                 if (! $shouldBeSkipped) {
                     $line = $imports[self::className($classRef['class'])][1]; // <== get the line number of the import
                     self::report($classRef, $absFilePath, $line);
-                    $fix && self::deleteFQCN($absFilePath, $classRef);
+                    $fix && self::deleteFQCN($file, $classRef);
                 }
             } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::conflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
                     self::reportSameNamespace($classRef, $absFilePath, $fix);
-                    $fix && self::deleteFQCN($absFilePath, $classRef);
+                    $fix && self::deleteFQCN($file, $classRef);
                 }
             } else {
                 $imports2 = self::restructureImports($imports);
@@ -99,17 +102,17 @@ class ExtraFQCN implements Check
         return Loop::mapKey($imports, fn ($import, $key) => ['\\'.$import[0] => [$import[1], $key]]);
     }
 
-    public static function deleteFQCN($absFilePath, $classRef)
+    public static function deleteFQCN(PhpFileDescriptor $file, $classRef)
     {
         $line = $classRef['line'];
         $classRef = $classRef['class'];
-        $lines = file($absFilePath);
+        $lines = file($file->getAbsolutePath());
         $count = 0;
 
         $new = str_replace([$classRef], self::className($classRef), $lines[$line - 1], $count);
         if ($count === 1) {
             $lines[$line - 1] = $new;
-            file_put_contents($absFilePath, implode('', $lines));
+            $file->putContents(implode('', $lines));
 
             return true;
         } elseif ($count > 1) {
@@ -120,7 +123,7 @@ class ExtraFQCN implements Check
             $new = str_replace($search, $replace, $lines[$line - 1], $count);
             if ($count === 1) {
                 $lines[$line - 1] = $new;
-                file_put_contents($absFilePath, implode('', $lines));
+                $file->putContents(implode('', $lines));
 
                 return true;
             }
