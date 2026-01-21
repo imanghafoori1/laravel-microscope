@@ -13,7 +13,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 {
     use FilesStats;
 
-    protected $signature = 'check:fqcn
+    protected $signature = 'check:extra_fqcn
         {--fix : Fix references}
         {--class= : Fix references of the specified class}
         {--f|file= : Pattern for file names to scan}
@@ -69,6 +69,6 @@ class CheckExtraFQCNCommand extends BaseCommand
     private function printGuide()
     {
         $this->line('<fg=yellow> You may use `--fix` option to delete extra code:</>');
-        $this->line('<fg=yellow> php artisan check:fqcn --fix</>');
+        $this->line('<fg=yellow> php artisan check:extra_fqcn --fix</>');
     }
 }
