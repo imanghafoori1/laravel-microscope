@@ -52,6 +52,7 @@ class CheckExtraFQCNCommand extends BaseCommand
             $iterator->forRoutes(),
         ]);
 
+        ExtraFQCN::reset();
         ! $options->option('fix') && ($this->exitCode() === 1) && $this->printGuide();
     }
 

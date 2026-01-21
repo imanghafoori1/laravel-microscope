@@ -78,7 +78,7 @@ class ExtraFQCN implements Check
             } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::conflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
-                    self::reportSameNamespace($classRef, $absFilePath);
+                    self::reportSameNamespace($classRef, $absFilePath, $fix);
                     $fix && self::deleteFQCN($absFilePath, $classRef);
                 }
             } else {
@@ -139,9 +139,10 @@ class ExtraFQCN implements Check
         );
     }
 
-    private static function reportSameNamespace($classRef, string $absFilePath)
+    private static function reportSameNamespace($classRef, string $absFilePath, $fix)
     {
         $header = 'FQCN is already on the same namespace.';
+        $fix && ($header .= ' (fixed)');
 
         ErrorPrinter::singleton()->simplePendError(
             $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
@@ -169,5 +170,10 @@ class ExtraFQCN implements Check
         self::$class = $class;
         self::$fix = $fix;
         self::$imports = $imports;
+    }
+
+    public static function reset()
+    {
+        self::configure(null, false, null);
     }
 }
