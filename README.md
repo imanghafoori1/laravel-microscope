@@ -83,6 +83,7 @@ Give your eyes a rest, we will detect and fix them for you.
         1. [`php artisan enforce:helper_functions`](#helper_functions)
         1. [`php artisan check:fqcn`](#fqcn)
         1. [`php artisan list:models`](#models)
+        1. [`php artisan check:extra_imports`](#extra_imports)
         1. [`php artisan enforce:imports`](#enforce_imports)
         1. [`php artisan check:abort_if`](#check_abort_if)
      </details>
