@@ -6,8 +6,7 @@ use Closure;
 use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class CheckAliasesCommand extends BaseCommand
 {
@@ -41,7 +40,7 @@ class CheckAliasesCommand extends BaseCommand
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
-        $importsProvider = self::getParamProvider();
+        $importsProvider = UseStatementParser::get();
         self::setEnforceImportsOptions($importsProvider);
         self::setFacadeAliasCheckOptions($command->option('alias'));
         FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
@@ -69,14 +68,5 @@ class CheckAliasesCommand extends BaseCommand
         $mutator = fn ($class) => ltrim($aliases[$class] ?? $class, '\\');
 
         EnforceImports::setOptions(false, $aliasKeys, $paramProvider, $onError, $mutator);
-    }
-
-    private static function getParamProvider()
-    {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
     }
 }

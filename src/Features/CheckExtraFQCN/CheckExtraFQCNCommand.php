@@ -4,10 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
-use JetBrains\PhpStorm\Pure;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class CheckExtraFQCNCommand extends BaseCommand
 {
@@ -40,7 +38,7 @@ class CheckExtraFQCNCommand extends BaseCommand
         ExtraFQCN::configure(
             $options->option('class'),
             $options->option('fix'),
-            self::useStatementParser()
+            UseStatementParser::get()
         );
 
         $iterator->printAll([
@@ -54,16 +52,6 @@ class CheckExtraFQCNCommand extends BaseCommand
 
         ExtraFQCN::reset();
         ! $options->option('fix') && ($this->exitCode() === 1) && $this->printGuide();
-    }
-
-    #[Pure]
-    private static function useStatementParser()
-    {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
     }
 
     private function printGuide()

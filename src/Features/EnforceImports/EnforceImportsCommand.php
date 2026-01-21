@@ -5,9 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
-use JetBrains\PhpStorm\Pure;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class EnforceImportsCommand extends BaseCommand
 {
@@ -35,22 +33,12 @@ class EnforceImportsCommand extends BaseCommand
     {
         $noFix = $this->options->option('no-fix');
         $class = $this->options->option('class');
-        EnforceImports::setOptions($noFix, $class, self::useParser(), self::getOnError($noFix));
+        EnforceImports::setOptions($noFix, $class, UseStatementParser::get(), self::getOnError($noFix));
 
         $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
             $iterator->forComposerLoadedFiles(),
         ]);
-    }
-
-    #[Pure]
-    private static function useParser()
-    {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
     }
 
     private static function getOnError($noFix)

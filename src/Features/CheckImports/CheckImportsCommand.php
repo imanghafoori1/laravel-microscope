@@ -9,11 +9,9 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClas
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
-use Imanghafoori\TokenAnalyzer\ParseUseStatement;
-use JetBrains\PhpStorm\Pure;
 
 class CheckImportsCommand extends BaseCommand
 {
@@ -56,7 +54,7 @@ class CheckImportsCommand extends BaseCommand
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        CheckClassReferencesAreValid::$imports = self::useStatementParser();
+        CheckClassReferencesAreValid::$imports = UseStatementParser::get();
 
         /**
          * @var string[] $messages
@@ -87,15 +85,5 @@ class CheckImportsCommand extends BaseCommand
         $this->line('');
 
         return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
-    }
-
-    #[Pure]
-    private static function useStatementParser()
-    {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
     }
 }
