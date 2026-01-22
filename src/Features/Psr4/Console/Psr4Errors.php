@@ -10,6 +10,8 @@ use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\ClassRefCorre
 use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForReferenceFix;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixerMessages;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\NamespaceFixer;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class Psr4Errors
@@ -29,11 +31,7 @@ class Psr4Errors
     {
         self::$command = $command;
 
-        foreach ($errorsLists as $errors) {
-            foreach ($errors as $error) {
-                self::handleError($error);
-            }
-        }
+        Loop::deepOver($errorsLists, fn ($error) => self::handleError($error));
     }
 
     private static function handleError($error)
@@ -63,7 +61,7 @@ class Psr4Errors
 
         if ($answer) {
             NamespaceFixer::fix($file, $from, $to);
-            self::$command->getOutput()->writeln('Namespace updated to: '.$to);
+            self::$command->getOutput()->writeln('Namespace updated to: '.Color::blue($to));
             self::$command->getOutput()->writeln('Searching for old references...');
             self::updateOldRefs($from, $to, $class);
             self::deleteLine(2);
@@ -102,7 +100,7 @@ class Psr4Errors
             if ($i >= $lines) {
                 break;
             }
-            usleep(self::$pause);
+            self::$pause && usleep(self::$pause);
         }
     }
 
