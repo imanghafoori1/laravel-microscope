@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class PrintWrongClassRefs
 {
@@ -10,14 +11,12 @@ class PrintWrongClassRefs
     {
         $printer = ErrorPrinter::singleton();
 
-        foreach ($wrongClassRefs as $classReference) {
-            $printer->simplePendError(
-                $classReference['class'],
-                $absFilePath,
-                $classReference['line'],
-                'wrongClassRef',
-                'Class Reference does not exist:'
-            );
-        }
+        Loop::over($wrongClassRefs, fn ($classRef) => $printer->simplePendError(
+            $classRef['class'],
+            $absFilePath,
+            $classRef['line'],
+            'wrongClassRef',
+            'Class Reference does not exist:'
+        ));
     }
 }

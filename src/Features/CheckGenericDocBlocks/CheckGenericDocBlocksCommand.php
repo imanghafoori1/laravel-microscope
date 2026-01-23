@@ -12,7 +12,7 @@ class CheckGenericDocBlocksCommand extends BaseCommand
     {--d|folder=}
     {--F|except-file= : Comma seperated patterns for file names to exclude}
     {--D|except-folder= : Comma seperated patterns for folder names to exclude}
-    {--nofix}
+    {--nofix : avoids deleting generic docblocks}
     ';
 
     protected $description = 'Removes generic doc-blocks from your controllers.';
