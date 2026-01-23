@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 
 class Color
 {
-    private static $color = true;
+    public static $color = true;
 
     public static function yellow($msg)
     {
@@ -15,7 +15,11 @@ class Color
 
     public static function boldYellow($msg)
     {
-        return self::$color ? '<options=bold;fg=yellow>'.$msg.'</>' : $msg;
+        if (self::$color === false) {
+            return $msg;
+        }
+
+        return "<options=bold;fg=yellow>$msg</>";
     }
 
     public static function red($msg)
@@ -50,6 +54,10 @@ class Color
 
     private static function color($msg, $color)
     {
-        return self::$color ? '<fg='.$color.'>'.$msg.'</>' : $msg;
+        if (self::$color === false) {
+            return $msg;
+        }
+
+        return "<fg=$color>$msg</>" ;
     }
 }
