@@ -32,4 +32,9 @@ class SummeryReport
     {
         return ' 🔸 '.Color::yellow($count).' '.$errorType.($count === 1 ? '' : 's').' found.';
     }
+
+    public static function noImportsFound($filter)
+    {
+        return Color::boldYellow('No imports were found!').' with filter: "'.Color::red($filter).'"';
+    }
 }

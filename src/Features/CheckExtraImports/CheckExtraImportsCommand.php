@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImport
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 
@@ -67,8 +66,7 @@ class CheckExtraImportsCommand extends BaseCommand
 
         if (! CheckImportsAreUsed::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
-            $messages = Color::boldYellow('No imports were found!').' with filter: "'.Color::red($filter).'"';
-            $this->getOutput()->writeln($messages);
+            $this->getOutput()->writeln(Reporters\SummeryReport::noImportsFound($filter));
         }
         Cache::writeCacheContent();
 

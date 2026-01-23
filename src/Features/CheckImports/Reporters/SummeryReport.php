@@ -28,6 +28,14 @@ class SummeryReport
 
     public static function format($errorType, $count)
     {
-        return ' 🔸 '.Color::yellow($count).' '.$errorType.($count === 1 ? '' : 's').' found.';
+        $int = Color::yellow($count);
+        $s = $int === 1 ? '' : 's';
+
+        return " 🔸 $int $errorType{$s} found.";
+    }
+
+    public static function noImportsFound($filter)
+    {
+        return Color::boldYellow('No imports were found!').' with filter: "'.Color::red($filter).'"';
     }
 }
