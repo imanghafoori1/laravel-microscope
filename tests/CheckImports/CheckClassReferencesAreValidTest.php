@@ -20,7 +20,7 @@ class CheckClassReferencesAreValidTest extends TestCase
 
         ImportsAnalyzer::$existenceChecker = AlwaysExistsMock::class;
 
-        CheckClassReferencesAreValid::$imports = function (PhpFileDescriptor $file) {
+        CheckClassReferencesAreValid::$importsProvider = function (PhpFileDescriptor $file) {
             $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
             return $imports[0] ?: [$imports[1]];

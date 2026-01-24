@@ -16,11 +16,11 @@ class CheckClassReferencesAreValid implements Check
 
     public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
-    public static $imports;
+    public static $importsProvider;
 
     public static function check(PhpFileDescriptor $file)
     {
-        $imports = self::$imports;
+        $imports = self::$importsProvider;
 
         loopStart:
 

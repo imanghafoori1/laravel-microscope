@@ -54,7 +54,7 @@ class CheckImportsCommand extends BaseCommand
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        CheckClassReferencesAreValid::$imports = UseStatementParser::get();
+        CheckClassReferencesAreValid::$importsProvider = UseStatementParser::get();
 
         /**
          * @var string[] $messages
