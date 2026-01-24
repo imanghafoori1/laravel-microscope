@@ -7,6 +7,9 @@ use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 
 class Cache
 {
+    /**
+     * @var string
+     */
     public static $cacheFileName;
 
     public static $cache = [];

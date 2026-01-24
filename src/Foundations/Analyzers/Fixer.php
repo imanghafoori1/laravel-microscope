@@ -98,6 +98,9 @@ class Fixer
         ];
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public static function fixImport($absPath, $import, $lineNum, $isAliased)
     {
         $correct = self::guessCorrect(class_basename($import));

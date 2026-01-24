@@ -6,9 +6,13 @@ use Composer\ClassMapGenerator\ClassMapGenerator;
 use ImanGhafoori\ComposerJson\ComposerJson as Composer;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ComposerJson
 {
+    /**
+     * @var \Closure
+     */
     public static $composer;
 
     /**
@@ -42,13 +46,10 @@ class ComposerJson
      */
     public static function getClassMaps($pathDTO)
     {
-        $classmaps = [];
-
-        foreach (self::make()->readAutoloadClassMap() as $composerPath => $classMapPaths) {
-            $classmaps[$composerPath] = self::getFilteredClasses($composerPath, $classMapPaths, $pathDTO);
-        }
-
-        return $classmaps;
+        return Loop::map(
+            self::make()->readAutoloadClassMap(),
+            fn ($classMapPaths, $composerPath) => self::getFilteredClasses($composerPath, $classMapPaths, $pathDTO)
+        );
     }
 
     /**
@@ -87,12 +88,10 @@ class ComposerJson
      */
     private static function filterClasses(array $classes, $pathDTO)
     {
-        foreach ($classes as $i => $class) {
-            if (! FilePath::contains(FilePath::getRelativePath($class), $pathDTO)) {
-                unset($classes[$i]);
-            }
-        }
-
-        return $classes;
+        return Loop::mapIf(
+            $classes,
+            fn ($path) => FilePath::contains(FilePath::getRelativePath($path), $pathDTO),
+            fn ($val, $key) => [$key => $val]
+        );
     }
 }

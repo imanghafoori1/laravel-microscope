@@ -28,9 +28,8 @@ class ForAutoloadedClassMaps extends BaseIterator
      */
     private static function getDirStats($classMap, $checkSet)
     {
-        return StatsDto::make(Loop::map(
-            $classMap,
-            fn ($absFilePaths) => FilesDto::make(self::applyChecks($absFilePaths, $checkSet))
-        ));
+        $cb = fn ($paths) => FilesDto::make(self::applyChecks($paths, $checkSet));
+
+        return StatsDto::make(Loop::map($classMap, $cb));
     }
 }

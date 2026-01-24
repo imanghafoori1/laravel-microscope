@@ -54,9 +54,10 @@ class ForBladeFiles implements Check
      */
     private static function filterPaths($paths)
     {
+        $ds = DIRECTORY_SEPARATOR;
         foreach ($paths as $path) {
             $path = FilePath::normalize($path);
-            if (! Str::startsWith($path, BasePath::$path.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
+            if (! Str::startsWith($path, BasePath::$path.$ds.'vendor'.$ds)) {
                 yield $path;
             }
         }
