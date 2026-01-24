@@ -5,8 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use ImanGhafoori\ComposerJson\ClassLists;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use ReflectionClass;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
@@ -26,8 +24,7 @@ class ListModelsArtisanCommand extends Command
 
         app(ModelListPrinter::class)->printList(
             $this->inspectModels($models),
-            $this->getOutput(),
-            ErrorPrinter::$terminalWidth
+            $this->getOutput()
         );
     }
 
