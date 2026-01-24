@@ -74,7 +74,7 @@ class IteratorTest extends TestCase
 
         $iterator->formatPrintPsr4();
         $this->assertIsArray($_SESSION['msg']);
-        $this->assertStringContainsString('<fg=blue>./composer.json</>', $_SESSION['msg'][0]);
+        $this->assertStringContainsString('<fg=blue> ./composer.json</>', $_SESSION['msg'][0]);
         $this->assertStringContainsString('App\\', $_SESSION['msg'][2]);
         $this->assertStringContainsString('./app', $_SESSION['msg'][3]);
 

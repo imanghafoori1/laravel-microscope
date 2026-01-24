@@ -62,7 +62,7 @@ class EnforceHelpersTest extends TestCase
         $helpers->errorPrinter = ErrorPrinter::singleton();
         $helpers->handleCommand($iterator);
 
-        $this->assertStringContainsString('<fg=blue>./composer.json</>', $_SESSION['printAll'][0]);
+        $this->assertStringContainsString('<fg=blue> ./composer.json</>', $_SESSION['printAll'][0]);
         $this->assertStringContainsString('PSR-4', $_SESSION['printAll'][1]);
         $this->assertStringContainsString('App\:', $_SESSION['printAll'][2]);
         $this->assertStringContainsString('./app', $_SESSION['printAll'][3]);
