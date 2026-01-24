@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\CheckCollection;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Throwable;
@@ -71,11 +72,7 @@ class CheckSet
         $finder = PhpFinder::getAllPhpFiles($psr4Path);
         $this->pathDTO && $finder = self::filterFiles($finder, $this->pathDTO);
 
-        $filesCount = 0;
-        foreach ($finder as $phpFilePath) {
-            $filesCount++;
-            $this->applyChecks($phpFilePath);
-        }
+        $filesCount = Loop::walkCount($finder, fn ($fileObj) => $this->applyChecks($fileObj));
         ChecksOnPsr4Classes::$checkedFilesCount += $filesCount;
 
         return $filesCount;
@@ -91,17 +88,12 @@ class CheckSet
 
         $file = PhpFileDescriptor::make($absFilePath);
 
-        foreach ($this->checks->checks as $check) {
-            try {
-                $newTokens = $this->performCheck($check, $file);
+        Loop::over(
+            $this->checks->checks,
+            fn ($check) => $this->applyCheck($check, $file)
+        );
 
-                if ($newTokens) {
-                    $file->setTokens($newTokens);
-                }
-            } catch (Throwable $exception) {
-                $this->exceptions[] = $exception;
-            }
-        }
+        return true;
     }
 
     private function performCheck($check, PhpFileDescriptor $file)
@@ -114,5 +106,15 @@ class CheckSet
         }
 
         return $check->check($file, $this->path, $this->namespace);
+    }
+
+    private function applyCheck($check, PhpFileDescriptor $file): void
+    {
+        try {
+            $newTokens = $this->performCheck($check, $file);
+            $newTokens && $file->setTokens($newTokens);
+        } catch (Throwable $exception) {
+            $this->exceptions[] = $exception;
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
+
 class CommentMaker
 {
     private const separator = "\n         *";
@@ -60,11 +62,7 @@ class CommentMaker
     {
         $middlewares = $route->gatherMiddleware();
 
-        foreach ($middlewares as $i => $m) {
-            if (! is_string($m)) {
-                $middlewares[$i] = 'Closure';
-            }
-        }
+        Loop::map($middlewares, fn ($val) => ! is_string($val) ? 'Closure' : $val);
 
         return $middlewares;
     }
