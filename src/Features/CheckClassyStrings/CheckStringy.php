@@ -45,13 +45,7 @@ class CheckStringy implements Check
                     if (self::refersToDir($classPath)) {
                         continue;
                     }
-                    ErrorPrinter::singleton()->simplePendError(
-                        $token[1],
-                        $file,
-                        $lineNum,
-                        'wrongUsedClassError',
-                        'Class does not exist:'
-                    );
+                    self::error($token[1], $file, $lineNum);
 
                     continue;
                 }
@@ -120,5 +114,16 @@ class CheckStringy implements Check
         }
 
         return $classPath;
+    }
+
+    private static function error($token, PhpFileDescriptor $file, $lineNum): void
+    {
+        ErrorPrinter::singleton()->simplePendError(
+            $token,
+            $file,
+            $lineNum,
+            'wrongUsedClassError',
+            'Class does not exist:'
+        );
     }
 }

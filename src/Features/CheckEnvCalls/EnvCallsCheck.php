@@ -12,6 +12,9 @@ class EnvCallsCheck implements Check
 {
     use CachedCheck;
 
+    /**
+     * @var \Closure
+     */
     public static $onErrorCallback;
 
     /**
@@ -54,7 +57,7 @@ class EnvCallsCheck implements Check
             return false;
         }
 
-        if ($token[0] === T_RETURN && strpos(strtolower($absPath), 'config')) {
+        if ($token[0] === T_RETURN && stripos($absPath, 'config')) {
             return true;
         }
 

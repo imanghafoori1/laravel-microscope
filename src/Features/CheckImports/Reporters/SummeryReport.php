@@ -28,8 +28,8 @@ class SummeryReport
 
     public static function format($errorType, $count)
     {
+        $s = $count === 1 ? '' : 's';
         $int = Color::yellow($count);
-        $s = $int === 1 ? '' : 's';
 
         return " 🔸 $int $errorType{$s} found.";
     }

@@ -22,7 +22,7 @@ class ComposerJsonReport
         $composerPath = trim($composerPath, '/');
         $composerPath = $composerPath ? trim($composerPath, '/').'/' : '';
 
-        return Color::blue(' ./'.$composerPath.'composer.json');
+        return Color::blue(" ./{$composerPath}composer.json");
     }
 
     /**

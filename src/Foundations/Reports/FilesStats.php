@@ -13,9 +13,10 @@ trait FilesStats
     {
         $count = ChecksOnPsr4Classes::$checkedFilesCount;
         ChecksOnPsr4Classes::$checkedFilesCount = 0;
+        $es = $count <= 1 ? '' : 'es';
 
         if ($count) {
-            return CheckImportReporter::blue($count).'class'.($count <= 1 ? '' : 'es');
+            return CheckImportReporter::blue($count)."class$es";
         } else {
             return '';
         }

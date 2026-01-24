@@ -208,10 +208,8 @@ class EnforceImports implements Check
                 if ($only === $class) {
                     return true;
                 }
-            } else {
-                if ($only === self::className($class)) {
-                    return true;
-                }
+            } elseif ($only === self::className($class)) {
+                return true;
             }
         }
 

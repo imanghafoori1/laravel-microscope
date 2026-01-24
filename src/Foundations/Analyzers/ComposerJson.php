@@ -72,9 +72,10 @@ class ComposerJson
      */
     private static function getClasses($compPath, $classmapPath)
     {
+        $ds = DIRECTORY_SEPARATOR;
         $compPath1 = trim($compPath, '/');
-        $compPath1 = $compPath1 ? $compPath1.DIRECTORY_SEPARATOR : '';
-        $classmapFullPath = BasePath::$path.DIRECTORY_SEPARATOR.$compPath1.$classmapPath;
+        $compPath1 = $compPath1 ? $compPath1.$ds : '';
+        $classmapFullPath = BasePath::$path.$ds.$compPath1.$classmapPath;
 
         return array_values(ClassMapGenerator::createMap($classmapFullPath));
     }

@@ -20,6 +20,9 @@ class CheckSet
      */
     public $checks;
 
+    /**
+     * @var string
+     */
     private $namespace;
 
     private $path;
@@ -45,7 +48,7 @@ class CheckSet
 
     public static function init($checks, ?PathFilterDTO $pathDTO = null): CheckSet
     {
-        $pathDTO && $pathDTO->includeFile && PhpFinder::$fileName = $pathDTO->includeFile;
+        $pathDTO && $pathDTO->includeFile && (PhpFinder::$fileName = $pathDTO->includeFile);
 
         $obj = new self;
         $obj->setChecks($checks);
@@ -80,7 +83,7 @@ class CheckSet
 
     /**
      * @param  \Symfony\Component\Finder\SplFileInfo  $phpFileObj
-     * @return void
+     * @return true
      */
     private function applyChecks($phpFileObj)
     {

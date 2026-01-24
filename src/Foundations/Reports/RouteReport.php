@@ -18,8 +18,9 @@ class RouteReport
         $linesArr = CheckImportReporter::formatFiles($routeFiles);
         $count = count($linesArr);
         $lines = implode('', $linesArr);
-        $count = Color::white('('.$count.' files)');
+        $count = Color::white("($count files)");
+        $s = $count <= 1 ? '' : 's';
 
-        return CheckImportReporter::hyphen().'route'.($count <= 1 ? '' : 's').' '.$count.$lines;
+        return CheckImportReporter::hyphen()."route$s {$count}{$lines}";
     }
 }

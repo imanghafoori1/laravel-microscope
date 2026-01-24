@@ -127,9 +127,13 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function registerCompiler()
     {
-        $this->app->singleton('microscope.blade.compiler', function () {
-            return new SpyBladeCompiler($this->app['files'], $this->app['config']['view.compiled']);
-        });
+        $this->app->singleton(
+            'microscope.blade.compiler',
+            fn() => new SpyBladeCompiler(
+                $this->app['files'],
+                $this->app['config']['view.compiled']
+            )
+        );
     }
 
     private function setLineSeparatorColor()
@@ -140,9 +144,11 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
 
     private function setBasePath()
     {
-        ComposerJson::$composer = function () {
-            return Composer::make(base_path(), config('microscope.ignored_namespaces', []), config('microscope.additional_composer_paths', []));
-        };
+        ComposerJson::$composer = fn () => Composer::make(
+            base_path(),
+            config('microscope.ignored_namespaces', []),
+            config('microscope.additional_composer_paths', [])
+        );
     }
 
     private function addCacheStore()

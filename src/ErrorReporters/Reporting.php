@@ -25,7 +25,9 @@ trait Reporting
     #[Pure]
     public static function files($count)
     {
-        return Color::white(' ('.$count.' file'.($count === 1 ? '' : 's').')');
+        $s = $count === 1 ? '' : 's';
+
+        return Color::white(" ($count file$s)");
     }
 
     #[Pure]
