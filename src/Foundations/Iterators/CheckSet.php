@@ -13,6 +13,9 @@ class CheckSet
 {
     use FiltersFiles;
 
+    /**
+     * @var PathFilterDTO
+     */
     public $pathDTO;
 
     /**
@@ -25,6 +28,9 @@ class CheckSet
      */
     private $namespace;
 
+    /**
+     * @var string
+     */
     private $path;
 
     /**
@@ -34,12 +40,12 @@ class CheckSet
 
     public static $options;
 
-    public static function initParams($checks, $options)
+    public static function initParams($checks, $options): CheckSet
     {
         return CheckSet::init($checks, PathFilterDTO::makeFromOption($options));
     }
 
-    public static function initParam($checks)
+    public static function initParam($checks): CheckSet
     {
         $pathDTO = PathFilterDTO::makeFromOption(self::$options);
 
@@ -57,7 +63,7 @@ class CheckSet
         return $obj;
     }
 
-    public function setChecks(array $checks)
+    public function setChecks(array $checks): void
     {
         $this->checks = CheckCollection::make($checks);
     }
@@ -99,6 +105,11 @@ class CheckSet
         return true;
     }
 
+    /**
+     * @param $check
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @return array
+     */
     private function performCheck($check, PhpFileDescriptor $file)
     {
         if (is_string($check)) {
