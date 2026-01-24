@@ -8,6 +8,7 @@ use ImanGhafoori\ComposerJson\ClassLists;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use ReflectionClass;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 class ListModelsArtisanCommand extends Command
 {
@@ -51,17 +52,12 @@ class ListModelsArtisanCommand extends Command
         return [
             'table' => $this->getTable($classPath),
             'class' => $classPath,
-            'relative_path' => $this->getRelativePath($absFilePath),
+            'relative_path' => FilePath::getRelativePath($absFilePath),
         ];
     }
 
     private function getTable(string $classPath)
     {
         return (new ReflectionClass($classPath))->newInstanceWithoutConstructor()->getTable();
-    }
-
-    private function getRelativePath(string $absFilePath)
-    {
-        return str_replace(BasePath::$path, '', $absFilePath);
     }
 }

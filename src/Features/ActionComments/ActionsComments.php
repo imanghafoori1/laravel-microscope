@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Refactor;
@@ -72,7 +72,7 @@ class ActionsComments implements Check
     {
         $callsite = app('router')->getRoutes()->routesInfo[$methods][$route->uri()] ?? [];
         $absPath = $callsite[0]['file'] ?? '';
-        $relativePath = trim(str_replace(BasePath::$path, '', $absPath), '\\/');
+        $relativePath = FilePath::getRelativePath($absPath);
         $relativePath = str_replace('\\', '/', $relativePath);
 
         $line = $callsite[0]['line'] ?? '';

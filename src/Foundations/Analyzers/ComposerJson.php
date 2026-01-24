@@ -87,7 +87,7 @@ class ComposerJson
     private static function filterClasses(array $classes, $pathDTO)
     {
         foreach ($classes as $i => $class) {
-            if (! FilePath::contains(str_replace(BasePath::$path, '', $class), $pathDTO)) {
+            if (! FilePath::contains(FilePath::getRelativePath($class), $pathDTO)) {
                 unset($classes[$i]);
             }
         }

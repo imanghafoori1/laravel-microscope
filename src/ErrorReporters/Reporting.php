@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -48,9 +47,10 @@ trait Reporting
     #[Pure]
     public static function normalize($dirPath)
     {
-        $path = trim(FilePath::normalize(str_replace(BasePath::$path, '', $dirPath)), DIRECTORY_SEPARATOR);
+        $ds = DIRECTORY_SEPARATOR;
+        $path = trim(FilePath::normalize(FilePath::getRelativePath($dirPath)), $ds);
 
-        return str_replace(DIRECTORY_SEPARATOR, '/', $path).'/';
+        return str_replace($ds, '/', $path).'/';
     }
 
     #[Pure]
