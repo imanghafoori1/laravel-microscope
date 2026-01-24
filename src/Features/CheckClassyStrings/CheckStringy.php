@@ -6,6 +6,7 @@ use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
@@ -13,12 +14,17 @@ use Imanghafoori\TokenAnalyzer\Str;
 
 class CheckStringy implements Check
 {
+    use CachedCheck;
+
+    public static $cacheKey = 'stringy_classes';
+
     public static $command = null;
 
-    public static function check(PhpFileDescriptor $file)
+    public static function performCheck(PhpFileDescriptor $file)
     {
         $errorPrinter = ErrorPrinter::singleton();
 
+        $hasError = false;
         foreach (ComposerJson::readPsr4() as $psr4) {
             $namespaces = array_keys($psr4);
             foreach ($file->getTokens() as $token) {
@@ -33,8 +39,8 @@ class CheckStringy implements Check
                     continue;
                 }
 
+                $hasError = true;
                 $lineNum = $token[2];
-                $absFilePath = $file->getAbsolutePath();
                 if (! class_exists($classPath)) {
                     if (self::refersToDir($classPath)) {
                         continue;
@@ -59,6 +65,8 @@ class CheckStringy implements Check
                 self::performReplacementProcess($token[1], $replacement, $file);
             }
         }
+
+        return $hasError;
     }
 
     private static function isPossiblyClassyString($namespaces, $classPath)
