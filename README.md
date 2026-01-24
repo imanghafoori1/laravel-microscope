@@ -141,31 +141,31 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 <a name="less-use-commands"></a>
 ### Less Used Commands:
 
-| #  | Artisan Command                                               |
-|----|---------------------------------------------------------------|
-| 1  | `php artisan check:views`                                     |
-| 2  | `php artisan check:routes`                                    |
-| 3  | `php artisan check:psr4 {-s\|--nofix} `                       |
-| 4  | `php artisan check:imports {-s\|--nofix} {--wrong} {--extra}` |
-| 5  | `php artisan check:stringy_classes`                           |
-| 6  | `php artisan check:dd`                                        |
-| 7  | `php artisan check:bad_practices`                             |
-| 8  | `php artisan check:compact`                                   |
-| 9  | `php artisan check:blade_queries`                             |
-| 10 | `php artisan check:action_comments`                           |
-| 11 | `php artisan check:extract_blades`                            |
-| 12 | `php artisan pp:route`                                        |
-| 13 | `php artisan list:models`                                     |
-| 14 | `php artisan check:endif`                                     |
-| 16 | `php artisan check:gates`                                     |
-| 17 | `php artisan check:dynamic_where`                             |
-| 18 | `php artisan check:aliases`                                   |
-| 19 | `php artisan check:dead_controllers`                          |
-| 20 | `php artisan check:generic_docblocks`                         |
-| 21 | `php artisan enforce:helper_functions`                        |
-| 22 | `php artisan enforce:imports`                                 |
-| 23 | `php artisan check:fqcn`                                      |
-| 24 | `php artisan check:abort_if`                                  |
+| #  | Artisan Command                            |
+|----|--------------------------------------------|
+| 1  | `php artisan check:views`                  |
+| 2  | `php artisan check:routes`                 |
+| 3  | `php artisan check:psr4 {-s\|--nofix} `    |
+| 4  | `php artisan check:imports {-s\|--nofix}`  |
+| 5  | `php artisan check:stringy_classes`        |
+| 6  | `php artisan check:dd`                     |
+| 7  | `php artisan check:bad_practices`          |
+| 8  | `php artisan check:compact`                |
+| 9  | `php artisan check:blade_queries`          |
+| 10 | `php artisan check:action_comments`        |
+| 11 | `php artisan check:extract_blades`         |
+| 12 | `php artisan pp:route`                     |
+| 13 | `php artisan list:models`                  |
+| 14 | `php artisan check:endif`                  |
+| 16 | `php artisan check:gates`                  |
+| 17 | `php artisan check:dynamic_where`          |
+| 18 | `php artisan check:aliases`                |
+| 19 | `php artisan check:dead_controllers`       |
+| 20 | `php artisan check:generic_docblocks`      |
+| 21 | `php artisan enforce:helper_functions`     |
+| 22 | `php artisan enforce:imports`              |
+| 23 | `php artisan check:fqcn`                   |
+| 24 | `php artisan check:abort_if`               |
 
 <a name="what-the-commands-do"></a>
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What do the Commands do?
@@ -631,7 +631,7 @@ if ($var1 > 1)
 
 <a name="imports"></a>
 
-### `php artisan check:imports {--wrong} {--file=} {--folder=} {--except-folder=} {--except-file=}`
+### `php artisan check:imports {--file=} {--folder=} {--except-folder=} {--except-file=}`
 
 
 - It checks all the imports (`use` statements) to be valid and reports invalid ones.
