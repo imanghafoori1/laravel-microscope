@@ -8,6 +8,8 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ErrorExceptionHandler
 {
+    private static $exceptionOrigin = 'vendor|composer|ClassLoader.php';
+
     public static function handle($e)
     {
         self::handleErrorException($e);
@@ -29,7 +31,7 @@ class ErrorExceptionHandler
 
     private static function composerWillNeedADumpAutoload($e)
     {
-        $end = str_replace('|', DIRECTORY_SEPARATOR, 'vendor|composer|ClassLoader.php');
+        $end = str_replace('|', DIRECTORY_SEPARATOR, self::$exceptionOrigin);
 
         return self::endsWith($e->getFile(), $end);
     }
