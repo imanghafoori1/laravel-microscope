@@ -27,9 +27,6 @@ class Loop
      *     $total += $value;
      * });
      * // $total is now 60
-     *
-     * @see array_walk() PHP's built-in equivalent for arrays
-     * @see foreach The language construct this function abstracts
      */
     public static function over($iterable, callable $callback)
     {

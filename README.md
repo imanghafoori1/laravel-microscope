@@ -154,7 +154,7 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 9  | `php artisan check:blade_queries`          |
 | 10 | `php artisan check:action_comments`        |
 | 11 | `php artisan check:extract_blades`         |
-| 12 | `php artisan pp:route`                     |
+| 12 | `php artisan check:abort_if`               |
 | 13 | `php artisan list:models`                  |
 | 14 | `php artisan check:endif`                  |
 | 16 | `php artisan check:gates`                  |
@@ -165,7 +165,6 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 | 21 | `php artisan enforce:helper_functions`     |
 | 22 | `php artisan enforce:imports`              |
 | 23 | `php artisan check:fqcn`                   |
-| 24 | `php artisan check:abort_if`               |
 
 <a name="what-the-commands-do"></a>
 ## <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> What do the Commands do?
