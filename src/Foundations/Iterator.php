@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ReportPrinter;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\Printer;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForBladeFiles;
@@ -87,6 +87,6 @@ class Iterator
 
     public function printAll($messages): void
     {
-        ReportPrinter::printAll($messages, $this->output);
+        Printer::printAll($messages, $this->output);
     }
 }

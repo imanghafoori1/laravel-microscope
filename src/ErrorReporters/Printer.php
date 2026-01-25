@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats;
 
-class ReportPrinter
+class Printer
 {
     /**
      * @param  array|\Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats  $messages
