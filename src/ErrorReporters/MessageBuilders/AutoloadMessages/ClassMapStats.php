@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use JetBrains\PhpStorm\Pure;
 
 class ClassMapStats
@@ -21,7 +22,7 @@ class ClassMapStats
         $c = $total = 0;
 
         foreach ($stat->stats as $path => $files) {
-            $count = count(iterator_to_array($files->files));
+            $count = Loop::walkCount($files->files, fn () => true);
             if (! $count) {
                 continue;
             }
