@@ -82,14 +82,14 @@ class ComposerJson
     }
 
     /**
-     * @param  string[]  $classes
+     * @param  string[]  $paths
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO  $pathDTO
      * @return string[]
      */
-    private static function filterClasses(array $classes, $pathDTO)
+    private static function filterClasses(array $paths, $pathDTO)
     {
         return Loop::mapIf(
-            $classes,
+            $paths,
             fn ($path) => FilePath::contains(FilePath::getRelativePath($path), $pathDTO),
             fn ($val, $key) => [$key => $val]
         );

@@ -16,8 +16,10 @@ trait CachedCheck
 
         $hasErrors = self::performCheck($file);
 
-        if (self::$cache && $hasErrors === false) {
-            CachedFiles::put(self::$cacheKey, $file);
+        if ($hasErrors) {
+            return;
         }
+
+        self::$cache && CachedFiles::put(self::$cacheKey, $file);
     }
 }

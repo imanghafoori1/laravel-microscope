@@ -2,14 +2,14 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
-use RuntimeException;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\DocblockReader;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use RuntimeException;
 
 class CheckImportsAreUsed implements Check
 {

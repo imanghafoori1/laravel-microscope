@@ -26,7 +26,9 @@ class ErrorExceptionHandler
 
     private static function entityNotFound(string $msg)
     {
-        return self::startsWith($msg, ['Enum ', 'Interface ', 'Class ', 'Trait ']) && self::endsWith($msg, ' not found');
+        $name = ['Enum ', 'Interface ', 'Class ', 'Trait '];
+
+        return self::startsWith($msg, $name) && self::endsWith($msg, ' not found');
     }
 
     private static function composerWillNeedADumpAutoload($e)
