@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\AutoloadMessages;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use JetBrains\PhpStorm\Pure;
 
 class AutoloadFiles
@@ -25,8 +26,8 @@ class AutoloadFiles
     #[Pure]
     private static function autoloadFilesHeader(int $count, string $lines): string
     {
-        $s = ($count === 0 ? '' : 's');
+        $s = ($count <= 1 ? '' : 's');
 
-        return ' Autoloaded file'.$s.self::blue($count).$lines;
+        return self::hyphen().' Autoloaded files'.' '.Color::white("($count file$s)").$lines;
     }
 }
