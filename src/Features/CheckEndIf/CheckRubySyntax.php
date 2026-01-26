@@ -6,6 +6,7 @@ use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
@@ -49,7 +50,7 @@ class CheckRubySyntax implements Check
     {
         $filePath = FilePath::getRelativePath($filePath);
 
-        return ErrorPrinter::singleton()->printer->confirm('Replacing endif in: '.$filePath);
+        return ErrorPrinter::singleton()->printer->confirm('Replacing endif in: '.Color::blue($filePath));
     }
 
     /**
