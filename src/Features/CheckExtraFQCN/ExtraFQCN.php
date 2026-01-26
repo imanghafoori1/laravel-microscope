@@ -88,9 +88,10 @@ class ExtraFQCN implements Check
                 }
             } else {
                 $imports2 = self::restructureImports($imports);
-                if (isset($imports2[ltrim($classRef['class'])])) {
+                $aliasToken = $imports2[ltrim($classRef['class'])] ?? '';
+                if ($aliasToken) {
                     $hasError = true;
-                    $alias = $imports2[ltrim($classRef['class'])][1];
+                    $alias = $aliasToken[1];
                     ! $shouldBeSkipped && self::reportAliasImported($absFilePath, $alias, $classRef);
                 }
             }

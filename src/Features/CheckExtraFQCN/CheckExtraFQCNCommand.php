@@ -14,7 +14,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 
     protected $signature = 'check:extra_fqcn
         {--fix : Fix references}
-        {--class= : Fix references of the specified class}
+        {--class= : Only fixes references of the specified class names}
         {--f|file= : Pattern for file names to scan}
         {--d|folder= : Pattern for file names to scan}
         {--F|except-file= : Pattern for file names to avoid}
@@ -24,7 +24,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 
     protected $customMsg = 'No Unnecessary Fully Qualified Class Name found.  \(^_^)/';
 
-    public $initialMsg = PHP_EOL.'Checking class references...';
+    public $initialMsg = PHP_EOL.'Checking for fully qualified class names.';
 
     public $checks = [ExtraFQCN::class];
 
@@ -58,6 +58,6 @@ class CheckExtraFQCNCommand extends BaseCommand
     private function printGuide()
     {
         $this->line(Color::yellow(' You may use `--fix` option to delete extra code, run:'));
-        $this->line(Color::yellow(' php artisan check:extra_fqcn --fix'));
+        $this->line(' php artisan '.Color::yellow('check:extra_fqcn --fix'));
     }
 }

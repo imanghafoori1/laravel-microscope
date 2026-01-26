@@ -53,6 +53,9 @@ class ErrorPrinter
      */
     public static $basePath;
 
+    /**
+     * @var positive-int
+     */
     public static $terminalWidth = 100;
 
     /**

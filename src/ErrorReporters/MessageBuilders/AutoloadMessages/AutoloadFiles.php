@@ -25,6 +25,8 @@ class AutoloadFiles
     #[Pure]
     private static function autoloadFilesHeader(int $count, string $lines): string
     {
-        return self::blue($count).' autoloaded file'.($count <= 1 ? '' : 's').$lines;
+        $s = ($count === 0 ? '' : 's');
+
+        return ' Autoloaded file'.$s.self::blue($count).$lines;
     }
 }
