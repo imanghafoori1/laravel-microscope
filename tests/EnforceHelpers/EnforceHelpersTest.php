@@ -40,10 +40,8 @@ class EnforceHelpersTest extends TestCase
     public function testEnforce()
     {
         ForBladeFiles::$paths = [];
-        ComposerJson::$composer = function () {
-            return new class extends SampleComposerJson {
-                //
-            };
+        ComposerJson::$composer = fn () => new class extends SampleComposerJson {
+            //
         };
 
         $checkSet = CheckSet::init([PatternRefactorings::class]);
