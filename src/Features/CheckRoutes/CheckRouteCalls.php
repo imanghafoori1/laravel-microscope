@@ -27,6 +27,10 @@ class CheckRouteCalls implements Check
             $total = count($tokens) - 3;
             $skippedRouteCallsNum = 0;
             while ($i < $total) {
+                // make the check case-insensitive:
+                if ($tokens[$i][0] === T_STRING && strtolower($tokens[$i][1]) === 'route') {
+                    $tokens[$i][1] = 'route';
+                }
                 $index = FunctionCall::isGlobalCall('route', $tokens, $i);
                 $index = $index ?: self::checkForRedirectRoute($tokens, $i);
 
