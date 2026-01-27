@@ -8,6 +8,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckRoutes extends BaseCommand
@@ -35,6 +36,7 @@ class CheckRoutes extends BaseCommand
      */
     public function handleCommand($iterator)
     {
+        Cache::loadToMemory('check_route_calls.php');
         app(Filesystem::class)->delete(app()->getCachedRoutesPath());
         $routes = app(Router::class)->getRoutes()->getRoutes();
 
@@ -48,6 +50,7 @@ class CheckRoutes extends BaseCommand
             $iterator->forBladeFiles(),
             PHP_EOL.$this->getStatisticsMsg(),
         ]);
+        Cache::writeCacheContent();
     }
 
     private function getRouteId($route)
