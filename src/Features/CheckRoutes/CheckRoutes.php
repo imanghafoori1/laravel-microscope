@@ -48,6 +48,8 @@ class CheckRoutes extends BaseCommand
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             $iterator->forBladeFiles(),
+        ]);
+        $iterator->printAll([
             PHP_EOL.$this->getStatisticsMsg(),
         ]);
         Cache::writeCacheContent();

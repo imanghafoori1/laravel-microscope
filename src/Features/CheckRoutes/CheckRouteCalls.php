@@ -64,7 +64,7 @@ class CheckRouteCalls implements Check
     {
         $value = Color::blue($value);
         self::route(
-            "route('$value')",
+            "route($value)",
             'route name does not exist: ',
             '  <=== is wrong',
             $absPath,
