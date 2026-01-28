@@ -2,10 +2,11 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
-use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
@@ -20,52 +21,67 @@ class CheckView implements Check
 
     public static function performCheck(PhpFileDescriptor $file)
     {
-        $staticCalls = [
-            'View' => ['make', 0],
-            'Route' => ['view', 1],
-        ];
+        [$views, $skipped] = self::getFromCache($file->getMd5(), $file);
 
-        return self::checkViewCalls($file, $staticCalls);
+        Loop::over(
+            $views,
+            fn ($view) => self::viewError($file, $view[0], $view[1])
+        );
+        $skippedCount = count($skipped);
+        $viewsCount = count($views);
+        CheckViewStats::$skippedCallsCount += $skippedCount;
+        CheckViewStats::$checkedCallsCount += $viewsCount;
+
+        return ($skippedCount + $viewsCount) !== 0;
     }
 
-    private static function checkViewParams($file, &$tokens, $i, $index)
+    private static function checkViewParams(&$tokens, $i, $index)
     {
         $params = FunctionCall::readParameters($tokens, $i);
 
-        // it should be a hard-coded string which is not concatinated like this: 'hi'. $there
+        // it should be a hard-coded string which is not concatenated like this: 'hi'. $there
         $paramTokens = $params[$index] ?? ['_', '_', '_'];
+        $lineNumber = $paramTokens[0][2];
 
         if (FunctionCall::isSolidString($paramTokens)) {
-            CheckViewStats::$checkedCallsCount++;
-            $viewName = self::getViewName($paramTokens[0][1]);
-            if ($viewName && ! View::exists($viewName)) {
-                self::viewError($file, $paramTokens[0][2], $viewName);
-            }
+            return [$lineNumber, self::getViewName($paramTokens[0][1])];
         } else {
-            CheckViewStats::$skippedCallsCount++;
+            return [$lineNumber, null];
         }
     }
 
     private static function checkViewCalls(PhpFileDescriptor $file, array $staticCalls)
     {
         $tokens = $file->getTokens();
-        $hasViewCalls = false;
+        $views = [];
+        $skippedViews = [];
         foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
-                $hasViewCalls = true;
-                self::checkViewParams($file, $tokens, $i, 0);
+                [$line, $view] = self::checkViewParams($tokens, $i, 0);
+
+                if ($view === null) {
+                    $skippedViews[] = $line;
+                } else {
+                    $views[] = [$line, $view];
+                }
+
                 continue;
             }
 
             foreach ($staticCalls as $class => $method) {
                 if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
-                    $hasViewCalls = true;
-                    self::checkViewParams($file, $tokens, $i, $method[1]);
+                    [$line, $view] = self::checkViewParams($tokens, $i, $method[1]);
+
+                    if ($view === null) {
+                        $skippedViews[] = $line;
+                    } else {
+                        $views[] = [$line, $view];
+                    }
                 }
             }
         }
 
-        return $hasViewCalls;
+        return [$views, $skippedViews];
     }
 
     public static function viewError($file, $lineNumber, $fileName)
@@ -85,5 +101,23 @@ class CheckView implements Check
         $viewName = trim($string, '\'\"');
 
         return str_replace('.', '/', $viewName);
+    }
+
+    private static function getFromCache($md5, PhpFileDescriptor $file)
+    {
+        if (isset(Cache::$cache[$md5])) {
+            return Cache::$cache[$md5];
+        }
+
+        [$views, $skipped] = self::checkViewCalls($file, [
+            'View' => ['make', 0],
+            'Route' => ['view', 1],
+        ]);
+
+        if ($views || $skipped) {
+            Cache::$cache[$md5] = [$views, $skipped];
+        }
+
+        return [$views, $skipped];
     }
 }

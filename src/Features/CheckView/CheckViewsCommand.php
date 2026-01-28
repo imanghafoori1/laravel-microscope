@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckView;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewFilesExistence;
 use Imanghafoori\LaravelMicroscope\Features\CheckView\Check\CheckViewStats;
@@ -34,6 +35,7 @@ class CheckViewsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
+        Cache::loadToMemory('check_views_call.php');
         $lines = $iterator->forComposerLoadedFiles();
         $lines->add(PHP_EOL.$iterator->forRoutes());
 
@@ -46,6 +48,7 @@ class CheckViewsCommand extends BaseCommand
             CheckViewStats::$checkedCallsCount,
             CheckViewStats::$skippedCallsCount
         ));
+        Cache::writeCacheContent();
     }
 
     private function stats($checkedCallsCount, $skippedCallsCount): string
