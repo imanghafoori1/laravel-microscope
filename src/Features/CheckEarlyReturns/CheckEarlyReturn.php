@@ -31,9 +31,6 @@ class CheckEarlyReturn implements Check
         try {
             [$fixes, $tokens] = self::refactor($tokens);
         } catch (Exception $e) {
-            dump('(O_o)   Well, It seems we had some problem parsing the contents of:  (O_o)');
-            dump('Skipping : '.$absFilePath);
-
             return;
         }
         // @codeCoverageIgnoreEnd

@@ -33,6 +33,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
         if (! $this->options->option('nofix') && ! $this->startWarning()) {
             return;
         }
+        $this->info(PHP_EOL.' Checking for Early Returns...');
 
         $nofix = $this->options->option('nofix');
         CheckEarlyReturn::$params = $this->getParams($nofix);
@@ -42,7 +43,6 @@ class CheckEarlyReturnsCommand extends BaseCommand
 
     private function startWarning()
     {
-        $this->info(PHP_EOL.' Checking for Early Returns...');
         $this->warn(' Warning: This command is going to make "CHANGES" to your files!');
 
         return $this->output->confirm(' Do you have committed everything in git?');

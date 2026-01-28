@@ -69,14 +69,15 @@ class CheckView implements Check
             }
 
             foreach ($staticCalls as $class => $method) {
-                if (FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
-                    [$line, $view] = self::checkViewParams($tokens, $i, $method[1]);
+                if (! FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
+                    continue;
+                }
+                [$line, $view] = self::checkViewParams($tokens, $i, $method[1]);
 
-                    if ($view === null) {
-                        $skippedViews[] = $line;
-                    } else {
-                        $views[] = [$line, $view];
-                    }
+                if ($view === null) {
+                    $skippedViews[] = $line;
+                } else {
+                    $views[] = [$line, $view];
                 }
             }
         }
