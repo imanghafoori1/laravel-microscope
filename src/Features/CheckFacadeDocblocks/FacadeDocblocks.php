@@ -13,6 +13,9 @@ use ReflectionMethod;
 
 class FacadeDocblocks
 {
+    /**
+     * @var \Illuminate\Console\Command
+     */
     public static $command;
 
     /**

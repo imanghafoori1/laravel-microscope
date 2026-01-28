@@ -25,7 +25,7 @@ class CommentMaker
     private static function getMsg($route)
     {
         $methods = $route->methods();
-        ($methods == ['GET', 'HEAD']) && $methods = ['GET'];
+        ($methods === ['GET', 'HEAD']) && $methods = ['GET'];
 
         $routeName = $route->getName() ?: '';
         $middlewares = self::gatherMiddlewares($route);

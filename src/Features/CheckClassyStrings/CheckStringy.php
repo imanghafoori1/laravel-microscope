@@ -18,8 +18,15 @@ class CheckStringy implements Check
 
     public static $cacheKey = 'stringy_classes';
 
-    public static $command = null;
+    /**
+     * @var \Illuminate\Console\Command
+     */
+    public static $command;
 
+    /**
+     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @return bool
+     */
     public static function performCheck(PhpFileDescriptor $file)
     {
         $errorPrinter = ErrorPrinter::singleton();
@@ -32,8 +39,7 @@ class CheckStringy implements Check
                     continue;
                 }
 
-                $classPath = trim($token[1], $token[1][0] === "'" ? "'" : '"');
-                $classPath = str_replace('\\\\', '\\', $classPath);
+                $classPath = self::rectify($token[1]);
 
                 if (! self::isPossiblyClassyString($namespaces, $classPath)) {
                     continue;
@@ -63,6 +69,11 @@ class CheckStringy implements Check
         return $hasError;
     }
 
+    /**
+     * @param string[] $namespaces
+     * @param string $classPath
+     * @return bool
+     */
     private static function isPossiblyClassyString($namespaces, $classPath)
     {
         $chars = ['@', ' ', ',', ':', '/', '.', '-', '\'', '"', '\\\\'];
@@ -73,6 +84,9 @@ class CheckStringy implements Check
             ! Str::endsWith($classPath, '\\');
     }
 
+    /**
+     * @return bool
+     */
     private static function ask($printer, $lineNumber, $classPath, PhpFileDescriptor $file)
     {
         $printer->text(CheckStringyMsg::getLineContents($lineNumber, $file));
@@ -125,5 +139,18 @@ class CheckStringy implements Check
             'wrongUsedClassError',
             'Class does not exist:'
         );
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    private static function rectify($string)
+    {
+        $classPath = trim($string, $string[0] === "'" ? "'" : '"');
+        $classPath = str_replace('\\\\', '\\', $classPath);
+
+        return $classPath;
     }
 }

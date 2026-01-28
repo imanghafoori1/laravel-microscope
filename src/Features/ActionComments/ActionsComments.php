@@ -6,16 +6,26 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
 class ActionsComments implements Check
 {
+    /**
+     * @var \Illuminate\Console\Command
+     */
     public static $command;
 
+    /**
+     * @var array<string, string>
+     */
     public static $controllers = [];
 
+    /**
+     * @var \Illuminate\Routing\Route[]
+     */
     public static $allRoutes;
 
     public static function check(PhpFileDescriptor $file)
@@ -82,11 +92,9 @@ class ActionsComments implements Check
 
     private static function getActionRoutes($method)
     {
-        $routes = [];
-        foreach (self::$allRoutes as $route) {
-            $method === $route->getAction('uses') && ($routes[] = $route);
-        }
-
-        return $routes;
+        return Loop::filter(
+            self::$allRoutes,
+            fn ($route) => $method === $route->getAction('uses')
+        );
     }
 }

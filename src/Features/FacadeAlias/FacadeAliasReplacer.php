@@ -37,8 +37,14 @@ class FacadeAliasReplacer
     private static function ask(PhpFileDescriptor $file, $use, $base, $aliases)
     {
         $relativePath = FilePath::normalize($file->relativePath());
-        self::$command->writeln('at '.$relativePath.':'.$use[1]);
-        $question = 'Do you want to replace '.Color::yellow($base).' with '.Color::yellow($aliases);
+        $line = $use[1];
+        self::$command->writeln(
+            FacadeAliasMessages::atLine($relativePath, $line)
+        );
+        $question = FacadeAliasMessages::askReplace(
+            Color::yellow($base),
+            Color::yellow($aliases)
+        );
 
         return self::$command->confirm($question, true);
     }
@@ -56,7 +62,7 @@ class FacadeAliasReplacer
         [$newVersion, $lines] = Searcher::search(
             [
                 [
-                    'search' => 'use '.$base.';',
+                    'search' => "use $base;",
                     'replace' => 'use '.ltrim($aliases).';',
                 ],
             ], $tokens, 1
@@ -66,7 +72,7 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => 'use \\'.$base.';',
+                        'search' => "use \\$base;",
                         'replace' => 'use '.ltrim($aliases).';',
                     ],
                 ], $tokens, 1
@@ -77,8 +83,8 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => 'use '.$base.' as '.$as,
-                        'replace' => 'use '.ltrim($aliases).' as '.$as,
+                        'search' => "use $base as $as",
+                        'replace' => 'use '.ltrim($aliases)." as $as",
                     ],
                 ], $tokens, 1
             );
@@ -88,11 +94,11 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => 'use '.$base.',',
+                        'search' => "use $base,",
                         'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                     [
-                        'search' => 'use \\'.$base.',',
+                        'search' => "use \\$base,",
                         'replace' => 'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                 ], $tokens, 1
@@ -103,11 +109,11 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => ','.$base.';',
+                        'search' => ",$base;",
                         'replace' => ', '.ltrim($aliases).';',
                     ],
                     [
-                        'search' => ',\\'.$base.';',
+                        'search' => ",\\$base;",
                         'replace' => ', '.ltrim($aliases).';',
                     ],
                 ], $tokens, 1
@@ -118,11 +124,11 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => ','.$base.',',
+                        'search' => ",$base,",
                         'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                     [
-                        'search' => ',\\'.$base.',',
+                        'search' => ",\\$base,",
                         'replace' => '; '.PHP_EOL.'use '.ltrim($aliases).';'.PHP_EOL.'use ',
                     ],
                 ], $tokens, 1
@@ -133,8 +139,8 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => 'use \\'.$base.' as '.$as,
-                        'replace' => 'use '.ltrim($aliases).' as '.$as,
+                        'search' => "use \\$base as $as",
+                        'replace' => 'use '.ltrim($aliases)." as $as",
                     ],
                 ], $tokens, 1);
         }
@@ -152,8 +158,8 @@ class FacadeAliasReplacer
         [$newVersion, $lines] = Searcher::search(
             [
                 [
-                    'search' => 'use '.$base.';',
-                    'replace' => 'use '.ltrim($aliases).' as '.$base.';',
+                    'search' => "use $base;",
+                    'replace' => 'use '.ltrim($aliases)." as $base;",
                 ],
             ], $tokens, 1
         );
@@ -162,8 +168,8 @@ class FacadeAliasReplacer
             [$newVersion, $lines] = Searcher::search(
                 [
                     [
-                        'search' => 'use \\'.$base.';',
-                        'replace' => 'use '.ltrim($aliases).' as '.$base.';',
+                        'search' => "use \\$base;",
+                        'replace' => 'use '.ltrim($aliases)." as $base;",
                     ],
                 ], $tokens, 1
             );

@@ -28,7 +28,7 @@ class CheckFacadeDocblocksCommand extends BaseCommand
     public function handleCommand($iterator, $command)
     {
         FacadeDocblocks::$onFix = function ($class) use ($command) {
-            $command->line('- Fixed doc-blocks for: "'.Color::yellow($class).'"');
+            $command->line('➖ Fixed doc-blocks for: "'.Color::yellow($class).'"');
         };
 
         FacadeDocblocks::$onError = function ($accessor, $file) {

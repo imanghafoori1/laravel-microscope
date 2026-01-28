@@ -43,19 +43,20 @@ class CurlyBracesCheck implements Check
 
     private static function openCurly($token, $level, $tokens, $i, $absFilePath)
     {
-        if ($token == '{' && ! in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
-            $sp = str_repeat('    ', $level);
-            if ($tokens[$i + 1][0] === T_WHITESPACE) {
-                if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
-                    $tokens[$i + 1][1] = PHP_EOL.$sp;
-                    Refactor::saveTokens($absFilePath, $tokens);
-                } else {
-                    //
-                }
-            } else {
-                array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
+        if ($token !== '{' || in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
+            return;
+        }
+        $sp = str_repeat('    ', $level);
+        if ($tokens[$i + 1][0] === T_WHITESPACE) {
+            if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
+                $tokens[$i + 1][1] = PHP_EOL.$sp;
                 Refactor::saveTokens($absFilePath, $tokens);
+            } else {
+                //
             }
+        } else {
+            array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
+            Refactor::saveTokens($absFilePath, $tokens);
         }
     }
 

@@ -30,7 +30,7 @@ class ReportMessages
 
     public static function getTotalChecked($count)
     {
-        return " - $count namespaces were checked.";
+        return " ➖ $count namespaces were checked.";
     }
 
     public static function getErrorsCount($errorCount)

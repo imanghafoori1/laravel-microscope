@@ -43,7 +43,9 @@ class CheckStatsCommand extends Command
                 $class1 = $namespace.'\\'.$entity->getEntityName();
 
                 foreach ($types as $type => $id) {
-                    is_subclass_of($class1, $type) && $stats[$id]['counts']++ && $stats[$id]['namespaces'][$namespace] = null;
+                    if (is_subclass_of($class1, $type)) {
+                        $stats[$id]['counts']++ && $stats[$id]['namespaces'][$namespace] = null;
+                    }
                 }
 
                 isset($events[$class1]) && $stats['Events']['counts']++;
@@ -52,7 +54,7 @@ class CheckStatsCommand extends Command
 
         foreach ($stats as $id => $int) {
             $stat = Color::yellow($int['counts'].' '.$id);
-            $this->info('  - '.$stat.' found.');
+            $this->info('  ➖ '.$stat.' found.');
             //foreach ($int['namespaces'] as $namespace => $_) {
             //    $this->warn('       '.$namespace);
             //}
@@ -60,10 +62,10 @@ class CheckStatsCommand extends Command
 
         [$listeners, $eventsCount] = $this->getListenersCount($events);
 
-        $listeners = Color::yellow($listeners.' listeners');
-        $eventsCount = Color::yellow($eventsCount.' events.');
+        $listeners = Color::yellow("$listeners listeners");
+        $eventsCount = Color::yellow("$eventsCount events.");
 
-        $this->info(' - '.$listeners.' are listening to '.$eventsCount);
+        $this->info(" ➖ $listeners are listening to $eventsCount");
         $this->line('');
 
         $duration = round(microtime(true) - $time, 5);

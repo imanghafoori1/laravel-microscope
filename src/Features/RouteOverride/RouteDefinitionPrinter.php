@@ -20,8 +20,9 @@ class RouteDefinitionPrinter
         $methods = self::getMethods($route1);
         $key = 'routeDefinitionConflict';
 
+        $uri = Color::blue("$methods: /".$route1->uri());
         $printer->errorsList[$key][$methods] = (new PendingError($key))
-            ->header('Route with uri: '.Color::blue($methods.': /'.$route1->uri()).' is overridden.')
+            ->header("Route with uri: $uri is overridden.")
             ->errorData($msg);
     }
 
@@ -30,11 +31,10 @@ class RouteDefinitionPrinter
         $routeName = $route1->getName();
         if ($routeName) {
             $routeName = Color::blue($routeName);
-            $msg = 'Route name: '.$routeName;
+            $msg = "Route name: $routeName";
         } else {
-            $routeUri = $route1->uri();
-            $routeUri = Color::blue($routeUri);
-            $msg = 'Route uri: '.$routeUri;
+            $routeUri = Color::blue($route1->uri());
+            $msg = "Route uri: $routeUri";
         }
 
         $msg .= "\n".' at '.($info[0]['file'] ?? 'unknown').':'.($info[0]['line'] ?? 2);
@@ -43,7 +43,7 @@ class RouteDefinitionPrinter
         $routeName = $route2->getName();
         if ($routeName) {
             $routeName = Color::blue($routeName);
-            $msg .= 'route name: '.$routeName;
+            $msg .= "route name: $routeName";
         } else {
             $msg .= 'an other route with same uri.';
         }

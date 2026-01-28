@@ -42,6 +42,8 @@ class CheckAll extends Command
 
     private static function getTimeMsg($time): string
     {
-        return 'time: '.round($time, 2).' (sec)';
+        $time = round($time, 2);
+
+        return "time: $time (sec)";
     }
 }

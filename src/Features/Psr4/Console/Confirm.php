@@ -6,8 +6,16 @@ use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class Confirm
 {
+    /**
+     * @var positive-int
+     */
     public static $askTime = 0;
 
+    /**
+     * @param \Illuminate\Console\Command $command
+     * @param string $correctNamespace
+     * @return bool
+     */
     public static function ask($command, $correctNamespace)
     {
         $time = microtime(true);
@@ -18,6 +26,10 @@ class Confirm
         }
     }
 
+    /**
+     * @param string $replacement
+     * @return string
+     */
     private static function getQuestion($replacement)
     {
         $replacement = Color::blue($replacement);
