@@ -26,13 +26,17 @@ class CheckImportsAreUsed implements Check
     public static function check(PhpFileDescriptor $file)
     {
         $imports = self::$imports;
-        $extraImports = Cache::getForever($file->getMd5(), function () use ($file, $imports) {
+        $uses = Cache::getForever($file->getMd5(), function () use ($file, $imports) {
             $uses = $imports($file);
 
-            return [self::findClassRefs($file->getTokens(), $uses), count($uses[array_key_first($uses)])];
+             return [
+                'extraImports' => self::findClassRefs($file->getTokens(), $uses),
+                'count' => count($uses[array_key_first($uses)])
+            ];
         });
-        Handlers\ExtraImports::handle($extraImports[0], $file);
-        self::$importsCount += $extraImports[1];
+
+        Handlers\ExtraImports::handle($uses['extraImports'], $file);
+        self::$importsCount += $uses['count'];
     }
 
     public static function findClassRefs($tokens, $imports)
