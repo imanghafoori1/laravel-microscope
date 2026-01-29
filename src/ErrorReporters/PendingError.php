@@ -6,8 +6,6 @@ class PendingError
 {
     public static $maxLength = 60;
 
-    private $type;
-
     private $header;
 
     private $errorData;
@@ -18,12 +16,10 @@ class PendingError
 
     /**
      * PendingError constructor.
-     *
-     * @param  $type
      */
-    public function __construct($type)
+    public function __construct()
     {
-        $this->type = $type;
+        //
     }
 
     /**
@@ -67,11 +63,6 @@ class PendingError
         $this->linkLineNumber = $lineNumber;
 
         return $this;
-    }
-
-    public function getType()
-    {
-        return $this->type;
     }
 
     public function getHeader()

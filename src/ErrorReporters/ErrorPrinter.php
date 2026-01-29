@@ -85,7 +85,7 @@ class ErrorPrinter
             return;
         }
         $this->count++;
-        $this->errorsList[$key][] = (new PendingError($key))
+        $this->errorsList[$key][] = (new PendingError())
             ->header($header)
             ->errorData($errorData)
             ->link($path, $lineNumber);
