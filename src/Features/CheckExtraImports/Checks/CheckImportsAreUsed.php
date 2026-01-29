@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ClassReferenceFinder;
 use Imanghafoori\TokenAnalyzer\DocblockReader;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
@@ -19,11 +20,7 @@ class CheckImportsAreUsed implements Check
 
     public static function setImports()
     {
-        CheckImportsAreUsed::$imports = function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
-
-            return $imports[0] ?: [$imports[1]];
-        };
+        CheckImportsAreUsed::$imports = UseStatementParser::get();
     }
 
     public static function check(PhpFileDescriptor $file)

@@ -6,13 +6,11 @@ use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 
-class CheckRubySyntax implements Check
+class CheckEndIfSyntax implements Check
 {
     use CachedCheck;
 
@@ -37,7 +35,7 @@ class CheckRubySyntax implements Check
         }
         // @codeCoverageIgnoreEnd
 
-        if (SyntaxNormalizer::$hasChange && self::getConfirm($absFilePath)) {
+        if (SyntaxNormalizer::$hasChange && self::getConfirm($file)) {
             Refactor::saveTokens($absFilePath, $tokens);
 
             return true;
@@ -46,11 +44,11 @@ class CheckRubySyntax implements Check
         return false;
     }
 
-    private static function getConfirm($filePath)
+    private static function getConfirm(PhpFileDescriptor $file)
     {
-        $filePath = FilePath::getRelativePath($filePath);
+        $question = CheckEndIfMsg::confirm($file);
 
-        return ErrorPrinter::singleton()->printer->confirm('Replacing endif in: '.Color::blue($filePath));
+        return ErrorPrinter::singleton()->printer->confirm($question);
     }
 
     /**

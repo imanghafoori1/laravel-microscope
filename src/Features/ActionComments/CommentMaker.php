@@ -72,7 +72,7 @@ class CommentMaker
         $url = $route->uri();
 
         if ($url && $url[0] !== '/') {
-            return '/'.$url;
+            return "/$url";
         }
 
         return $url;

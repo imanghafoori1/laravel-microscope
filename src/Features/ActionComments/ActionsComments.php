@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -72,7 +71,7 @@ class ActionsComments implements Check
             }
         }
 
-        $question = 'Add route definition into the: '.Color::yellow($fullNamespace);
+        $question = ActionCommentMsg::getQuestion($fullNamespace);
         if ($shouldSave && self::$command->confirm($question, true)) {
             Refactor::saveTokens($absFilePath, $tokens);
         }

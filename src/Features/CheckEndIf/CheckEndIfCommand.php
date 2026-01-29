@@ -16,7 +16,7 @@ class CheckEndIfCommand extends BaseCommand
 
     protected $description = 'replaces ruby like syntax of php (endif) with curly brackets.';
 
-    public $checks = [CheckRubySyntax::class];
+    public $checks = [CheckEndIfSyntax::class];
 
     public $initialMsg = 'Checking for endif\'s...';
 
