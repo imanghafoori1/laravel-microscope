@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ErrorExceptionHandler
 {
-    private static $exceptionOrigin = 'vendor|composer|ClassLoader.php';
+    public static $exceptionOrigin = 'vendor|composer|ClassLoader.php';
 
     public static function handle($e)
     {
