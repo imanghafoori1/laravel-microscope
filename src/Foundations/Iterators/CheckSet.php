@@ -106,8 +106,8 @@ class CheckSet
     }
 
     /**
-     * @param $check
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @param  $check
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return array
      */
     private function performCheck($check, PhpFileDescriptor $file)

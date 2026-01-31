@@ -64,7 +64,7 @@ class DeadControllerActions implements Check
     {
         try {
             return is_subclass_of($fullNamespace, self::$baseController);
-        // @codeCoverageIgnoreStart
+            // @codeCoverageIgnoreStart
         } catch (Throwable $r) {
             // it means the file does not contain a class or interface.
             return false;
@@ -102,7 +102,7 @@ class DeadControllerActions implements Check
                     'replace' => '$this->'.$methodName,
                 ],
             ], $tokens);
-        // @codeCoverageIgnoreStart
+            // @codeCoverageIgnoreStart
         } catch (Throwable $e) {
             return false;
         }

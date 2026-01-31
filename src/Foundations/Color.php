@@ -58,6 +58,6 @@ class Color
             return $msg;
         }
 
-        return "<fg=$color>$msg</>" ;
+        return "<fg=$color>$msg</>";
     }
 }

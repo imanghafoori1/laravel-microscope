@@ -37,7 +37,7 @@ class CheckExtraImportsCommand extends BaseCommand
     public $initialMsg = 'Checking imports and class references...';
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\Iterator $iterator
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return int
      */
     public function handleCommand($iterator)

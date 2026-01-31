@@ -29,9 +29,9 @@ class CheckImportsAreUsed implements Check
         $uses = Cache::getForever($file->getMd5(), function () use ($file, $imports) {
             $uses = $imports($file);
 
-             return [
+            return [
                 'extraImports' => self::findClassRefs($file->getTokens(), $uses),
-                'count' => count($uses[array_key_first($uses)])
+                'count' => count($uses[array_key_first($uses)]),
             ];
         });
 

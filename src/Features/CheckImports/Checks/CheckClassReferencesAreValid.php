@@ -3,8 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 

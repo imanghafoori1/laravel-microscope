@@ -24,7 +24,7 @@ class CheckStringy implements Check
     public static $command;
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return bool
      */
     public static function performCheck(PhpFileDescriptor $file)
@@ -70,8 +70,8 @@ class CheckStringy implements Check
     }
 
     /**
-     * @param string[] $namespaces
-     * @param string $classPath
+     * @param  string[]  $namespaces
+     * @param  string  $classPath
      * @return bool
      */
     private static function isPossiblyClassyString($namespaces, $classPath)
@@ -142,8 +142,7 @@ class CheckStringy implements Check
     }
 
     /**
-     * @param string $string
-     *
+     * @param  string  $string
      * @return string
      */
     private static function rectify($string)

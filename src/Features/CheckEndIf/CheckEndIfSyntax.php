@@ -27,7 +27,7 @@ class CheckEndIfSyntax implements Check
 
         try {
             $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
-        // @codeCoverageIgnoreStart
+            // @codeCoverageIgnoreStart
         } catch (Exception $e) {
             self::requestIssue($absFilePath);
 

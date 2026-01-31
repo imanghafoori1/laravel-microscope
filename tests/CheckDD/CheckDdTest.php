@@ -23,10 +23,10 @@ class CheckDdTest extends TestCase
         };
 
         $result = CheckDD::performCheck($file);
-        $this->assertEquals([T_STRING, 'dd', 3,], self::$errors[0][1]);
-        $this->assertEquals([T_STRING, 'dump', 4,], self::$errors[1][1]);
-        $this->assertEquals([T_STRING, 'dump', 5,], self::$errors[2][1]);
-        $this->assertEquals([T_STRING, 'dump', 6,], self::$errors[3][1]);
+        $this->assertEquals([T_STRING, 'dd', 3], self::$errors[0][1]);
+        $this->assertEquals([T_STRING, 'dump', 4], self::$errors[1][1]);
+        $this->assertEquals([T_STRING, 'dump', 5], self::$errors[2][1]);
+        $this->assertEquals([T_STRING, 'dump', 6], self::$errors[3][1]);
 
         $this->assertTrue($result);
         $this->assertCount(4, self::$errors);

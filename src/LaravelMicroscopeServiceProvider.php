@@ -127,7 +127,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             'microscope.blade.compiler',
-            fn() => new SpyBladeCompiler(
+            fn () => new SpyBladeCompiler(
                 $this->app['files'],
                 $this->app['config']['view.compiled']
             )

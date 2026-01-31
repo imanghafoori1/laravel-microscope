@@ -12,8 +12,8 @@ class Confirm
     public static $askTime = 0;
 
     /**
-     * @param \Illuminate\Console\Command $command
-     * @param string $correctNamespace
+     * @param  \Illuminate\Console\Command  $command
+     * @param  string  $correctNamespace
      * @return bool
      */
     public static function ask($command, $correctNamespace)
@@ -27,7 +27,7 @@ class Confirm
     }
 
     /**
-     * @param string $replacement
+     * @param  string  $replacement
      * @return string
      */
     private static function getQuestion($replacement)
