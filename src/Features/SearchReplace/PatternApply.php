@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use Imanghafoori\SearchReplace\PatternParser;
 
 trait PatternApply
@@ -20,8 +19,6 @@ trait PatternApply
      */
     public function handleCommand($iterator)
     {
-        ComposerJsonReport::$callback = fn () => $this->errorPrinter->flushErrors();
-
         $patterns = $this->getPatterns();
 
         $this->appliesPatterns($patterns, $iterator);
