@@ -11,12 +11,6 @@ use JetBrains\PhpStorm\Pure;
 trait Reporting
 {
     #[Pure]
-    public static function green(string $string)
-    {
-        return Color::green($string);
-    }
-
-    #[Pure]
     public static function hyphen($string = '')
     {
         return '   ➖  '.$string;
@@ -34,7 +28,7 @@ trait Reporting
     public static function addLine($path, $count)
     {
         $output = PHP_EOL.'    '.self::hyphen();
-        $output .= self::green(self::normalize($path));
+        $output .= Color::green(self::normalize($path));
         $output .= self::files($count);
 
         return $output;

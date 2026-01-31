@@ -31,7 +31,7 @@ class Psr4Stats
             // consumes the generator:
             foreach ($psr4Paths as $path => $countClasses) {
                 $spaces = str_repeat(' ', 6);
-                $path = self::green('./'.$path);
+                $path = Color::green('./'.$path);
 
                 yield $spaces.$path;
 
