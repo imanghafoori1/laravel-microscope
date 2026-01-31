@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;

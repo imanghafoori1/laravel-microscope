@@ -1,9 +1,8 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ClassAtMethodHandler;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;

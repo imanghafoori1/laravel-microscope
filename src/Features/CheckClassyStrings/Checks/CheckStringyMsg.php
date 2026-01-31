@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;

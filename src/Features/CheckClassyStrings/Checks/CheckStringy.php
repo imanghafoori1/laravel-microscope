@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
+namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\Check;
