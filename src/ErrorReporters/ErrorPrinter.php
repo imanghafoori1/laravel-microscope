@@ -70,15 +70,6 @@ class ErrorPrinter
         return self::$instance;
     }
 
-    public function flushErrors()
-    {
-        if ($this->hasErrors()) {
-            $this->logErrors();
-            $this->errorsList = [];
-            $this->count = 0;
-        }
-    }
-
     public function addPendingError($path, $lineNumber, $key, $header, $errorData)
     {
         if (self::isIgnored($path)) {
