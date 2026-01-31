@@ -64,6 +64,7 @@ class PostReplaceAndSave
 '.Color::yellow(Str::limit($endResult, 150)), '');
 
         $printer->print(Color::red('Replacement will occur at:'), '');
+        $printer->count++;
 
         $lineNum && $printer->printLink($file, $lineNum);
     }
