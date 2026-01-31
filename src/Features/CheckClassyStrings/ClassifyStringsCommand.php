@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 class ClassifyStringsCommand extends BaseCommand
 {
     protected $signature = 'check:stringy_classes
+    {--fix}
     {--f|file=}
     {--d|folder=}
     {--F|except-file= : Comma seperated patterns for file names to exclude}
@@ -28,6 +29,7 @@ class ClassifyStringsCommand extends BaseCommand
 
     public function handleCommand($iterator, $command)
     {
+        CheckClassAtMethod::$handler::$fix = (bool) $this->option('fix');
         CheckStringy::$command = $command;
 
         $iterator->printAll([
