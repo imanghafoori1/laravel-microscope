@@ -19,6 +19,8 @@ class CheckImportsCommand extends BaseCommand
 
     protected $signature = 'check:imports
         {--force : fixes without asking}
+        {--w|wrong : This flag is deprecated and has no effect.}
+        {--e|extra : This flag is deprecated and has no effect.}
         {--f|file= : Pattern for file names to scan}
         {--F|except-file= : Pattern for file names to avoid}
         {--D|except-folder= : Pattern for folder names to avoid}
