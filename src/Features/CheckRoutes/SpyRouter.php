@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Closure;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\TokenAnalyzer\Str;
 use Throwable;
 
 class SpyRouter extends Router
@@ -35,9 +35,8 @@ class SpyRouter extends Router
     {
         parent::updateGroupStack($attributes);
 
-        $command = $_SERVER['argv'][1] ?? '';
-        $checkAll = Str::startsWith('check:all', $command);
-        if (! $checkAll && ! Str::startsWith('check:routes', $command)) {
+        $start = fn ($name) => Str::startsWith($_SERVER['argv'][1] ?? '', $name);
+        if (! $start('check:al') && ! $start('check:rout')) {
             return;
         }
 
