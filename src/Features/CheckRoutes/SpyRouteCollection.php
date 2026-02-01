@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Illuminate\Routing\RouteCollection;
-use Imanghafoori\LaravelMicroscope\Features\RouteOverride\RouteDefinitionPrinter;
 
 class SpyRouteCollection extends RouteCollection
 {
@@ -11,7 +10,7 @@ class SpyRouteCollection extends RouteCollection
 
     public function addCallSiteInfo($route, $info)
     {
-        $domainAndUri = $this->_getDomainAndUrl($route);
+        $domainAndUri = $this->getDomainAndUrl($route);
         foreach ($route->methods() as $method) {
             $this->routesInfo[$method][$domainAndUri][] = $info;
         }
@@ -25,7 +24,7 @@ class SpyRouteCollection extends RouteCollection
      */
     protected function addToCollections($route)
     {
-        $domainAndUri = $this->_getDomainAndUrl($route);
+        $domainAndUri = $this->getDomainAndUrl($route);
         foreach ($route->methods() as $method) {
             if (isset($this->routes[$method][$domainAndUri])) {
                 if (! $this->isItSelf($this->routesInfo[$method][$domainAndUri])) {
@@ -41,15 +40,9 @@ class SpyRouteCollection extends RouteCollection
         return $info[0] == $info[1];
     }
 
-    private function _getDomainAndUrl($route)
+    private function getDomainAndUrl($route)
     {
-        if (version_compare(app()->version(), '5.5.0', '<')) {
-            $getDomain = 'domain';
-        } else {
-            $getDomain = 'getDomain';
-        }
-
-        return $route->$getDomain().$route->uri();
+        return $route->getDomain().$route->uri();
     }
 
     private function reportDefinitionConflict($method, string $domainAndUri, $route)

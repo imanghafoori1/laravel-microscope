@@ -9,7 +9,7 @@ class ViewsData
 {
     public $all = [];
 
-    public $main = null;
+    public $main;
 
     public function add($view)
     {
