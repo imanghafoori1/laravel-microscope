@@ -54,7 +54,7 @@ class CheckStatsCommand extends Command
 
         foreach ($stats as $id => $int) {
             $stat = Color::yellow($int['counts'].' '.$id);
-            $this->info('  ➖ '.$stat.' found.');
+            $this->info('  ➖  '.$stat.' found.');
             //foreach ($int['namespaces'] as $namespace => $_) {
             //    $this->warn('       '.$namespace);
             //}
@@ -65,7 +65,7 @@ class CheckStatsCommand extends Command
         $listeners = Color::yellow("$listeners listeners");
         $eventsCount = Color::yellow("$eventsCount events.");
 
-        $this->info(" ➖ $listeners are listening to $eventsCount");
+        $this->info("  ➖  $listeners are listening to $eventsCount");
         $this->line('');
 
         $duration = round(microtime(true) - $time, 5);
@@ -91,9 +91,9 @@ class CheckStatsCommand extends Command
     {
         $type = new TypeStatistics();
 
-        Loop::deepOver($classLists, function ($entities, $namespace) use ($type) {
+        Loop::deepOver($classLists->getAllLists(), function ($entities, $namespace) use ($type) {
             $type->namespaceFiles($namespace, count($entities));
-            Loop::over($entities, static fn ($entity) => $type->increment($entity->getType()));
+            Loop::over($entities, fn ($entity) => $type->increment($entity->getType()));
         });
 
         return $type;
