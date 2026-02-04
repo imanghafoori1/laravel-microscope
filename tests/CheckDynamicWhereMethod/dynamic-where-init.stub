@@ -1,6 +1,0 @@
-<?php
-
-use Imanghafoori\LaravelMicroscope\Tests\CheckDynamicWhereMethod\User;
-
-User::whereProductId($id)->get();
-User::where('id', 4)->whereProductId($id)->get();

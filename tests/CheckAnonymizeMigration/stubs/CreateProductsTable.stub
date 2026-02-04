@@ -1,8 +1,0 @@
-<?php
-
-use App\Database\Migration;
-
-class CreateProductsTable extends Migration
-{
-
-}

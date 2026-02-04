@@ -1,5 +1,0 @@
-<?php
-
-\Imanghafoori\LaravelMicroscope\Tests\CheckClassyStrings\CheckClassyStringTest::class;
-
-'App\Models\User2';

@@ -1,5 +1,0 @@
-<?php
-
-if ($a > 1) {
-	abort(401, 'adscas');
-}

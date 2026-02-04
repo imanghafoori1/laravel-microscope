@@ -1,7 +1,0 @@
-<?php
-
-env();
-Cls::env();
-new env();
-new env();
-$obj->env();
