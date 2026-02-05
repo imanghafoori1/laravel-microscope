@@ -139,7 +139,7 @@ class PhpFileDescriptor
 
     public function searchReplacePatterns($search, $replace)
     {
-        [$newVersion, $lines] = self::searchReplace($search, $replace, $this->tokens);
+        [$newVersion, $lines] = self::searchReplace($search, $replace, $this->getTokens());
 
         $this->putContents($newVersion);
 
