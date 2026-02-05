@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\Autoload
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Reporting;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 use JetBrains\PhpStorm\Pure;
 
 class Psr4Stats
@@ -22,7 +21,6 @@ class Psr4Stats
         $lines = [];
 
         foreach ($psr4Stats->stats as $psr4Namespace => $psr4Paths) {
-            ComposerJsonReport::$callback && (ComposerJsonReport::$callback)();
             $lines[0] = PHP_EOL.self::getPsr4Head();
             $lines[1] = Color::red(self::getPsr4($max, $psr4Namespace));
 

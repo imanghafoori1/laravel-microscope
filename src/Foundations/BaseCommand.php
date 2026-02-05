@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\BladeFiles\CheckBladePaths;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\ComposerJsonReport;
 
 class BaseCommand extends Command
 {
@@ -64,7 +63,6 @@ class BaseCommand extends Command
         $this->printTime();
 
         CheckBladePaths::$scanned = [];
-        ComposerJsonReport::$callback = null;
         ErrorPrinter::$instance = null;
 
         return $this->exitCode();

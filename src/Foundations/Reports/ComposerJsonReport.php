@@ -14,8 +14,6 @@ class ComposerJsonReport
 {
     use Reporting;
 
-    public static $callback;
-
     #[Pure]
     public static function formatComposerPath($composerPath)
     {
@@ -43,7 +41,7 @@ class ComposerJsonReport
         $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4Stat, $max);
 
         if ($classMapStat) {
-            $line = AutoloadMessages\ClassMapStats::getLines($classMapStat, self::$callback);
+            $line = AutoloadMessages\ClassMapStats::getLines($classMapStat);
             $line && ($lines[] = PHP_EOL.$line);
         }
 

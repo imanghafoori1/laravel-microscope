@@ -12,11 +12,10 @@ class ClassMapStats
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\StatsDto  $stat
-     * @param  \Closure  $callback
      * @return string|void
      */
     #[Pure]
-    public static function getLines($stat, $callback)
+    public static function getLines($stat)
     {
         $lines = '';
         $c = $total = 0;
@@ -29,7 +28,6 @@ class ClassMapStats
             $total += $count;
             $c++;
             $lines .= self::addLine($path, $count);
-            $callback && $callback($path, $count);
         }
 
         if ($total) {
