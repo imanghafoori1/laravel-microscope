@@ -21,7 +21,7 @@ class RouteDefinitionPrinter
         $key = 'routeDefinitionConflict';
 
         $uri = Color::blue("$methods: /".$route1->uri());
-        $printer->errorsList[$key][$methods] = (new PendingError($key))
+        $printer->errorsList[$key][$methods] = (new PendingError())
             ->header("Route with uri: $uri is overridden.")
             ->errorData($msg);
     }
@@ -47,8 +47,10 @@ class RouteDefinitionPrinter
         } else {
             $msg .= 'an other route with same uri.';
         }
+        $file = $info[1]['file'] ?? ' ';
+        $line = $info[1]['line'];
 
-        $msg .= "\n".' at '.($info[1]['file'] ?? ' ').':'.$info[1]['line']."\n";
+        $msg .= "\n at $file:$line\n";
 
         return $msg;
     }

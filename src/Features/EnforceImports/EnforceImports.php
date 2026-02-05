@@ -20,7 +20,7 @@ class EnforceImports implements Check
     public static $fix = true;
 
     /**
-     * @var array
+     * @var string[]
      */
     public static $onlyRefs;
 

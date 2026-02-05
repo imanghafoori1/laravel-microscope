@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckRoutes extends BaseCommand
+class CheckRoutesCommand extends BaseCommand
 {
     public static $checkedRoutesNum = 0;
 
@@ -115,6 +115,6 @@ class CheckRoutes extends BaseCommand
 
     private function getRouteDefinitionStatistics()
     {
-        return ' - '.CheckRoutes::$checkedRoutesNum.' Route:: definitions were checked. ('.CheckRoutes::$skippedRoutesNum.' skipped)';
+        return ' - '.CheckRoutesCommand::$checkedRoutesNum.' Route:: definitions were checked. ('.CheckRoutesCommand::$skippedRoutesNum.' skipped)';
     }
 }

@@ -12,6 +12,9 @@ class Cache
      */
     public static $cacheFileName;
 
+    /**
+     * @var array<string, mixed>
+     */
     public static $cache = [];
 
     public static function getForever($md5, Closure $refFinder)

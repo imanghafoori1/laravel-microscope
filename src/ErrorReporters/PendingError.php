@@ -15,14 +15,6 @@ class PendingError
     private $linkLineNumber = 4;
 
     /**
-     * PendingError constructor.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Sets the content of the error header.
      *
      * @param  string  $header

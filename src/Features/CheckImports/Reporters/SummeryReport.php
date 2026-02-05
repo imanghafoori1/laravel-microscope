@@ -23,7 +23,9 @@ class SummeryReport
 
     public static function formatErrorSummary($totalCount, $checkedRefCount)
     {
-        return Color::boldYellow($checkedRefCount.' references were checked, '.$totalCount.' error'.($totalCount === 1 ? '' : 's').' found.');
+        $s = $totalCount === 1 ? '' : 's';
+
+        return Color::boldYellow("$checkedRefCount references were checked, $totalCount error$s found.");
     }
 
     public static function format($errorType, $count)

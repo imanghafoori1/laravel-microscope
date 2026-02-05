@@ -32,8 +32,9 @@ class ClassMapStats
 
         if ($total) {
             $c === 1 && $total = '';
+            $total = self::blue($total);
 
-            return self::blue($total).'classmap:'.$lines;
+            return "{$total}classmap:{$lines}";
         }
     }
 }

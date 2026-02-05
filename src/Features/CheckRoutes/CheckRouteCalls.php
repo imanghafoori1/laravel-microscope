@@ -58,36 +58,36 @@ class CheckRouteCalls implements Check
         });
 
         foreach ($calls as [$line, $routeName]) {
-            self::checkRouteExists($line, $routeName, $file->getAbsolutePath());
+            self::checkRouteExists($routeName, $file, $line);
         }
         self::$checkedRouteCallsNum += count($calls);
         self::$skippedRouteCallsNum += $skippedRouteCallsNum;
     }
 
-    public static function printError($value, $absPath, $lineNumber)
+    public static function printError($routeName, $file, $lineNumber)
     {
-        $value = Color::blue($value);
+        $routeName = Color::blue($routeName);
         self::route(
-            "route($value)",
-            'route name does not exist: ',
+            "route($routeName)",
+            'Route name does not exist: ',
             '  <=== is wrong',
-            $absPath,
+            $file,
             $lineNumber
         );
     }
 
-    public static function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
+    public static function route($path, $errorIt, $errorTxt, $file, $lineNumber)
     {
         $p = ErrorPrinter::singleton();
-        $p->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);
+        $p->simplePendError($path, $file, $lineNumber, 'route', $errorIt, $errorTxt);
     }
 
-    public static function checkRouteExists($line, $routeName, $absPath)
+    public static function checkRouteExists($routeName, $file, $line)
     {
         $matchedRoute = app('router')->getRoutes()->getByName(
             trim($routeName, '\'\"')
         );
-        is_null($matchedRoute) && self::printError($routeName, $absPath, $line);
+        is_null($matchedRoute) && self::printError($routeName, $file, $line);
     }
 
     private static function redirectRouteTokens()
