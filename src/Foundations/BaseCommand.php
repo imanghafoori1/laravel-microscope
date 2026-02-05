@@ -22,6 +22,9 @@ class BaseCommand extends Command
      */
     public $checkSet;
 
+    /**
+     * @var bool
+     */
     public $gitConfirm = false;
 
     public array $params = [];
