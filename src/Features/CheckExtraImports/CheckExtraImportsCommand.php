@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
@@ -42,6 +42,7 @@ class CheckExtraImportsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
+        CheckImportsAreUsed::$importsCount = 0;
         $pathDTO = PathFilterDTO::makeFromOption($this);
         Cache::loadToMemory('check_extra_imports.php');
 
@@ -62,7 +63,7 @@ class CheckExtraImportsCommand extends BaseCommand
 
         $iterator->printAll($messages);
         // must be after other messages:
-        $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery(ErrorPrinter::singleton()->errorsList)]);
+        $iterator->printAll(Reporters\SummeryReport::summery(CheckImportsAreUsed::$importsCount));
 
         if (! CheckImportsAreUsed::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
@@ -71,8 +72,7 @@ class CheckExtraImportsCommand extends BaseCommand
         Cache::writeCacheContent();
 
         $this->line('');
-        CheckImportsAreUsed::$importsCount = 0;
 
-        return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
+        return ExtraImports::$count > 0 ? 1 : 0;
     }
 }

@@ -2,35 +2,32 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\ErrorCounter;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImports;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class SummeryReport
 {
-    public static function summery($errorsList)
+    public static function summery($importCount)
     {
-        ErrorCounter::calculateErrors($errorsList);
-
-        $messages = [
-            self::formatErrorSummary(
-                ErrorCounter::getTotalErrors(),
-                CheckImportsAreUsed::$importsCount
-            ),
-            self::format('unused import', ErrorCounter::getExtraImportsCount()),
+        return [
+            self::formatErrorSummary($importCount),
+            PHP_EOL,
+            self::unusedImportsCount(),
         ];
-
-        return implode(PHP_EOL, $messages);
     }
 
-    public static function formatErrorSummary($totalCount, $checkedRefCount)
+    public static function formatErrorSummary($allImportsCount)
     {
-        return Color::boldYellow($checkedRefCount.' references were checked, '.$totalCount.' error'.($totalCount === 1 ? '' : 's').' found.');
+        return Color::boldYellow("$allImportsCount imports were checked.");
     }
 
-    public static function format($errorType, $count)
+    public static function unusedImportsCount()
     {
-        return ' 🔸 '.Color::yellow($count).' '.$errorType.($count === 1 ? '' : 's').' found.';
+        $count = ExtraImports::$count;
+        $s = $count === 1 ? '' : 's';
+        $count = Color::yellow($count);
+
+        return " 🔸 $count unused import$s found.";
     }
 
     public static function noImportsFound($filter)
