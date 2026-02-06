@@ -36,7 +36,7 @@ class CheckEndIfSyntax implements Check
         // @codeCoverageIgnoreEnd
 
         if (SyntaxNormalizer::$hasChange && self::getConfirm($file)) {
-            Refactor::saveTokens($absFilePath, $tokens);
+            Refactor::saveTokens($file, $tokens);
 
             return true;
         }

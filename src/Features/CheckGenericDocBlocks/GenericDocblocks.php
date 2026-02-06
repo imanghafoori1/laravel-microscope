@@ -43,7 +43,7 @@ class GenericDocblocks implements Check
             ErrorPrinter::singleton()->addPendingError(
                 $absFilePath, ($token[2] ?? 5) - 4, 'generic_docs', 'Docblock removed:', $token[1] ?? ''
             );
-            Refactor::saveTokens($absFilePath, $tokens);
+            Refactor::saveTokens($file, $tokens);
         }
     }
 

@@ -21,7 +21,6 @@ class CheckEarlyReturn implements Check
 
         $nofix = self::$params['nofix'];
         $nofixCallback = self::$params['nofixCallback'];
-        $fixCallback = self::$params['fixCallback'];
 
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
             return;
@@ -40,9 +39,9 @@ class CheckEarlyReturn implements Check
         }
 
         if ($nofix) {
-            $nofixCallback($absFilePath);
+            $nofixCallback($file);
         } elseif (self::getConfirm($absFilePath)) {
-            self::fix($absFilePath, $tokens, $fixes, $fixCallback);
+            self::fix($file, $tokens, $fixes);
         }
     }
 
@@ -64,9 +63,10 @@ class CheckEarlyReturn implements Check
         return [$fixes, $tokens];
     }
 
-    private static function fix($absFilePath, $tokens, $fixes, $fixCallback)
+    private static function fix(PhpFileDescriptor $file, $tokens, $fixes)
     {
-        Refactor::saveTokens($absFilePath, $tokens);
-        $fixCallback($absFilePath, $fixes);
+        Refactor::saveTokens($file, $tokens);
+        $fixCallback = self::$params['fixCallback'];
+        $fixCallback($file, $fixes);
     }
 }
