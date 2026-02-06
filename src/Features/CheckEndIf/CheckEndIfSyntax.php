@@ -7,7 +7,6 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 
 class CheckEndIfSyntax implements Check
@@ -36,7 +35,7 @@ class CheckEndIfSyntax implements Check
         // @codeCoverageIgnoreEnd
 
         if (SyntaxNormalizer::$hasChange && self::getConfirm($file)) {
-            Refactor::saveTokens($file, $tokens);
+            $file->saveTokens($tokens);
 
             return true;
         }

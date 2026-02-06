@@ -38,10 +38,8 @@ class ActionsComments implements Check
         }
     }
 
-    private static function checkActions($tokens, $fullNamespace, $file)
+    private static function checkActions($tokens, $fullNamespace, PhpFileDescriptor $file)
     {
-        $absFilePath = $file->getAbsolutePath();
-
         $methods = ClassMethods::read($tokens)['methods'];
 
         $methods = DeadControllerActions::getControllerActions($methods);
@@ -74,7 +72,7 @@ class ActionsComments implements Check
 
         $question = ActionCommentMsg::getQuestion($fullNamespace);
         if ($shouldSave && self::$command->confirm($question, true)) {
-            Refactor::saveTokens($file, $tokens);
+            $file->saveTokens($tokens);
         }
     }
 

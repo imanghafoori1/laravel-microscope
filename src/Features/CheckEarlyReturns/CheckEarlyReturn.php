@@ -65,7 +65,7 @@ class CheckEarlyReturn implements Check
 
     private static function fix(PhpFileDescriptor $file, $tokens, $fixes)
     {
-        Refactor::saveTokens($file, $tokens);
+        $file->saveTokens($tokens);
         $fixCallback = self::$params['fixCallback'];
         $fixCallback($file, $fixes);
     }

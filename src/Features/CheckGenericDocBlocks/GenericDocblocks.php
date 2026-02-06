@@ -6,7 +6,6 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\Refactor;
 use Imanghafoori\TokenAnalyzer\Str;
 
 class GenericDocblocks implements Check
@@ -43,7 +42,7 @@ class GenericDocblocks implements Check
             ErrorPrinter::singleton()->addPendingError(
                 $absFilePath, ($token[2] ?? 5) - 4, 'generic_docs', 'Docblock removed:', $token[1] ?? ''
             );
-            Refactor::saveTokens($file, $tokens);
+            $file->saveTokens($tokens);
         }
     }
 

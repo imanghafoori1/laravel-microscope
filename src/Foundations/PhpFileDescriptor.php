@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
+use Imanghafoori\TokenAnalyzer\Refactor;
 
 class PhpFileDescriptor
 {
@@ -172,5 +173,11 @@ class PhpFileDescriptor
     public function getFileName()
     {
         return basename($this->getAbsolutePath());
+    }
+
+    public function saveTokens($tokens)
+    {
+        $this->putContents(Refactor::toString($tokens));
+        $this->setTokens($tokens);
     }
 }

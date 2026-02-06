@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckPsr12;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
-use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CurlyBracesCheck implements Check
 {
@@ -40,7 +39,7 @@ class CurlyBracesCheck implements Check
         }
     }
 
-    private static function openCurly($token, $level, $tokens, $i, $file)
+    private static function openCurly($token, $level, $tokens, $i, PhpFileDescriptor $file)
     {
         if ($token !== '{' || in_array($tokens[$i - 1][0], [T_DOUBLE_COLON, T_OBJECT_OPERATOR])) {
             return;
@@ -49,17 +48,17 @@ class CurlyBracesCheck implements Check
         if ($tokens[$i + 1][0] === T_WHITESPACE) {
             if ($tokens[$i + 1][1] !== PHP_EOL.$sp && $tokens[$i + 1][1] !== "\n".$sp) {
                 $tokens[$i + 1][1] = PHP_EOL.$sp;
-                Refactor::saveTokens($file, $tokens);
+                $file->saveTokens($tokens);
             } else {
                 //
             }
         } else {
             array_splice($tokens, $i + 1, 0, [[T_WHITESPACE, PHP_EOL.$sp]]);
-            Refactor::saveTokens($file, $tokens);
+            $file->saveTokens($tokens);
         }
     }
 
-    private static function writePublic($level, $token, $isInClass, $i, $tokens, $file)
+    private static function writePublic($level, $token, $isInClass, $i, $tokens, PhpFileDescriptor $file)
     {
         if (($level !== 1) || ($token[0] !== T_FUNCTION) || ! $isInClass) {
             return [$tokens, $i];
@@ -75,7 +74,7 @@ class CurlyBracesCheck implements Check
             array_splice($tokens, $t, 0, [[T_PUBLIC, 'public']]);
             $i++;
             $i++;
-            Refactor::saveTokens($file, $tokens);
+            $file->saveTokens($tokens);
         }
 
         return [$tokens, $i];
