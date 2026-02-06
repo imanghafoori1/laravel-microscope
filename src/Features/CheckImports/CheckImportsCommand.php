@@ -48,6 +48,7 @@ class CheckImportsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
+        CheckClassAtMethod::$handler::$fix = ! $this->option('nofix');
         if ($this->option('nofix')) {
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
@@ -74,7 +75,9 @@ class CheckImportsCommand extends BaseCommand
 
         $iterator->printAll($messages);
         // must be after other messages:
-        $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery(ErrorPrinter::singleton()->errorsList)]);
+        $counter = ErrorCounter::calculateErrors(ErrorPrinter::singleton()->errorsList);
+        
+        $iterator->printAll([PHP_EOL.Reporters\SummeryReport::summery($counter)]);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
@@ -85,6 +88,6 @@ class CheckImportsCommand extends BaseCommand
 
         $this->line('');
 
-        return ErrorCounter::getTotalErrors() > 0 ? 1 : 0;
+        return $counter->getTotalErrors() > 0 ? 1 : 0;
     }
 }

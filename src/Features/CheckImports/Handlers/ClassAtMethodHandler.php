@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ClassAtMethodHandler
 {
-    public static $fix = false;
+    public static $fix = true;
 
     public static function handle($file, $atSignTokens)
     {
