@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks\CheckStringy;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class ClassifyStringsCommand extends BaseCommand
@@ -22,7 +22,6 @@ class ClassifyStringsCommand extends BaseCommand
 
     public $checks = [
         CheckStringy::class,
-        CheckClassAtMethod::class,
     ];
 
     public $customMsg = '';
