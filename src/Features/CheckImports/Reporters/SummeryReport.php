@@ -8,17 +8,13 @@ use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class SummeryReport
 {
-    public static function summery($errorsList)
+    public static function summery(ErrorCounter $counter)
     {
-        $counter = ErrorCounter::calculateErrors($errorsList);
-
-        $messages = [
+        return implode(PHP_EOL, [
             self::formatErrorSummary($counter->getTotalErrors(), ImportsAnalyzer::$checkedRefCount),
             self::format('wrong import', $counter->getExtraWrongCount()),
             self::format('wrong class reference', $counter->getWrongUsedClassCount()),
-        ];
-
-        return implode(PHP_EOL, $messages);
+        ]);
     }
 
     public static function formatErrorSummary($totalCount, $checkedRefCount)
