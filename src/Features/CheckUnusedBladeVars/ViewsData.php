@@ -12,7 +12,7 @@ class ViewsData
     public $main;
 
     /**
-     * @param \Illuminate\View\View $view
+     * @param  \Illuminate\View\View  $view
      * @return void
      */
     public function add($view)

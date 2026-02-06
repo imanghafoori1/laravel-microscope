@@ -4,7 +4,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckEarlyReturnsCommand extends BaseCommand

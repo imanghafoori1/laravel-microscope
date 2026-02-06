@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
-use JetBrains\PhpStorm\Pure;
 
 class ExtraImports
 {

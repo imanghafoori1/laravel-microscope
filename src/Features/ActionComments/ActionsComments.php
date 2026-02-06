@@ -8,7 +8,6 @@ use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ClassMethods;
-use Imanghafoori\TokenAnalyzer\Refactor;
 
 class ActionsComments implements Check
 {
