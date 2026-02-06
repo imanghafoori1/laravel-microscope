@@ -6,44 +6,42 @@ use JetBrains\PhpStorm\Pure;
 
 class ErrorCounter
 {
-    public static function calculateErrors($errors)
-    {
-        self::$errors['extraWrongImport'] = count($errors['extraWrongImport'] ?? []);
-        self::$errors['wrongClassRef'] = count($errors['wrongClassRef'] ?? []);
-    }
-
     /**
      * @var array<string, array>
      */
-    public static $errors = [];
+    public $errors = [];
 
-    #[Pure(true)]
-    public static function getExtraWrongCount(): int
+    public static function calculateErrors($errors)
     {
-        return self::getCount('extraWrongImport');
+        $self = new self;
+
+        $self->errors['extraWrongImport'] = count($errors['extraWrongImport'] ?? []);
+        $self->errors['wrongClassRef'] = count($errors['wrongClassRef'] ?? []);
+
+        return $self;
     }
 
     #[Pure(true)]
-    public static function getWrongUsedClassCount(): int
+    public function getExtraWrongCount(): int
     {
-        return self::getCount('wrongClassRef');
+        return $this->getCount('extraWrongImport');
     }
 
     #[Pure(true)]
-    public static function getExtraImportsCount(): int
+    public function getWrongUsedClassCount(): int
     {
-        return self::getExtraWrongCount();
+        return $this->getCount('wrongClassRef');
     }
 
     #[Pure(true)]
-    public static function getTotalErrors(): int
+    public function getTotalErrors(): int
     {
-        return self::getExtraWrongCount() + self::getWrongUsedClassCount() + self::getExtraImportsCount();
+        return $this->getExtraWrongCount() + $this->getWrongUsedClassCount();
     }
 
     #[Pure(true)]
-    private static function getCount(string $key)
+    private function getCount(string $key)
     {
-        return self::$errors[$key] ?? 0;
+        return $this->errors[$key] ?? 0;
     }
 }
