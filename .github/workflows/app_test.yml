@@ -170,3 +170,101 @@ jobs:
 #            laravel-app/bootstrap/cache/
 #            laravel-app/vendor/composer/installed.json
 #          retention-days: 14
+  laravel-11-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        php: ["8.2", "8.3"]  # Note: Laravel 11 supports PHP 8.2-8.3
+
+    name: Laravel 11 (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+        with:
+          path: laravel-microscope
+
+      - name: Checkout Laravel test application
+        uses: actions/checkout@v4
+        with:
+          repository: imanghafoori1/laravel-microscope-tester
+          path: laravel-app
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, xml, ctype, iconv, intl, libxml, bcmath, tokenizer, json
+#          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies for Laravel 11
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-laravel11-php-${{ matrix.php }}-${{ hashFiles('laravel-app/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-laravel11-php-${{ matrix.php }}-
+            ${{ runner.os }}-composer-
+
+      - name: Configure Laravel 11 and local package
+        timeout-minutes: 2
+        run: |
+          cd laravel-app
+          
+          # First, install without updating
+          composer install --no-interaction --no-progress
+          
+          # Remove Laravel 12 and install Laravel 11
+          composer remove laravel/framework --no-interaction 2>/dev/null || true
+          composer require "laravel/framework:^11.0" --no-interaction --no-update
+          
+          # Update composer to use Laravel 11 dependencies
+          composer update --no-interaction --with-all-dependencies
+          
+          # Remove any existing version of the package
+          composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
+          
+          # Add local package repository
+          composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
+          
+          # Require local package
+          composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
+
+      - name: Verify installations
+        run: |
+          cd laravel-app
+          echo "=== Installed Versions ==="
+          composer show laravel/framework 2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit 2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
+          echo "=========================="
+
+      - name: Prepare Laravel environment
+        run: |
+          cd laravel-app
+          
+          # Create .env if not exists
+          if [ ! -f ".env" ]; then
+            cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
+          fi
+          
+          # Generate app key
+          php artisan key:generate --force 2>/dev/null || true
+          
+          # Clear caches
+          php artisan config:clear 2>/dev/null || true
+          php artisan cache:clear 2>/dev/null || true
+
+      - name: Run tests with Laravel 11
+        if: always()
+        run: |
+          cd laravel-app
+          
+          # Check if there are test files mentioning microscope
+          echo "running tests..."
+          php artisan test --colors=always 2>/dev/null || false
