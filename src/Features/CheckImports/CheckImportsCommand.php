@@ -76,7 +76,7 @@ class CheckImportsCommand extends BaseCommand
         $iterator->printAll($messages);
         // must be after other messages:
         $counter = ErrorCounter::calculateErrors(ErrorPrinter::singleton()->errorsList);
-        
+
         $iterator->printAll([PHP_EOL, Reporters\SummeryReport::summery($counter)]);
 
         if (! ImportsAnalyzer::$checkedRefCount) {
