@@ -6,6 +6,7 @@ use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\Refactor;
+use SplFileObject;
 
 class PhpFileDescriptor
 {
@@ -73,7 +74,16 @@ class PhpFileDescriptor
 
     public function getLine(int $lineNumber)
     {
-        return file($this->getAbsolutePath())[$lineNumber - 1] ?? '';
+        $file = new SplFileObject($this->getAbsolutePath());
+
+        // Move to specific line (line numbers start at 0)
+        $file->seek($lineNumber - 1);
+
+        if ($file->valid()) {
+            return trim($file->current(), PHP_EOL);
+        }
+
+        return null;
     }
 
     public function getNamespace()
