@@ -10,11 +10,11 @@ class SummeryReport
 {
     public static function summery(ErrorCounter $counter)
     {
-        return implode(PHP_EOL, [
+        return [
             self::formatErrorSummary($counter->getTotalErrors(), ImportsAnalyzer::$checkedRefCount),
-            self::format('wrong import', $counter->getExtraWrongCount()),
-            self::format('wrong class reference', $counter->getWrongUsedClassCount()),
-        ]);
+            PHP_EOL.self::format('wrong import', $counter->getExtraWrongCount()),
+            PHP_EOL.self::format('wrong class reference', $counter->getWrongUsedClassCount()),
+        ];
     }
 
     public static function formatErrorSummary($totalCount, $checkedRefCount)
