@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-package:
+  laravel-12-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5  # Add timeout to prevent indefinite runs
 
@@ -64,30 +64,17 @@ jobs:
           # Add local package repository
           composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
           
-          # Update only specific packages instead of full update
-          # Require Laravel 12 if needed (uncomment if needed)
-          # composer require "laravel/framework:^12.0" --no-interaction
-          
           # Require local package
           composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
           
           # Update PHPUnit based on PHP version
           # if [[ "${{ matrix.php }}" == "8.5" ]] || [[ "${{ matrix.php }}" == "8.4" ]]; then
-            # PHP 8.4+ requires PHPUnit 11+
-          #  composer require "phpunit/phpunit:^11.0" --dev --no-interaction
+          #   # PHP 8.4+ requires PHPUnit 11+
+          #   composer update "phpunit/phpunit:^11.0" -W --no-interaction
           # else
-            # PHP 8.2-8.3 work with PHPUnit 10+
-          #  composer require "phpunit/phpunit:^10.0" --dev --no-interaction
+          #   # PHP 8.2-8.3 work with PHPUnit 10+
+          #   composer update "phpunit/phpunit:^10.0" -W --no-interaction
           # fi
-          
-          # Update testbench for Laravel 12 (uncomment if needed)
-          # composer require "orchestra/testbench:^10.0" --dev --no-interaction
-          
-          # Update common dependencies for Laravel 12
-          # composer require "symfony/console:^7.0" --no-interaction 2>/dev/null || true
-          # composer require "symfony/http-foundation:^7.0" --no-interaction 2>/dev/null || true
-          # composer require "league/flysystem:^3.0" --no-interaction 2>/dev/null || true
-
       - name: Verify installations
         run: |
           cd laravel-app
@@ -112,28 +99,6 @@ jobs:
           # Clear caches
           php artisan config:clear 2>/dev/null || true
           php artisan cache:clear 2>/dev/null || true
-          
-          # Set up SQLite database for testing
-          mkdir -p database
-          touch database/database.sqlite
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
-
-      - name: Publish package assets if needed
-        run: |
-          cd laravel-app
-          # Check if package has config to publish
-          if grep -q "MicroscopeServiceProvider" vendor/composer/installed.json 2>/dev/null; then
-            php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\MicroscopeServiceProvider" --tag=config --force 2>/dev/null || true
-            php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\MicroscopeServiceProvider" --tag=views --force 2>/dev/null || true
-          fi
-
-      - name: Run migrations if needed
-        run: |
-          cd laravel-app
-          if [ -d "database/migrations" ] && [ -n "$(ls -A database/migrations/*.php 2>/dev/null)" ]; then
-            php artisan migrate --force 2>/dev/null || true
-          fi
 
       - name: Run tests with Laravel 12
         if: always()
@@ -160,16 +125,6 @@ jobs:
           cd laravel-microscope
           composer global require php-coveralls/php-coveralls
           php-coveralls --coverage_clover=clover.xml --json_path=coverall.xml -v
-#      - name: Upload test artifacts on failure
-#        if: failure()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: failure-details-php-${{ matrix.php }}
-#          path: |
-#            laravel-app/storage/logs/
-#            laravel-app/bootstrap/cache/
-#            laravel-app/vendor/composer/installed.json
-#          retention-days: 14
   laravel-11-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
