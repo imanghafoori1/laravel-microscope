@@ -47,7 +47,9 @@ class CheckEnvCallsCommand extends BaseCommand
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             $iterator->forBladeFiles(),
-            PHP_EOL.$iterator->forRoutes(),
+            PHP_EOL,
+            $iterator->forRoutes(),
+            PHP_EOL,
         ]);
 
         $this->info('&It is recommended use env() calls, only and only in config files.');

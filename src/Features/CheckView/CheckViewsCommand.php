@@ -37,7 +37,8 @@ class CheckViewsCommand extends BaseCommand
     {
         Cache::loadToMemory('check_views_call.php');
         $lines = $iterator->forComposerLoadedFiles();
-        $lines->add(PHP_EOL.$iterator->forRoutes());
+        $lines->add(PHP_EOL);
+        $lines->add($iterator->forRoutes());
 
         $checkSet = CheckSet::initParams([CheckViewFilesExistence::class], $this);
         $lines->add(PHP_EOL.BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));

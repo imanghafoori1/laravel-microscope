@@ -17,7 +17,7 @@ class ClassMapStats
     #[Pure]
     public static function getLines($stat)
     {
-        $lines = '';
+        $lines = [];
         $c = $total = 0;
 
         foreach ($stat->stats as $path => $files) {
@@ -27,14 +27,14 @@ class ClassMapStats
             }
             $total += $count;
             $c++;
-            $lines .= self::addLine($path, $count);
+            $lines[] = self::addLine($path, $count);
         }
 
         if ($total) {
             $c === 1 && $total = '';
             $total = self::blue($total);
 
-            return "{$total}classmap:{$lines}";
+            return ["{$total}classmap:", $lines];
         }
     }
 }

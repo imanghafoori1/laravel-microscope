@@ -37,17 +37,17 @@ class ComposerJsonReport
 
         $lines = [];
         $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
-        $lines[] = PHP_EOL.self::hyphen(Color::boldYellow('PSR-4 '));
+        $lines[] = PHP_EOL.self::hyphen(Color::boldYellow('PSR-4'));
         $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4Stat, $max);
 
         if ($classMapStat) {
             $line = AutoloadMessages\ClassMapStats::getLines($classMapStat);
-            $line && ($lines[] = PHP_EOL.$line);
+            $line && ($lines[] = [PHP_EOL, $line]);
         }
 
         if ($filesStat) {
             $line = AutoloadMessages\AutoloadFiles::getLines($filesStat);
-            $line && ($lines[] = PHP_EOL.$line);
+            $line && ($lines[] = [PHP_EOL, $line]);
         }
 
         return $lines;

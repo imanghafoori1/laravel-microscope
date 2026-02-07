@@ -11,9 +11,12 @@ class SummeryReport
     public static function summery(ErrorCounter $counter)
     {
         return [
+            PHP_EOL,
             self::formatErrorSummary($counter->getTotalErrors(), ImportsAnalyzer::$checkedRefCount),
-            PHP_EOL.self::format('wrong import', $counter->getExtraWrongCount()),
-            PHP_EOL.self::format('wrong class reference', $counter->getWrongUsedClassCount()),
+            PHP_EOL,
+            self::format('wrong import', $counter->getExtraWrongCount()),
+            PHP_EOL,
+            self::format('wrong class reference', $counter->getWrongUsedClassCount()),
         ];
     }
 

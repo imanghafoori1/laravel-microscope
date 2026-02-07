@@ -18,16 +18,15 @@ class AutoloadFiles
     {
         $lines = self::formatFiles($filesList);
         $total = count($lines);
-        $lines = implode('', $lines);
 
-        return $total ? self::autoloadFilesHeader($total, $lines) : '';
+        return $total ? [self::autoloadFilesHeader($total), $lines] : [];
     }
 
     #[Pure]
-    private static function autoloadFilesHeader(int $count, string $lines): string
+    private static function autoloadFilesHeader(int $count): string
     {
         $s = ($count <= 1 ? '' : 's');
 
-        return self::hyphen().' Autoloaded files'.' '.Color::white("($count file$s)").$lines;
+        return self::hyphen().' Autoloaded files'.' '.Color::white("($count file$s)");
     }
 }

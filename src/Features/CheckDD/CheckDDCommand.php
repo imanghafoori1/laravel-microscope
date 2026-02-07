@@ -37,8 +37,11 @@ class CheckDDCommand extends BaseCommand
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
+            PHP_EOL,
+            $iterator->forBladeFiles(),
+            PHP_EOL,
             $iterator->forRoutes(),
-            PHP_EOL.$iterator->forBladeFiles(),
+            PHP_EOL,
         ]);
     }
 }

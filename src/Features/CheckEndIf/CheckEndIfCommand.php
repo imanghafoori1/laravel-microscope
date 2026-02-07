@@ -32,7 +32,9 @@ class CheckEndIfCommand extends BaseCommand
     {
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
+            PHP_EOL,
             $iterator->forRoutes(),
+            PHP_EOL,
         ]);
     }
 }

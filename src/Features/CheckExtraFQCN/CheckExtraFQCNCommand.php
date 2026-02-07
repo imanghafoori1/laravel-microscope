@@ -45,10 +45,13 @@ class CheckExtraFQCNCommand extends BaseCommand
         $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
             $iterator->forComposerLoadedFiles(),
-            PHP_EOL.CheckImportReporter::header(),
-            PHP_EOL.self::getFilesStats(),
+            PHP_EOL,
+            CheckImportReporter::header(),
+            PHP_EOL,
+            self::getFilesStats(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),
+            PHP_EOL,
         ]);
 
         ExtraFQCN::reset();

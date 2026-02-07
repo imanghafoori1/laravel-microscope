@@ -24,6 +24,5 @@ class Printer
                 self::printAll($message, $output);
             }
         }
-        $output->write(PHP_EOL);
     }
 }

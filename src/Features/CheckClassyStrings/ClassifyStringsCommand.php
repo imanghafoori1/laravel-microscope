@@ -33,8 +33,10 @@ class ClassifyStringsCommand extends BaseCommand
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
+            $iterator->forBladeFiles(),
+            PHP_EOL,
             $iterator->forRoutes(),
-            PHP_EOL.$iterator->forBladeFiles(),
+            PHP_EOL,
         ]);
     }
 }

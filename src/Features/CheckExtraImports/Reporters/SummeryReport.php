@@ -10,6 +10,7 @@ class SummeryReport
     public static function summery($importCount)
     {
         return [
+            PHP_EOL,
             self::formatErrorSummary($importCount),
             PHP_EOL,
             self::unusedImportsCount(),

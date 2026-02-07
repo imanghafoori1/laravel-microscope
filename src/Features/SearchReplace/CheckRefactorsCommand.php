@@ -64,7 +64,9 @@ class CheckRefactorsCommand extends Command
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
-            PHP_EOL.$iterator->forRoutes(),
+            PHP_EOL,
+            $iterator->forRoutes(),
+            PHP_EOL,
         ]);
 
         $errorPrinter->hasErrors() && $errorPrinter->logErrors();
