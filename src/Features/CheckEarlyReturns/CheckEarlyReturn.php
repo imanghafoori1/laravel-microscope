@@ -17,7 +17,6 @@ class CheckEarlyReturn implements Check
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
-        $absFilePath = $file->getAbsolutePath();
 
         $nofix = self::$params['nofix'];
         $nofixCallback = self::$params['nofixCallback'];
@@ -40,15 +39,14 @@ class CheckEarlyReturn implements Check
 
         if ($nofix) {
             $nofixCallback($file);
-        } elseif (self::getConfirm($absFilePath)) {
+        } elseif (self::getConfirm($file)) {
             self::fix($file, $tokens, $fixes);
         }
     }
 
-    private static function getConfirm($absFilePath)
+    private static function getConfirm(PhpFileDescriptor $file)
     {
-        $relFilePath = FilePath::getRelativePath($absFilePath);
-        $question = ' Do you want to flatten: '.Color::yellow($relFilePath);
+        $question = ' Do you want to flatten: '.Color::yellow($file->relativePath());
 
         return ErrorPrinter::singleton()->printer->confirm($question);
     }

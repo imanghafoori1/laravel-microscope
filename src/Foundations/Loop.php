@@ -242,7 +242,7 @@ class Loop
         $result = [];
         foreach ($iterable as $key => $value) {
             if ($if($value, $key)) {
-                foreach ($callback($value, $key) as $key2 => $value2) {
+                foreach (($callback($value, $key) ?: []) as $key2 => $value2) {
                     $result[$key2] = $value2;
                 }
             }
