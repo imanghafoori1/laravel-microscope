@@ -2,8 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 
+use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckDDCommand extends BaseCommand
@@ -19,7 +21,7 @@ class CheckDDCommand extends BaseCommand
 
     public $checks = [CheckDD::class];
 
-    public $initialMsg = 'Checking dd...';
+    public $initialMsg = 'Checking for debug functions...';
 
     public $customMsg = '';
 
@@ -29,12 +31,6 @@ class CheckDDCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        CheckDD::$onErrorCallback = function (PhpFileDescriptor $file, $token) {
-            ErrorPrinter::singleton()->simplePendError(
-                $token[1], $file->getAbsolutePath(), $token[2], 'ddFound', 'Debug function found: '
-            );
-        };
-
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,

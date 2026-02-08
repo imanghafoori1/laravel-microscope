@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\Paths;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
@@ -34,15 +33,8 @@ class CheckEnvCallsCommand extends BaseCommand
     {
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        $params = function ($name, $absPath, $lineNumber) {
-            ErrorPrinter::singleton()->simplePendError(
-                $name, $absPath, $lineNumber, 'envFound', 'env() function found: '
-            );
-        };
-
         $this->excludeConfigFiles($pathDTO);
-        $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO), $params);
-        EnvCallsCheck::$onErrorCallback = $params;
+        $this->checkPaths(LaravelPaths::getMigrationsFiles($pathDTO));
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
@@ -61,13 +53,13 @@ class CheckEnvCallsCommand extends BaseCommand
      * @param  \Generator|string[]|\Generator[]  $paths
      * @return void
      */
-    private function checkPaths($paths, $params)
+    private function checkPaths($paths)
     {
         foreach ($paths as $filePath) {
             if (is_string($filePath)) {
                 EnvCallsCheck::check(PhpFileDescriptor::make($filePath));
             } else {
-                $this->checkPaths($filePath, $params);
+                $this->checkPaths($filePath);
             }
         }
     }

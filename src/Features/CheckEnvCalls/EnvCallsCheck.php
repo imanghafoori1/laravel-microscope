@@ -15,7 +15,7 @@ class EnvCallsCheck implements Check
     /**
      * @var \Closure
      */
-    public static $onErrorCallback;
+    public static $onErrorCallback = EnvCallHandler::class;
 
     /**
      * @var string
@@ -24,8 +24,6 @@ class EnvCallsCheck implements Check
 
     public static function performCheck(PhpFileDescriptor $file): bool
     {
-        $onError = self::$onErrorCallback;
-        $absPath = $file->getAbsolutePath();
         $tokens = $file->getTokens();
 
         $hasError = false;
@@ -39,17 +37,17 @@ class EnvCallsCheck implements Check
             if (! $index) {
                 continue;
             }
-            if (self::isLikelyConfigFile($absPath, $tokens)) {
+            if (self::isLikelyConfigFile($file, $tokens)) {
                 continue;
             }
-            $onError($tokens[$index][1], $absPath, $tokens[$index][2]);
+            self::$onErrorCallback::handle($file, $tokens[$index][1], $tokens[$index][2]);
             $hasError = true;
         }
 
         return $hasError;
     }
 
-    private static function isLikelyConfigFile($absPath, $tokens)
+    private static function isLikelyConfigFile(PhpFileDescriptor $file, $tokens)
     {
         [$token] = TokenManager::getNextToken($tokens, 0);
 
@@ -57,10 +55,10 @@ class EnvCallsCheck implements Check
             return false;
         }
 
-        if ($token[0] === T_RETURN && stripos($absPath, 'config')) {
+        if ($token[0] === T_RETURN && stripos($file->getAbsolutePath(), 'config')) {
             return true;
         }
 
-        return basename($absPath) === 'config.php';
+        return $file->getFileName() === 'config.php';
     }
 }
