@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations\Analyzers;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\Filesystem\FileManipulator;
-use Imanghafoori\LaravelMicroscope\ClassListProvider;
+use Imanghafoori\LaravelMicroscope\Foundations\ClassListProvider;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;

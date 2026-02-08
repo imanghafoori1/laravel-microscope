@@ -1,8 +1,9 @@
 <?php
 
-namespace Imanghafoori\LaravelMicroscope;
+namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use ImanGhafoori\ComposerJson\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\PhpFinder;
 use Imanghafoori\TokenAnalyzer\Str;
@@ -60,7 +61,7 @@ class ClassListProvider
         ];
     }
 
-    public static function derive($psr4Path, $relativePath, $namespace, $fileName): array
+    private static function derive($psr4Path, $relativePath, $namespace, $fileName): array
     {
         $composerPath = str_replace('/', '\\', $psr4Path);
         $relativePath = str_replace('/', '\\', $relativePath);
