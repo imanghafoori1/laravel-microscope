@@ -14,10 +14,10 @@ use RuntimeException;
 
 class ExtractBladePartial implements Check
 {
-    public static function check(PhpFileDescriptor $file)
+    public static function check(PhpFileDescriptor $fileObj)
     {
-        $tokens = $file->getTokens();
-        $absPath = $file->getAbsolutePath();
+        $tokens = $fileObj->getTokens();
+        $absPath = $fileObj->getAbsolutePath();
 
         // we skip the very first tokens: '<?php '
         $i = 4;
@@ -59,11 +59,8 @@ class ExtractBladePartial implements Check
             $start = $call[0][2] - 1;
             $removedLinesNumber = ($call[1][2] - $call[0][2]) + 1;
             $extracted = array_splice($file, $start, $removedLinesNumber, $replacement);
-            $partialPath = self::find(trim($call[0][1], '\'\"'));
             array_shift($extracted);
             array_pop($extracted);
-
-            $partialPath = str_replace(['/', '\\'], '/', $partialPath);
 
             $spaces = Str::before($extracted[0], trim($extracted[0]));
             // add space before the @include to have proper indentation.
@@ -71,10 +68,14 @@ class ExtractBladePartial implements Check
             // remove spaces so that the created file
             // does not have irrelevant indentation.
             $extracted = Loop::map($extracted, fn ($line, $i) => Str::after($line, $spaces));
-            self::forceFilePutContents($partialPath, implode('', $extracted));
+            $contents = implode('', $extracted);
+            self::forceFilePutContents(
+                self::find(trim($call[0][1], '\'\"')),
+                $contents
+            );
         }
 
-        self::forceFilePutContents($absPath, implode('', $file));
+        self::forceFilePutContents($fileObj, implode('', $file));
 
         return $tokens;
     }
@@ -82,10 +83,12 @@ class ExtractBladePartial implements Check
     public static function find($name)
     {
         if (self::hasHintInformation($name = trim($name))) {
-            return self::findNamespacedView($name);
+            $path = self::findNamespacedView($name);
+        } else {
+            $path = self::findInPaths($name, View::getFinder()->getPaths());
         }
 
-        return self::findInPaths($name, View::getFinder()->getPaths());
+        return PhpFileDescriptor::make($path);
     }
 
     protected static function getPossibleViewFiles($name)
@@ -134,17 +137,18 @@ class ExtractBladePartial implements Check
         return strpos($name, '::') > 0;
     }
 
-    public static function forceFilePutContents($filepath, $message)
+    public static function forceFilePutContents(PhpFileDescriptor $file, $message)
     {
+        $pattern = "/^(.*)\/([^\/]+)$/";
         try {
-            $isInFolder = preg_match("/^(.*)\/([^\/]+)$/", $filepath, $filepathMatches);
+            $isInFolder = preg_match($pattern, $file->path()->getWithUnixDirectorySeprator(), $filepathMatches);
             if ($isInFolder) {
                 $folderName = $filepathMatches[1];
                 self::ensureDirExists($folderName);
             }
-            file_put_contents($filepath, $message);
+            $file->putContents($message);
         } catch (Exception $e) {
-            echo "ERR: error writing '$message' to '$filepath', ".$e->getMessage();
+            // "ERR: error writing '$message' to '$filepath', ".$e->getMessage();
         }
     }
 
