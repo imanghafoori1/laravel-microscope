@@ -92,7 +92,7 @@ class ExtraFQCN implements Check
                 if ($aliasToken) {
                     $hasError = true;
                     $alias = $aliasToken[1];
-                    ! $shouldBeSkipped && self::reportAliasImported($absFilePath, $alias, $classRef);
+                    ! $shouldBeSkipped && self::reportAliasImported($file, $alias, $classRef);
                 }
             }
         }
@@ -135,13 +135,13 @@ class ExtraFQCN implements Check
         return false;
     }
 
-    private static function reportAliasImported($absFilePath, $alias, $classRef)
+    private static function reportAliasImported($file, $alias, $classRef)
     {
         $header = 'FQCN is already imported with an alias: '.$alias;
         $body = $classRef['class'].' can be replaced with: '.$alias;
 
         ErrorPrinter::singleton()->simplePendError(
-            $body, $absFilePath, $classRef['line'], 'FQCN', $header
+            $body, $file, $classRef['line'], 'FQCN', $header
         );
     }
 

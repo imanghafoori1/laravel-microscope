@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
@@ -37,24 +36,16 @@ class EnforceImportsCommand extends BaseCommand
     {
         $noFix = $this->options->option('no-fix');
         $class = $this->options->option('class');
-        EnforceImports::setOptions($noFix, $class, UseStatementParser::get(), self::getOnError($noFix));
+        EnforceImports::setOptions(
+            $noFix,
+            $class,
+            UseStatementParser::get(),
+            EnforceImportsHandler::handler($noFix)
+        );
 
         $iterator->printAll([
             CheckImportReporter::totalImportsMsg(),
             $iterator->forComposerLoadedFiles(),
         ]);
-    }
-
-    private static function getOnError($noFix)
-    {
-        if ($noFix) {
-            $header = 'FQCN needs to be imported';
-        } else {
-            $header = 'FQCN got imported at the top';
-        }
-
-        return function ($classRef, $file, $line) use ($header) {
-            ErrorPrinter::singleton()->simplePendError($classRef, $file, $line, 'enforce_imports', $header);
-        };
     }
 }
