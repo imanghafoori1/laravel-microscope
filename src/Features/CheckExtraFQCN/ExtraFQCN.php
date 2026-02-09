@@ -27,11 +27,13 @@ class ExtraFQCN implements Check
 
     public static function performCheck(PhpFileDescriptor $file): bool
     {
-        $tokens = $file->getTokens();
-        $absFilePath = $file->getAbsolutePath();
         ! self::$imports && (self::$imports = UseStatementParser::get());
         $imports = (self::$imports)($file);
-        $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
+        $classRefs = ImportsAnalyzer::findClassRefs(
+            $file->getTokens(),
+            $file->getAbsolutePath(),
+            $imports
+        );
         $hasError = self::checkClassRef($classRefs, $imports, $file);
 
         return $hasError;
@@ -63,7 +65,6 @@ class ExtraFQCN implements Check
     {
         $fix = self::$fix;
         $class = self::$class;
-        $absFilePath = $file->getAbsolutePath();
         $hasError = false;
         $namespace = $classRefs[1];
         $imports = array_values($imports)[0];
@@ -77,13 +78,13 @@ class ExtraFQCN implements Check
                 $hasError = true;
                 if (! $shouldBeSkipped) {
                     $line = $imports[self::className($classRef['class'])][1]; // <== get the line number of the import
-                    self::report($classRef, $absFilePath, $line);
+                    self::report($classRef, $file, $line);
                     $fix && self::deleteFQCN($file, $classRef);
                 }
             } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::conflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
-                    self::reportSameNamespace($classRef, $absFilePath, $fix);
+                    self::reportSameNamespace($classRef, $file, $fix);
                     $fix && self::deleteFQCN($file, $classRef);
                 }
             } else {
@@ -145,22 +146,22 @@ class ExtraFQCN implements Check
         );
     }
 
-    private static function reportSameNamespace($classRef, string $absFilePath, $fix)
+    private static function reportSameNamespace($classRef, $file, $fix)
     {
         $header = 'FQCN is already on the same namespace.';
         $fix && ($header .= ' (fixed)');
 
         ErrorPrinter::singleton()->simplePendError(
-            $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
+            $classRef['class'], $file, $classRef['line'], 'FQCN', $header
         );
     }
 
-    private static function report(array $classRef, string $absFilePath, $line)
+    private static function report(array $classRef, $file, $line)
     {
         $header = 'FQCN is already imported at line: '.$line;
 
         ErrorPrinter::singleton()->simplePendError(
-            $classRef['class'], $absFilePath, $classRef['line'], 'FQCN', $header
+            $classRef['class'], $file, $classRef['line'], 'FQCN', $header
         );
     }
 

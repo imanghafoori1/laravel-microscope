@@ -14,12 +14,12 @@ class ExtraImports
     {
         $printer = ErrorPrinter::singleton();
 
-        foreach ($extraImports as [$class, $lineNumber]) {
+        foreach ($extraImports as [$class, $line]) {
             self::$count++;
             $printer->simplePendError(
-                trim($file->getLine($lineNumber), PHP_EOL),
+                Color::gray($line.'| ').trim($file->getLine($line), PHP_EOL),
                 $file,
-                $lineNumber,
+                $line,
                 'extraImports',
                 'Extra Import: '.Color::yellow(class_basename($class))
             );

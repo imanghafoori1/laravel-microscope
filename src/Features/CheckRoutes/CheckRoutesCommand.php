@@ -82,7 +82,7 @@ class CheckRoutesCommand extends BaseCommand
             } catch (Exception $e) {
                 // Starts with: "SQLSTATE"
                 if (strpos($e->getMessage(), 'SQLSTATE') === 0) {
-                    dump($ctrlClass.'  -  '.$e->getMessage());
+                    //dump($ctrlClass.'  -  '.$e->getMessage());
                     continue;
                 }
 
