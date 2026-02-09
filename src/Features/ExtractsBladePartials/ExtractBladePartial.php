@@ -17,8 +17,6 @@ class ExtractBladePartial implements Check
     public static function check(PhpFileDescriptor $fileObj)
     {
         $tokens = $fileObj->getTokens();
-        $absPath = $fileObj->getAbsolutePath();
-
         // we skip the very first tokens: '<?php '
         $i = 4;
         // we skip the very end of the file.
@@ -46,7 +44,7 @@ class ExtractBladePartial implements Check
             return;
         }
 
-        $file = file($absPath) ?: [];
+        $file = file($fileObj->getAbsolutePath()) ?: [];
 
         $callsOrder = array_reverse($callsOrder);
         foreach ($callsOrder as $paramName) {

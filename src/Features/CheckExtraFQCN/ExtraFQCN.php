@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -44,7 +43,7 @@ class ExtraFQCN implements Check
         return isset($imports[self::className($class)]) && $imports[self::className($class)][0] === ltrim($class, '\\');
     }
 
-    private static function conflictingAlias($class, $imports)
+    private static function isConflictingAlias($class, $imports)
     {
         return isset($imports[self::className($class)]);
     }
@@ -78,13 +77,13 @@ class ExtraFQCN implements Check
                 $hasError = true;
                 if (! $shouldBeSkipped) {
                     $line = $imports[self::className($classRef['class'])][1]; // <== get the line number of the import
-                    self::report($classRef, $file, $line);
+                    ExtraFqcnHandler::reportAlreadyImported($classRef, $file, $line);
                     $fix && self::deleteFQCN($file, $classRef);
                 }
-            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::conflictingAlias($classRef['class'], $imports)) {
+            } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::isConflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
-                    self::reportSameNamespace($classRef, $file, $fix);
+                    ExtraFqcnHandler::reportSameNamespace($classRef, $file, $fix);
                     $fix && self::deleteFQCN($file, $classRef);
                 }
             } else {
@@ -93,7 +92,7 @@ class ExtraFQCN implements Check
                 if ($aliasToken) {
                     $hasError = true;
                     $alias = $aliasToken[1];
-                    ! $shouldBeSkipped && self::reportAliasImported($file, $alias, $classRef);
+                    ! $shouldBeSkipped && ExtraFqcnHandler::reportAliasImported($file, $alias, $classRef);
                 }
             }
         }
@@ -119,12 +118,10 @@ class ExtraFQCN implements Check
             $file->putContents(implode('', $lines));
 
             return true;
-        } elseif ($count > 1) {
-            $className = self::className($classRef);
-            $search = [$classRef.' ', $classRef.'(', $classRef.'::', $classRef.')', $classRef.';'];
-            $replace = [$className.' ', $className.'(', $className.'::', $className.')', $className.';'];
+        }
 
-            $new = str_replace($search, $replace, $lines[$line - 1], $count);
+        if ($count > 1) {
+            [$count, $new] = self::replace($classRef, $lines[$line - 1]);
             if ($count === 1) {
                 $lines[$line - 1] = $new;
                 $file->putContents(implode('', $lines));
@@ -134,35 +131,6 @@ class ExtraFQCN implements Check
         }
 
         return false;
-    }
-
-    private static function reportAliasImported($file, $alias, $classRef)
-    {
-        $header = 'FQCN is already imported with an alias: '.$alias;
-        $body = $classRef['class'].' can be replaced with: '.$alias;
-
-        ErrorPrinter::singleton()->simplePendError(
-            $body, $file, $classRef['line'], 'FQCN', $header
-        );
-    }
-
-    private static function reportSameNamespace($classRef, $file, $fix)
-    {
-        $header = 'FQCN is already on the same namespace.';
-        $fix && ($header .= ' (fixed)');
-
-        ErrorPrinter::singleton()->simplePendError(
-            $classRef['class'], $file, $classRef['line'], 'FQCN', $header
-        );
-    }
-
-    private static function report(array $classRef, $file, $line)
-    {
-        $header = 'FQCN is already imported at line: '.$line;
-
-        ErrorPrinter::singleton()->simplePendError(
-            $classRef['class'], $file, $classRef['line'], 'FQCN', $header
-        );
     }
 
     private static function className($class)
@@ -182,5 +150,16 @@ class ExtraFQCN implements Check
     public static function reset()
     {
         self::configure(null, false, null);
+    }
+
+    private static function replace($classRef, $subject): array
+    {
+        $className = self::className($classRef);
+        $search = [$classRef.' ', $classRef.'(', $classRef.'::', $classRef.')', $classRef.';'];
+        $replace = [$className.' ', $className.'(', $className.'::', $className.')', $className.';'];
+        $count = 0;
+        $new = str_replace($search, $replace, $subject, $count);
+
+        return [$count, $new];
     }
 }
