@@ -40,8 +40,9 @@ class CheckViewsCommand extends BaseCommand
         $lines->add(PHP_EOL);
         $lines->add($iterator->forRoutes());
 
+        $lines->add(PHP_EOL);
         $checkSet = CheckSet::initParams([CheckViewFilesExistence::class], $this);
-        $lines->add(PHP_EOL.BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));
+        $lines->add(BladeReport::getBladeStats(ForBladeFiles::check($checkSet)));
 
         $iterator->printAll($lines);
 

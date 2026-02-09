@@ -46,7 +46,7 @@ class CheckViewFilesExistence implements Check
     {
         $viewName = $tokens[$i + 4][1];
         $viewName = str_replace('.', '/', trim($viewName, '\'\"'));
-        CheckView::viewError($file, $tokens[$i + 4][2], $viewName);
+        CheckViewHandler::handle($file, $tokens[$i + 4][2], $viewName);
     }
 
     private static function isVariable($token, string $varName)

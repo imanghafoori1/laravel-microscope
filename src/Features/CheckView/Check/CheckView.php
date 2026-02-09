@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
@@ -25,7 +24,7 @@ class CheckView implements Check
 
         Loop::over(
             $views,
-            fn ($view) => self::viewError($file, $view[0], $view[1])
+            fn ($view) => CheckViewHandler::handle($file, $view[0], $view[1])
         );
         $skippedCount = count($skipped);
         $viewsCount = count($views);
@@ -83,18 +82,6 @@ class CheckView implements Check
         }
 
         return [$views, $skippedViews];
-    }
-
-    public static function viewError($file, $lineNumber, $fileName)
-    {
-        ErrorPrinter::singleton()->simplePendError(
-            $fileName.'.blade.php',
-            $file,
-            $lineNumber,
-            'missing_view',
-            'The blade file is missing:',
-            ' does not exist'
-        );
     }
 
     private static function getViewName($string)
