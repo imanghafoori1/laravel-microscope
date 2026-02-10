@@ -2,9 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckFacadeDocblocks;
 
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class CheckFacadeDocblocksCommand extends BaseCommand
 {
@@ -25,16 +23,8 @@ class CheckFacadeDocblocksCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
-    public function handleCommand($iterator, $command)
+    public function handleCommand($iterator)
     {
-        FacadeDocblocks::$onFix = function ($class) use ($command) {
-            $command->line('➖ Fixed doc-blocks for: "'.Color::yellow($class).'"');
-        };
-
-        FacadeDocblocks::$onError = function ($accessor, $file) {
-            ErrorPrinter::singleton()->simplePendError('"'.$accessor.'"', $file, 20, 'asd', 'The Facade Accessor Not Found.');
-        };
-
         $iterator->formatPrintPsr4Classmap();
     }
 }

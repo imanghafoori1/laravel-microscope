@@ -3,9 +3,8 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FunctionCall;
 
@@ -57,37 +56,17 @@ class CheckRouteCalls implements Check
             return [$skippedRouteCallsNum, $calls];
         });
 
-        foreach ($calls as [$line, $routeName]) {
-            self::checkRouteExists($routeName, $file, $line);
-        }
+        Loop::over($calls, fn ($call) => self::checkRouteExists($file, $call[0], $call[1]));
         self::$checkedRouteCallsNum += count($calls);
         self::$skippedRouteCallsNum += $skippedRouteCallsNum;
     }
 
-    public static function printError($routeName, $file, $lineNumber)
-    {
-        $routeName = Color::blue($routeName);
-        self::route(
-            "route($routeName)",
-            'Route name does not exist: ',
-            '  <=== is wrong',
-            $file,
-            $lineNumber
-        );
-    }
-
-    public static function route($path, $errorIt, $errorTxt, $file, $lineNumber)
-    {
-        $p = ErrorPrinter::singleton();
-        $p->simplePendError($path, $file, $lineNumber, 'route', $errorIt, $errorTxt);
-    }
-
-    public static function checkRouteExists($routeName, $file, $line)
+    public static function checkRouteExists($file, $lineNumber, $routeName)
     {
         $matchedRoute = app('router')->getRoutes()->getByName(
             trim($routeName, '\'\"')
         );
-        is_null($matchedRoute) && self::printError($routeName, $file, $line);
+        is_null($matchedRoute) && WrongRouteCallHandler::printError($file, $lineNumber, $routeName);
     }
 
     private static function redirectRouteTokens()

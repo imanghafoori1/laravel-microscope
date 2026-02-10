@@ -18,16 +18,6 @@ class FacadeDocblocks
      */
     public static $command;
 
-    /**
-     * @var \Closure|null
-     */
-    public static $onError;
-
-    /**
-     * @var \Closure|null
-     */
-    public static $onFix;
-
     public static function check(PhpFileDescriptor $file)
     {
         $fqcnFacade = $file->getNamespace();
@@ -47,7 +37,7 @@ class FacadeDocblocks
             try {
                 $accessor = get_class($fqcnFacade::getFacadeRoot());
             } catch (Exception $e) {
-                (self::$onError)($accessor, $file);
+                FacadeDocblockHandler::onError($accessor, $file);
 
                 return;
             }
@@ -56,7 +46,7 @@ class FacadeDocblocks
         self::addDocBlocks($accessor, $fqcnFacade, $file);
     }
 
-    private static function addDocBlocks(string $accessor, $fqcn, PhpFileDescriptor $file)
+    private static function addDocBlocks($accessor, $fqcn, PhpFileDescriptor $file)
     {
         $methods = Loop::filter(
             self::findPublicMethods($accessor),
@@ -73,7 +63,7 @@ class FacadeDocblocks
         $newVersion = self::injectDocblocks($className, $docblocks, $file);
 
         if ($file->getContent() !== $newVersion) {
-            (self::$onFix)($fqcn);
+            FacadeDocblockHandler::onFix($fqcn, $file);
             $file->putContents($newVersion);
         }
     }

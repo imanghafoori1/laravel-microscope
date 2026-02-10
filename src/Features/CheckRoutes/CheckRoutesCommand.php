@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
@@ -58,7 +57,7 @@ class CheckRoutesCommand extends BaseCommand
     private function getRouteId($route)
     {
         if ($routeName = $route->getName()) {
-            $msg = 'name: "'.$routeName.'"';
+            $msg = "name: '$routeName'";
         } else {
             $msg = 'url: "'.$route->uri().'"';
         }
@@ -89,7 +88,7 @@ class CheckRoutesCommand extends BaseCommand
                 $msg1 = $this->getRouteId($route);
                 $msg2 = 'The controller can not be resolved: ('.$msg1.')';
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                self::route($ctrlClass, $msg2, '', $path, $line);
+                WrongRouteCallHandler::route($ctrlClass, $msg2, '', $path, $line);
 
                 continue;
             }
@@ -97,15 +96,9 @@ class CheckRoutesCommand extends BaseCommand
             if (! method_exists($ctrlObj, $method)) {
                 $msg2 = 'Absent method for route'.' '.$this->getRouteId($route);
                 [$path, $line] = ActionsComments::getCallsiteInfo($route->methods()[0], $route);
-                self::route($ctrl, $msg2, '', $path, $line);
+                WrongRouteCallHandler::route($ctrl, $msg2, '', $path, $line);
             }
         }
-    }
-
-    public static function route($path, $errorIt, $errorTxt, $absPath = null, $lineNumber = 0)
-    {
-        $p = ErrorPrinter::singleton();
-        $p->simplePendError($path, $absPath, $lineNumber, 'route', $errorIt, $errorTxt);
     }
 
     private function getStatisticsMsg()

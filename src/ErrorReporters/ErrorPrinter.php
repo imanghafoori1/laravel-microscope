@@ -82,11 +82,11 @@ class ErrorPrinter
             ->link($path, $lineNumber);
     }
 
-    public function simplePendError($text, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
+    public function simplePendError($blueText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
     {
         is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
 
-        $errorData = $pre.Color::blue($text).$rest;
+        $errorData = $pre.Color::blue($blueText).$rest;
 
         $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
     }

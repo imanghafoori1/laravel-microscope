@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckGenericDocBlocksCommand extends BaseCommand
 {
@@ -38,11 +39,13 @@ class CheckGenericDocBlocksCommand extends BaseCommand
 
     private function getConformer()
     {
-        return $this->options->option('nofix') ? fn () => false : fn ($path) => $this->options->confirm($this->getQuestion($path), true);
+        $conformer = fn (PhpFileDescriptor $file) => $this->options->confirm($this->getQuestion($file), true);
+
+        return $this->options->option('nofix') ? fn () => false : $conformer;
     }
 
-    private function getQuestion($absFilePath)
+    private function getQuestion(PhpFileDescriptor $file)
     {
-        return 'Do you want to remove doc-blocks from: '.Color::yellow(basename($absFilePath));
+        return 'Do you want to remove doc-blocks from: '.Color::yellow($file->getFileName());
     }
 }

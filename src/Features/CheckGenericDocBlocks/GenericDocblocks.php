@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Str;
@@ -37,11 +36,8 @@ class GenericDocblocks implements Check
 
         [$hasReplacement, $tokens, $token] = self::removeDocBlocks($tokens);
 
-        $absFilePath = $file->getAbsolutePath();
-        if ($hasReplacement && (self::$conformer)($absFilePath)) {
-            ErrorPrinter::singleton()->addPendingError(
-                $absFilePath, ($token[2] ?? 5) - 4, 'generic_docs', 'Docblock removed:', $token[1] ?? ''
-            );
+        if ($hasReplacement && (self::$conformer)($file)) {
+            GenericDocblocksHandler::handle($file, $token);
             $file->saveTokens($tokens);
         }
     }

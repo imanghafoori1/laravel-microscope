@@ -2,11 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckDD;
 
-use Illuminate\Support\Str;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckDDCommand extends BaseCommand
 {
