@@ -2,9 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\ExtraWrongImportsHandler;
 use JetBrains\PhpStorm\Pure;
 
-class ErrorCounter
+class ImportsErrorCounter
 {
     /**
      * @var array<string, array>
@@ -15,8 +16,12 @@ class ErrorCounter
     {
         $self = new self;
 
-        $self->errors['extraWrongImport'] = count($errors['extraWrongImport'] ?? []);
+        $self->errors['extraWrongImport'] = ExtraWrongImportsHandler::$count;
         $self->errors['wrongClassRef'] = count($errors['wrongClassRef'] ?? []);
+        $self->errors['wrongMethod'] = count($errors['wrongMethodError'] ?? []);
+        $self->errors['wrongStringyClass'] = count($errors['wrongUsedClassError'] ?? []);
+
+        ExtraWrongImportsHandler::$count = 0;
 
         return $self;
     }
@@ -36,7 +41,10 @@ class ErrorCounter
     #[Pure(true)]
     public function getTotalErrors(): int
     {
-        return $this->getExtraWrongCount() + $this->getWrongUsedClassCount();
+        return $this->getExtraWrongCount() +
+            $this->getWrongUsedClassCount() +
+            $this->errors['wrongMethod'] +
+            $this->errors['wrongStringyClass'];
     }
 
     #[Pure(true)]

@@ -2,13 +2,13 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\ErrorCounter;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsErrorCounter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class SummeryReport
 {
-    public static function summery(ErrorCounter $counter)
+    public static function summery(ImportsErrorCounter $counter)
     {
         return [
             PHP_EOL,

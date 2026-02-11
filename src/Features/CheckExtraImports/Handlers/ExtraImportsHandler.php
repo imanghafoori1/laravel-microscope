@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
-class ExtraImports
+class ExtraImportsHandler
 {
     public static $count = 0;
 
@@ -14,14 +14,17 @@ class ExtraImports
     {
         $printer = ErrorPrinter::singleton();
 
-        foreach ($extraImports as [$class, $line]) {
+        foreach ($extraImports as [$class, $lineNumber]) {
             self::$count++;
             $printer->simplePendError(
-                Color::gray($line.'| ').trim($file->getLine($line), PHP_EOL),
+                Color::gray("$lineNumber| ").trim($file->getLine($lineNumber), PHP_EOL),
                 $file,
-                $line,
+                $lineNumber,
                 'extraImports',
-                'Extra Import: '.Color::yellow(class_basename($class))
+                'Extra Import: '.Color::yellow(class_basename($class)),
+                '',
+                '',
+                $class.$lineNumber
             );
         }
     }

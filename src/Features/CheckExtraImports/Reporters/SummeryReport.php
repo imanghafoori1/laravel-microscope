@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImportsHandler;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class SummeryReport
@@ -24,7 +24,7 @@ class SummeryReport
 
     public static function unusedImportsCount()
     {
-        $count = ExtraImports::$count;
+        $count = ExtraImportsHandler::$count;
         $s = $count === 1 ? '' : 's';
         $count = Color::yellow($count);
 

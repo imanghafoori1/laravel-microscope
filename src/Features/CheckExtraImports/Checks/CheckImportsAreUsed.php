@@ -35,7 +35,7 @@ class CheckImportsAreUsed implements Check
             ];
         });
 
-        Handlers\ExtraImports::handle($uses['extraImports'], $file);
+        Handlers\ExtraImportsHandler::handle($uses['extraImports'], $file);
         self::$importsCount += $uses['count'];
     }
 

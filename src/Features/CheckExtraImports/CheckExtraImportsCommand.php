@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports;
 
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImports;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImportsHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
@@ -43,6 +43,8 @@ class CheckExtraImportsCommand extends BaseCommand
     public function handleCommand($iterator)
     {
         CheckImportsAreUsed::$importsCount = 0;
+        ExtraImportsHandler::$count = 0;
+
         $pathDTO = PathFilterDTO::makeFromOption($this);
         Cache::loadToMemory('check_extra_imports.php');
 
@@ -77,7 +79,12 @@ class CheckExtraImportsCommand extends BaseCommand
         Cache::writeCacheContent();
 
         $this->line('');
+        $count = ExtraImportsHandler::$count;
 
-        return ExtraImports::$count > 0 ? 1 : 0;
+        // reset static vars to avoid testing issues.
+        ExtraImportsHandler::$count = 0;
+        CheckImportsAreUsed::$importsCount = 0;
+
+        return $count > 0 ? 1 : 0;
     }
 }

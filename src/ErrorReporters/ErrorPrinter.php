@@ -70,25 +70,31 @@ class ErrorPrinter
         return self::$instance;
     }
 
-    public function addPendingError($path, $lineNumber, $key, $header, $errorData)
+    public function addPendingError($path, $lineNumber, $key, $header, $errorData, $key2 = null)
     {
         if (self::isIgnored($path)) {
             return;
         }
         $this->count++;
-        $this->errorsList[$key][] = (new PendingError())
+        $pendError = (new PendingError())
             ->header($header)
             ->errorData($errorData)
             ->link($path, $lineNumber);
+
+        if ($key2 === null) {
+            $this->errorsList[$key][] = $pendError;
+        } else {
+            $this->errorsList[$key][$key2] = $pendError;
+        }
     }
 
-    public function simplePendError($blueText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '')
+    public function simplePendError($blueText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '', $key2 = null)
     {
         is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
 
         $errorData = $pre.Color::blue($blueText).$rest;
 
-        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData);
+        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData, $key2);
     }
 
     public function print($msg, $path = '   ')
@@ -181,13 +187,13 @@ class ErrorPrinter
         );
     }
 
-    private static function is($pattern, $value)
+    private static function is($patterns, $value)
     {
-        if (! is_iterable($pattern)) {
-            $pattern = [$pattern];
+        if (! is_iterable($patterns)) {
+            $patterns = [$patterns];
         }
 
-        foreach ($pattern as $pattern) {
+        foreach ($patterns as $pattern) {
             if ($pattern === $value) {
                 return true;
             }

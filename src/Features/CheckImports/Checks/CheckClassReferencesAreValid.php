@@ -12,7 +12,7 @@ class CheckClassReferencesAreValid implements Check
 {
     public static $checkWrong = true;
 
-    public static $extraWrongImportsHandler = Handlers\ExtraWrongImports::class;
+    public static $extraWrongImportsHandler = Handlers\ExtraWrongImportsHandler::class;
 
     public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
@@ -24,13 +24,11 @@ class CheckClassReferencesAreValid implements Check
 
         loopStart:
 
-        $refFinder = function () use ($file, $imports) {
-            $tokens = $file->getTokens();
-            $imports = $imports($file);
-            $absFilePath = $file->getAbsolutePath();
-
-            return ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
-        };
+        $refFinder = fn () => ImportsAnalyzer::findClassRefs(
+            $file->getTokens(),
+            $file->getAbsolutePath(),
+            $imports($file)
+        );
 
         [
             $classReferences,
@@ -60,16 +58,10 @@ class CheckClassReferencesAreValid implements Check
             }
         }
 
-        self::handleExtraImports($file, $extraWrongImports);
+        // Extra wrong imports:
+        $handler = self::$extraWrongImportsHandler;
+        $handler && $handler::handle($extraWrongImports, $file);
 
         return $tokens;
-    }
-
-    private static function handleExtraImports($file, $extraWrongImports)
-    {
-        // Extra wrong imports:
-        if (self::$extraWrongImportsHandler) {
-            self::$extraWrongImportsHandler::handle($extraWrongImports, $file);
-        }
     }
 }

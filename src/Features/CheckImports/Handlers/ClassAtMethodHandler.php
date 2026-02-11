@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class ClassAtMethodHandler
@@ -34,30 +35,36 @@ class ClassAtMethodHandler
                     self::wrongUsedClassError($file, $token[1], $token[2]);
                 }
             } elseif (! method_exists($class, $method)) {
-                self::wrongMethodError($file, $trimmed, $token[2]);
+                self::wrongMethodError($file, $trimmed, $token[2], $method);
             }
         }
 
         return $fix;
     }
 
-    private static function wrongMethodError(PhpFileDescriptor $file, $class, $lineNumber)
+    private static function wrongMethodError(PhpFileDescriptor $file, $class, $lineNumber, $method)
     {
         ErrorPrinter::singleton()->simplePendError(
-            $class, $file->getAbsolutePath(), $lineNumber, 'wrongMethodError', 'Method does not exist:'
+            $class, $file, $lineNumber, 'wrongMethodError', "Method '$method' does not exist:"
         );
     }
 
     private static function printFixation(PhpFileDescriptor $file, $wrongClass, $lineNumber, $correct)
     {
-        $header = $wrongClass.'  <=== Did not exist';
+        $header = "$wrongClass  <=== Did not exist";
         $msg = 'Fixed to:  '.substr($correct[0], 0, 55);
 
-        ErrorPrinter::singleton()->simplePendError($msg, $file, $lineNumber, 'ns_replacement', $header);
+        ErrorPrinter::singleton()->simplePendError(
+            $msg, $file, $lineNumber, 'ns_replacement', $header
+        );
     }
 
     private static function wrongUsedClassError(PhpFileDescriptor $file, $class, $lineNumber)
     {
-        ErrorPrinter::singleton()->simplePendError($class, $file, $lineNumber, 'wrongUsedClassError', 'Class does not exist:');
+        [$className] = explode('@', $class);
+
+        ErrorPrinter::singleton()->simplePendError(
+            $class, $file, $lineNumber, 'wrongUsedClassError', 'Class '.Color::blue(class_basename($className)).' does not exist:'
+        );
     }
 }
