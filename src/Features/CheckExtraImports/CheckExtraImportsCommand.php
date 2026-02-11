@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckImportsAreUsed;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckForExtraImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImportsHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
@@ -31,7 +31,7 @@ class CheckExtraImportsCommand extends BaseCommand
      * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     protected $checks = [
-        CheckImportsAreUsed::class,
+        CheckForExtraImports::class,
     ];
 
     public $initialMsg = 'Checking imports and class references...';
@@ -42,13 +42,13 @@ class CheckExtraImportsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        CheckImportsAreUsed::$importsCount = 0;
+        CheckForExtraImports::$importsCount = 0;
         ExtraImportsHandler::$count = 0;
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
-        Cache::loadToMemory('check_extra_imports.php');
+        Cache::loadToMemory('check_extra_imports');
 
-        CheckImportsAreUsed::setImports();
+        CheckForExtraImports::setImports();
 
         /**
          * @var string[] $messages
@@ -70,9 +70,9 @@ class CheckExtraImportsCommand extends BaseCommand
 
         $iterator->printAll($messages);
         // must be after other messages:
-        $iterator->printAll(Reporters\SummeryReport::summery(CheckImportsAreUsed::$importsCount));
+        $iterator->printAll(Reporters\SummeryReport::summery(CheckForExtraImports::$importsCount));
 
-        if (! CheckImportsAreUsed::$importsCount) {
+        if (! CheckForExtraImports::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
             $this->getOutput()->writeln(Reporters\SummeryReport::noImportsFound($filter));
         }
@@ -83,7 +83,7 @@ class CheckExtraImportsCommand extends BaseCommand
 
         // reset static vars to avoid testing issues.
         ExtraImportsHandler::$count = 0;
-        CheckImportsAreUsed::$importsCount = 0;
+        CheckForExtraImports::$importsCount = 0;
 
         return $count > 0 ? 1 : 0;
     }

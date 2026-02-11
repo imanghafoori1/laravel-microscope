@@ -17,7 +17,7 @@ class CheckRouteCalls implements Check
     public static function check(PhpFileDescriptor $file)
     {
         // we skip the very first tokens: '<?php '
-        [$skippedRouteCallsNum, $calls] = Cache::getForever($file->getMd5(), function () use ($file) {
+        [$skippedRouteCallsNum, $calls] = Cache::getForever($file->getMd5(), 'check_route_calls', function () use ($file) {
             $calls = [];
             $i = 4;
             // we skip the very end of the file.

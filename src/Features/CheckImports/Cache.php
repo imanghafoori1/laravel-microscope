@@ -8,49 +8,52 @@ use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 class Cache
 {
     /**
-     * @var string
+     * @var string[]
      */
-    public static $cacheFileName;
+    public static $cacheFileNames = [];
 
     /**
      * @var array<string, mixed>
      */
     public static $cache = [];
 
-    public static function getForever($md5, Closure $refFinder)
+    public static function getForever($md5, $key, Closure $callback)
     {
-        return self::$cache[$md5] ?? (self::$cache[$md5] = $refFinder());
+        return self::$cache[$key][$md5] ?? (self::$cache[$key][$md5] = $callback());
     }
 
     public static function writeCacheContent(): void
     {
-        $cache = self::$cache;
+        foreach (self::$cacheFileNames as $cacheFileName) {
+            $cache = self::$cache[$cacheFileName] ?? null;
 
-        if (! $cache) {
-            return;
+            if (! $cache) {
+                continue;
+            }
+
+            $folder = CachedFiles::getFolderPath();
+            ! is_dir($folder) && mkdir($folder);
+            $content = CachedFiles::getCacheFileContents($cache);
+            $path = $folder.$cacheFileName.'.php';
+            file_exists($path) && chmod($path, 0777);
+            file_put_contents($path, $content);
+            self::$cache[$cacheFileName] = [];
         }
-
-        $folder = CachedFiles::getFolderPath();
-        ! is_dir($folder) && mkdir($folder);
-        $content = CachedFiles::getCacheFileContents($cache);
-        $path = $folder.self::$cacheFileName;
-        file_exists($path) && chmod($path, 0777);
-        file_put_contents($path, $content);
-        self::$cache = [];
     }
 
     public static function loadToMemory($cacheFileName)
     {
-        self::$cacheFileName = $cacheFileName;
-        if (self::$cache) {
+        self::$cacheFileNames[] = $cacheFileName;
+
+        if (self::$cache[$cacheFileName] ?? '') {
             // is already loaded
             return;
         }
 
-        $path = CachedFiles::getFolderPath().$cacheFileName;
+        $path = CachedFiles::getFolderPath().$cacheFileName.'.php';
 
         if (file_exists($path)) {
-            self::$cache = (require $path) ?: [];
+            self::$cache[$cacheFileName] = (require $path) ?: [];
         }
     }
 }

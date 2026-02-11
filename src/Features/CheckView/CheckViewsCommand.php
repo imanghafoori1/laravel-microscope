@@ -35,7 +35,7 @@ class CheckViewsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        Cache::loadToMemory('check_views_call.php');
+        Cache::loadToMemory('check_views_call');
         $lines = $iterator->forComposerLoadedFiles();
         $lines->add(PHP_EOL);
         $lines->add($iterator->forRoutes());

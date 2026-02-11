@@ -93,8 +93,9 @@ class CheckView implements Check
 
     private static function getFromCache($md5, PhpFileDescriptor $file)
     {
-        if (isset(Cache::$cache[$md5])) {
-            return Cache::$cache[$md5];
+        $key = 'check_views_call';
+        if (isset(Cache::$cache[$key][$md5])) {
+            return Cache::$cache[$key][$md5];
         }
 
         [$views, $skipped] = self::checkViewCalls($file, [
@@ -103,7 +104,7 @@ class CheckView implements Check
         ]);
 
         if ($views || $skipped) {
-            Cache::$cache[$md5] = [$views, $skipped];
+            Cache::$cache[$key][$md5] = [$views, $skipped];
         }
 
         return [$views, $skipped];

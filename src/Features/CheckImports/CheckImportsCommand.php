@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckForExtraImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
@@ -38,6 +39,7 @@ class CheckImportsCommand extends BaseCommand
     protected $checks = [
         CheckClassReferencesAreValid::class,
         CheckClassAtMethod::class,
+        CheckForExtraImports::class,
     ];
 
     public $initialMsg = 'Checking imports and class references...';
@@ -53,10 +55,12 @@ class CheckImportsCommand extends BaseCommand
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
-        Cache::loadToMemory('check_imports.php');
+        Cache::loadToMemory('check_imports');
+        Cache::loadToMemory('check_extra_imports');
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
+        CheckForExtraImports::setImports();
         CheckClassReferencesAreValid::$importsProvider = UseStatementParser::get();
         ImportsAnalyzer::$checkedRefCount = 0;
 

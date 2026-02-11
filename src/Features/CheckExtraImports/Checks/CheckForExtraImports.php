@@ -12,7 +12,7 @@ use Imanghafoori\TokenAnalyzer\DocblockReader;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
 use RuntimeException;
 
-class CheckImportsAreUsed implements Check
+class CheckForExtraImports implements Check
 {
     public static $imports;
 
@@ -20,13 +20,13 @@ class CheckImportsAreUsed implements Check
 
     public static function setImports()
     {
-        CheckImportsAreUsed::$imports = UseStatementParser::get();
+        self::$imports = UseStatementParser::get();
     }
 
     public static function check(PhpFileDescriptor $file)
     {
         $imports = self::$imports;
-        $uses = Cache::getForever($file->getMd5(), function () use ($file, $imports) {
+        $uses = Cache::getForever($file->getMd5(), 'check_extra_imports', function () use ($file, $imports) {
             $uses = $imports($file);
 
             return [

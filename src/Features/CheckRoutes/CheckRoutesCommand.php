@@ -35,7 +35,7 @@ class CheckRoutesCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        Cache::loadToMemory('check_route_calls.php');
+        Cache::loadToMemory('check_route_calls');
         app(Filesystem::class)->delete(app()->getCachedRoutesPath());
         $routes = app(Router::class)->getRoutes()->getRoutes();
 
