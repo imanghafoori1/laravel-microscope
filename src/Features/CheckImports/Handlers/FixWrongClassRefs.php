@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\Fixer;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use JetBrains\PhpStorm\Pure;
 
@@ -66,11 +67,11 @@ class FixWrongClassRefs
     private static function wrongRef($printer, $wrongClassRef, $file, $line): void
     {
         $printer->simplePendError(
-            $wrongClassRef,
+            Color::gray("$line| ").trim($file->getLine($line), PHP_EOL),
             $file,
             $line,
             'wrongClassRef',
-            'Inline class Ref does not exist:'
+            "Inline class Ref '$wrongClassRef' does not exist:"
         );
     }
 
@@ -89,7 +90,7 @@ class FixWrongClassRefs
     {
         ErrorPrinter::singleton()->simplePendError(
             $class,
-            $file->getAbsolutePath(),
+            $file,
             $line,
             'wrongClassRef',
             'Class does not exist:'

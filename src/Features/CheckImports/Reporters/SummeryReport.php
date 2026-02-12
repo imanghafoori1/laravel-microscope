@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters;
 
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers\ExtraImportsHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\ImportsErrorCounter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
@@ -17,6 +18,8 @@ class SummeryReport
             self::format('wrong import', $counter->getExtraWrongCount()),
             PHP_EOL,
             self::format('wrong class reference', $counter->getWrongUsedClassCount()),
+            PHP_EOL,
+            self::format('extra import', ExtraImportsHandler::$count),
         ];
     }
 
