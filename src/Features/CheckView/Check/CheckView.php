@@ -56,13 +56,7 @@ class CheckView implements Check
         $skippedViews = [];
         foreach ($tokens as $i => $token) {
             if (FunctionCall::isGlobalCall('view', $tokens, $i)) {
-                [$line, $view] = self::checkViewParams($tokens, $i, 0);
-
-                if ($view === null) {
-                    $skippedViews[] = $line;
-                } else {
-                    $views[] = [$line, $view];
-                }
+                [$tokens, $skippedViews, $views] = self::process($tokens, $i, 0, $skippedViews, $views);
 
                 continue;
             }
@@ -71,13 +65,7 @@ class CheckView implements Check
                 if (! FunctionCall::isStaticCall($method[0], $tokens, $i, $class)) {
                     continue;
                 }
-                [$line, $view] = self::checkViewParams($tokens, $i, $method[1]);
-
-                if ($view === null) {
-                    $skippedViews[] = $line;
-                } else {
-                    $views[] = [$line, $view];
-                }
+                [$tokens, $skippedViews, $views] = self::process($tokens, $i, $method[1], $skippedViews, $views);
             }
         }
 
@@ -108,5 +96,19 @@ class CheckView implements Check
         }
 
         return [$views, $skipped];
+    }
+
+    private static function process($tokens, $i, $index, $skippedViews, $views): array
+    {
+        [$line, $view] = self::checkViewParams($tokens, $i, $index);
+
+        if ($view === null) {
+            $skippedViews[] = $line;
+        } else {
+            $views[] = [$line, $view];
+        }
+
+
+        return [$tokens, $skippedViews, $views];
     }
 }
