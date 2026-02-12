@@ -54,6 +54,14 @@ class CheckImportsCommand extends BaseCommand
             CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
         }
 
+        if ($this->option('extra')) {
+            $this->checks = [CheckForExtraImports::class];
+        }
+
+        if ($this->option('wrong')) {
+            unset($this->checks[2]);
+        }
+
         Cache::loadToMemory('check_imports');
         Cache::loadToMemory('check_extra_imports');
 
