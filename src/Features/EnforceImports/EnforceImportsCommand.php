@@ -5,7 +5,6 @@ namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class EnforceImportsCommand extends BaseCommand
 {
@@ -39,7 +38,6 @@ class EnforceImportsCommand extends BaseCommand
         EnforceImports::setOptions(
             $noFix,
             $class,
-            UseStatementParser::get(),
             EnforceImportsHandler::handler($noFix)
         );
 

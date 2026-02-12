@@ -6,7 +6,6 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
-use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class CheckExtraFQCNCommand extends BaseCommand
 {
@@ -38,8 +37,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 
         ExtraFQCN::configure(
             $options->option('class'),
-            $options->option('fix'),
-            UseStatementParser::get()
+            $options->option('fix')
         );
 
         $iterator->printAll([

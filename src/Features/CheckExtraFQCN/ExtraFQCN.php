@@ -20,14 +20,13 @@ class ExtraFQCN implements Check
 
     public static $fix;
 
-    public static $imports;
+    public static $imports = UseStatementParser::class;
 
     public static $class;
 
     public static function performCheck(PhpFileDescriptor $file): bool
     {
-        ! self::$imports && (self::$imports = UseStatementParser::get());
-        $imports = (self::$imports)($file);
+        $imports = self::$imports::parse($file);
         $classRefs = ImportsAnalyzer::findClassRefs(
             $file->getTokens(),
             $file->getAbsolutePath(),
@@ -140,16 +139,15 @@ class ExtraFQCN implements Check
         return basename($class);
     }
 
-    public static function configure($class, $fix, $imports): void
+    public static function configure($class, $fix): void
     {
         self::$class = $class;
         self::$fix = $fix;
-        self::$imports = $imports;
     }
 
     public static function reset()
     {
-        self::configure(null, false, null);
+        self::configure(null, false);
     }
 
     private static function replace($classRef, $subject): array

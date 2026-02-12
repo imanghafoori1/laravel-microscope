@@ -48,8 +48,6 @@ class CheckExtraImportsCommand extends BaseCommand
         $pathDTO = PathFilterDTO::makeFromOption($this);
         Cache::loadToMemory('check_extra_imports');
 
-        CheckForExtraImports::setImports();
-
         /**
          * @var string[] $messages
          */
@@ -70,7 +68,11 @@ class CheckExtraImportsCommand extends BaseCommand
 
         $iterator->printAll($messages);
         // must be after other messages:
-        $iterator->printAll(Reporters\SummeryReport::summery(CheckForExtraImports::$importsCount));
+        $iterator->printAll(
+            Reporters\SummeryReport::summery(
+                CheckForExtraImports::$importsCount
+            )
+        );
 
         if (! CheckForExtraImports::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;

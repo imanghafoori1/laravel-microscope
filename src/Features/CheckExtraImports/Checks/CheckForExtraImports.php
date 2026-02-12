@@ -14,20 +14,14 @@ use RuntimeException;
 
 class CheckForExtraImports implements Check
 {
-    public static $imports;
+    public static $imports = UseStatementParser::class;
 
     public static $importsCount = 0;
 
-    public static function setImports()
-    {
-        self::$imports = UseStatementParser::get();
-    }
-
     public static function check(PhpFileDescriptor $file)
     {
-        $imports = self::$imports;
-        $uses = Cache::getForever($file->getMd5(), 'check_extra_imports', function () use ($file, $imports) {
-            $uses = $imports($file);
+        $uses = Cache::getForever($file->getMd5(), 'check_extra_imports', function () use ($file) {
+            $uses = self::$imports::parse($file);
 
             return [
                 'extraImports' => self::findClassRefs($file->getTokens(), $uses),

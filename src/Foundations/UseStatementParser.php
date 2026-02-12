@@ -8,12 +8,10 @@ use JetBrains\PhpStorm\Pure;
 class UseStatementParser
 {
     #[Pure]
-    public static function get()
+    public static function parse(PhpFileDescriptor $file)
     {
-        return function (PhpFileDescriptor $file) {
-            $imports = ParseUseStatement::parseUseStatements($file->getTokens());
+        $imports = ParseUseStatement::parseUseStatements($file->getTokens());
 
-            return $imports[0] ?: [$imports[1]];
-        };
+        return $imports[0] ?: [$imports[1]];
     }
 }

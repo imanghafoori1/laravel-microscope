@@ -11,7 +11,6 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportRe
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
-use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckImportsCommand extends BaseCommand
@@ -60,8 +59,6 @@ class CheckImportsCommand extends BaseCommand
 
         $pathDTO = PathFilterDTO::makeFromOption($this);
 
-        CheckForExtraImports::setImports();
-        CheckClassReferencesAreValid::$importsProvider = UseStatementParser::get();
         ImportsAnalyzer::$checkedRefCount = 0;
 
         /**
@@ -90,7 +87,9 @@ class CheckImportsCommand extends BaseCommand
 
         if (! ImportsAnalyzer::$checkedRefCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
-            $this->getOutput()->writeln(Reporters\SummeryReport::noImportsFound($filter));
+            $this->getOutput()->writeln(
+                Reporters\SummeryReport::noImportsFound($filter)
+            );
         }
 
         Cache::writeCacheContent();

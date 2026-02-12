@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class FacadeAliasesCheck implements Check
 {
@@ -20,7 +21,7 @@ class FacadeAliasesCheck implements Check
      */
     public static $command;
 
-    public static $importsProvider;
+    public static $importsProvider = UseStatementParser::class;
 
     /**
      * @var array
@@ -49,7 +50,7 @@ class FacadeAliasesCheck implements Check
         $aliases = self::$aliases;
         self::$handler::$command = self::$command;
 
-        $imports = (self::$importsProvider)($file);
+        $imports = self::$importsProvider::parse($file);
         $hasError = false;
         foreach ($imports as $import) {
             foreach ($import as $base => $usageInfo) {

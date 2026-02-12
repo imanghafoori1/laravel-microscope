@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
@@ -27,7 +28,7 @@ class EnforceImports implements Check
     /**
      * @var \Closure
      */
-    public static $importsProvider;
+    public static $importsProvider = UseStatementParser::class;
 
     /**
      * @var \Closure
@@ -48,14 +49,14 @@ class EnforceImports implements Check
     {
         $tokens = $file->getTokens();
         $absFilePath = $file->getAbsolutePath();
-        $imports = (self::$importsProvider)($file);
+        $imports = self::$importsProvider::parse($file);
 
         $classRefs = ImportsAnalyzer::findClassRefs($tokens, $absFilePath, $imports);
 
         return self::checkClassRef($classRefs, $imports, $file);
     }
 
-    public static function setOptions($noFix, $onlyRefs, $provider, $onError, $mutator = null)
+    public static function setOptions($noFix, $onlyRefs, $onError, $mutator = null)
     {
         if (is_string($onlyRefs)) {
             $onlyRefs = explode(',', $onlyRefs);
@@ -63,7 +64,6 @@ class EnforceImports implements Check
 
         self::$fix = ! $noFix;
         self::$onlyRefs = $onlyRefs;
-        self::$importsProvider = $provider;
         self::$onError = $onError;
         self::$mutator = $mutator;
     }

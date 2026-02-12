@@ -6,6 +6,7 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckClassReferencesAreValid implements Check
@@ -16,18 +17,16 @@ class CheckClassReferencesAreValid implements Check
 
     public static $wrongClassRefsHandler = Handlers\FixWrongClassRefs::class;
 
-    public static $importsProvider;
+    public static $importsProvider = UseStatementParser::class;
 
     public static function check(PhpFileDescriptor $file)
     {
-        $imports = self::$importsProvider;
-
         loopStart:
 
         $refFinder = fn () => ImportsAnalyzer::findClassRefs(
             $file->getTokens(),
             $file->getAbsolutePath(),
-            $imports($file)
+            self::$importsProvider::parse($file)
         );
 
         [

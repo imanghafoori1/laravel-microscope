@@ -2,11 +2,9 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
-use Closure;
 use Illuminate\Foundation\AliasLoader;
 use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
-use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 
 class CheckAliasesCommand extends BaseCommand
 {
@@ -40,11 +38,9 @@ class CheckAliasesCommand extends BaseCommand
             FacadeAliasesCheck::$handler = FacadeAliasReporter::class;
         }
 
-        $importsProvider = UseStatementParser::get();
-        self::setEnforceImportsOptions($importsProvider);
+        self::setEnforceImportsOptions();
         self::setFacadeAliasCheckOptions($command->option('alias'));
         FacadeAliasesCheck::$aliases = AliasLoader::getInstance()->getAliases();
-        FacadeAliasesCheck::$importsProvider = $importsProvider;
 
         $iterator->formatPrintPsr4Classmap();
         $iterator->forComposerLoadedFiles();
@@ -57,7 +53,7 @@ class CheckAliasesCommand extends BaseCommand
         $alias && (FacadeAliasesCheck::$alias = explode(',', strtolower($alias)));
     }
 
-    private static function setEnforceImportsOptions(Closure $paramProvider)
+    private static function setEnforceImportsOptions()
     {
         $aliases = AliasLoader::getInstance()->getAliases();
 
@@ -67,6 +63,6 @@ class CheckAliasesCommand extends BaseCommand
 
         $mutator = fn ($class) => ltrim($aliases[$class] ?? $class, '\\');
 
-        EnforceImports::setOptions(false, $aliasKeys, $paramProvider, $onError, $mutator);
+        EnforceImports::setOptions(false, $aliasKeys, $onError, $mutator);
     }
 }
