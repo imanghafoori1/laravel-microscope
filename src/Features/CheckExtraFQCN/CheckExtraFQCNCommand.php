@@ -41,7 +41,7 @@ class CheckExtraFQCNCommand extends BaseCommand
         );
 
         $iterator->printAll([
-            CheckImportReporter::totalImportsMsg(),
+            CheckImportReporter::importsCheckedMsg(),
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),

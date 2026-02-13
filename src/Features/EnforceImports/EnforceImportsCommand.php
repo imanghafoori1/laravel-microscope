@@ -42,7 +42,7 @@ class EnforceImportsCommand extends BaseCommand
         );
 
         $iterator->printAll([
-            CheckImportReporter::totalImportsMsg(),
+            CheckImportReporter::importsCheckedMsg(),
             $iterator->forComposerLoadedFiles(),
         ]);
     }

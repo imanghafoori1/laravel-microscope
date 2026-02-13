@@ -73,8 +73,7 @@ class CheckImportsCommand extends BaseCommand
          * @var string[] $messages
          */
         $messages = [
-            CheckImportReporter::totalImportsMsg(),
-            PHP_EOL,
+            CheckImportReporter::importsCheckedMsg(),
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),

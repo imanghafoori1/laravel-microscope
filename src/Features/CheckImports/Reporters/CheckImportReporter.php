@@ -11,7 +11,7 @@ class CheckImportReporter
     use Reporting;
 
     #[Pure]
-    public static function totalImportsMsg()
+    public static function importsCheckedMsg()
     {
         return Color::boldYellow('Imports were checked under:');
     }
