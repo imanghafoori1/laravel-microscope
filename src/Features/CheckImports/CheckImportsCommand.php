@@ -89,7 +89,6 @@ class CheckImportsCommand extends BaseCommand
         // must be after other messages:
         $counter = ImportsErrorCounter::calculateErrors(ErrorPrinter::singleton()->errorsList);
 
-
         if (! ImportsAnalyzer::$checkedRefCount && ! CheckForExtraImports::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
             $this->getOutput()->writeln(
