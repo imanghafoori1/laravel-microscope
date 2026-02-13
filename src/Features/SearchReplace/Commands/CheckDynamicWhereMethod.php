@@ -67,6 +67,13 @@ class CheckDynamicWhereMethod extends BaseCommand
         'whereInStrict',
         'whereInstanceOf',
         'whereNotInStrict',
+        'wherePivot',
+        'wherePivotIn',
+        'wherePivotNotIn',
+        'wherePivotBetween',
+        'wherePivotNotBetween',
+        'wherePivotNull',
+        'wherePivotNotNull',
     ];
 
     public function __construct()
