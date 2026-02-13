@@ -36,7 +36,6 @@ trait PatternApply
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
             $iterator->forBladeFiles(),
-            PHP_EOL,
             $iterator->forRoutes(),
             PHP_EOL,
         ]);

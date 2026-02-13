@@ -32,6 +32,6 @@ class BladeReport
 
         $c === 1 && $total = '';
 
-        return self::blue($total).'blade'.($total > 1 ? 's' : '').$output;
+        return self::blue($total).'blade'.($total > 1 ? 's' : '').$output.PHP_EOL;
     }
 }

@@ -17,8 +17,8 @@ class CheckImportReporter
     }
 
     #[Pure]
-    public static function header(): string
+    public static function header()
     {
-        return ' ⬛️ '.Color::blue('Overall:');
+        return [' ⬛️ '.Color::blue('Overall:'), PHP_EOL];
     }
 }

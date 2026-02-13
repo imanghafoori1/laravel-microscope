@@ -45,7 +45,6 @@ class CheckExtraFQCNCommand extends BaseCommand
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),
-            PHP_EOL,
             self::getFilesStats(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),
