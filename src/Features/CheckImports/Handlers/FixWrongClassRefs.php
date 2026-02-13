@@ -13,10 +13,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class FixWrongClassRefs
 {
-    public static function handle(array $wrongClassRefs, PhpFileDescriptor $file, $hostNamespace, array $tokens): array
+    public static function handle(array $wrongClassRefs, PhpFileDescriptor $file, $hostNamespace): bool
     {
-        $printer = ErrorPrinter::singleton();
-
         foreach ($wrongClassRefs as $classReference) {
             $wrongClassRef = $classReference['class'];
             $line = $classReference['line'];
@@ -39,15 +37,9 @@ class FixWrongClassRefs
             } else {
                 WrongImportHandler::handle($wrongClassRef, $file, $line);
             }
-
-            if ($isFixed) {
-                $tokens = token_get_all($afterFix);
-
-                return [$tokens, true];
-            }
         }
 
-        return [$tokens, false];
+        return false;
     }
 
     private static function fixClassReference($file, $class, $line, $namespace)

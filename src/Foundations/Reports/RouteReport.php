@@ -10,7 +10,7 @@ class RouteReport
 {
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $routeFiles
-     * @return string
+     * @return array
      */
     #[Pure]
     public static function getStats($routeFiles)
@@ -18,8 +18,8 @@ class RouteReport
         $lines = CheckImportReporter::formatFiles($routeFiles);
         $count = count($lines);
         $s = $count <= 1 ? '' : 's';
-        $count = Color::white("($count files)");
+        $countStr = Color::white("($count files)");
 
-        return [CheckImportReporter::hyphen()."route$s {$count}", $lines];
+        return [CheckImportReporter::hyphen()."route$s {$countStr}", $lines];
     }
 }

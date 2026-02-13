@@ -11,7 +11,7 @@ class ClassAtMethodHandler
 {
     public static $fix = true;
 
-    public static function handle($file, $atSignTokens)
+    public static function handle(PhpFileDescriptor $file, $atSignTokens)
     {
         $fix = false;
 

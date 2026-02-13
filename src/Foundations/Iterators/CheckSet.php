@@ -125,8 +125,7 @@ class CheckSet
     private function applyCheck($check, PhpFileDescriptor $file): void
     {
         try {
-            $newTokens = $this->performCheck($check, $file);
-            $newTokens && $file->setTokens($newTokens);
+            $this->performCheck($check, $file);
         } catch (Throwable $exception) {
             $this->exceptions[] = $exception;
         }

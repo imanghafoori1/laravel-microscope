@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\Analyzers;
 
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
-use Imanghafoori\Filesystem\FileManipulator;
 use Imanghafoori\LaravelMicroscope\Foundations\ClassListProvider;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -93,7 +92,7 @@ class Fixer
         }
 
         return [
-            FileManipulator::insertNewLine($file->getAbsolutePath(), "use $fullClassPath;", $lineNum),
+            $file->insertNewLine("use $fullClassPath;", $lineNum),
             $correct,
         ];
     }

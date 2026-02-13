@@ -43,13 +43,12 @@ class CheckClassReferencesAreValid implements Check
         [$extraWrongImports] = ImportsAnalyzer::filterWrongClassRefs($extraImports, $absFilePath);
 
         $wrongClassRefs = array_merge($wrongClassRefs, $wrongDocblockRefs);
-        $tokens = null;
+
         if ($wrongClassRefs && self::$checkWrong && self::$wrongClassRefsHandler) {
-            [$tokens, $isFixed] = self::$wrongClassRefsHandler::handle(
+            $isFixed = self::$wrongClassRefsHandler::handle(
                 $wrongClassRefs,
                 $file,
                 $hostNamespace,
-                $file->getTokens(),
             );
 
             if ($isFixed) {
@@ -60,7 +59,5 @@ class CheckClassReferencesAreValid implements Check
         // Extra wrong imports:
         $handler = self::$extraWrongImportsHandler;
         $handler && $handler::handle($extraWrongImports, $file);
-
-        return $tokens;
     }
 }

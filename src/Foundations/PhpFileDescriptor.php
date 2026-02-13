@@ -174,6 +174,8 @@ class PhpFileDescriptor
 
     public function insertNewLine($newLine, $atLine)
     {
+        $this->tokens = [];
+
         return FileManipulator::insertNewLine($this->getAbsolutePath(), $newLine, $atLine);
     }
 

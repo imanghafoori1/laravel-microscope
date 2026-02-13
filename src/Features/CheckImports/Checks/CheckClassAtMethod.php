@@ -16,14 +16,7 @@ class CheckClassAtMethod implements Check
     {
         $tokens = $file->getTokens();
 
-        $replaced = self::$handler::handle(
-            $file,
-            self::getAtSignTokens($tokens)
-        );
-
-        if ($replaced) {
-            return $file->getTokens(true);
-        }
+        self::$handler::handle($file, self::getAtSignTokens($tokens));
     }
 
     #[Pure]
