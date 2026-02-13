@@ -22,7 +22,7 @@ class FixWrongClassRefs
             $line = $classReference['line'];
 
             if (! Fixer::isInUserSpace($wrongClassRef)) {
-                self::wrongRef($printer, $wrongClassRef, $file, $line);
+                WrongClassRefHandler::handle($wrongClassRef, $file, $line);
                 continue;
             }
 
@@ -37,7 +37,7 @@ class FixWrongClassRefs
             if ($isFixed) {
                 self::printFixation($file, $wrongClassRef, $line, $corrections);
             } else {
-                self::wrongUsedClassError($file, $wrongClassRef, $line);
+                WrongImportHandler::handle($wrongClassRef, $file, $line);
             }
 
             if ($isFixed) {
@@ -64,18 +64,6 @@ class FixWrongClassRefs
         return Fixer::fixReference($file, $class, $line);
     }
 
-    private static function wrongRef($printer, $wrongClassRef, $file, int $line): void
-    {
-        $wrongClassRef = Color::yellow(class_basename($wrongClassRef));
-        $printer->simplePendError(
-            self::getLineContent($line, $file),
-            $file,
-            $line,
-            'wrongClassRef',
-            "Inline class Ref '$wrongClassRef' does not exist:"
-        );
-    }
-
     private static function printFixation(PhpFileDescriptor $file, $wrongClass, int $line, $correct)
     {
         ErrorPrinter::singleton()->simplePendError(
@@ -87,17 +75,6 @@ class FixWrongClassRefs
         );
     }
 
-    private static function wrongUsedClassError(PhpFileDescriptor $file, $class, int $line)
-    {
-        ErrorPrinter::singleton()->simplePendError(
-            self::getLineContent($line, $file),
-            $file,
-            $line,
-            'wrongClassRef',
-            'Class '.Color::yellow(class_basename($class)).' does not exist:'
-        );
-    }
-
     #[Pure]
     private static function removeFirst($search, $subject)
     {
@@ -106,10 +83,5 @@ class FixWrongClassRefs
         }
 
         return $subject;
-    }
-
-    private static function getLineContent(int $line, $file): string
-    {
-        return Color::gray("$line| ").trim($file->getLine($line), PHP_EOL.' ');
     }
 }
