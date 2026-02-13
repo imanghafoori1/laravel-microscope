@@ -16,7 +16,7 @@ trait FilesStats
         $es = $count <= 1 ? '' : 'es';
 
         if ($count) {
-            return CheckImportReporter::blue($count)."class$es";
+            return CheckImportReporter::blue($count)."class$es".PHP_EOL;
         } else {
             return '';
         }

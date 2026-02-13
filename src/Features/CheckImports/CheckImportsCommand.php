@@ -36,9 +36,9 @@ class CheckImportsCommand extends BaseCommand
      * @var array<int, class-string<\Imanghafoori\LaravelMicroscope\Check>>
      */
     protected $checks = [
+        CheckForExtraImports::class,
         CheckClassReferencesAreValid::class,
         CheckClassAtMethod::class,
-        CheckForExtraImports::class,
     ];
 
     public $initialMsg = 'Checking imports and class references...';
@@ -55,11 +55,11 @@ class CheckImportsCommand extends BaseCommand
         }
 
         if ($this->option('extra')) {
-            $this->checks = [CheckForExtraImports::class];
+            $this->checkSet->checks->checks = [CheckForExtraImports::class];
         }
 
         if ($this->option('wrong')) {
-            unset($this->checks[2]);
+            unset($this->checkSet->checks->checks[0]);
         }
 
         Cache::loadToMemory('check_imports');
@@ -91,13 +91,14 @@ class CheckImportsCommand extends BaseCommand
         // must be after other messages:
         $counter = ImportsErrorCounter::calculateErrors(ErrorPrinter::singleton()->errorsList);
 
-        $iterator->printAll([PHP_EOL, Reporters\SummeryReport::summery($counter)]);
 
-        if (! ImportsAnalyzer::$checkedRefCount) {
+        if (! ImportsAnalyzer::$checkedRefCount && ! CheckForExtraImports::$importsCount) {
             $filter = $pathDTO->includeFile ?: $pathDTO->includeFolder;
             $this->getOutput()->writeln(
                 Reporters\SummeryReport::noImportsFound($filter)
             );
+        } else {
+            $iterator->printAll([PHP_EOL, Reporters\SummeryReport::summery($counter)]);
         }
 
         Cache::writeCacheContent();
