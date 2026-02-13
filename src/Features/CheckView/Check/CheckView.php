@@ -108,7 +108,6 @@ class CheckView implements Check
             $views[] = [$line, $view];
         }
 
-
         return [$tokens, $skippedViews, $views];
     }
 }

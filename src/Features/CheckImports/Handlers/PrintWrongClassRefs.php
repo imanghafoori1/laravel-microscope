@@ -13,7 +13,7 @@ class PrintWrongClassRefs
         $printer = ErrorPrinter::singleton();
 
         Loop::over($wrongClassRefs, fn ($classRef) => $printer->simplePendError(
-            Color::gray($classRef['line']."| ").trim($file->getLine($classRef['line']), PHP_EOL),
+            Color::gray($classRef['line'].'| ').trim($file->getLine($classRef['line']), PHP_EOL),
             $file,
             $classRef['line'],
             'wrongClassRef',
