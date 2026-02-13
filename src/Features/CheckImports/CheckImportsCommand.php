@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Checks\CheckForExtraImports;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassAtMethod;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Checks\CheckClassReferencesAreValid;
-use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\PrintWrongClassRefs;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\WrongClassRefsHandler;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
@@ -51,7 +51,7 @@ class CheckImportsCommand extends BaseCommand
     {
         CheckClassAtMethod::$handler::$fix = ! $this->option('nofix');
         if ($this->option('nofix')) {
-            CheckClassReferencesAreValid::$wrongClassRefsHandler = PrintWrongClassRefs::class;
+            CheckClassReferencesAreValid::$wrongClassRefsHandler = WrongClassRefsHandler::class;
         }
 
         if ($this->option('extra')) {

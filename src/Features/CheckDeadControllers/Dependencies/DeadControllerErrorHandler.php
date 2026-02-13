@@ -4,9 +4,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\Dependenc
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
-class DeadControllerErrors
+class DeadControllerErrorHandler
 {
-    public static function printErrors(array $actions, $file)
+    public static function handle(array $actions, $file)
     {
         $errorPrinter = ErrorPrinter::singleton();
 

@@ -15,7 +15,7 @@ class DeadControllerActions implements Check
 
     public static $baseController = 'Illuminate\\Routing\\Controller';
 
-    public static $errors = Dependencies\DeadControllerErrors::class;
+    public static $errors = Dependencies\DeadControllerErrorHandler::class;
 
     public static function check(PhpFileDescriptor $file)
     {
@@ -32,7 +32,7 @@ class DeadControllerActions implements Check
 
         $actions = self::findOrphanActions($file->getTokens(), $fullNamespace);
 
-        (self::$errors)::printErrors($actions, $file);
+        (self::$errors)::handle($actions, $file);
     }
 
     public static function getControllerActions($methods)
