@@ -8,7 +8,7 @@ use JetBrains\PhpStorm\Pure;
 class ImportsErrorCounter
 {
     /**
-     * @var array<string, array>
+     * @var array<string, int>
      */
     public $errors = [];
 

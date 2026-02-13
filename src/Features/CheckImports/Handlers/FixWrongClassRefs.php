@@ -64,10 +64,11 @@ class FixWrongClassRefs
         return Fixer::fixReference($file, $class, $line);
     }
 
-    private static function wrongRef($printer, $wrongClassRef, $file, $line): void
+    private static function wrongRef($printer, $wrongClassRef, $file, int $line): void
     {
+        $wrongClassRef = Color::yellow(class_basename($wrongClassRef));
         $printer->simplePendError(
-            Color::gray("$line| ").trim($file->getLine($line), PHP_EOL),
+            self::getLineContent($line, $file),
             $file,
             $line,
             'wrongClassRef',
@@ -75,25 +76,25 @@ class FixWrongClassRefs
         );
     }
 
-    private static function printFixation(PhpFileDescriptor $file, $wrongClass, $lineNumber, $correct)
+    private static function printFixation(PhpFileDescriptor $file, $wrongClass, int $line, $correct)
     {
         ErrorPrinter::singleton()->simplePendError(
             'Fixed to:   '.substr($correct[0], 0, 55),
             $file,
-            $lineNumber,
+            $line,
             'ns_replacement',
-            $wrongClass.'  <=== Did not exist'
+            Color::yellow($wrongClass).'  <=== Did not exist'
         );
     }
 
-    private static function wrongUsedClassError(PhpFileDescriptor $file, $class, $line)
+    private static function wrongUsedClassError(PhpFileDescriptor $file, $class, int $line)
     {
         ErrorPrinter::singleton()->simplePendError(
-            $class,
+            self::getLineContent($line, $file),
             $file,
             $line,
             'wrongClassRef',
-            'Class does not exist:'
+            'Class '.Color::yellow(class_basename($class)).' does not exist:'
         );
     }
 
@@ -105,5 +106,10 @@ class FixWrongClassRefs
         }
 
         return $subject;
+    }
+
+    private static function getLineContent(int $line, $file): string
+    {
+        return Color::gray("$line| ").trim($file->getLine($line), PHP_EOL.' ');
     }
 }

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class ExtraWrongImportsHandler
 {
@@ -12,17 +13,17 @@ class ExtraWrongImportsHandler
     {
         $printer = ErrorPrinter::singleton();
 
-        foreach ($extraWrongImports as [$class, $lineNumber]) {
+        foreach ($extraWrongImports as [$class, $line]) {
             self::$count++;
             $printer->simplePendError(
-                "use $class;",
+                Color::gray("$line| ").trim($file->getLine($line), PHP_EOL),
                 $file,
-                $lineNumber,
+                $line,
                 'extraImports',
                 'Unused & wrong import:',
                 '',
                 '',
-                $class.$lineNumber
+                $class.$line
             );
         }
     }
