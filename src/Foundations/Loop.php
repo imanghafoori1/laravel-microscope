@@ -2,6 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
+use Closure;
+
 class Loop
 {
     /**
@@ -271,5 +273,12 @@ class Loop
         }
 
         return $items;
+    }
+
+    public static function unpack($iterable, callable $param)
+    {
+        foreach ($iterable as $item) {
+            $param(...$item);
+        }
     }
 }

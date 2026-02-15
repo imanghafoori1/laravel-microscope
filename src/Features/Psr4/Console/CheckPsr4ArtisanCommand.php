@@ -9,6 +9,7 @@ use ImanGhafoori\ComposerJson\ClassLists;
 use ImanGhafoori\ComposerJson\ComposerJson as Comp;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class CheckPsr4ArtisanCommand extends Command
 {
@@ -55,7 +56,8 @@ class CheckPsr4ArtisanCommand extends Command
     private function composerDumpIfNeeded(ErrorPrinter $errorPrinter)
     {
         if ($c = $errorPrinter->getCount('badNamespace')) {
-            $this->output->write('- '.$c.' Namespace'.($c > 1 ? 's' : ' ').' Fixed, Running: "composer dump"');
+            $s = $c > 1 ? 's' : ' ';
+            $this->output->write(" - $c Namespace$s Fixed, Running: 'composer dump'");
             app(Composer::class)->dumpAutoloads();
             $this->info("\n".'Finished: "composer dump"');
         }
@@ -76,9 +78,7 @@ class CheckPsr4ArtisanCommand extends Command
 
     private function printMessages($messages)
     {
-        foreach ($messages as [$message, $level]) {
-            $this->$level($message);
-        }
+        Loop::unpack($messages, fn ($message, $level) => $this->$level($message));
     }
 
     private static function countClasses(ClassLists $classLists)
@@ -88,9 +88,7 @@ class CheckPsr4ArtisanCommand extends Command
         foreach ($classLists->getAllLists() as $composerPath => $classList) {
             foreach ($classList as $namespace => $entities) {
                 $type->namespaceFiles($namespace, count($entities));
-                foreach ($entities as $entity) {
-                    $type->increment($entity->getType());
-                }
+                Loop::over($entities, fn ($entity) => $type->increment($entity->getType()));
             }
         }
 
@@ -99,9 +97,7 @@ class CheckPsr4ArtisanCommand extends Command
 
     private function getPathFilter($folder)
     {
-        return function ($absFilePath, $fileName) use ($folder) {
-            return strpos($absFilePath, $folder) !== false;
-        };
+        return fn ($absFilePath, $fileName) => strpos($absFilePath, $folder) !== false;
     }
 
     private function getClassLists(Comp $composer): ClassLists

@@ -8,18 +8,17 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 class ClassRefCorrector
 {
     /**
-     * @var \Closure
+     * @var class-string
      */
-    private static $afterFix;
+    private static $afterFix = AfterRefFix::class;
 
     /**
      * @var \Closure
      */
     private static $beforeFix;
 
-    public static function fixOldRefs($from, $class, $to, $paths, $beforeFix = null, $afterFix = null)
+    public static function fixOldRefs($from, $class, $to, $paths, $beforeFix = null)
     {
-        $afterFix && self::$afterFix = $afterFix;
         $beforeFix && self::$beforeFix = $beforeFix;
 
         $changes = [
@@ -50,7 +49,7 @@ class ClassRefCorrector
 
         if ($changedLineNums) {
             // calling the \Closure:
-            (self::$afterFix)($path, $changedLineNums, $content);
+            self::$afterFix::handle($path, $changedLineNums, $content);
         }
     }
 

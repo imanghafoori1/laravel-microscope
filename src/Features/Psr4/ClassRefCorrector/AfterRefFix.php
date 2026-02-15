@@ -10,18 +10,16 @@ class AfterRefFix
     /**
      * @return \Closure
      */
-    public static function getCallback()
+    public static function handle(PhpFileDescriptor $file, $changedLineNums, $content)
     {
-        return function (PhpFileDescriptor $file, $changedLineNums, $content) {
-            $file->putContents($content);
-            $path = $file->getAbsolutePath();
+        $file->putContents($content);
+        $path = $file->getAbsolutePath();
 
-            $printer = ErrorPrinter::singleton();
-            foreach ($changedLineNums as $line) {
-                $printer->simplePendError(
-                    '', $path, $line, 'ns_replacement', 'Namespace replacement:'
-                );
-            }
-        };
+        $printer = ErrorPrinter::singleton();
+        foreach ($changedLineNums as $line) {
+            $printer->simplePendError(
+                '', $path, $line, 'ns_replacement', 'Namespace replacement:'
+            );
+        }
     }
 }

@@ -7,14 +7,14 @@ use Imanghafoori\LaravelMicroscope\Foundations\Color;
 
 class ExtraWrongImportsHandler
 {
-    public static $count = 0;
+    public static $errorCount = 0;
 
     public static function handle($extraWrongImports, $file)
     {
         $printer = ErrorPrinter::singleton();
 
         foreach ($extraWrongImports as [$class, $line]) {
-            self::$count++;
+            self::$errorCount++;
             $printer->simplePendError(
                 Color::gray("$line| ").trim($file->getLine($line), PHP_EOL),
                 $file,

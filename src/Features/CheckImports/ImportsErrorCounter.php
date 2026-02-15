@@ -16,12 +16,12 @@ class ImportsErrorCounter
     {
         $self = new self;
 
-        $self->errors['extraWrongImport'] = ExtraWrongImportsHandler::$count;
+        $self->errors['extraWrongImport'] = ExtraWrongImportsHandler::$errorCount;
         $self->errors['wrongClassRef'] = count($errors['wrongClassRef'] ?? []);
         $self->errors['wrongMethod'] = count($errors['wrongMethodError'] ?? []);
         $self->errors['wrongStringyClass'] = count($errors['wrongUsedClassError'] ?? []);
 
-        ExtraWrongImportsHandler::$count = 0;
+        ExtraWrongImportsHandler::$errorCount = 0;
 
         return $self;
     }

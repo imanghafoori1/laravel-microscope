@@ -17,7 +17,11 @@ use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
 
 class Iterator
 {
+    /**
+     * @var \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet
+     */
     public $checkSet;
+
 
     private $output;
 
@@ -43,6 +47,9 @@ class Iterator
         return ForAutoloadedClassMaps::check($this->checkSet);
     }
 
+    /**
+     * @return string
+     */
     public function forBladeFiles(): string
     {
         return BladeReport::getBladeStats(ForBladeFiles::check($this->checkSet));
@@ -58,11 +65,17 @@ class Iterator
         $this->printAll($this->formatAutoloads($this->forPsr4(), $this->forClassmaps()));
     }
 
+    /**
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats
+     */
     public function formatAutoloads($psr4Stats, $classMapStats = [], $filesStat = [])
     {
         return ComposerJsonReport::formatAutoloads($psr4Stats, $classMapStats, $filesStat);
     }
 
+    /**
+     * @return \Generator<int, string>
+     */
     public function forMigrationsAndConfigs()
     {
         $foldersStats = ForFolderPaths::check($this->checkSet, LaravelPaths::getMigrationConfig());
@@ -70,11 +83,17 @@ class Iterator
         return LaravelFoldersReport::formatFoldersStats($foldersStats);
     }
 
+    /**
+     * @return array<int, string|string[]>
+     */
     public function forRoutes()
     {
         return RouteReport::getStats(ForRouteFiles::check($this->checkSet));
     }
 
+    /**
+     * @return \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats
+     */
     public function forComposerLoadedFiles()
     {
         return ForComposerJsonFiles::checkAndPrint($this->checkSet);
