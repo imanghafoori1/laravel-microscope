@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
-use Imanghafoori\LaravelMicroscope\Foundations\Handlers\ErrorExceptionHandler;
-
 class ForAutoloadedPsr4Classes
 {
     /**
@@ -12,8 +10,6 @@ class ForAutoloadedPsr4Classes
      */
     public static function check(CheckSet $checkSet)
     {
-        ChecksOnPsr4Classes::$errorExceptionHandler = ErrorExceptionHandler::class;
-
         return ChecksOnPsr4Classes::apply($checkSet);
     }
 }

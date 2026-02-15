@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
+use Imanghafoori\LaravelMicroscope\Foundations\Handlers\ErrorExceptionHandler;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\Psr4StatsDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
@@ -11,7 +12,7 @@ class ChecksOnPsr4Classes
     /**
      * @var class-string
      */
-    public static $errorExceptionHandler;
+    public static $errorExceptionHandler = ErrorExceptionHandler::class;
 
     /**
      * @var positive-int
