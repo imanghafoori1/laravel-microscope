@@ -40,8 +40,8 @@ class NamespaceFixer
     {
         return [
             'fix' => [
-                'search' => 'namespace '.$oldLine.';',
-                'replace' => 'namespace '.$newline.';',
+                'search' => "namespace $oldLine;",
+                'replace' => "namespace $newline;",
             ],
         ];
     }

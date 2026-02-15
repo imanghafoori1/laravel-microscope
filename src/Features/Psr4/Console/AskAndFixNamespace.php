@@ -36,10 +36,11 @@ class AskAndFixNamespace
     {
         $answer = self::getAnswer($file, $from, $class, $to);
 
+        $output = self::$command->getOutput();
         if ($answer) {
             NamespaceFixer::fix($file, $from, $to);
-            self::$command->getOutput()->writeln('Namespace updated to: '.Color::blue($to));
-            self::$command->getOutput()->writeln('Searching for old references...');
+            $output->writeln('Namespace updated to: '.Color::blue($to));
+            $output->writeln('Searching for old references...');
             self::updateOldRefs($from, $to, $class);
             self::deleteLine(2);
             NamespaceFixerMessages::fixedNamespace($file, $from, $to, $class);
