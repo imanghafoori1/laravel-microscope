@@ -12,7 +12,7 @@ class AutoloadFiles
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\FilesDto  $filesList
-     * @return string
+     * @return array
      */
     public static function getLines($filesList)
     {

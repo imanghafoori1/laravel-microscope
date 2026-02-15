@@ -35,9 +35,9 @@ trait Reporting
     }
 
     #[Pure]
-    public static function blue($filesCount)
+    public static function blue($string)
     {
-        return self::hyphen().Color::blue($filesCount).' ';
+        return self::hyphen().Color::blue($string).' ';
     }
 
     #[Pure]
