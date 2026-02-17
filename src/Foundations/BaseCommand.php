@@ -36,6 +36,11 @@ class BaseCommand extends Command
 
     public function handle()
     {
+        $answer = $this->gitConfirm ? $this->gitConfirm() : true;
+        if (! $answer) {
+            return;
+        }
+
         $this->errorPrinter = ErrorPrinter::singleton();
         $this->errorPrinter->printer = $this->getOutput();
         $this->confirmer = $this->options = CheckSet::$options = $this;
@@ -45,11 +50,6 @@ class BaseCommand extends Command
 
         if (property_exists($this, 'initialMsg')) {
             $this->info($this->initialMsg);
-        }
-
-        $answer = $this->gitConfirm ? $this->gitConfirm() : true;
-        if (! $answer) {
-            return;
         }
 
         /*------------------------*/
