@@ -2,8 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
-use Closure;
-
 class Loop
 {
     /**

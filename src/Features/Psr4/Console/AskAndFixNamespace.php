@@ -21,7 +21,6 @@ class AskAndFixNamespace
 
     public static $pause = 70_000;
 
-
     public static function handle(NamespaceError $error)
     {
         self::applyFixProcess(
@@ -59,6 +58,7 @@ class AskAndFixNamespace
             );
         }
     }
+
     public static function deleteLine($lines = 1): void
     {
         $output = self::$command->getOutput();

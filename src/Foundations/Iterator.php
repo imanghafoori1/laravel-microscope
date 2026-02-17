@@ -22,7 +22,6 @@ class Iterator
      */
     public $checkSet;
 
-
     private $output;
 
     public function __construct($checkSet, $output)
