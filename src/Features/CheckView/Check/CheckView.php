@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckView\Check;
 
+use Illuminate\Support\Facades\View;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
@@ -22,8 +23,9 @@ class CheckView implements Check
     {
         [$views, $skipped] = self::getFromCache($file->getMd5(), $file);
 
-        Loop::over(
+        Loop::mapIf(
             $views,
+            fn ($view) => ! View::exists($view[1]),
             fn ($view) => CheckViewHandler::handle($file, $view[0], $view[1])
         );
         $skippedCount = count($skipped);
