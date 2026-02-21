@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\Console;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 
 class Confirm
 {
@@ -12,15 +13,14 @@ class Confirm
     public static $askTime = 0;
 
     /**
-     * @param  \Illuminate\Console\Command  $command
      * @param  string  $correctNamespace
      * @return bool
      */
-    public static function ask($command, $correctNamespace)
+    public static function ask($correctNamespace)
     {
         $time = microtime(true);
         try {
-            return $command->getOutput()->confirm(self::getQuestion($correctNamespace), true);
+            return Console::confirm(self::getQuestion($correctNamespace));
         } finally {
             self::$askTime += (microtime(true) - $time);
         }

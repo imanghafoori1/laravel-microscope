@@ -26,10 +26,9 @@ class ClassifyStringsCommand extends BaseCommand
 
     public $customMsg = '';
 
-    public function handleCommand($iterator, $command)
+    public function handleCommand($iterator)
     {
         CheckClassAtMethod::$handler::$fix = (bool) $this->option('fix');
-        CheckStringy::$command = $command;
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),

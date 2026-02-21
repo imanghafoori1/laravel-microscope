@@ -85,7 +85,7 @@ class BaseCommand extends Command
     {
         $this->warn('This command is going to make changes to your files!');
 
-        return $this->output->confirm('Do you have committed everything in git?', true);
+        return Console::confirm('Do you have committed everything in git?', true);
     }
 
     public function getCheckSet(): CheckSet

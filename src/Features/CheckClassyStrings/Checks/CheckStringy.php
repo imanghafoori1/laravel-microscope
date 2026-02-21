@@ -7,6 +7,7 @@ use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Analyzers\ComposerJson;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
@@ -19,18 +20,11 @@ class CheckStringy implements Check
     public static $cacheKey = 'stringy_classes';
 
     /**
-     * @var \Illuminate\Console\Command
-     */
-    public static $command;
-
-    /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return bool
      */
     public static function performCheck(PhpFileDescriptor $file)
     {
-        $errorPrinter = ErrorPrinter::singleton();
-
         $hasError = false;
         foreach (ComposerJson::readPsr4() as $psr4) {
             $namespaces = array_keys($psr4);
@@ -56,9 +50,7 @@ class CheckStringy implements Check
                     continue;
                 }
 
-                $errorPrinter->printLink($file, $lineNum);
-
-                if (! self::ask($errorPrinter->printer, $lineNum, $token[1], $file)) {
+                if (! self::ask($lineNum, $token[1], $file)) {
                     continue;
                 }
                 $replacement = self::getClassPath($classPath, $file);
@@ -87,11 +79,12 @@ class CheckStringy implements Check
     /**
      * @return bool
      */
-    private static function ask($printer, $lineNumber, $classPath, PhpFileDescriptor $file)
+    private static function ask($lineNumber, $classPath, PhpFileDescriptor $file)
     {
-        $printer->text(CheckStringyMsg::getLineContents($lineNumber, $file));
+        Console::getInstance()->text(PHP_EOL.CheckStringyMsg::getLineContents($lineNumber, $file));
+        Console::getInstance()->text(ErrorPrinter::getLink($file->getAbsolutePath(), $lineNumber));
 
-        return $printer->confirm(CheckStringyMsg::question($classPath), true);
+        return Console::confirm(CheckStringyMsg::question($classPath));
     }
 
     private static function refersToDir($classPath)
@@ -101,13 +94,13 @@ class CheckStringy implements Check
 
     private static function performReplacementProcess($classyString, $classPath, PhpFileDescriptor $file)
     {
-        $command = self::$command;
-        $command->info(CheckStringyMsg::successfulReplacementMsg($classPath));
+        $command = Console::getInstance();
+        $command->writeln(CheckStringyMsg::successfulReplacementMsg($classPath));
 
         // todo: should replace tokens not the file contents.
         FileManipulator::replaceFirst($file->getAbsolutePath(), $classyString, $classPath);
 
-        $command->info(ErrorPrinter::lineSeparator());
+        $command->writeln(ErrorPrinter::lineSeparator());
     }
 
     public static function getClassPath(string $classPath, PhpFileDescriptor $file)

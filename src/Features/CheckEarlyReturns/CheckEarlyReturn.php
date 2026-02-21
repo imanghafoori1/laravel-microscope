@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Refactor;
 
@@ -47,7 +47,7 @@ class CheckEarlyReturn implements Check
     {
         $question = ' Do you want to flatten: '.Color::yellow($file->relativePath());
 
-        return ErrorPrinter::singleton()->printer->confirm($question);
+        return Console::confirm($question);
     }
 
     private static function refactor($tokens)

@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class BeforeRefFix
@@ -24,7 +25,7 @@ class BeforeRefFix
 
             $command->warn($lineContent);
 
-            return $command->confirm(self::getQuestion(), true);
+            return Console::confirm(self::getQuestion());
         };
     }
 

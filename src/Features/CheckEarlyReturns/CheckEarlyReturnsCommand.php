@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckEarlyReturnsCommand extends BaseCommand
@@ -45,7 +46,7 @@ class CheckEarlyReturnsCommand extends BaseCommand
     {
         $this->warn(' Warning: This command is going to make "CHANGES" to your files!');
 
-        return $this->output->confirm(' Do you have committed everything in git?');
+        return Console::confirm(' Do you have committed everything in git?');
     }
 
     private function getParams($nofix): array

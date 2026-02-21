@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Finder;
 use Imanghafoori\SearchReplace\Replacer;
@@ -73,6 +74,6 @@ class PostReplaceAndSave
     {
         $text = 'Do you want to replace '.Color::yellow($file->getFileName()).' with new version of it?';
 
-        return ErrorPrinter::singleton()->printer->confirm($text);
+        return Console::confirm($text);
     }
 }

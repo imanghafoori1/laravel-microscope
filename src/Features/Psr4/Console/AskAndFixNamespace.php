@@ -9,6 +9,7 @@ use Imanghafoori\LaravelMicroscope\Features\Psr4\ClassRefCorrector\FilePathsForR
 use Imanghafoori\LaravelMicroscope\Features\Psr4\Console\NamespaceFixer\NamespaceFixerMessages;
 use Imanghafoori\LaravelMicroscope\Features\Psr4\NamespaceFixer;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class AskAndFixNamespace
@@ -35,7 +36,7 @@ class AskAndFixNamespace
     {
         $answer = self::getAnswer($file, $from, $class, $to);
 
-        $output = self::$command->getOutput();
+        $output = Console::getInstance();
         if ($answer) {
             NamespaceFixer::fix($file, $from, $to);
             $output->writeln('Namespace updated to: '.Color::blue($to));
@@ -61,7 +62,7 @@ class AskAndFixNamespace
 
     public static function deleteLine($lines = 1): void
     {
-        $output = self::$command->getOutput();
+        $output = Console::getInstance();
         $i = 0;
         while (true) {
             $output->write("\x1b[1A\x1b[1G\x1b[2K");
@@ -81,7 +82,7 @@ class AskAndFixNamespace
             $answer = true;
         } else {
             NamespaceFixerMessages::warnIncorrectNamespace($file, $from, $class);
-            $answer = self::$confirm::ask(self::$command, $to);
+            $answer = self::$confirm::ask($to);
             self::deleteLine(9);
         }
 

@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -70,7 +71,7 @@ class ActionsComments implements Check
         }
 
         $question = ActionCommentMsg::getQuestion($fullNamespace);
-        if ($shouldSave && self::$command->confirm($question, true)) {
+        if ($shouldSave && Console::confirm($question)) {
             $file->saveTokens($tokens);
         }
     }

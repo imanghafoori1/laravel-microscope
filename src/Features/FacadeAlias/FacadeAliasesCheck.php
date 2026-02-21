@@ -16,11 +16,6 @@ class FacadeAliasesCheck implements Check
      */
     public static $handler = FacadeAliasReplacer::class;
 
-    /**
-     * @var \Illuminate\Console\OutputStyle
-     */
-    public static $command;
-
     public static $importsProvider = UseStatementParser::class;
 
     /**
@@ -48,7 +43,6 @@ class FacadeAliasesCheck implements Check
         $tokens = $file->getTokens();
 
         $aliases = self::$aliases;
-        self::$handler::$command = self::$command;
 
         $imports = self::$importsProvider::parse($file);
         $hasError = false;

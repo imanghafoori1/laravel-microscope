@@ -4,8 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEndIf;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
 
@@ -22,13 +22,11 @@ class CheckEndIfSyntax implements Check
             return false;
         }
 
-        $absFilePath = $file->getAbsolutePath();
-
         try {
             $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
             // @codeCoverageIgnoreStart
         } catch (Exception $e) {
-            self::requestIssue($absFilePath);
+            self::requestIssue($file->getAbsolutePath());
 
             return false;
         }
@@ -45,9 +43,7 @@ class CheckEndIfSyntax implements Check
 
     private static function getConfirm(PhpFileDescriptor $file)
     {
-        $question = CheckEndIfMsg::confirm($file);
-
-        return ErrorPrinter::singleton()->printer->confirm($question);
+        return Console::confirm(CheckEndIfMsg::confirm($file));
     }
 
     /**

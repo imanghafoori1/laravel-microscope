@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\SearchReplace\Searcher;
@@ -10,11 +11,6 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class FacadeAliasReplacer
 {
-    /**
-     * @var \Illuminate\Console\OutputStyle
-     */
-    public static $command;
-
     public static $forceReplace = false;
 
     public static $replacementsCount = 0;
@@ -38,7 +34,7 @@ class FacadeAliasReplacer
     {
         $relativePath = FilePath::normalize($file->relativePath());
         $line = $use[1];
-        self::$command->writeln(
+        Console::getInstance()->writeln(
             FacadeAliasMessages::atLine($relativePath, $line)
         );
         $question = FacadeAliasMessages::askReplace(
@@ -46,7 +42,7 @@ class FacadeAliasReplacer
             Color::yellow($aliases)
         );
 
-        return self::$command->confirm($question, true);
+        return Console::confirm($question);
     }
 
     private static function searchReplace($base, $aliases, $tokens, $as, $imports)

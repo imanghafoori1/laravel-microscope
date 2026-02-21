@@ -4,6 +4,8 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGenericDocBlocks;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\Str;
 
@@ -20,8 +22,6 @@ class GenericDocblocks implements Check
         '* Handle the incoming request.',
     ];
 
-    public static $conformer;
-
     public static $foundCount = 0;
 
     public static function check(PhpFileDescriptor $file)
@@ -36,10 +36,15 @@ class GenericDocblocks implements Check
 
         [$hasReplacement, $tokens, $token] = self::removeDocBlocks($tokens);
 
-        if ($hasReplacement && (self::$conformer)($file)) {
+        if ($hasReplacement && Console::confirm(self::getQuestion($file))) {
             GenericDocblocksHandler::handle($file, $token);
             $file->saveTokens($tokens);
         }
+    }
+
+    private static function getQuestion(PhpFileDescriptor $file)
+    {
+        return 'Do you want to remove doc-blocks from: '.Color::yellow($file->getFileName());
     }
 
     private static function removeDocblock($tokens, $i)
