@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -43,9 +42,9 @@ class Console
 
     public static function warn($msg)
     {
-        self::$warned[]  = $msg;
+        self::$warned[] = $msg;
 
-        (self::$instance)->warning($msg);
+        self::$instance->warning($msg);
     }
 
     public static function fakeAnswer(string $question, bool $default = true)
@@ -77,8 +76,7 @@ class Console
             self::$instance = self::askUserObject();
         }
 
-
-        (self::$instance)->writeln($messages);
+        self::$instance->writeln($messages);
     }
 
     /**
