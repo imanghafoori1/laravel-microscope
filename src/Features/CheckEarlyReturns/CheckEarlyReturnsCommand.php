@@ -56,8 +56,8 @@ class CheckEarlyReturnsCommand extends BaseCommand
             'nofixCallback' => function (PhpFileDescriptor $file) {
                 $this->line('    - '.Color::red($file->relativePath()));
             },
-            'fixCallback' => function ($filePath, $tries) {
-                $this->warn(PHP_EOL.$tries.' fixes applied to: '.Color::blue(class_basename($filePath)));
+            'fixCallback' => function (PhpFileDescriptor $filePath, $tries) {
+                $this->warn(PHP_EOL.$tries.' fixes applied to: '.Color::blue($filePath->getFileName()));
             },
         ];
     }
