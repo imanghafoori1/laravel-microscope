@@ -121,7 +121,7 @@ class ExtraFQCN implements Check
 
         if ($count > 1) {
             [$count, $new] = self::replace($classRef, $lines[$line - 1]);
-            if ($count === 1) {
+            if ($count > 0) {
                 $lines[$line - 1] = $new;
                 $file->putContents(implode('', $lines));
 
