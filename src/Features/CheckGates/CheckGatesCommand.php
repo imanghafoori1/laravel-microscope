@@ -4,7 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckGates;
 
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckGates extends BaseCommand
+class CheckGatesCommand extends BaseCommand
 {
     protected $signature = 'check:gates';
 

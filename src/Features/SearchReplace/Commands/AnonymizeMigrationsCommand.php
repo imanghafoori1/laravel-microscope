@@ -13,9 +13,10 @@ use Imanghafoori\SearchReplace\Filters;
 use Imanghafoori\SearchReplace\PatternParser;
 use Symfony\Component\Finder\Finder;
 
-class AnonymizeMigrations extends BaseCommand
+class AnonymizeMigrationsCommand extends BaseCommand
 {
-    protected $signature = 'check:migrations {--s|nofix}
+    protected $signature = 'check:migrations
+    {--s|nofix}
     {--f|file=}
     {--d|folder=}
     {--F|except-file= : Comma seperated patterns for file names to exclude}

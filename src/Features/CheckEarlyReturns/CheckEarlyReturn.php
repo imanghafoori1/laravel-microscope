@@ -11,14 +11,11 @@ use Imanghafoori\TokenAnalyzer\Refactor;
 
 class CheckEarlyReturn implements Check
 {
-    public static $params = [];
+    public static $noFix = false;
 
     public static function check(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
-
-        $nofix = self::$params['nofix'];
-        $nofixCallback = self::$params['nofixCallback'];
 
         if (empty($tokens) || $tokens[0][0] !== T_OPEN_TAG) {
             return;
@@ -36,10 +33,12 @@ class CheckEarlyReturn implements Check
             return;
         }
 
-        if ($nofix) {
-            $nofixCallback($file);
+        if (self::$noFix) {
+            Console::getInstance()->writeln(PHP_EOL.'    - '.Color::red($file->relativePath()));
         } elseif (self::getConfirm($file)) {
-            self::fix($file, $tokens, $fixes);
+            $file->saveTokens($tokens);
+
+            self::printFixMsg($file, $fixes);
         }
     }
 
@@ -60,10 +59,12 @@ class CheckEarlyReturn implements Check
         return [$fixes, $tokens];
     }
 
-    private static function fix(PhpFileDescriptor $file, $tokens, $fixes)
+    private static function printFixMsg(PhpFileDescriptor $file, $fixes)
     {
-        $file->saveTokens($tokens);
-        $fixCallback = self::$params['fixCallback'];
-        $fixCallback($file, $fixes);
+        $s = $fixes > 1 ? 'es' : '';
+        $file = Color::blue($file->getFileName());
+        $msg = PHP_EOL.Color::red($fixes)." fix$s applied to: $file";
+
+        Console::getInstance()->writeln($msg);
     }
 }

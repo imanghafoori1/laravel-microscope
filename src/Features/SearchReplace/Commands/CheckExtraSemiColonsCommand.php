@@ -5,7 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
-class CheckExtraSemiColons extends BaseCommand
+class CheckExtraSemiColonsCommand extends BaseCommand
 {
     use PatternApply;
 
