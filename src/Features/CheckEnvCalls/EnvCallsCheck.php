@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckEnvCalls;
 
+use Generator;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -13,7 +14,7 @@ class EnvCallsCheck implements Check
     use CachedCheck;
 
     /**
-     * @var \Closure
+     * @var class-string
      */
     public static $onErrorCallback = EnvCallHandler::class;
 
@@ -22,11 +23,17 @@ class EnvCallsCheck implements Check
      */
     private static $cacheKey = 'env_calls_command';
 
-    public static function performCheck(PhpFileDescriptor $file): bool
+    public static function performCheck(PhpFileDescriptor $file)
+    {
+        $errors = self::getErrors($file);
+
+        return self::handleErrors($file, $errors);
+    }
+
+    private static function getErrors(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
 
-        $hasError = false;
         foreach ($tokens as $i => $token) {
             if (strtolower($token[1] ?? '') === 'env') {
                 $tokens[$i][1] = 'env';
@@ -37,14 +44,13 @@ class EnvCallsCheck implements Check
             if (! $index) {
                 continue;
             }
+
             if (self::isLikelyConfigFile($file, $tokens)) {
                 continue;
             }
-            self::$onErrorCallback::handle($file, $tokens[$index][1], $tokens[$index][2]);
-            $hasError = true;
-        }
 
-        return $hasError;
+            yield $index;
+        }
     }
 
     private static function isLikelyConfigFile(PhpFileDescriptor $file, $tokens)
@@ -60,5 +66,20 @@ class EnvCallsCheck implements Check
         }
 
         return $file->getFileName() === 'config.php';
+    }
+
+    private static function handleErrors(PhpFileDescriptor $file, Generator $indexes): bool
+    {
+        $tokens = $file->getTokens();
+
+        foreach ($indexes as $index) {
+            self::$onErrorCallback::handle(
+                $file,
+                $tokens[$index][1],
+                $tokens[$index][2]
+            );
+        }
+
+        return isset($index);
     }
 }
