@@ -9,15 +9,23 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class CheckDDHandler
 {
-    public static function handle(PhpFileDescriptor $file, $function, $line)
+    public static function handle(PhpFileDescriptor $file, $errors): bool
+    {
+        foreach ($errors as $index) {
+            $tokens = $file->getTokens();
+
+            self::handleErrors($file, $tokens[$index][1], $tokens[$index][2]);
+        }
+
+        return isset($tokens);
+    }
+
+    private static function handleErrors(PhpFileDescriptor $file, $function, $line)
     {
         $dd = Color::yellow($function);
+        $content = self::getLine($file, $function, $dd, $line);
         ErrorPrinter::singleton()->simplePendError(
-            self::getLine($file, $function, $dd, $line),
-            $file,
-            $line,
-            'ddFound',
-            "Debug function found: '$dd'"
+            $content, $file, $line, 'dd', "Debug function found: '$dd'"
         );
     }
 
