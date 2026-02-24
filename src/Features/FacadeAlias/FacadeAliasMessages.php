@@ -9,8 +9,8 @@ class FacadeAliasMessages
         return "Do you want to replace $base with $aliases";
     }
 
-    public static function atLine($relativePath, $line): string
+    public static function atLine($path, $line): string
     {
-        return "at $relativePath:$line";
+        return "at $path:$line";
     }
 }

@@ -88,13 +88,13 @@ class ErrorPrinter
         }
     }
 
-    public function simplePendError($blueText, $absPath, $lineNumber, $key, $header, $rest = '', $pre = '', $key2 = null)
+    public function simplePendError($blueText, $file, $lineNumber, $key, $header, $rest = '', $pre = '', $key2 = null)
     {
-        is_a($absPath, PhpFileDescriptor::class) && ($absPath = $absPath->getAbsolutePath());
+        is_a($file, PhpFileDescriptor::class) && ($file = $file->getAbsolutePath());
 
         $errorData = $pre.Color::blue($blueText).$rest;
 
-        $this->addPendingError($absPath, $lineNumber, $key, $header, $errorData, $key2);
+        $this->addPendingError($file, $lineNumber, $key, $header, $errorData, $key2);
     }
 
     public function print($msg, $path = '   ')

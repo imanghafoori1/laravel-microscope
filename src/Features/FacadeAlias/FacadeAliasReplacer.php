@@ -32,10 +32,12 @@ class FacadeAliasReplacer
 
     private static function ask(PhpFileDescriptor $file, $use, $base, $aliases)
     {
-        $relativePath = FilePath::normalize($file->relativePath());
         $line = $use[1];
         Console::getInstance()->writeln(
-            FacadeAliasMessages::atLine($relativePath, $line)
+            FacadeAliasMessages::atLine(
+                FilePath::normalize($file->relativePath()),
+                $line
+            )
         );
         $question = FacadeAliasMessages::askReplace(
             Color::yellow($base),
