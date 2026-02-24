@@ -30,10 +30,7 @@ class EnforceImports implements Check
      */
     public static $importsProvider = UseStatementParser::class;
 
-    /**
-     * @var \Closure
-     */
-    public static $onError;
+    public static $onError = EnforceImportsHandler::class;
 
     /**
      * @var \Closure
@@ -56,15 +53,15 @@ class EnforceImports implements Check
         return self::checkClassRef($classRefs, $imports, $file);
     }
 
-    public static function setOptions($noFix, $onlyRefs, $onError, $mutator = null)
+    public static function setOptions($noFix, $onlyRefs, $mutator = null)
     {
         if (is_string($onlyRefs)) {
             $onlyRefs = explode(',', $onlyRefs);
         }
 
         self::$fix = ! $noFix;
+        self::$onError::$noFix = $noFix;
         self::$onlyRefs = $onlyRefs;
-        self::$onError = $onError;
         self::$mutator = $mutator;
     }
 
@@ -115,7 +112,7 @@ class EnforceImports implements Check
             }
         }
 
-        ! $reverted && self::report($replacedRefs, $file);
+        ! $reverted && self::$onError && self::report($replacedRefs, $file);
 
         return $hasError;
     }
@@ -177,7 +174,7 @@ class EnforceImports implements Check
     {
         Loop::over(
             $replacedRefs,
-            fn ($line, $classRef) => (self::$onError)($classRef, $file, $line)
+            fn ($line, $classRef) => self::$onError::handle($classRef, $file, $line)
         );
     }
 

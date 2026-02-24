@@ -33,12 +33,9 @@ class EnforceImportsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        $noFix = $this->options->option('no-fix');
-        $class = $this->options->option('class');
         EnforceImports::setOptions(
-            $noFix,
-            $class,
-            EnforceImportsHandler::handler($noFix)
+            $this->options->option('no-fix'),
+            $this->options->option('class'),
         );
 
         $iterator->printAll([

@@ -6,16 +6,16 @@ use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 
 class EnforceImportsHandler
 {
-    public static function handler($noFix)
+    public static $noFix;
+
+    public static function handle($classRef, $file, $line)
     {
-        if ($noFix) {
+        if (self::$noFix) {
             $header = 'FQCN needs to be imported';
         } else {
             $header = 'FQCN got imported at the top';
         }
 
-        return function ($classRef, $file, $line) use ($header) {
-            ErrorPrinter::singleton()->simplePendError($classRef, $file, $line, 'enforce_imports', $header);
-        };
+        ErrorPrinter::singleton()->simplePendError($classRef, $file, $line, 'enforce_imports', $header);
     }
 }

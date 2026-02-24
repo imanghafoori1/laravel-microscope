@@ -57,10 +57,10 @@ class CheckAliasesCommand extends BaseCommand
 
         $aliasKeys = array_map(fn ($alias) => '\\'.$alias, array_keys($aliases));
 
-        $onError = fn () => null;
+        EnforceImports::$onError = null;
 
         $mutator = fn ($class) => ltrim($aliases[$class] ?? $class, '\\');
 
-        EnforceImports::setOptions(false, $aliasKeys, $onError, $mutator);
+        EnforceImports::setOptions(false, $aliasKeys, $mutator);
     }
 }
