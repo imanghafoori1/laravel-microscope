@@ -20,7 +20,15 @@ class CheckForExtraImports implements Check
 
     public static function check(PhpFileDescriptor $file)
     {
-        $uses = Cache::getForever($file->getMd5(), 'check_extra_imports', function () use ($file) {
+        $uses = self::getExtraImports($file);
+
+        Handlers\ExtraImportsHandler::handle($uses['extraImports'], $file);
+        self::$importsCount += $uses['count'];
+    }
+
+    private static function getExtraImports(PhpFileDescriptor $file)
+    {
+        return Cache::get($file->getMd5(), 'check_extra_imports', function () use ($file) {
             $uses = self::$imports::parse($file);
 
             return [
@@ -28,12 +36,9 @@ class CheckForExtraImports implements Check
                 'count' => count($uses[array_key_first($uses)]),
             ];
         });
-
-        Handlers\ExtraImportsHandler::handle($uses['extraImports'], $file);
-        self::$importsCount += $uses['count'];
     }
 
-    public static function findClassRefs($tokens, $imports)
+    private static function findClassRefs($tokens, $imports)
     {
         try {
             [$classes, $namespace, $attributeRefs] = ClassReferenceFinder::process($tokens);

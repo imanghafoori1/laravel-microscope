@@ -52,9 +52,9 @@ class BaseCommand extends Command
             $this->info($this->initialMsg);
         }
 
-        /*------------------------*/
+        /*----------------------------------------------*/
         $this->handleCommand($this->getIterator(), $this);
-        /*------------------------*/
+        /*----------------------------------------------*/
         CachedFiles::writeCacheFiles();
 
         if (! $this->errorPrinter->hasErrors()) {
