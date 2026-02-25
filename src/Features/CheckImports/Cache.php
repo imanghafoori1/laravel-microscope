@@ -17,7 +17,7 @@ class Cache
      */
     public static $cache = [];
 
-    public static function getForever($md5, $key, Closure $callback)
+    public static function get($md5, $key, Closure $callback)
     {
         return self::$cache[$key][$md5] ?? (self::$cache[$key][$md5] = $callback());
     }

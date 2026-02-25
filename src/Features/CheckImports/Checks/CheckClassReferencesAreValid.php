@@ -35,7 +35,7 @@ class CheckClassReferencesAreValid implements Check
             $extraImports,
             $docblockRefs,
             $attributeReferences,
-        ] = Cache::getForever($file->getMd5(), 'check_imports', $refFinder);
+        ] = Cache::get($file->getMd5(), 'check_imports', $refFinder);
 
         $absFilePath = $file->getAbsolutePath();
         [$wrongClassRefs] = ImportsAnalyzer::filterWrongClassRefs($classReferences, $absFilePath);
