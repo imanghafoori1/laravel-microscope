@@ -18,9 +18,7 @@ class UnusedVarsInstaller
 
         app()->singleton('microscope.views', ViewsData::class);
 
-        ViewFacade::creator('*', function (View $view) {
-            resolve('microscope.views')->add($view);
-        });
+        ViewFacade::creator('*', fn (View $view) => resolve('microscope.views')->add($view));
 
         app()->terminating(self::install());
     }
