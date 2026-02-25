@@ -37,7 +37,6 @@ class DeadControllerActions implements Check
 
     public static function getControllerActions($methods)
     {
-        $orphanMethods = [];
         foreach ($methods as $method) {
             // we exclude non-public methods
             if ($method['visibility'][0] !== T_PUBLIC) {
@@ -54,10 +53,8 @@ class DeadControllerActions implements Check
                 continue;
             }
 
-            $orphanMethods[] = $method;
+            yield $method;
         }
-
-        return $orphanMethods;
     }
 
     public static function isLaravelController($fullNamespace)
