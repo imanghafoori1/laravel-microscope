@@ -2,6 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
+use Generator;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -29,39 +30,33 @@ class FacadeAliasesCheck implements Check
             return;
         }
 
-        [$tokens, $hasError] = self::performCheck($file);
-
-        if ($hasError === false) {
-            CachedFiles::put('check_facade_alias_command', $file);
+        foreach (self::findAliases($file) as $data) {
+            self::$handler::handle($file, ...$data);
         }
 
-        return $tokens;
+        // if there are no errors:
+        if (isset($data) === false) {
+            CachedFiles::put('check_facade_alias_command', $file);
+        }
     }
 
-    public static function performCheck(PhpFileDescriptor $file): array
+    private static function findAliases(PhpFileDescriptor $file): Generator
     {
-        $tokens = $file->getTokens();
-
         $aliases = self::$aliases;
 
-        $imports = self::$importsProvider::parse($file);
-        $hasError = false;
-        foreach ($imports as $import) {
+        foreach (self::$importsProvider::parse($file) as $import) {
             foreach ($import as $base => $usageInfo) {
                 $shortAlias = $usageInfo[0];
                 if (! isset($aliases[$shortAlias])) {
                     continue;
                 }
-                $hasError = true;
                 if (self::$alias !== '-all-' && ! in_array(strtolower($shortAlias), self::$alias)) {
                     continue;
                 }
                 $expandedAlias = $aliases[$shortAlias];
 
-                $tokens = self::$handler::handle($file, $usageInfo, $base, $expandedAlias, $tokens, $import);
+                yield [$usageInfo, $base, $expandedAlias, $import];
             }
         }
-
-        return [$tokens, $hasError];
     }
 }

@@ -15,19 +15,16 @@ class FacadeAliasReplacer
 
     public static $replacementsCount = 0;
 
-    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias, $tokens, $imports)
+    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias, $imports)
     {
         if (self::$forceReplace || self::ask($file, $usageInfo, $base, $alias)) {
+            $tokens = $file->getTokens();
             $newVersion = self::searchReplace($usageInfo[0], $alias, $tokens, $base, $imports);
 
             $file->putContents(Refactor::toString($newVersion));
 
-            $tokens = $file->getTokens(true);
-
             self::$replacementsCount++;
         }
-
-        return $tokens;
     }
 
     private static function ask(PhpFileDescriptor $file, $use, $base, $aliases)

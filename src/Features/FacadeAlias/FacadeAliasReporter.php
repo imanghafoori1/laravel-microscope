@@ -10,7 +10,7 @@ class FacadeAliasReporter
 {
     public static $errorCount = 0;
 
-    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias, $tokens)
+    public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias)
     {
         $relativePath = $file->relativePath();
 
