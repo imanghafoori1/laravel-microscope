@@ -9,21 +9,20 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 class BeforeRefFix
 {
     /**
-     * @param  $command
      * @return \Closure(): bool
      */
-    public static function getCallback($command)
+    public static function getCallback($forceRefFix)
     {
-        if ($command->option('force-ref-fix')) {
+        if ($forceRefFix) {
             return fn () => true;
         }
 
-        return function (PhpFileDescriptor $file, $lineIndex, $lineContent) use ($command) {
-            $command->getOutput()->writeln(
+        return function (PhpFileDescriptor $file, $lineIndex, $lineContent) {
+            Console::getInstance()->writeln(
                 ErrorPrinter::getLink($file->getAbsolutePath(), $lineIndex)
             );
 
-            $command->warn($lineContent);
+            Console::getInstance()->writeln($lineContent);
 
             return Console::confirm(self::getQuestion());
         };

@@ -60,7 +60,7 @@ class EnforceImports implements Check
         }
 
         self::$fix = ! $noFix;
-        self::$onError::$noFix = $noFix;
+        self::$onError && self::$onError::$noFix = $noFix;
         self::$onlyRefs = $onlyRefs;
         self::$mutator = $mutator;
     }

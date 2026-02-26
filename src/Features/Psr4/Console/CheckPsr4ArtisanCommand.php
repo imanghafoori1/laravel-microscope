@@ -36,7 +36,15 @@ class CheckPsr4ArtisanCommand extends Command
         $classLists = $this->getClassLists($composer);
         $errorsLists = $this->checkClassLists($composer, $classLists);
         $this->deleteLastLine();
-        Psr4Errors::handle($errorsLists, $this);
+
+        AskAndFixNamespace::$options = new Options(
+            $this->option('no-ref-fix'),
+            $this->option('nofix'),
+            $this->option('force'),
+            $this->option('force-ref-fix'),
+        );
+
+        Psr4Errors::handle($errorsLists);
 
         $duration = self::getDuration($time);
         $this->printReport($printer, $duration, $composer->readAutoload(), $classLists);

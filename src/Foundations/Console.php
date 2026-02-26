@@ -8,6 +8,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Console
 {
+    public static $pause = 70_000;
+
     public static $warned = [];
 
     public static $askedConfirmations = [];
@@ -90,5 +92,19 @@ class Console
         }
 
         return self::$instance;
+    }
+
+    public static function deleteLine($lines = 1): void
+    {
+        $output = self::getInstance();
+        $i = 0;
+        while (true) {
+            $output->write("\x1b[1A\x1b[1G\x1b[2K");
+            $i++;
+            if ($i >= $lines) {
+                break;
+            }
+            self::$pause && usleep(self::$pause);
+        }
     }
 }

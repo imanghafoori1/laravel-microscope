@@ -14,13 +14,12 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class AskAndFixNamespace
 {
-    public static $command;
+    /**
+     * @var \Imanghafoori\LaravelMicroscope\Features\Psr4\Console\Options
+     */
+    public static $options;
 
     public static $refCorrector = ClassRefCorrector::class;
-
-    public static $confirm = Confirm::class;
-
-    public static $pause = 70_000;
 
     public static function handle(NamespaceError $error)
     {
@@ -34,58 +33,34 @@ class AskAndFixNamespace
 
     private static function applyFixProcess(PhpFileDescriptor $file, $from, $class, $to)
     {
-        $answer = self::getAnswer($file, $from, $class, $to);
+        $answer = Ask::getAnswer($file, $from, $class, $to, self::$options);
 
-        $output = Console::getInstance();
         if ($answer) {
-            NamespaceFixer::fix($file, $from, $to);
-            $output->writeln('Namespace updated to: '.Color::blue($to));
-            $output->writeln('Searching for old references...');
-            self::updateOldRefs($from, $to, $class);
-            self::deleteLine(2);
-            NamespaceFixerMessages::fixedNamespace($file, $from, $to, $class);
+            self::performFix($file, $from, $to, $class);
         } else {
             NamespaceFixerMessages::wrongNamespace($file, $from, $to, $class);
         }
     }
 
+    private static function performFix(PhpFileDescriptor $file, $from, $to, $class): void
+    {
+        NamespaceFixer::fix($file, $from, $to);
+        $output = Console::getInstance();
+        $output->writeln('Namespace updated to: '.Color::blue($to));
+        $output->writeln('Searching for old references...');
+        self::updateOldRefs($from, $to, $class);
+        Console::deleteLine(2);
+        NamespaceFixerMessages::fixedNamespace($file, $from, $to, $class);
+    }
+
     private static function updateOldRefs($from, $to, $class)
     {
-        if ($from && ! self::$command->option('no-ref-fix')) {
-            $before = BeforeRefFix::getCallback(self::$command);
+        if ($from && ! self::$options->noRefFix) {
+            $before = BeforeRefFix::getCallback(self::$options->forceRefFix);
 
             self::$refCorrector::fixOldRefs(
                 $from, $class, $to, FilePathsForReferenceFix::getFiles(), $before
             );
         }
-    }
-
-    public static function deleteLine($lines = 1): void
-    {
-        $output = Console::getInstance();
-        $i = 0;
-        while (true) {
-            $output->write("\x1b[1A\x1b[1G\x1b[2K");
-            $i++;
-            if ($i >= $lines) {
-                break;
-            }
-            self::$pause && usleep(self::$pause);
-        }
-    }
-
-    private static function getAnswer(PhpFileDescriptor $file, $from, $class, $to)
-    {
-        if (self::$command->option('nofix')) {
-            $answer = false;
-        } elseif (self::$command->option('force')) {
-            $answer = true;
-        } else {
-            NamespaceFixerMessages::warnIncorrectNamespace($file, $from, $class);
-            $answer = self::$confirm::ask($to);
-            self::deleteLine(9);
-        }
-
-        return $answer;
     }
 }

@@ -7,10 +7,8 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class Psr4Errors
 {
-    public static function handle(array $errorsLists, $command)
+    public static function handle(array $errorsLists)
     {
-        AskAndFixNamespace::$command = $command;
-
         Loop::deepOver($errorsLists, fn ($error) => self::handleError($error));
     }
 
