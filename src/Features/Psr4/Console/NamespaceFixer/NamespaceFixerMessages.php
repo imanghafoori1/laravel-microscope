@@ -9,18 +9,18 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class NamespaceFixerMessages
 {
-    public static $pause = 250000;
+    public static $pause = 250_000;
 
     public static function warnIncorrectNamespace(PhpFileDescriptor $file, $currentNamespace, $className)
     {
-        $printer = ErrorPrinter::singleton();
         $msg = self::getHeader($currentNamespace, $className);
-        self::$pause && usleep(self::$pause);
+        self::pause();
 
         PendingError::$maxLength = max(PendingError::$maxLength, strlen($msg) - 12);
 
+        $printer = ErrorPrinter::singleton();
         $printer->printHeader($msg, false);
-        self::$pause && usleep(self::$pause);
+        self::pause();
 
         $printer->printLink($file, 3);
     }
@@ -66,5 +66,10 @@ class NamespaceFixerMessages
         $errorData = ' Namespace of class "'.Color::yellow($wrong.'\\'.$class).'" should be:';
 
         $printer->addPendingError($path, $lineNumber, $key, $errorData, Color::blue($correct));
+    }
+
+    private static function pause(): void
+    {
+        self::$pause && usleep(self::$pause);
     }
 }
