@@ -48,19 +48,19 @@ class AskAndFixNamespace
         $output = Console::getInstance();
         $output->writeln('Namespace updated to: '.Color::blue($to));
         $output->writeln('Searching for old references...');
-        self::updateOldRefs($from, $to, $class);
+        if ($from && ! self::$options->noRefFix) {
+            self::updateOldRefs($from, $to, $class);
+        }
         Console::deleteLine(2);
         NamespaceFixerMessages::fixedNamespace($file, $from, $to, $class);
     }
 
     private static function updateOldRefs($from, $to, $class)
     {
-        if ($from && ! self::$options->noRefFix) {
-            $before = BeforeRefFix::getCallback(self::$options->forceRefFix);
+        $before = BeforeRefFix::getCallback(self::$options->forceRefFix);
 
-            self::$refCorrector::fixOldRefs(
-                $from, $class, $to, FilePathsForReferenceFix::getFiles(), $before
-            );
-        }
+        self::$refCorrector::fixOldRefs(
+            $from, $class, $to, FilePathsForReferenceFix::getFiles(), $before
+        );
     }
 }

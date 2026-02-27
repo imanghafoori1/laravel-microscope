@@ -55,6 +55,6 @@ class CheckViewsCommand extends BaseCommand
 
     private function stats($checkedCallsCount, $skippedCallsCount): string
     {
-        return ' - '.$checkedCallsCount.' view references were checked to exist. ('.$skippedCallsCount.' skipped)';
+        return " - $checkedCallsCount view references were checked to exist. ($skippedCallsCount skipped)";
     }
 }

@@ -69,7 +69,7 @@ class CheckEnvCallsCommand extends BaseCommand
 
         $configs = trim(implode(',', array_keys($configs)), ',');
         if ($pathDTO->excludeFolder) {
-            $pathDTO->excludeFolder = $pathDTO->excludeFolder.','.$configs;
+            $pathDTO->excludeFolder .= ','.$configs; // appends
         } else {
             $pathDTO->excludeFolder = $configs;
         }

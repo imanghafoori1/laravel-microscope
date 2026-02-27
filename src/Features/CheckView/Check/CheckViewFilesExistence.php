@@ -23,7 +23,7 @@ class CheckViewFilesExistence implements Check
             if (! View::exists($viewName)) {
                 self::error($tokens, $file, $i);
             }
-            $i = $i + 5;
+            $i += 5;
         }
     }
 
@@ -38,8 +38,8 @@ class CheckViewFilesExistence implements Check
 
         // checks for this syntax: $__env->make('myViewFile', ...
         return self::isMethodCall($tokens, $i, $varName, $methods)
-            && ($tokens[$i + 4][0] ?? '') == T_CONSTANT_ENCAPSED_STRING
-            && ($tokens[$i + 5] ?? null) == ',';
+            && ($tokens[$i + 4][0] ?? '') === T_CONSTANT_ENCAPSED_STRING
+            && ($tokens[$i + 5] ?? null) === ',';
     }
 
     private static function error($tokens, $file, $i)
@@ -51,11 +51,11 @@ class CheckViewFilesExistence implements Check
 
     private static function isVariable($token, string $varName)
     {
-        return ($token[0] == T_VARIABLE) && ($token[1] == $varName);
+        return ($token[0] === T_VARIABLE) && ($token[1] === $varName);
     }
 
     private static function isMethodCall($tokens, $i, $varName, $methods)
     {
-        return self::isVariable($tokens[$i], $varName) && in_array($tokens[$i + 2][1] ?? null, $methods);
+        return self::isVariable($tokens[$i], $varName) && in_array($tokens[$i + 2][1] ?? null, $methods, true);
     }
 }
