@@ -34,10 +34,13 @@ class GenericDocblocks implements Check
             return null;
         }
 
-        [$hasReplacement, $tokens, $token] = self::removeDocBlocks($tokens);
+        [$tokens, $removedToken] = self::removeDocBlocks(
+            self::getDocblockIndexes($tokens),
+            $tokens
+        );
 
-        if ($hasReplacement && Console::confirm(self::getQuestion($file))) {
-            GenericDocblocksHandler::handle($file, $token);
+        if ($removedToken && Console::confirm(self::getQuestion($file))) {
+            GenericDocblocksHandler::handle($file, $removedToken);
             $file->saveTokens($tokens);
         }
     }
@@ -67,23 +70,29 @@ class GenericDocblocks implements Check
         return Str::contains($docblock, self::statements);
     }
 
-    private static function removeDocBlocks(array $tokens): array
+    private static function removeDocBlocks($indexes, $tokens): array
     {
-        $hasReplacement = false;
-        $doc = [];
+        foreach ($indexes as $i) {
+            self::$foundCount++;
+            $doc = $tokens[$i];
+            $tokens = self::removeDocblock($tokens, $i);
+        }
+
+        return [$tokens, $doc ?? null];
+    }
+
+    private static function getDocblockIndexes(array $tokens)
+    {
         foreach ($tokens as $i => $token) {
             if ($token[0] !== T_DOC_COMMENT) {
                 continue;
             }
 
-            if (self::shouldBeRemoved($token[1])) {
-                $doc = $token;
-                self::$foundCount++;
-                $hasReplacement = true;
-                $tokens = self::removeDocblock($tokens, $i);
+            if (! self::shouldBeRemoved($token[1])) {
+                continue;
             }
-        }
 
-        return [$hasReplacement, $tokens, $doc];
+            yield $i;
+        }
     }
 }
