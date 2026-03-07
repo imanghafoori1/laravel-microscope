@@ -8,7 +8,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 class AfterRefFix
 {
     /**
-     * @return \Closure
+     * @return void
      */
     public static function handle(PhpFileDescriptor $file, $changedLineNums, $content)
     {

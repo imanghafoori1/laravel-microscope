@@ -65,8 +65,7 @@ class CheckStatsCommand extends Command
         $listeners = Color::yellow("$listeners listeners");
         $eventsCount = Color::yellow("$eventsCount events.");
 
-        $this->info("  ➖  $listeners are listening to $eventsCount");
-        $this->line('');
+        $this->info("  ➖  $listeners are listening to $eventsCount".PHP_EOL);
 
         $duration = round(microtime(true) - $time, 5);
         $this->printReport($printer, $duration, $composer->readAutoload(), $classLists);

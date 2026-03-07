@@ -38,7 +38,7 @@ class ReportMessages
         if ($errorCount === 1) {
             return [[PHP_EOL.'one error was found.', 'warn']];
         } elseif ($errorCount > 1) {
-            return [[PHP_EOL.$errorCount.' errors were found.', 'warn']];
+            return [[PHP_EOL."$errorCount errors were found.", 'warn']];
         } else {
             return self::noErrorFound();
         }
@@ -67,7 +67,9 @@ class ReportMessages
 
     private static function getFinishMsg($time)
     {
-        return 'Finished In: '.Color::blue($time.'(s)');
+        $time = Color::blue($time.'(s)');
+
+        return "Finished In: $time";
     }
 
     private static function getMaxNamespaceLength($autoload): int
