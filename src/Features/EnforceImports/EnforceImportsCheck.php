@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
 use Imanghafoori\LaravelMicroscope\Check;
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\FqcnDeleter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -11,7 +11,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\SearchReplace\Searcher;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
-class EnforceImports implements Check
+class EnforceImportsCheck implements Check
 {
     use CachedCheck;
 
@@ -42,6 +42,11 @@ class EnforceImports implements Check
      */
     private static $cacheKey = 'EnforceImports';
 
+    /**
+     * @var bool
+     */
+    public static $hasError;
+
     public static function performCheck(PhpFileDescriptor $file): bool
     {
         $tokens = $file->getTokens();
@@ -67,54 +72,22 @@ class EnforceImports implements Check
 
     private static function checkClassRef(array $classRefs, array $imports, PhpFileDescriptor $file): bool
     {
-        $hasError = false;
+        self::$hasError = false;
         $namespace = $classRefs[1];
         $imports = array_values($imports)[0];
-        $replacedRefs = [];
-        $deletes = [];
-        $original = $file->getContent();
+        $classRefs = FilterImports::refs($classRefs[0], $imports, $namespace);
 
-        foreach ($classRefs[0] as $classRef) {
-            if (! self::shouldBeImported($classRef['class'], $imports, $namespace)) {
-                continue;
-            }
+        $classRefs = self::collectClassRefs($classRefs, self::$onlyRefs);
 
-            $hasError = true;
+        $replacedRefs = self::deleteRefs($file, $classRefs, $namespace);
 
-            $onlyRefs = self::$onlyRefs;
-            $shouldBeSkipped = $onlyRefs && ! self::contains($onlyRefs, $classRef['class']);
-
-            if ($shouldBeSkipped) {
-                continue;
-            }
-
-            $className = self::className($classRef['class']);
-
-            if ($namespace && ! self::refIsDeleted($deletes, $className, $classRef['class'])) {
-                if ($file->getFileName() !== $className.'.php') {
-                    self::$fix && ExtraFQCN::deleteFQCN($file, $classRef);
-                    $deletes[$className] = $classRef['class'];
-                    $replacedRefs[$classRef['class']] = $classRef['line'];
-                }
-            }
-        }
-
-        $reverted = false;
         if (self::$fix) {
-            foreach ($replacedRefs as $classRef => $_) {
-                $replacements = self::insertImport($file, $classRef);
-                // in case we are not able to insert imports at the top:
-                if (count($replacements) === 0) {
-                    $file->putContents($original);
-                    $hasError = $reverted = true;
-                    break;
-                }
-            }
+            $reverted = self::insertImportForReplacedRefs($file, $replacedRefs);
         }
 
-        ! $reverted && self::$onError && self::report($replacedRefs, $file);
+        ! isset($reverted) && self::$onError && self::report($replacedRefs, $file);
 
-        return $hasError;
+        return self::$hasError;
     }
 
     private static function insertImport(PhpFileDescriptor $file, $classRef)
@@ -138,33 +111,6 @@ class EnforceImports implements Check
         return $replacements;
     }
 
-    private static function isDirectlyImported($class, $imports): bool
-    {
-        return isset($imports[self::className($class)]);
-    }
-
-    private static function isInSameNamespace($namespace, $ref)
-    {
-        return trim(self::beforeLast($ref, '\\'), '\\') === $namespace;
-    }
-
-    private static function beforeLast($subject, $search)
-    {
-        $pos = mb_strrpos($subject, $search) ?: 0;
-
-        return mb_substr($subject, 0, $pos, 'UTF-8');
-    }
-
-    private static function restructureImports(array $imports): array
-    {
-        return Loop::mapKey(
-            $imports,
-            fn ($import, $key) => [
-                '\\'.$import[0] => [$import[1], $key],
-            ]
-        );
-    }
-
     private static function refIsDeleted(array $deletes, string $className, string $class): bool
     {
         return isset($deletes[$className]) && $deletes[$className] !== $class;
@@ -176,26 +122,6 @@ class EnforceImports implements Check
             $replacedRefs,
             fn ($line, $classRef) => self::$onError::handle($classRef, $file, $line)
         );
-    }
-
-    private static function shouldBeImported($class, $imports, $namespace)
-    {
-        if ($class[0] !== '\\') {
-            return false;
-        }
-
-        if (self::isDirectlyImported($class, $imports)) {
-            return false;
-        } elseif ($namespace && self::isInSameNamespace($namespace, $class)) {
-            return false;
-        } else {
-            $imports2 = self::restructureImports($imports);
-            if (isset($imports2[ltrim($class)])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static function contains($onlyRefs, $class): bool
@@ -218,5 +144,55 @@ class EnforceImports implements Check
         $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
 
         return basename($class);
+    }
+
+    private static function collectClassRefs($classRefs, $onlyRefs)
+    {
+        foreach ($classRefs as $classRef) {
+            if ($onlyRefs && ! self::contains($onlyRefs, $classRef['class'])) {
+                continue;
+            }
+
+            yield $classRef;
+        }
+    }
+
+    private static function deleteRefs(PhpFileDescriptor $file, $refs, $namespace): array
+    {
+        $deletes = [];
+        $replacedRefs = [];
+        foreach ($refs as $classRef) {
+            $className = self::className($classRef['class']);
+
+            if (! $namespace || self::refIsDeleted($deletes, $className, $classRef['class'])) {
+                continue;
+            }
+            if ($file->getFileName() === $className.'.php') {
+                continue;
+            }
+            self::$fix && FqcnDeleter::delete($file, $classRef);
+            $deletes[$className] = $classRef['class'];
+            $replacedRefs[$classRef['class']] = $classRef['line'];
+        }
+
+        return $replacedRefs;
+    }
+
+    private static function insertImportForReplacedRefs(PhpFileDescriptor $file, array $replacedRefs)
+    {
+        $reverted = null;
+        $original = $file->getContent();
+        foreach ($replacedRefs as $classRef => $_) {
+            $replacements = self::insertImport($file, $classRef);
+            // in case we are not able to insert imports at the top:
+            if (count($replacements) === 0) {
+                $file->putContents($original);
+                self::$hasError = $reverted = true;
+
+                break;
+            }
+        }
+
+        return $reverted;
     }
 }

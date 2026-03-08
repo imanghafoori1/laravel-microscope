@@ -9,7 +9,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
-class ExtraFQCN implements Check
+class ExtraFQCNCheck implements Check
 {
     use CachedCheck;
 
@@ -77,13 +77,13 @@ class ExtraFQCN implements Check
                 if (! $shouldBeSkipped) {
                     $line = $imports[self::className($classRef['class'])][1]; // <== get the line number of the import
                     ExtraFqcnHandler::reportAlreadyImported($classRef, $file, $line);
-                    $fix && self::deleteFQCN($file, $classRef);
+                    $fix && FqcnDeleter::delete($file, $classRef);
                 }
             } elseif ($namespace && self::isInSameNamespace($namespace, $classRef['class']) && ! self::isConflictingAlias($classRef['class'], $imports)) {
                 $hasError = true;
                 if (! $shouldBeSkipped) {
                     ExtraFqcnHandler::reportSameNamespace($classRef, $file, $fix);
-                    $fix && self::deleteFQCN($file, $classRef);
+                    $fix && FqcnDeleter::delete($file, $classRef);
                 }
             } else {
                 $imports2 = self::restructureImports($imports);
@@ -104,34 +104,6 @@ class ExtraFQCN implements Check
         return Loop::mapKey($imports, fn ($import, $key) => ['\\'.$import[0] => [$import[1], $key]]);
     }
 
-    public static function deleteFQCN(PhpFileDescriptor $file, $classRef)
-    {
-        $line = $classRef['line'];
-        $classRef = $classRef['class'];
-        $lines = file($file->getAbsolutePath());
-        $count = 0;
-
-        $new = str_replace([$classRef], self::className($classRef), $lines[$line - 1], $count);
-        if ($count === 1) {
-            $lines[$line - 1] = $new;
-            $file->putContents(implode('', $lines));
-
-            return true;
-        }
-
-        if ($count > 1) {
-            [$count, $new] = self::replace($classRef, $lines[$line - 1]);
-            if ($count > 0) {
-                $lines[$line - 1] = $new;
-                $file->putContents(implode('', $lines));
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static function className($class)
     {
         $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
@@ -148,16 +120,5 @@ class ExtraFQCN implements Check
     public static function reset()
     {
         self::configure(null, false);
-    }
-
-    private static function replace($classRef, $subject): array
-    {
-        $className = self::className($classRef);
-        $search = [$classRef.' ', $classRef.'(', $classRef.'::', $classRef.')', $classRef.';'];
-        $replace = [$className.' ', $className.'(', $className.'::', $className.')', $className.';'];
-        $count = 0;
-        $new = str_replace($search, $replace, $subject, $count);
-
-        return [$count, $new];
     }
 }

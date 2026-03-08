@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\EnforceImports;
 
-use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCN;
+use Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN\ExtraFQCNCheck;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
@@ -23,8 +23,8 @@ class EnforceImportsCommand extends BaseCommand
     public $initialMsg = 'Checking class references...';
 
     public $checks = [
-        ExtraFQCN::class,
-        EnforceImports::class,
+        ExtraFQCNCheck::class,
+        EnforceImportsCheck::class,
     ];
 
     /**
@@ -33,7 +33,7 @@ class EnforceImportsCommand extends BaseCommand
      */
     public function handleCommand($iterator)
     {
-        EnforceImports::setOptions(
+        EnforceImportsCheck::setOptions(
             $this->options->option('no-fix'),
             $this->options->option('class'),
         );

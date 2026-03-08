@@ -25,7 +25,7 @@ class CheckExtraFQCNCommand extends BaseCommand
 
     public $initialMsg = PHP_EOL.'Checking for fully qualified class names.';
 
-    public $checks = [ExtraFQCN::class];
+    public $checks = [ExtraFQCNCheck::class];
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
@@ -35,7 +35,7 @@ class CheckExtraFQCNCommand extends BaseCommand
     {
         $options = $this->options;
 
-        ExtraFQCN::configure(
+        ExtraFQCNCheck::configure(
             $options->option('class'),
             $options->option('fix')
         );
@@ -51,7 +51,7 @@ class CheckExtraFQCNCommand extends BaseCommand
             PHP_EOL,
         ]);
 
-        ExtraFQCN::reset();
+        ExtraFQCNCheck::reset();
         ! $options->option('fix') && ($this->exitCode() === 1) && $this->printGuide();
     }
 

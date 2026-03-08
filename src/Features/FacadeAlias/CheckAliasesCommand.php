@@ -3,7 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Illuminate\Foundation\AliasLoader;
-use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImports;
+use Imanghafoori\LaravelMicroscope\Features\EnforceImports\EnforceImportsCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 
 class CheckAliasesCommand extends BaseCommand
@@ -23,7 +23,7 @@ class CheckAliasesCommand extends BaseCommand
 
     public $initialMsg = ' 🔍 Looking Facade Aliases...';
 
-    public $checks = [EnforceImports::class, FacadeAliasesCheck::class];
+    public $checks = [EnforceImportsCheck::class, FacadeAliasesCheck::class];
 
     /**
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
@@ -57,10 +57,10 @@ class CheckAliasesCommand extends BaseCommand
 
         $aliasKeys = array_map(fn ($alias) => '\\'.$alias, array_keys($aliases));
 
-        EnforceImports::$onError = null;
+        EnforceImportsCheck::$onError = null;
 
         $mutator = fn ($class) => ltrim($aliases[$class] ?? $class, '\\');
 
-        EnforceImports::setOptions(false, $aliasKeys, $mutator);
+        EnforceImportsCheck::setOptions(false, $aliasKeys, $mutator);
     }
 }
