@@ -9,6 +9,9 @@ class Psr4StatsDTO
      */
     public $stats = [];
 
+    /**
+     * @return self
+     */
     public static function make($stats)
     {
         return MakeDto::make($stats, self::class);

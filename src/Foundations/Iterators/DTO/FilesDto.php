@@ -9,10 +9,13 @@ class FilesDto
      */
     public $files;
 
-    public static function make($data)
+    /**
+     * @return self
+     */
+    public static function make($files)
     {
         $obj = new self();
-        $obj->files = $data;
+        $obj->files = $files;
 
         return $obj;
     }
