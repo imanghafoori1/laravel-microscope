@@ -25,9 +25,11 @@ class EnvCallsCheck implements Check
 
     public static function performCheck(PhpFileDescriptor $file)
     {
-        $errors = self::getErrors($file);
+        if (self::isLikelyConfigFile($file)) {
+            return false;
+        }
 
-        return self::handleErrors($file, $errors);
+        return self::handleErrors($file, self::getErrors($file));
     }
 
     private static function getErrors(PhpFileDescriptor $file)
@@ -45,16 +47,13 @@ class EnvCallsCheck implements Check
                 continue;
             }
 
-            if (self::isLikelyConfigFile($file, $tokens)) {
-                continue;
-            }
-
             yield $index;
         }
     }
 
-    private static function isLikelyConfigFile(PhpFileDescriptor $file, $tokens)
+    private static function isLikelyConfigFile(PhpFileDescriptor $file)
     {
+        $tokens = $file->getTokens();
         [$token] = TokenManager::getNextToken($tokens, 0);
 
         if ($token[0] === T_NAMESPACE) {
