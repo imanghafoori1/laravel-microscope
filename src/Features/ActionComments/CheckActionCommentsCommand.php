@@ -24,9 +24,8 @@ class CheckActionCommentsCommand extends BaseCommand
      * @param  \Imanghafoori\LaravelMicroscope\Foundations\Iterator  $iterator
      * @return void
      */
-    public function handleCommand($iterator, $command)
+    public function handleCommand($iterator)
     {
-        ActionsComments::$command = $command;
         ActionsComments::$controllers = self::findDefinedRouteActions();
         ActionsComments::$allRoutes = app('router')->getRoutes()->getRoutes();
 

@@ -12,11 +12,6 @@ use Imanghafoori\TokenAnalyzer\ClassMethods;
 class ActionsComments implements Check
 {
     /**
-     * @var \Illuminate\Console\Command
-     */
-    public static $command;
-
-    /**
      * @var array<string, string>
      */
     public static $controllers = [];
