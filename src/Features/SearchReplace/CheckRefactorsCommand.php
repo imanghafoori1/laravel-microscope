@@ -29,8 +29,6 @@ class CheckRefactorsCommand extends Command
 
         Filters::$filters['is_sub_class_of'] = IsSubClassOf::class;
 
-        $errorPrinter->printer = $this->output;
-
         try {
             $patterns = require base_path('/search_replace.php');
         } catch (ErrorException $e) {
@@ -60,7 +58,7 @@ class CheckRefactorsCommand extends Command
 
         PatternRefactorings::$patterns = $parsedPatterns;
         $checkSet = CheckSet::initParams([PatternRefactorings::class], $this);
-        $iterator = new Iterator($checkSet, $this->getOutput());
+        $iterator = new Iterator($checkSet);
 
         $iterator->printAll([
             $iterator->forComposerLoadedFiles(),
@@ -102,7 +100,7 @@ class CheckRefactorsCommand extends Command
                 if (isset($pattern['tags'])) {
                     $tags = $pattern['tags'];
                     is_string($tags) && $tags = explode(',', $tags);
-                    if (in_array($tag, $tags)) {
+                    if (in_array($tag, $tags, true)) {
                         $filteredPatterns[$key] = $pattern;
                     }
                 }

@@ -2,22 +2,34 @@
 
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
-use Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
+use Imanghafoori\LaravelMicroscope\Foundations\ConsoleWriter;
 
-class Printer
+class Printer implements ConsoleWriter
 {
+    private $output;
+
+    public function __construct($output)
+    {
+        $this->output = $output;
+    }
+
+    public function writeln($string)
+    {
+        $this->output->writeln($string);
+    }
+
     /**
      * @param  array|\Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO\AutoloadStats  $messages
-     * @param  $output
      * @return void
      */
-    public static function printAll($messages, $output): void
+    public static function printAll($messages): void
     {
         foreach ($messages as $message) {
             if (is_string($message)) {
-                $output->write($message);
+                Console::getInstance()->write($message);
             } else {
-                self::printAll($message, $output);
+                self::printAll($message);
             }
         }
     }

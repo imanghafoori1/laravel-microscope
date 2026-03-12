@@ -22,12 +22,9 @@ class Iterator
      */
     public $checkSet;
 
-    private $output;
-
-    public function __construct($checkSet, $output)
+    public function __construct($checkSet)
     {
         $this->checkSet = $checkSet;
-        $this->output = $output;
     }
 
     /**
@@ -105,6 +102,6 @@ class Iterator
 
     public function printAll($messages): void
     {
-        Printer::printAll($messages, $this->output);
+        Printer::printAll($messages);
     }
 }

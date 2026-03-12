@@ -39,8 +39,9 @@ class AnonymizeMigrationsCommand extends BaseCommand
         $version = self::$laravelVersion ?: app()->version();
 
         if (version_compare('8.37.0', $version) !== -1) {
-            Console::getInstance()->writeln(Color::yellow('"Anonymous migrations"').' are supported only in laravel v8.37 or above.');
-            Console::getInstance()->writeln('You are currently on laravel version: '.Color::yellow($version));
+            $write = fn ($str) => Console::getInstance()->writeln($str);
+            $write(Color::yellow('"Anonymous migrations"').' are supported only in laravel v8.37 or above.');
+            $write('You are currently on laravel version: '.Color::yellow($version));
 
             return 0;
         }

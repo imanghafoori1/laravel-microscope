@@ -3,6 +3,7 @@
 namespace Imanghafoori\LaravelMicroscope\ErrorReporters;
 
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -24,7 +25,7 @@ class ErrorPrinter
     /**
      * The output interface implementation.
      *
-     * @var \Illuminate\Console\OutputStyle
+     * @var \Imanghafoori\LaravelMicroscope\Foundations\ConsoleWriter
      */
     public $printer;
 
@@ -61,11 +62,12 @@ class ErrorPrinter
     /**
      * @return self
      */
-    public static function singleton($output = null)
+    public static function singleton()
     {
-        is_null(self::$instance) && (self::$instance = new self);
-
-        $output && (self::$instance->printer = $output);
+         if (is_null(self::$instance)) {
+            self::$instance = new self;
+            self::$instance->printer = new Printer(Console::getInstance());
+        }
 
         return self::$instance;
     }

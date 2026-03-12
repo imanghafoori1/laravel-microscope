@@ -42,7 +42,6 @@ class BaseCommand extends Command
         }
 
         $this->errorPrinter = ErrorPrinter::singleton();
-        $this->errorPrinter->printer = $this->getOutput();
         $this->confirmer = $this->options = CheckSet::$options = $this;
         $this->checkSet = $this->getCheckSet();
 
@@ -53,7 +52,7 @@ class BaseCommand extends Command
         }
 
         /*----------------------------------------------*/
-        $this->handleCommand($this->getIterator(), $this);
+        $this->handleCommand($this->getIterator());
         /*----------------------------------------------*/
         CachedFiles::writeCacheFiles();
 
@@ -111,6 +110,6 @@ class BaseCommand extends Command
 
     private function getIterator(): Iterator
     {
-        return new Iterator($this->checkSet, $this->getOutput());
+        return new Iterator($this->checkSet);
     }
 }

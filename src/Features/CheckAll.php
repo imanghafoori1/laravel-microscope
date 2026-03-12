@@ -16,7 +16,6 @@ class CheckAll extends Command
     public function handle(ErrorPrinter $errorPrinter)
     {
         $t1 = microtime(true);
-        $errorPrinter->printer = $this->output;
 
         // Turns off error logging.
         $errorPrinter->logErrors = false;
@@ -35,7 +34,7 @@ class CheckAll extends Command
         $errorPrinter->logErrors = true;
 
         $duration = microtime(true) - $t1;
-        $errorPrinter->printer->writeln(self::getTimeMsg($duration), 2);
+        $errorPrinter->printer->writeln(self::getTimeMsg($duration));
 
         return $errorPrinter->hasErrors() ? 1 : 0;
     }
