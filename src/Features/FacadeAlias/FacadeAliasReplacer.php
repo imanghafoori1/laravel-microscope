@@ -145,7 +145,9 @@ class FacadeAliasReplacer
 
     private static function isAlreadyImported($imports, $alias)
     {
-        return isset($imports[class_basename($alias)]) && $imports[class_basename($alias)][0] === $alias;
+        $basename = class_basename($alias);
+
+        return isset($imports[$basename]) && $imports[$basename][0] === $alias;
     }
 
     private static function replaceWithAs($base, $aliases, $tokens)

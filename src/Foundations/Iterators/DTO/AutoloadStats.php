@@ -2,7 +2,10 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations\Iterators\DTO;
 
-class AutoloadStats
+use ArrayIterator;
+use IteratorAggregate;
+
+class AutoloadStats implements IteratorAggregate
 {
     /**
      * @var array<int, array<int, string|\Generator<int, string>>>
@@ -20,5 +23,10 @@ class AutoloadStats
     public function add($msg)
     {
         $this->stats[] = $msg;
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->stats);
     }
 }

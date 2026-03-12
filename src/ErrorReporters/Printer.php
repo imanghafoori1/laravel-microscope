@@ -13,10 +13,6 @@ class Printer
      */
     public static function printAll($messages, $output): void
     {
-        if (is_a($messages, AutoloadStats::class)) {
-            $messages = $messages->stats;
-        }
-
         foreach ($messages as $message) {
             if (is_string($message)) {
                 $output->write($message);

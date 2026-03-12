@@ -132,9 +132,10 @@ class ErrorPrinter
 
     public static function getLink($path, $lineNumber = 4)
     {
+        $green = fn ($str) => Color::green($str);
         $relativePath = FilePath::normalize(trim($path, '\\/'));
 
-        return 'at '.Color::green($relativePath).':'.Color::green($lineNumber);
+        return 'at '.$green($relativePath).':'.$green($lineNumber);
     }
 
     /**
