@@ -6,6 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsEqualOrSub;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternRefactorings;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
+use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\LaravelPaths\LaravelPaths;
@@ -31,14 +33,14 @@ class AnonymizeMigrationsCommand extends BaseCommand
 
     public static $laravelVersion;
 
-    public function handleCommand($iterator, $command)
+    public function handleCommand()
     {
         Filters::$filters['is_a'] = IsEqualOrSub::class;
         $version = self::$laravelVersion ?: app()->version();
 
         if (version_compare('8.37.0', $version) !== -1) {
-            $command->info('Anonymous migrations are supported in laravel 8.37 and above.');
-            $command->info('You are currently on laravel version: '.$version);
+            Console::getInstance()->writeln(Color::yellow('"Anonymous migrations"').' are supported only in laravel v8.37 or above.');
+            Console::getInstance()->writeln('You are currently on laravel version: '.Color::yellow($version));
 
             return 0;
         }
