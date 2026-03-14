@@ -10,8 +10,9 @@ class BladeQueryHandler
 {
     public static function handle(PhpFileDescriptor $file, $class, $lineNumber)
     {
+        $class = Color::blue($class);
         ErrorPrinter::singleton()->simplePendError(
-            Color::blue($class).'  <=== DB query in blade file',
+            "$class  <=== DB query in blade file",
             $file,
             $lineNumber,
             'queryInBlade',
