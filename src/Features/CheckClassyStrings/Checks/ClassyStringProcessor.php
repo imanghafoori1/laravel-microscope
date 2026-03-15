@@ -39,14 +39,14 @@ class ClassyStringProcessor
     }
 
 
-    private static function error($token, PhpFileDescriptor $file, $lineNum): void
+    private static function error($class, PhpFileDescriptor $file, $lineNum): void
     {
         ErrorPrinter::singleton()->simplePendError(
-            $token,
+            $class,
             $file,
             $lineNum,
-            'wrongUsedClassError',
-            'Class does not exist:'
+            'wrongStringyClassError',
+            CheckStringyMsg::classDoesNotExist($class)
         );
     }
 
@@ -88,12 +88,12 @@ class ClassyStringProcessor
 
     private static function performReplacementProcess($classyString, $classPath, PhpFileDescriptor $file)
     {
-        $command = Console::getInstance();
-        $command->writeln(CheckStringyMsg::successfulReplacementMsg($classPath));
+        $console = Console::getInstance();
+        $console->writeln(CheckStringyMsg::successfulReplacementMsg($classPath));
 
         // todo: should replace tokens not the file contents.
         FileManipulator::replaceFirst($file->getAbsolutePath(), $classyString, $classPath);
 
-        $command->writeln(ErrorPrinter::lineSeparator());
+        $console->writeln(ErrorPrinter::lineSeparator());
     }
 }

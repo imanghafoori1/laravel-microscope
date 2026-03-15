@@ -23,6 +23,11 @@ class CheckStringyMsg
     #[Pure(true)]
     public static function getLineContents($lineNumber, PhpFileDescriptor $file)
     {
-        return $lineNumber.' |'.$file->getLine($lineNumber);
+        return "$lineNumber |".$file->getLine($lineNumber);
+    }
+
+    public static function classDoesNotExist($class)
+    {
+        return "Class '$class' does not exist:";
     }
 }
