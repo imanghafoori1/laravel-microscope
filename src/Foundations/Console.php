@@ -107,4 +107,17 @@ class Console
             self::$pause && usleep(self::$pause);
         }
     }
+
+    public static function recoredWrites()
+    {
+        self::$instance = new class
+        {
+            public $msg = [];
+
+            public function write($msg)
+            {
+                $this->msg[] = $msg;
+            }
+        };
+    }
 }
