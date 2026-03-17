@@ -36,8 +36,10 @@ class ComposerJsonReport
         $max = max(array_map('strlen', array_keys(ComposerJson::readPsr4()[$composerPath])));
 
         $lines = [];
-        $lines[] = PHP_EOL.self::formatComposerPath($composerPath);
-        $lines[] = PHP_EOL.self::hyphen(Color::boldYellow('PSR-4'));
+        $lines[] = PHP_EOL;
+        $lines[] = self::formatComposerPath($composerPath);
+        $lines[] = PHP_EOL;
+        $lines[] = self::hyphen(Color::boldYellow('PSR-4'));
         $lines[] = AutoloadMessages\Psr4Stats::getLines($psr4Stat, $max);
 
         if ($classMapStat) {
