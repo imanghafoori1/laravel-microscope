@@ -21,10 +21,11 @@ class Psr4Stats
         $lines = [];
 
         foreach ($psr4Stats->stats as $psr4Namespace => $psr4Paths) {
-            $lines[0] = PHP_EOL.self::getPsr4Head();
-            $lines[1] = Color::red(self::getPsr4($max, $psr4Namespace));
+            $lines[0] = PHP_EOL;
+            $lines[1] = self::getPsr4Head();
+            $lines[2] = Color::red(self::getPsr4($max, $psr4Namespace));
 
-            yield implode('', $lines);
+            yield $lines;
 
             // consumes the generator:
             foreach ($psr4Paths as $path => $countClasses) {
