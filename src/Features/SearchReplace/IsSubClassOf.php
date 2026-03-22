@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\TokenAnalyzer\GetClassProperties;
 use Imanghafoori\TokenAnalyzer\ParseUseStatement;
+use Throwable;
 
 class IsSubClassOf implements Check
 {
@@ -12,7 +13,11 @@ class IsSubClassOf implements Check
     {
         $fullClassPath = self::getFullClassPath($placeholderVal[1], $tokens);
 
-        return is_subclass_of($fullClassPath, $parameter);
+        try {
+            return is_subclass_of($fullClassPath, $parameter);
+        } catch (Throwable $t) {
+            return false;
+        }
     }
 
     private static function getFullClassPath($classRef, $tokens): string

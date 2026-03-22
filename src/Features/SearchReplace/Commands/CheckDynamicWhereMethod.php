@@ -95,7 +95,7 @@ class CheckDynamicWhereMethod extends BaseCommand
         return [
             'pattern_name_1' => [
                 'search' => '<class_ref>::<name>(',
-                'replace' => '<1>::query()->where(<2>, ',
+                'replace' => '<1>::where(<2>, ',
                 'filters' => [
                     1 => [
                         'is_subclass_of' => Model::class,
@@ -124,7 +124,6 @@ class CheckDynamicWhereMethod extends BaseCommand
                     return $matches;
                 },
             ],
-
         ];
     }
 
