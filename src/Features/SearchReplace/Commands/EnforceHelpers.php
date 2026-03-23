@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\SearchReplace\Commands;
 
-use Imanghafoori\LaravelMicroscope\Features\SearchReplace\FullNamespaceIs;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\IsSubClassOf;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\NamespaceIs;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\PatternApply;
@@ -28,7 +27,6 @@ class EnforceHelpers extends BaseCommand
     {
         parent::__construct();
         Filters::$filters['is_subclass_of'] = IsSubClassOf::class;
-        Filters::$filters['full_namespace_pattern'] = FullNamespaceIs::class;
         Filters::$filters['namespace_pattern'] = NamespaceIs::class;
     }
 
@@ -52,7 +50,7 @@ class EnforceHelpers extends BaseCommand
                     ],
                 ],
                 'mutator' => function ($matches) {
-                    $value = trim(strtolower($matches[0][1]), '\\');
+                    $value = strtolower(trim($matches[0][1], '\\'));
                     $matches[0][1] = str_replace('illuminate\\support\\facades\\', '', $value);
 
                     return $matches;
