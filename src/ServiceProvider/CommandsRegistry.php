@@ -8,7 +8,7 @@ trait CommandsRegistry
 {
     private static $commandNames = [
         Features\CheckFacadeDocblocks\CheckFacadeDocblocksCommand::class,
-        Features\CheckGates\CheckGates::class,
+        Features\CheckGates\CheckGatesCommand::class,
         Features\CheckRoutes\CheckRoutesCommand::class,
         Features\CheckView\CheckViewsCommand::class,
         Features\Psr4\Console\CheckPsr4ArtisanCommand::class,
