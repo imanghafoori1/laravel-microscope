@@ -74,8 +74,8 @@ class ClassyStringProcessor
      */
     private static function ask($lineNumber, $classPath, PhpFileDescriptor $file)
     {
-        Console::getInstance()->text(PHP_EOL.CheckStringyMsg::getLineContents($lineNumber, $file));
-        Console::getInstance()->text(ErrorPrinter::getLink($file->getAbsolutePath(), $lineNumber));
+        Console::getInstance()->writeln(PHP_EOL.CheckStringyMsg::getLineContents($lineNumber, $file));
+        Console::getInstance()->writeln(ErrorPrinter::getLink($file->getAbsolutePath(), $lineNumber));
 
         return Console::confirm(CheckStringyMsg::question($classPath));
     }

@@ -113,9 +113,16 @@ class Console
         {
             public $msg = [];
 
+            public $writeln = [];
+
             public function write($msg)
             {
                 $this->msg[] = $msg;
+            }
+
+            public function writeln($msg)
+            {
+                $this->writeln[] = $msg;
             }
         };
     }
