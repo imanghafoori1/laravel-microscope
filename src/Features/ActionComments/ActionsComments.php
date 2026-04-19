@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\ActionComments;
 
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Features\CheckDeadControllers\DeadControllerActions;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -64,10 +65,16 @@ class ActionsComments implements Check
             }
         }
 
-        $question = ActionCommentMsg::getQuestion($fullNamespace);
+        $question = self::getQuestion($fullNamespace);
+
         if ($shouldSave && Console::confirm($question)) {
             $file->saveTokens($tokens);
         }
+    }
+
+    private static function getQuestion($fullNamespace): string
+    {
+        return 'Add route definition into the: '.Color::yellow($fullNamespace);
     }
 
     public static function getCallsiteInfo($methods, $route)
