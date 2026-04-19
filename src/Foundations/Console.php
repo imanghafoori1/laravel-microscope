@@ -44,9 +44,9 @@ class Console
 
     public static function warn($msg)
     {
-        self::$warned[]  = $msg;
+        self::$warned[] = $msg;
 
-        (self::$instance)->warning($msg);
+        self::$instance->warning($msg);
     }
 
     public static function fakeAnswer(string $question, bool $default = true)
@@ -78,8 +78,7 @@ class Console
             self::$instance = self::askUserObject();
         }
 
-
-        (self::$instance)->writeln($messages);
+        self::$instance->writeln($messages);
     }
 
     /**

@@ -16,7 +16,7 @@ class CheckDD implements Check
     private static $cacheKey = 'check_dd_command';
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return bool
      */
     public static function performCheck(PhpFileDescriptor $file)
@@ -27,7 +27,7 @@ class CheckDD implements Check
     }
 
     /**
-     * @param \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor $file
+     * @param  \Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor  $file
      * @return \Generator<int, int>
      */
     private static function getErrors(PhpFileDescriptor $file)

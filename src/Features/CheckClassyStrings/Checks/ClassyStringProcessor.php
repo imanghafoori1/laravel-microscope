@@ -2,7 +2,6 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckClassyStrings\Checks;
 
-
 use Generator;
 use ImanGhafoori\ComposerJson\NamespaceCalculator;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
@@ -11,6 +10,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\FileManipulator;
+
 use function class_basename;
 
 class ClassyStringProcessor
@@ -37,7 +37,6 @@ class ClassyStringProcessor
 
         return isset($token);
     }
-
 
     private static function error($class, PhpFileDescriptor $file, $lineNum): void
     {

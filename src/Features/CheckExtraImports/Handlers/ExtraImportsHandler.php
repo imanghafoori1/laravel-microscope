@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Handlers;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
+
 use function class_basename;
 
 class ExtraImportsHandler
