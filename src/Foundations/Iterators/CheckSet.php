@@ -40,6 +40,8 @@ class CheckSet
 
     public static $options;
 
+    public $checkedFilesCount = 0;
+
     public static function initParams($checks, $options): CheckSet
     {
         return CheckSet::init($checks, PathFilterDTO::makeFromOption($options));
@@ -82,7 +84,7 @@ class CheckSet
         $this->pathDTO && $finder = self::filterFiles($finder, $this->pathDTO);
 
         $filesCount = Loop::walkCount($finder, fn ($fileObj) => $this->applyChecks($fileObj));
-        ChecksOnPsr4Classes::$checkedFilesCount += $filesCount;
+        $this->checkedFilesCount += $filesCount;
 
         return $filesCount;
     }

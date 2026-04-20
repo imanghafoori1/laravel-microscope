@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Foundations;
 
 use Imanghafoori\LaravelMicroscope\ErrorReporters\MessageBuilders\LaravelFoldersReport;
 use Imanghafoori\LaravelMicroscope\ErrorReporters\Printer;
+use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedClassMaps;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForAutoloadedPsr4Classes;
 use Imanghafoori\LaravelMicroscope\Foundations\Iterators\ForBladeFiles;
@@ -103,5 +104,18 @@ class Iterator
     public function printAll($messages): void
     {
         Printer::printAll($messages);
+    }
+
+    public function getFilesStats()
+    {
+        $count = $this->checkSet->checkedFilesCount;
+
+        if ($count > 0) {
+            $es = $count === 1 ? '' : 'es';
+
+            return CheckImportReporter::blue($count)."class$es".PHP_EOL;
+        } else {
+            return '';
+        }
     }
 }

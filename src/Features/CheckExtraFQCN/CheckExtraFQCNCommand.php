@@ -5,12 +5,9 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckExtraFQCN;
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 
 class CheckExtraFQCNCommand extends BaseCommand
 {
-    use FilesStats;
-
     protected $signature = 'check:extra_fqcn
         {--fix : Fix references}
         {--class= : Only fixes references of the specified class names}
@@ -45,7 +42,7 @@ class CheckExtraFQCNCommand extends BaseCommand
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),
-            self::getFilesStats(),
+            $iterator->getFilesStats(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),
             PHP_EOL,

@@ -10,13 +10,10 @@ use Imanghafoori\LaravelMicroscope\Features\CheckImports\Handlers\WrongClassRefs
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Reporters\CheckImportReporter;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 use Imanghafoori\TokenAnalyzer\ImportsAnalyzer;
 
 class CheckImportsCommand extends BaseCommand
 {
-    use FilesStats;
-
     protected $signature = 'check:imports
         {--force : fixes without asking}
         {--w|wrong : This flag is deprecated and has no effect.}
@@ -77,7 +74,7 @@ class CheckImportsCommand extends BaseCommand
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),
-            self::getFilesStats(),
+            $iterator->getFilesStats(),
             $iterator->forBladeFiles(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),

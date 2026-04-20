@@ -8,12 +8,9 @@ use Imanghafoori\LaravelMicroscope\Features\CheckExtraImports\Reporters\CheckImp
 use Imanghafoori\LaravelMicroscope\Features\CheckImports\Cache;
 use Imanghafoori\LaravelMicroscope\Foundations\BaseCommand;
 use Imanghafoori\LaravelMicroscope\Foundations\PathFilterDTO;
-use Imanghafoori\LaravelMicroscope\Foundations\Reports\FilesStats;
 
 class CheckExtraImportsCommand extends BaseCommand
 {
-    use FilesStats;
-
     protected $signature = 'check:extra_imports
         {--force : fixes without asking}
         {--f|file= : Pattern for file names to scan}
@@ -56,7 +53,7 @@ class CheckExtraImportsCommand extends BaseCommand
             $iterator->forComposerLoadedFiles(),
             PHP_EOL,
             CheckImportReporter::header(),
-            self::getFilesStats(),
+            $iterator->getFilesStats(),
             $iterator->forBladeFiles(),
             $iterator->forMigrationsAndConfigs(),
             $iterator->forRoutes(),

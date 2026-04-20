@@ -15,11 +15,6 @@ class ChecksOnPsr4Classes
     public static $errorExceptionHandler = ErrorExceptionHandler::class;
 
     /**
-     * @var positive-int
-     */
-    public static $checkedFilesCount = 0;
-
-    /**
      * @var \Imanghafoori\LaravelMicroscope\Foundations\Iterators\CheckSet
      */
     private static $check;
