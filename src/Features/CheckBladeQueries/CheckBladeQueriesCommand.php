@@ -30,7 +30,7 @@ class CheckBladeQueriesCommand extends BaseCommand
     {
         // checks the blade files for database queries.
         $iterator->printAll([
-            $iterator->forBladeFiles()
+            $iterator->forBladeFiles(),
         ]);
     }
 }
