@@ -29,6 +29,8 @@ class CheckBladeQueriesCommand extends BaseCommand
     public function handleCommand($iterator)
     {
         // checks the blade files for database queries.
-        $iterator->printAll([$iterator->forBladeFiles()]);
+        $iterator->printAll([
+            $iterator->forBladeFiles()
+        ]);
     }
 }
