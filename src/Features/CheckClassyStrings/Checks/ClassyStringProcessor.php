@@ -19,6 +19,7 @@ class ClassyStringProcessor
     {
         foreach ($tokens as [$token, $classPath]) {
             $lineNum = $token[2];
+
             if (! class_exists($classPath)) {
                 if (self::refersToDir($classPath)) {
                     continue;
@@ -75,7 +76,7 @@ class ClassyStringProcessor
     private static function ask($lineNumber, $classPath, PhpFileDescriptor $file)
     {
         Console::getInstance()->writeln(PHP_EOL.CheckStringyMsg::getLineContents($lineNumber, $file));
-        Console::getInstance()->writeln(ErrorPrinter::getLink($file->getAbsolutePath(), $lineNumber));
+        Console::getInstance()->writeln(ErrorPrinter::getLink($file->relativePath(), $lineNumber));
 
         return Console::confirm(CheckStringyMsg::question($classPath));
     }
