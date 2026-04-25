@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEarlyReturns;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
@@ -34,11 +35,23 @@ class CheckEarlyReturn implements Check
         }
 
         if (self::$noFix) {
-            Console::getInstance()->writeln(PHP_EOL.'    - '.Color::red($file->relativePath()));
+            ErrorPrinter::singleton()->simplePendError(
+                $file->relativePath(),
+                $file,
+                1,
+                'early',
+                'code needs refactor'
+            );
         } elseif (self::getConfirm($file)) {
             $file->saveTokens($tokens);
 
-            self::printFixMsg($file, $fixes);
+            ErrorPrinter::singleton()->simplePendError(
+                self::printFixMsg($file, $fixes),
+                $file,
+                1,
+                'early',
+                'code was refactored'
+            );
         }
     }
 
@@ -63,8 +76,7 @@ class CheckEarlyReturn implements Check
     {
         $s = $fixes > 1 ? 'es' : '';
         $file = Color::blue($file->getFileName());
-        $msg = PHP_EOL.Color::red($fixes)." fix$s applied to: $file";
 
-        Console::getInstance()->writeln($msg);
+        return PHP_EOL.Color::red($fixes)." fix$s applied to: $file";
     }
 }
