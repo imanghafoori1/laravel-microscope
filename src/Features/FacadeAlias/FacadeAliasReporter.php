@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
-use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 
 class FacadeAliasReporter
@@ -12,14 +12,9 @@ class FacadeAliasReporter
 
     public static function handle(PhpFileDescriptor $file, $usageInfo, $base, $alias)
     {
-        $relativePath = $file->relativePath();
+        $message = Color::red($base).' for '.Color::yellow($alias);
 
-        $message = '   '.Color::red('Facade alias').': '.Color::yellow($base).' for '.Color::yellow($alias);
-
-        $output = Console::getInstance();
-        $output->writeln($message);
-        $output->writeln('   at '.Color::green($relativePath).':'.$usageInfo[1]);
-        $output->writeln('   ');
+        ErrorPrinter::singleton()->simplePendError($message, $file, $usageInfo[1], 'facade_alias', 'Alias found:');
 
         self::$errorCount++;
     }

@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\FacadeAlias;
 
 use Generator;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Features\SearchReplace\CachedFiles;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\LaravelMicroscope\Foundations\UseStatementParser;
@@ -31,6 +32,7 @@ class FacadeAliasesCheck implements Check
         }
 
         foreach (self::findAliases($file) as $data) {
+            ErrorPrinter::singleton()->count++;
             self::$handler::handle($file, ...$data);
         }
 
