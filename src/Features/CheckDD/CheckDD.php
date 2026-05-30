@@ -42,7 +42,9 @@ class CheckDD implements Check
                 continue;
             }
 
-            if (($index = FunctionCall::isGlobalCall('dd', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('dump', $tokens, $i)) || ($index = FunctionCall::isGlobalCall('ddd', $tokens, $i))) {
+            $getCall = fn ($functionName) => FunctionCall::isGlobalCall($functionName, $tokens, $i);
+
+            if (($index = $getCall('dd')) || ($index = $getCall('dump')) || ($index = $getCall('ddd'))) {
                 yield $index;
             }
         }
