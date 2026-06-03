@@ -37,10 +37,10 @@ class CheckEndIfSyntax implements Check
         if ($hasChange && (! self::$ask || self::getConfirm($file))) {
             $file->saveTokens($tokens);
 
-            return true;
+            return false;
         }
 
-        return false;
+        return (bool) $hasChange;
     }
 
     private static function getConfirm(PhpFileDescriptor $file)
