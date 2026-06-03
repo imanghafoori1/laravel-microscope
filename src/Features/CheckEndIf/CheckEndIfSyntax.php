@@ -5,6 +5,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEndIf;
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
+use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Console;
 use Imanghafoori\LaravelMicroscope\Foundations\PhpFileDescriptor;
 use Imanghafoori\TokenAnalyzer\SyntaxNormalizer;
@@ -24,15 +25,14 @@ class CheckEndIfSyntax implements Check
 
         try {
             $tokens = SyntaxNormalizer::normalizeSyntax($tokens, true);
+            $hasChange = SyntaxNormalizer::$hasChange;
             // @codeCoverageIgnoreStart
         } catch (Exception $e) {
-            self::requestIssue($file->getAbsolutePath());
-
             return false;
         }
         // @codeCoverageIgnoreEnd
 
-        if (SyntaxNormalizer::$hasChange && self::getConfirm($file)) {
+        if ($hasChange && self::getConfirm($file)) {
             $file->saveTokens($tokens);
 
             return true;
@@ -43,16 +43,11 @@ class CheckEndIfSyntax implements Check
 
     private static function getConfirm(PhpFileDescriptor $file)
     {
-        return Console::confirm(CheckEndIfMsg::confirm($file));
+        return Console::confirm(self::confirm($file));
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
-    private static function requestIssue($path)
+    public static function confirm(PhpFileDescriptor $file)
     {
-        dump('(O_o)   Well, It seems we had some problem parsing the contents of:   (o_O)');
-        dump('Submit an issue on github: https://github.com/imanghafoori1/microscope');
-        dump('Send us the contents of: '.$path);
+        return 'Replacing endif in: '.Color::blue($file->relativePath());
     }
 }
