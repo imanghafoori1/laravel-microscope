@@ -4,6 +4,7 @@ namespace Imanghafoori\LaravelMicroscope\Features\CheckEndIf;
 
 use Exception;
 use Imanghafoori\LaravelMicroscope\Check;
+use Imanghafoori\LaravelMicroscope\ErrorReporters\ErrorPrinter;
 use Imanghafoori\LaravelMicroscope\Foundations\CachedCheck;
 use Imanghafoori\LaravelMicroscope\Foundations\Color;
 use Imanghafoori\LaravelMicroscope\Foundations\Console;
@@ -33,6 +34,10 @@ class CheckEndIfSyntax implements Check
             return false;
         }
         // @codeCoverageIgnoreEnd
+
+        if ($hasChange) {
+            ErrorPrinter::singleton()->count++;
+        }
 
         if ($hasChange && (! self::$ask || self::getConfirm($file))) {
             $file->saveTokens($tokens);
