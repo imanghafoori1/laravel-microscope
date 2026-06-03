@@ -6,7 +6,7 @@ use Imanghafoori\LaravelMicroscope\Foundations\Reports\LineSeperator;
 
 class Color
 {
-    public static $color = true;
+    public static bool $color = true;
 
     /**
      * @param  string  $msg
