@@ -19,6 +19,8 @@ class CheckEndIfSyntax implements Check
 
     public static bool $ask = true;
 
+    public static bool $nofix = false;
+
     public static function performCheck(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
@@ -35,17 +37,25 @@ class CheckEndIfSyntax implements Check
         }
         // @codeCoverageIgnoreEnd
 
-        if ($hasChange) {
-            ErrorPrinter::singleton()->count++;
-        }
-
-        if ($hasChange && (! self::$ask || self::getConfirm($file))) {
-            $file->saveTokens($tokens);
-
+        if (! $hasChange) {
             return false;
         }
 
-        return (bool) $hasChange;
+        if (self::$nofix) {
+            ErrorPrinter::singleton()->simplePendError('', $file, 4, 'ruby', 'Ruby like syntax found:');
+
+            return true;
+        }
+
+        ErrorPrinter::singleton()->count++;
+
+        if (self::$ask && ! self::getConfirm($file)) {
+            return true;
+        }
+
+        $file->saveTokens($tokens);
+
+        return false;
     }
 
     private static function getConfirm(PhpFileDescriptor $file)
