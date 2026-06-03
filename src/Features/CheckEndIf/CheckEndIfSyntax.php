@@ -16,6 +16,8 @@ class CheckEndIfSyntax implements Check
 
     public static $cacheKey = 'check_ruby_syntax';
 
+    public static bool $ask = true;
+
     public static function performCheck(PhpFileDescriptor $file)
     {
         $tokens = $file->getTokens();
@@ -32,7 +34,7 @@ class CheckEndIfSyntax implements Check
         }
         // @codeCoverageIgnoreEnd
 
-        if ($hasChange && self::getConfirm($file)) {
+        if ($hasChange && (! self::$ask || self::getConfirm($file))) {
             $file->saveTokens($tokens);
 
             return true;
