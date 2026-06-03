@@ -168,6 +168,8 @@ jobs:
 
       - name: Configure Laravel 11 and local package
         timeout-minutes: 2
+        env:
+          COMPOSER_POLICY_ADVISORIES_BLOCK: false
         run: |
           cd laravel-app
           
