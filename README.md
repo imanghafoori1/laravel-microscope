@@ -894,4 +894,4 @@ This project exists thanks to all the people who contribute. [[Contributors](htt
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=imanghafoori1/laravel-microscope&type=Date)](https://star-history.com/#imanghafoori1/laravel-microscope&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=imanghafoori1/laravel-microscope&type=Date)](https://star-history.dera.page/#imanghafoori1/laravel-microscope&Date)
