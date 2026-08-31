@@ -2,7 +2,7 @@
 
 namespace Imanghafoori\LaravelMicroscope\Foundations;
 
-use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\BasePath;
+use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 
 class Path
 {
@@ -31,9 +31,7 @@ class Path
 
     public function relativePath()
     {
-        $relPath = str_replace(BasePath::$path, '', $this->path);
-
-        return self::make(trim($relPath, DIRECTORY_SEPARATOR));
+        return self::make(FilePath::getRelativePath($this->path));
     }
 
     private static function removeTrailingSlash($path): string
