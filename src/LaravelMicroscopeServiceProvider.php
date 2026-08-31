@@ -140,6 +140,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         LineSeperator::$color = ((int) $major >= 10 ? 'gray' : 'blue');
     }
 
+    /**
+     * @return void
+     */
     private function setBasePath()
     {
         ComposerJson::$composer = fn () => Composer::make(
@@ -149,6 +152,9 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * @return void
+     */
     private function addCacheStore()
     {
         config()->set('cache.stores.|-microscope-|', [
