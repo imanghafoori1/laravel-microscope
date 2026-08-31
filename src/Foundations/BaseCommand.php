@@ -92,22 +92,6 @@ class BaseCommand extends Command
         return CheckSet::initParam($this->checks);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
-    public function output($output)
-    {
-        $this->output = $output;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function input($input)
-    {
-        $this->input = $input;
-    }
-
     private function getIterator(): Iterator
     {
         return new Iterator($this->checkSet);
