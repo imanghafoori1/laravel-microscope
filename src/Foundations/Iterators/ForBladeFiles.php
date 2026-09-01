@@ -13,6 +13,9 @@ use Imanghafoori\LaravelMicroscope\Foundations\Loop;
 
 class ForBladeFiles implements Check
 {
+    /**
+     * @var array<string, string[]>
+     */
     public static $paths;
 
     /**
@@ -22,7 +25,7 @@ class ForBladeFiles implements Check
     public static function check($checkSet)
     {
         self::withoutComponentTags();
-        $mapper = fn ($paths) => BladeStatDto::make(CheckBladePaths::checkPaths($paths, $checkSet));
+        $mapper = static fn ($paths) => BladeStatDto::make(CheckBladePaths::checkPaths($paths, $checkSet));
 
         return Loop::map(self::getViewsPaths(), $mapper);
     }
@@ -32,7 +35,11 @@ class ForBladeFiles implements Check
      */
     public static function getViewsPaths()
     {
-        return self::normalizeAndFilterVendorPaths(self::$paths);
+        // normalize and filter vendor paths:
+        return Loop::map(
+            self::$paths,
+            static fn ($paths) => self::filterPaths($paths)
+        );
     }
 
     /**
@@ -61,14 +68,5 @@ class ForBladeFiles implements Check
                 yield $path;
             }
         }
-    }
-
-    /**
-     * @param  array<string, string[]>  $pathsList
-     * @return array<string, \Generator<int, string>>
-     */
-    private static function normalizeAndFilterVendorPaths(array $pathsList)
-    {
-        return Loop::map($pathsList, fn ($paths) => self::filterPaths($paths));
     }
 }

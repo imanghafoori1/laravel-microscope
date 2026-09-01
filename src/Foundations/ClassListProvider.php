@@ -53,7 +53,7 @@ class ClassListProvider
     {
         $sp = DIRECTORY_SEPARATOR;
         $path1 = BasePath::$path;
-        $path2 = base_path('vendor'.$sp.'laravel'.$sp.'framework');
+        $path2 = $path1.$sp.'vendor'.$sp.'laravel'.$sp.'framework';
 
         return [
             $path1 => Foundations\Analyzers\ComposerJson::make()->readAutoload(),
@@ -77,8 +77,7 @@ class ClassListProvider
         $t = str_replace('.php', '', [$ns, $fileName]);
         $t = str_replace('/', '\\', $t); // for linux environments.
 
-        $classBaseName = $t[1];
-        $fullClassPath = $t[0];
+        [$fullClassPath, $classBaseName] = $t;
 
         return [$classBaseName, trim($fullClassPath, '\\')];
     }
