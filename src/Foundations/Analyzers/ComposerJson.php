@@ -48,7 +48,7 @@ class ComposerJson
     {
         return Loop::map(
             self::make()->readAutoloadClassMap(),
-            fn ($classMapPaths, $composerPath) => self::getFilteredClasses($composerPath, $classMapPaths, $pathDTO)
+            static fn ($classMapPaths, $composerPath) => self::getFilteredClasses($composerPath, $classMapPaths, $pathDTO)
         );
     }
 
@@ -90,8 +90,8 @@ class ComposerJson
     {
         return Loop::mapIf(
             $paths,
-            fn ($path) => FilePath::contains(FilePath::getRelativePath($path), $pathDTO),
-            fn ($val, $key) => [$key => $val]
+            static fn ($path) => FilePath::contains(FilePath::getRelativePath($path), $pathDTO),
+            static fn ($val, $key) => [$key => $val]
         );
     }
 }

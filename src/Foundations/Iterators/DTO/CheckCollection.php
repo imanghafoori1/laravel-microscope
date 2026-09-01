@@ -13,7 +13,7 @@ class CheckCollection
 
     public function applyOnFile($fileDescriptor)
     {
-        Loop::over($this->checks, fn ($check) => $check::check($fileDescriptor));
+        Loop::over($this->checks, static fn ($check) => $check::check($fileDescriptor));
     }
 
     /**

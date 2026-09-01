@@ -63,7 +63,7 @@ class ComposerJsonReport
      */
     public static function formatAutoloads($psr4Stats, $classMapStats, $filesStat = [])
     {
-        return AutoloadStats::make(Loop::map($psr4Stats, fn ($psr4Stat, $key) => self::present(
+        return AutoloadStats::make(Loop::map($psr4Stats, static fn ($psr4Stat, $key) => self::present(
             $key,
             $psr4Stat,
             $classMapStats[$key] ?? null,

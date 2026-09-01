@@ -17,7 +17,7 @@ class ForAutoloadedClassMaps extends BaseIterator
     {
         return Loop::map(
             ComposerJson::getClassMaps($checkSet->pathDTO),
-            fn ($classMap) => self::getDirStats($classMap, $checkSet)
+            static fn ($classMap) => self::getDirStats($classMap, $checkSet)
         );
     }
 
@@ -28,7 +28,7 @@ class ForAutoloadedClassMaps extends BaseIterator
      */
     private static function getDirStats($classMap, $checkSet)
     {
-        $cb = fn ($paths) => FilesDto::make(self::applyChecks($paths, $checkSet));
+        $cb = static fn ($paths) => FilesDto::make(self::applyChecks($paths, $checkSet));
 
         return StatsDto::make(Loop::map($classMap, $cb));
     }

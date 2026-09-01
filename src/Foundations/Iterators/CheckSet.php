@@ -83,7 +83,7 @@ class CheckSet
         $finder = PhpFinder::getAllPhpFiles($psr4Path);
         $this->pathDTO && $finder = self::filterFiles($finder, $this->pathDTO);
 
-        $filesCount = Loop::walkCount($finder, fn ($fileObj) => $this->applyChecks($fileObj));
+        $filesCount = Loop::walkCount($finder, static fn ($fileObj) => $this->applyChecks($fileObj));
         $this->checkedFilesCount += $filesCount;
 
         return $filesCount;
@@ -101,7 +101,7 @@ class CheckSet
 
         Loop::over(
             $this->checks->checks,
-            fn ($check) => $this->applyCheck($check, $file)
+            static fn ($check) => $this->applyCheck($check, $file)
         );
 
         return true;

@@ -93,7 +93,7 @@ class CheckBladePaths
 
             $file = PhpFileDescriptor::make($absFilePath);
             if (self::$readOnly) {
-                $file->setTokenizer(fn ($absPath) => ViewsData::getBladeTokens($absPath));
+                $file->setTokenizer(static fn ($absPath) => ViewsData::getBladeTokens($absPath));
             }
 
             $checks->applyOnFile($file);

@@ -18,7 +18,7 @@ class ForFolderPaths extends BaseIterator
     public static function checkFilePaths($paths, CheckSet $checker)
     {
         if ($checker->pathDTO) {
-            $paths = Loop::map($paths, fn ($files) => FilePath::filter($files, $checker->pathDTO));
+            $paths = Loop::map($paths, static fn ($files) => FilePath::filter($files, $checker->pathDTO));
         }
 
         return self::applyOnFiles($paths, $checker);
@@ -31,7 +31,7 @@ class ForFolderPaths extends BaseIterator
      */
     public static function check(CheckSet $checker, $dirsList)
     {
-        return Loop::map($dirsList, fn ($dirs, $listName) => self::checkFilePaths(
+        return Loop::map($dirsList, static fn ($dirs, $listName) => self::checkFilePaths(
             Paths::getAbsFilePaths($dirs, $checker->pathDTO), $checker
         ));
     }
@@ -46,7 +46,7 @@ class ForFolderPaths extends BaseIterator
         return StatsDto::make(
             Loop::map(
                 $paths,
-                fn ($absPaths) => FilesDto::make(self::applyChecks($absPaths, $checker))
+                static fn ($absPaths) => FilesDto::make(self::applyChecks($absPaths, $checker))
             )
         );
     }

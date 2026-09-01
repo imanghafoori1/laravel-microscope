@@ -39,7 +39,7 @@ class ChecksOnPsr4Classes
      */
     private static function processAll()
     {
-        return Loop::map(ComposerJson::readPsr4(), fn ($psr4) => self::processGetStats($psr4));
+        return Loop::map(ComposerJson::readPsr4(), static fn ($psr4) => self::processGetStats($psr4));
     }
 
     /**
@@ -51,7 +51,7 @@ class ChecksOnPsr4Classes
         return Psr4StatsDTO::make(
             Loop::map(
                 $psr4,
-                fn ($paths, $namespace) => self::checkFiles($namespace, $paths)
+                static fn ($paths, $namespace) => self::checkFiles($namespace, $paths)
             )
         );
     }
@@ -65,7 +65,7 @@ class ChecksOnPsr4Classes
     {
         return Loop::mapKey(
             (array) $psr4Paths,
-            fn ($psr4Path) => [$psr4Path => self::getCounter($psr4Namespace, $psr4Path)]
+            static fn ($psr4Path) => [$psr4Path => self::getCounter($psr4Namespace, $psr4Path)]
         );
     }
 
@@ -76,14 +76,14 @@ class ChecksOnPsr4Classes
      */
     private static function getCounter($psr4Namespace, $psr4Path)
     {
-        return fn () => self::$check->applyChecksInPath($psr4Namespace, $psr4Path);
+        return static fn () => self::$check->applyChecksInPath($psr4Namespace, $psr4Path);
     }
 
     private static function handleExceptions()
     {
         Loop::map(
             self::$check->exceptions,
-            fn ($e) => self::$errorExceptionHandler::handle($e)
+            static fn ($e) => self::$errorExceptionHandler::handle($e)
         );
     }
 }

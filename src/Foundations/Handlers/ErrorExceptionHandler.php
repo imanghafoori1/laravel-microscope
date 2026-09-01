@@ -42,7 +42,7 @@ class ErrorExceptionHandler
     {
         return Loop::any(
             $needles,
-            fn ($needle) => substr($haystack, 0, strlen($needle)) === $needle
+            static fn ($needle) => substr($haystack, 0, strlen($needle)) === $needle
         );
     }
 
