@@ -86,7 +86,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
         $this->registerCompiler();
         $this->loadConfig();
 
-        app()->singleton(ErrorPrinter::class, fn () => ErrorPrinter::singleton());
+        app()->singleton(ErrorPrinter::class, static fn () => ErrorPrinter::singleton());
         Features\CheckRoutes\Installer::spyRouter();
 
         // We need to start spying before the boot process starts.
@@ -145,7 +145,7 @@ class LaravelMicroscopeServiceProvider extends ServiceProvider
      */
     private function setBasePath()
     {
-        ComposerJson::$composer = fn () => Composer::make(
+        ComposerJson::$composer = static fn () => Composer::make(
             base_path(),
             config('microscope.ignored_namespaces', []),
             config('microscope.additional_composer_paths', [])

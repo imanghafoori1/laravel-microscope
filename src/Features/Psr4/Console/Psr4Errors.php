@@ -9,7 +9,7 @@ class Psr4Errors
 {
     public static function handle(array $errorsLists)
     {
-        Loop::deepOver($errorsLists, fn ($error) => self::handleError($error));
+        Loop::deepOver($errorsLists, static fn ($error) => self::handleError($error));
     }
 
     private static function handleError($error)

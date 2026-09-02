@@ -134,7 +134,7 @@ class ErrorPrinter
 
     public static function getLink($path, $lineNumber = 4)
     {
-        $green = fn ($str) => Color::green($str);
+        $green = static fn ($str) => Color::green($str);
         $relativePath = FilePath::normalize(trim($path, '\\/'));
 
         return 'at '.$green($relativePath).':'.$green($lineNumber);
@@ -186,7 +186,7 @@ class ErrorPrinter
 
         return Loop::any(
             $ignorePatterns,
-            fn ($pattern) => self::is(base_path($pattern), $path)
+            static fn ($pattern) => self::is(base_path($pattern), $path)
         );
     }
 

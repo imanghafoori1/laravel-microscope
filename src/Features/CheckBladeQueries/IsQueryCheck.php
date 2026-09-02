@@ -18,8 +18,8 @@ class IsQueryCheck implements Check
 
         Loop::mapIf(
             $classes,
-            fn ($class) => self::isQuery($class['class']),
-            fn ($class) => BladeQueryHandler::handle($file, $class['class'], $class['line'])
+            static fn ($class) => self::isQuery($class['class']),
+            static fn ($class) => BladeQueryHandler::handle($file, $class['class'], $class['line'])
         );
     }
 

@@ -21,7 +21,7 @@ class ClassMapStats
         $c = $total = 0;
 
         foreach ($stat->stats as $path => $files) {
-            $count = Loop::walkCount($files->files, fn () => true);
+            $count = Loop::walkCount($files->files, static fn () => true);
             if (! $count) {
                 continue;
             }

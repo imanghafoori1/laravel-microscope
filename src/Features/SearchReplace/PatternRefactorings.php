@@ -62,7 +62,7 @@ class PatternRefactorings implements Check
             $postReplaces = $pattern['post_replace'] ?? [];
             self::$patternFound = true;
             if (! isset($pattern['replace'])) {
-                Loop::over($matchedValues, fn ($value) => self::show($value, $tokens, $absFilePath));
+                Loop::over($matchedValues, static fn ($value) => self::show($value, $tokens, $absFilePath));
                 continue;
             }
 

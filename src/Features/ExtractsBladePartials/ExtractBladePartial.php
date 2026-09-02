@@ -65,7 +65,7 @@ class ExtractBladePartial implements Check
             $file[$start] = $spaces.$file[$start];
             // remove spaces so that the created file
             // does not have irrelevant indentation.
-            $extracted = Loop::map($extracted, fn ($line, $i) => Str::after($line, $spaces));
+            $extracted = Loop::map($extracted, static fn ($line, $i) => Str::after($line, $spaces));
             $contents = implode('', $extracted);
             self::forceFilePutContents(
                 self::find(trim($call[0][1], '\'\"')),
@@ -91,7 +91,7 @@ class ExtractBladePartial implements Check
 
     protected static function getPossibleViewFiles($name)
     {
-        $cb = fn ($extension) => str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
+        $cb = static fn ($extension) => str_replace('.', DIRECTORY_SEPARATOR, $name).'.'.$extension;
 
         return array_map($cb, ['blade.php']);
     }

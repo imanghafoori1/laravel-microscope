@@ -92,7 +92,7 @@ class ActionsComments implements Check
     {
         return Loop::filter(
             self::$allRoutes,
-            fn ($route) => $method === $route->getAction('uses')
+            static fn ($route) => $method === $route->getAction('uses')
         );
     }
 }
