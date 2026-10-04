@@ -3,7 +3,6 @@
 namespace Imanghafoori\LaravelMicroscope\Features\ListModels;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 use ImanGhafoori\ComposerJson\ClassLists;
 use Imanghafoori\LaravelMicroscope\Foundations\FileReaders\FilePath;
 use ReflectionClass;
@@ -14,7 +13,7 @@ class ListModelsArtisanCommand extends Command
 
     protected $description = 'Lists Eloquent Models';
 
-    public static $parentModel = Model::class;
+    public static $parentModel = 'Illuminate\Database\Eloquent\Model';
 
     public function handle()
     {

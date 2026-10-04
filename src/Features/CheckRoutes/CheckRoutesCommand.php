@@ -2,8 +2,8 @@
 
 namespace Imanghafoori\LaravelMicroscope\Features\CheckRoutes;
 
+use ErrorException;
 use Exception;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 use Imanghafoori\LaravelMicroscope\Features\ActionComments\ActionsComments;
@@ -36,7 +36,7 @@ class CheckRoutesCommand extends BaseCommand
     public function handleCommand($iterator)
     {
         Cache::loadToMemory('check_route_calls');
-        app(Filesystem::class)->delete(app()->getCachedRoutesPath());
+        $this->delete(app()->getCachedRoutesPath());
         $routes = app(Router::class)->getRoutes()->getRoutes();
 
         $this->checkRouteDefinitions($routes);
@@ -109,5 +109,20 @@ class CheckRoutesCommand extends BaseCommand
     private function getRouteDefinitionStatistics()
     {
         return ' - '.CheckRoutesCommand::$checkedRoutesNum.' Route:: definitions were checked. ('.CheckRoutesCommand::$skippedRoutesNum.' skipped)';
+    }
+
+    /**
+     * @param $path
+     * @return void
+     */
+    public function delete($path)
+    {
+        try {
+            if (@unlink($path)) {
+                clearstatcache(false, $path);
+            }
+        } catch (ErrorException $e) {
+            //
+        }
     }
 }
