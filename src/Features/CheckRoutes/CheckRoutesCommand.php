@@ -112,7 +112,7 @@ class CheckRoutesCommand extends BaseCommand
     }
 
     /**
-     * @param $path
+     * @param  $path
      * @return void
      */
     public function delete($path)
