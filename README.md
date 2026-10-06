@@ -29,6 +29,7 @@ Give your eyes a rest, we will detect and fix them for you.
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Today Downloads][ico-today-downloads]][link-downloads]
 [![Coverage Status](https://coveralls.io/repos/github/imanghafoori1/laravel-microscope/badge.svg?branch=master)](https://coveralls.io/github/imanghafoori1/laravel-microscope?branch=master)
+[![Test Package with Laravel 12](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/app_test.yml/badge.svg)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/app_test.yml)
 
 <!--
 <p align="center">
@@ -38,6 +39,7 @@ Give your eyes a rest, we will detect and fix them for you.
 <a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/7f10826df8cf3fb52525fd2494554c0e587b8bb7/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f64742f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Total Downloads" data-canonical-src="https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
 <a href="/imanghafoori1/laravel-microscope/blob/master/LICENSE.md"><img src="https://camo.githubusercontent.com/d885b3999bb863974fb67118174bb0402d089a89/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e7376673f7374796c653d726f756e642d737175617265" alt="Software License" data-canonical-src="https://img.shields.io/badge/license-MIT-blue.svg?style=round-square" style="max-width:100%;"></a></p>
 -->
+
 
 - Table Of Contents
     - [Key Things To Know](#key-things-to-know)
