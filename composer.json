@@ -26,7 +26,6 @@
         "imanghafoori/smart-realtime-facades": "^1.1.9",
         "jetbrains/phpstorm-attributes": "1.*",
         "illuminate/support": "6.*|7.*|8.*|9.*|10.*|11.*|12.*|13.*",
-        "illuminate/foundation": "6.*|7.*|8.*|9.*|10.*|11.*|12.*|13.*",
         "illuminate/console": "6.*|7.*|8.*|9.*|10.*|11.*|12.*|13.*",
         "illuminate/filesystem": "6.*|7.*|8.*|9.*|10.*|11.*|12.*|13.*",
         "illuminate/contracts": "6.*|7.*|8.*|9.*|10.*|11.*|12.*|13.*",
