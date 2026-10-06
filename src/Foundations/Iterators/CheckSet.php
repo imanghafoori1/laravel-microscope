@@ -101,7 +101,7 @@ class CheckSet
 
         Loop::over(
             $this->checks->checks,
-            static fn ($check) => $this->applyCheck($check, $file)
+            fn ($check) => $this->applyCheck($check, $file)
         );
 
         return true;
