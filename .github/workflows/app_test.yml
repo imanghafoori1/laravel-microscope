@@ -145,6 +145,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: imanghafoori1/laravel-microscope-tester
+          ref: 11.x
           path: laravel-app
 
       - name: Setup PHP
@@ -152,7 +153,6 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, xml, ctype, iconv, intl, libxml, bcmath, tokenizer, json
-#          coverage: xdebug
 
       - name: Get composer cache directory
         id: composer-cache
@@ -176,13 +176,6 @@ jobs:
           
           # First, install without updating
           composer install --no-interaction --no-progress
-          
-          # Remove Laravel 12 and install Laravel 11
-          composer remove laravel/framework --no-interaction 2>/dev/null || true
-          composer require "laravel/framework:^11.0" --no-interaction --no-update
-          
-          # Update composer to use Laravel 11 dependencies
-          composer update --no-interaction --with-all-dependencies
           
           # Remove any existing version of the package
           composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
@@ -229,11 +222,11 @@ jobs:
 
   laravel-13-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # bumped from 5 — cold cache + full dependency swap can exceed 5 min
+    timeout-minutes: 10
 
     strategy:
       matrix:
-        php: ["8.3", "8.4"]  # Laravel 13 likely requires PHP 8.3+; adjust when released
+        php: [ "8.3", "8.4" ]  # Laravel 13 minimum is PHP 8.3; adjust on release
 
     name: Laravel 13 (PHP ${{ matrix.php }})
 
@@ -247,6 +240,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: imanghafoori1/laravel-microscope-tester
+          ref: 13.x
           path: laravel-app
 
       - name: Setup PHP
@@ -275,68 +269,27 @@ jobs:
           COMPOSER_POLICY_ADVISORIES_BLOCK: false
         run: |
           cd laravel-app
-
-          # 1. Install the tester app's existing (Laravel 12) dependencies first
-          composer install --no-interaction --no-progress
-
-          # 2. Remove framework + first-party + test tooling so Composer can
-          #    resolve them fresh against Laravel 13 without conflict.
-          composer remove \
-            laravel/framework \
-            laravel/boost \
-            laravel/tinker \
-            phpunit/phpunit \
-            pestphp/pest \
-            --no-interaction 2>/dev/null || true
-          
-          composer dump-autoload --no-interaction 2>/dev/null || true
-          
-          # 3. Require the Laravel 13 versions (no-update so all constraints
-          #    are set before a single resolution pass).
-          composer require \
-            "laravel/framework:^13.0" \
-            "laravel/tinker:^3.0" \
-            "phpunit/phpunit:^12.0" \
-            "pestphp/pest:^4.0" \
-            --no-interaction --no-update
-
-          composer dump-autoload --no-interaction 2>/dev/null || true
-
-          rm -rf vendor composer.lock
-  
-          # 4. Single resolution pass for everything at once.
           composer update --no-interaction --with-all-dependencies
-
-          composer dump-autoload --no-interaction 2>/dev/null || true
-
-          # 5. Remove any existing version of the package
           composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
-
-          # 6. Add local package repository
           composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
-
-          # 7. Require local package
           composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
-
-          composer dump-autoload --no-interaction 2>/dev/null || true
+          composer dump-autoload --no-interaction
 
       - name: Verify installations
         run: |
           cd laravel-app
           echo "=== Installed Versions ==="
-          composer show laravel/framework           2>/dev/null || echo "laravel/framework not installed"
-          composer show phpunit/phpunit             2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show laravel/framework 2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit 2>/dev/null || echo "phpunit/phpunit not installed"
           composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
           echo "=========================="
 
       - name: Prepare Laravel environment
         run: |
           cd laravel-app
-
           if [ ! -f ".env" ]; then
             cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
           fi
-
           php artisan key:generate --force 2>/dev/null || true
           php artisan config:clear 2>/dev/null || true
           php artisan cache:clear 2>/dev/null || true
