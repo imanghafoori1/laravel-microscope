@@ -63,7 +63,7 @@ jobs:
           composer install --no-interaction --no-progress
 
           # Swap the framework to Laravel 13
-          composer remove laravel/framework --no-interaction 2>/dev/null || true
+          composer remove laravel/tinker laravel/framework --no-interaction 2>/dev/null || true
           composer require "laravel/framework:^13.0" --no-interaction --no-update
 
           # Resolve everything against Laravel 13
