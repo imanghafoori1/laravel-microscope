@@ -303,6 +303,8 @@ jobs:
 
           composer dump-autoload --no-interaction 2>/dev/null || true
 
+          rm -rf vendor composer.lock
+  
           # 4. Single resolution pass for everything at once.
           composer update --no-interaction --with-all-dependencies
 
