@@ -8,119 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  laravel-13-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10  # bumped from 5 — cold cache + full dependency swap can exceed 5 min
-
-    strategy:
-      matrix:
-        php: ["8.3", "8.4"]  # Laravel 13 likely requires PHP 8.3+; adjust when released
-
-    name: Laravel 13 (PHP ${{ matrix.php }})
-
-    steps:
-      - name: Checkout package repository
-        uses: actions/checkout@v4
-        with:
-          path: laravel-microscope
-
-      - name: Checkout Laravel test application
-        uses: actions/checkout@v4
-        with:
-          repository: imanghafoori1/laravel-microscope-tester
-          path: laravel-app
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, sqlite3, gd, zip, curl, dom, fileinfo, libxml, bcmath, openssl, tokenizer, json, xdebug
-          coverage: xdebug
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-laravel13-php-${{ matrix.php }}-${{ hashFiles('laravel-app/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-laravel13-php-${{ matrix.php }}-
-            ${{ runner.os }}-composer-
-
-      - name: Configure Laravel 13 and local package
-        timeout-minutes: 5
-        env:
-          COMPOSER_POLICY_ADVISORIES_BLOCK: false
-        run: |
-          cd laravel-app
-
-          # 1. Install the tester app's existing (Laravel 12) dependencies first
-          composer install --no-interaction --no-progress
-
-          # 2. Remove framework + first-party + test tooling so Composer can
-          #    resolve them fresh against Laravel 13 without conflict.
-          composer remove \
-            laravel/framework \
-            laravel/boost \
-            laravel/tinker \
-            phpunit/phpunit \
-            pestphp/pest \
-            --no-interaction 2>/dev/null || true
-
-          # 3. Require the Laravel 13 versions (no-update so all constraints
-          #    are set before a single resolution pass).
-          composer require "laravel/framework:^13.0" "phpunit/phpunit:^12.0" --no-interaction --no-update
-
-          # 4. Single resolution pass for everything at once.
-          composer update --no-interaction --with-all-dependencies
-
-          # 5. Remove any existing version of the package
-          composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
-
-          # 6. Add local package repository
-          composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
-
-          # 7. Require local package
-          composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
-
-      - name: Verify installations
-        run: |
-          cd laravel-app
-          echo "=== Installed Versions ==="
-          composer show laravel/framework           2>/dev/null || echo "laravel/framework not installed"
-          composer show phpunit/phpunit             2>/dev/null || echo "phpunit/phpunit not installed"
-          composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
-          echo "=========================="
-
-      - name: Prepare Laravel environment
-        run: |
-          cd laravel-app
-
-          if [ ! -f ".env" ]; then
-            cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
-          fi
-
-          php artisan key:generate --force 2>/dev/null || true
-          php artisan config:clear 2>/dev/null || true
-          php artisan cache:clear 2>/dev/null || true
-
-      - name: Run tests with Laravel 13
-        if: always()
-        run: |
-          cd laravel-app
-          echo "running tests..."
-          php artisan test --colors=always 2>/dev/null || false
-
-      - name: Check for dependency issues
-        if: always()
-        run: |
-          cd laravel-app
-          echo "=== Dependency Status ==="
-          composer outdated --direct --format=json 2>/dev/null | jq -r '.installed[] | "\(.name): \(.version) -> \(.latest)"' 2>/dev/null || echo "Could not check dependencies"
-    laravel-12-tests:
+  laravel-12-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5  # Add timeout to prevent indefinite runs
 
@@ -237,6 +125,7 @@ jobs:
           cd laravel-microscope
           composer global require php-coveralls/php-coveralls
           php-coveralls --coverage_clover=clover.xml --json_path=coverall.xml -v
+
   laravel-11-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -337,3 +226,119 @@ jobs:
           # Check if there are test files mentioning microscope
           echo "running tests..."
           php artisan test --colors=always 2>/dev/null || false
+
+  laravel-13-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # bumped from 5 — cold cache + full dependency swap can exceed 5 min
+
+    strategy:
+      matrix:
+        php: ["8.3", "8.4"]  # Laravel 13 likely requires PHP 8.3+; adjust when released
+
+    name: Laravel 13 (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+        with:
+          path: laravel-microscope
+
+      - name: Checkout Laravel test application
+        uses: actions/checkout@v4
+        with:
+          repository: imanghafoori1/laravel-microscope-tester
+          path: laravel-app
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, sqlite3, gd, zip, curl, dom, fileinfo, libxml, bcmath, openssl, tokenizer, json, xdebug
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-laravel13-php-${{ matrix.php }}-${{ hashFiles('laravel-app/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-laravel13-php-${{ matrix.php }}-
+            ${{ runner.os }}-composer-
+
+      - name: Configure Laravel 13 and local package
+        timeout-minutes: 5
+        env:
+          COMPOSER_POLICY_ADVISORIES_BLOCK: false
+        run: |
+          cd laravel-app
+
+          # 1. Install the tester app's existing (Laravel 12) dependencies first
+          composer install --no-interaction --no-progress
+
+          # 2. Remove framework + first-party + test tooling so Composer can
+          #    resolve them fresh against Laravel 13 without conflict.
+          composer remove \
+            laravel/framework \
+            laravel/boost \
+            laravel/tinker \
+            phpunit/phpunit \
+            pestphp/pest \
+            --no-interaction 2>/dev/null || true
+
+          # 3. Require the Laravel 13 versions (no-update so all constraints
+          #    are set before a single resolution pass).
+          composer require \
+            "laravel/framework:^13.0" \
+            "phpunit/phpunit:^12.0" \
+            --no-interaction --no-update
+
+          # 4. Single resolution pass for everything at once.
+          composer update --no-interaction --with-all-dependencies
+
+          # 5. Remove any existing version of the package
+          composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
+
+          # 6. Add local package repository
+          composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
+
+          # 7. Require local package
+          composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
+
+      - name: Verify installations
+        run: |
+          cd laravel-app
+          echo "=== Installed Versions ==="
+          composer show laravel/framework           2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit             2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
+          echo "=========================="
+
+      - name: Prepare Laravel environment
+        run: |
+          cd laravel-app
+
+          if [ ! -f ".env" ]; then
+            cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
+          fi
+
+          php artisan key:generate --force 2>/dev/null || true
+          php artisan config:clear 2>/dev/null || true
+          php artisan cache:clear 2>/dev/null || true
+
+      - name: Run tests with Laravel 13
+        if: always()
+        run: |
+          cd laravel-app
+          echo "running tests..."
+          php artisan test --colors=always 2>/dev/null || false
+
+      - name: Check for dependency issues
+        if: always()
+        run: |
+          cd laravel-app
+          echo "=== Dependency Status ==="
+          composer outdated --direct --format=json 2>/dev/null | jq -r '.installed[] | "\(.name): \(.version) -> \(.latest)"' 2>/dev/null || echo "Could not check dependencies"
