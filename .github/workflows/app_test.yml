@@ -10,13 +10,11 @@ on:
 jobs:
   laravel-13-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10  # bumped from 5 — cold cache + full dependency swap can exceed 5 min
 
     strategy:
       matrix:
         php: ["8.3", "8.4"]  # Laravel 13 likely requires PHP 8.3+; adjust when released
-        # Uncomment when Laravel 13 officially supports PHP 8.5:
-        # php: ["8.3", "8.4", "8.5"]
 
     name: Laravel 13 (PHP ${{ matrix.php }})
 
@@ -53,37 +51,47 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Configure Laravel 13 and local package
-        timeout-minutes: 2
+        timeout-minutes: 5
         env:
           COMPOSER_POLICY_ADVISORIES_BLOCK: false
         run: |
           cd laravel-app
 
-          # Install base dependencies (whatever the tester repo ships with)
+          # 1. Install the tester app's existing (Laravel 12) dependencies first
           composer install --no-interaction --no-progress
 
-          # Swap the framework to Laravel 13
-          composer remove laravel/tinker laravel/framework --no-interaction 2>/dev/null || true
-          composer require "laravel/framework:^13.0" laravel/tinker --no-interaction --no-update
+          # 2. Remove framework + first-party + test tooling so Composer can
+          #    resolve them fresh against Laravel 13 without conflict.
+          composer remove \
+            laravel/framework \
+            laravel/boost \
+            laravel/tinker \
+            phpunit/phpunit \
+            pestphp/pest \
+            --no-interaction 2>/dev/null || true
 
-          # Resolve everything against Laravel 13
+          # 3. Require the Laravel 13 versions (no-update so all constraints
+          #    are set before a single resolution pass).
+          composer require "laravel/framework:^13.0" "phpunit/phpunit:^12.0" --no-interaction --no-update
+
+          # 4. Single resolution pass for everything at once.
           composer update --no-interaction --with-all-dependencies
 
-          # Remove any existing version of the package
+          # 5. Remove any existing version of the package
           composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
 
-          # Add local package repository
+          # 6. Add local package repository
           composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
 
-          # Require local package
+          # 7. Require local package
           composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
 
       - name: Verify installations
         run: |
           cd laravel-app
           echo "=== Installed Versions ==="
-          composer show laravel/framework 2>/dev/null || echo "laravel/framework not installed"
-          composer show phpunit/phpunit 2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show laravel/framework           2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit             2>/dev/null || echo "phpunit/phpunit not installed"
           composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
           echo "=========================="
 
@@ -112,7 +120,7 @@ jobs:
           cd laravel-app
           echo "=== Dependency Status ==="
           composer outdated --direct --format=json 2>/dev/null | jq -r '.installed[] | "\(.name): \(.version) -> \(.latest)"' 2>/dev/null || echo "Could not check dependencies"
-  laravel-12-tests:
+    laravel-12-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5  # Add timeout to prevent indefinite runs
 
