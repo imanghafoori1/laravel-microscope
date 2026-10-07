@@ -288,7 +288,9 @@ jobs:
             phpunit/phpunit \
             pestphp/pest \
             --no-interaction 2>/dev/null || true
-
+          
+          composer dump-autoload --no-interaction 2>/dev/null || true
+          
           # 3. Require the Laravel 13 versions (no-update so all constraints
           #    are set before a single resolution pass).
           composer require \
@@ -296,6 +298,7 @@ jobs:
             "phpunit/phpunit:^12.0" \
             --no-interaction --no-update
 
+          composer dump-autoload --no-interaction 2>/dev/null || true
           # 4. Single resolution pass for everything at once.
           composer update --no-interaction --with-all-dependencies
 
