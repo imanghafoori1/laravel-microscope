@@ -295,14 +295,18 @@ jobs:
           #    are set before a single resolution pass).
           composer require \
             "laravel/framework:^13.0" \
+            "laravel/boost:^2.0" \
             "laravel/tinker:^3.0" \
             "phpunit/phpunit:^12.0" \
+            "pestphp/pest:^4.0" \
             --no-interaction --no-update
 
           composer dump-autoload --no-interaction 2>/dev/null || true
 
           # 4. Single resolution pass for everything at once.
           composer update --no-interaction --with-all-dependencies
+
+          composer dump-autoload --no-interaction 2>/dev/null || true
 
           # 5. Remove any existing version of the package
           composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
@@ -312,6 +316,8 @@ jobs:
 
           # 7. Require local package
           composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
+
+          composer dump-autoload --no-interaction 2>/dev/null || true
 
       - name: Verify installations
         run: |
