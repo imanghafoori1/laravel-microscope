@@ -54,51 +54,30 @@ jobs:
         timeout-minutes: 2
         run: |
           cd laravel-app
-          
-          # First, just install existing dependencies without updating
           composer install --no-interaction --no-progress
-          
-          # Remove any existing version of the package
           composer remove imanghafoori/laravel-microscope --no-interaction 2>/dev/null || true
-          
-          # Add local package repository
           composer config repositories.local-microscope '{"type": "path", "url": "../laravel-microscope", "options": {"symlink": true}}'
-          
-          # Require local package
           composer require "imanghafoori/laravel-microscope:@dev" --no-interaction
-          
-          # Update PHPUnit based on PHP version
-          # if [[ "${{ matrix.php }}" == "8.5" ]] || [[ "${{ matrix.php }}" == "8.4" ]]; then
-          #   # PHP 8.4+ requires PHPUnit 11+
-          #   composer update "phpunit/phpunit:^11.0" -W --no-interaction
-          # else
-          #   # PHP 8.2-8.3 work with PHPUnit 10+
-          #   composer update "phpunit/phpunit:^10.0" -W --no-interaction
-          # fi
+          composer dump-autoload --no-interaction
+
       - name: Verify installations
         run: |
           cd laravel-app
           echo "=== Installed Versions ==="
-          composer show laravel/framework 2>/dev/null || echo "laravel/framework not installed"
-          composer show phpunit/phpunit 2>/dev/null || echo "phpunit/phpunit not installed"
+          composer show laravel/framework  2>/dev/null || echo "laravel/framework not installed"
+          composer show phpunit/phpunit    2>/dev/null || echo "phpunit/phpunit not installed"
           composer show imanghafoori/laravel-microscope 2>/dev/null || echo "Package not found"
           echo "=========================="
 
       - name: Prepare Laravel environment
         run: |
           cd laravel-app
-          
-          # Create .env if not exists
           if [ ! -f ".env" ]; then
             cp .env.example .env 2>/dev/null || echo "APP_NAME=Test\nAPP_ENV=testing\nAPP_KEY=" > .env
           fi
-          
-          # Generate app key
           php artisan key:generate --force 2>/dev/null || true
-          
-          # Clear caches
           php artisan config:clear 2>/dev/null || true
-          php artisan cache:clear 2>/dev/null || true
+          php artisan cache:clear  2>/dev/null || true
 
       - name: Run tests with Laravel 12
         if: always()
