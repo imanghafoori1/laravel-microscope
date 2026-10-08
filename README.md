@@ -12,13 +12,13 @@ Built with :heart: for lazy Laravel developers ;)
 </h4>
 
 <h3 align="center">
-Why repeat the old errors, if there are so many new errors to commit?
+Check the output of your AI agent to make sure it passes health checks.
 </h3>
 <h3 align="center">
-(Bertrand Russel)
+AI hallucinations are never going to end.
 </h3>
 <h5 align="center">
-Give your eyes a rest, we will detect and fix them for you.
+Give your eyes a rest; we will detect and fix them for you.
 </h5>
 
 ![Packagist Stars](https://img.shields.io/packagist/stars/imanghafoori/laravel-microscope)
