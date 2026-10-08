@@ -14,6 +14,6 @@ class ForAutoloadedFiles
     {
         $autoloadFiles = ComposerJson::autoloadedFilesList();
 
-        return ForFolderPaths::checkFilePaths($autoloadFiles, $checker);
+        return ForFilePaths::check($autoloadFiles, $checker);
     }
 }
