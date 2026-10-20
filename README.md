@@ -476,19 +476,12 @@ Pattern:
    ]
 ```
 
-Nice yeah??!
-
->Possibilities are endless and the sky is the limit...
-
-
-
+Nice, right? Possibilities are endless — the sky is the limit.
 
 <a name="early_returns"></a>
 ### `php artisan check:early_returns`
 
-
-This will scan all your Psr-4 loaded classes and flattens your functions and loops by applying the early return rule.
-For example:
+Scans all your PSR-4 loaded classes and flattens functions and loops by applying the early-return rule.
 
 ```php
 <?php
@@ -498,15 +491,9 @@ foreach ($products as $product) {
         // A lot of code 1
         if ($someOtherCond) {
             // A lot more code 2
-            // A lot more code 2
-            // A lot more code 2
-            // A lot more code 2 
-            // A lot more code 2
-            //
-        } // <--- closes second if
-    } // <--- closes first if
+        }
+    }
 }
-
 ```
 
 becomes:
@@ -593,6 +580,9 @@ php artisan check:psr4 --folder=app/Models
 <a name="imports"></a>
 ### `php artisan check:imports`
 
+```bash
+php artisan check:imports {--file=} {--folder=} {--except-folder=} {--except-file=}
+```
 
 - Checks all imports (`use` statements) and reports invalid ones.
 - Auto-corrects references when there is no ambiguity around the class name.
