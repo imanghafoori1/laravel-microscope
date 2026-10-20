@@ -560,7 +560,7 @@ foreach ($products as $product) {
     if (! $someCond) {
         continue;
     }
-    
+
     // A lot of code 1
 
     if (! $someOtherCond) {
@@ -569,7 +569,6 @@ foreach ($products as $product) {
 
     // A lot more code 2
 }
-
 ```
 
 The same thing will apply for functions and methods, but with `return`
@@ -621,14 +620,12 @@ if ($var1 > 1)
 
 
 <a name="imports"></a>
+### `php artisan check:imports`
 
-### `php artisan check:imports {--file=} {--folder=} {--except-folder=} {--except-file=}`
 
-
-- It checks all the imports (`use` statements) to be valid and reports invalid ones.
-- It autocorrects some references, no ambiguity is around the class name.
-- It can understand the laravel aliased classes so `use Request;` would be valid.
-
+- Checks all imports (`use` statements) and reports invalid ones.
+- Auto-corrects references when there is no ambiguity around the class name.
+- Understands Laravel aliased classes, so `use Request;` is valid.
 
 <a name="bad_practices"></a>
 ### `php artisan check:bad_practices`
@@ -639,11 +636,10 @@ if ($var1 > 1)
 <a name="routes"></a>
 ### `php artisan check:routes`
 
-
-- It checks that your routes refer to valid controller classes and methods.
-- It checks all the controller methods to have valid type-hints.
-- It scans for `route()`, `redirect()->route()`, `\Redirect::route()` to refer to valid routes.
-- It will report the public methods of controllers, which have no routes pointing to them. In other words, `dead controllers` are detected.
+- Checks that routes refer to valid controller classes and methods.
+- Checks that controller methods have valid type-hints.
+- Scans `route()`, `redirect()->route()`, and `\Redirect::route()` for references to valid routes.
+- Reports public controller methods with no route pointing to them (dead controllers).
 
 <a name="compact"></a>
 ### `php artisan check:compact`
@@ -667,21 +663,18 @@ This command searches all the blade files for the `Eloquent models` and `DB` que
 You can use `{!! extractBlade('myPartials.someFile') !!}` in your blade files to indicate `start/end line` and the `path/name` of the partial you intend to be made.
 
 ```html
- <html>
-      
-      {!! extractBlade('myPartials.head') !!}
-          <head>...</head>
-      {!! extractBlade() !!}
+<html>
+    {!! extractBlade('myPartials.head') !!}
+        <head>...</head>
+    {!! extractBlade() !!}
 
-      
-      {!! extractBlade('myPartials.body') !!}
-          <body>...</body>
-      {!! extractBlade() !!}
-      
- </html>
+    {!! extractBlade('myPartials.body') !!}
+        <body>...</body>
+    {!! extractBlade() !!}
+</html>
 ```
 
-After you execute `php artisan check:extract_blades` it will become:
+After `php artisan check:extract_blades`:
 
 ```html
 <html>
@@ -749,7 +742,7 @@ into:
 ```php
 <?php
 
-abort_if(404, 'optional message.');
+abort_if($some === 'Condition', 404, 'optional message.');
 ```
 
 <a name="gates"></a>
@@ -774,8 +767,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 
 - It looks for "dynamic where" methods like `whereFamilyName('...')` with `where('family_name', '...')`.
 
-<a name="enforce:query"></a>
-
+<a name="enforce_query"></a>
 ### `php artisan enforce:query`
 
 
@@ -786,8 +778,7 @@ Gate::define('someAbility', 'UserGate@someMethod');
 <a name="dead_controllers"></a>
 ### `php artisan check:dead_controllers`
 
-
-- We can find the controllers that don't have any routes.
+Finds controllers with no routes pointing to them.
 
 <a name="generic_docblocks"></a>
 
@@ -833,9 +824,7 @@ The MIT License (MIT). Please see the [License File](LICENSE.md) for more inform
 <a name="contributing"></a>
 ## 🙋 Contributing
 
-### :raising_hand: Contributing
-If you find an issue or have a better way to do something, feel free to open an issue or a pull request.
-If you use laravel-microscope in your open source project, create a pull request to provide its URL as a sample application in the README.md file.
+If you find an issue or have a better way to do something, feel free to open an issue or a pull request. If you use laravel-microscope in your open-source project, create a pull request to provide its URL as a sample application in the README.md file.
 
 <a name="security"></a>
 ## ❗ Security
