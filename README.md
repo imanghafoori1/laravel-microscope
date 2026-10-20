@@ -653,44 +653,37 @@ It also creates:
 - `resources/views/myPartials/head.blade.php`
 - `resources/views/myPartials/body.blade.php`
 
-And put the corresponding content in them.
-
-- It is also compatible with namespaced views in modular Laravel applications.
-So this syntax will work: `'MyMod::myPartials.body'`
+with the corresponding content. Namespaced views (modular apps) are supported too: `'MyMod::myPartials.body'`.
 
 <a name="action_comments"></a>
-### `php artisan check:action_comments {--file=SomeFile.php}`
+### `php artisan check:action_comments`
 
 ```bash
 php artisan check:action_comments {--file=SomeFile.php}
 ```
 
-- This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
-- You can use the `--file=` option to narrow down the scanned files.
+Adds annotations in controller actions so you know which route points to the current action. Use `--file=` to narrow down the scanned files.
 
 <a name="views"></a>
 ### `php artisan check:views`
 
+- Scans your code for `view()` and `View::make()` and reports references to missing files.
+- Scans Blade files for `@include()` and `@extends()` and reports references to missing files.
+- Detects **unused variables** passed from a controller, e.g. `view('hello', [...])`.
 
-- It scans your code and finds the `view()` and `View::make()` and reports if they refer to the wrong files.
-- It scans your blade files for `@include()` and `@extends()` and reports if they refer to the wrong files.
+To detect unused variables, open the page in the browser, then check the log file:
 
-
-Also, it can detect `unused variables` which are passed into your view from the controller like this: `view('hello', [...]);`
-For that you must open up the page in the browser and then visit the log file to see a message like this:
 ```
-local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:   
+local.INFO: Laravel Microscope: The view file: welcome.index-1 at App\Http\Controllers\HomeController@index has some unused variables passed to it:
 local.INFO: array ('$var1' , '$var2');
 ```
 
-Remember some variables are passed into your view from a `view composer` and not the controller.
-Those variables are also taken into consideration when detecting unused variables.
+Variables passed via a view composer are also considered when detecting unused variables.
 
 <a name="enforce_imports"></a>
 ### `php artisan enforce:imports`
 
-This command refactors your code by importing fully qualified class namespaces at the top as `use` statements.
-You may use `--class=MyCls1,MyCls2` flag to limit the imported class names.
+Refactors your code by importing fully qualified class namespaces at the top as `use` statements. Use `--class=MyCls1,MyCls2` to limit which class names are imported.
 
 <a name="check_abort_if"></a>
 ### `php artisan check:abort_if`
@@ -730,16 +723,12 @@ Gate::define('someAbility', 'UserGate@someMethod');
 <a name="dynamic_where"></a>
 ### `php artisan check:dynamic_where`
 
-
-- It looks for "dynamic where" methods like `whereFamilyName('...')` with `where('family_name', '...')`.
+Looks for "dynamic where" methods like `whereFamilyName('...')` and suggests `where('family_name', '...')`.
 
 <a name="enforce_query"></a>
 ### `php artisan enforce:query`
 
-
-- It calls the static `query` method on your eloquent query chains so that IDEs can understand eloquent.
-
-- For example, converts: `User::where(...` to `User::query()->where(...`
+Calls the static `query` method on your Eloquent query chains so IDEs can understand Eloquent. For example, converts `User::where(...` into `User::query()->where(...`.
 
 <a name="dead_controllers"></a>
 ### `php artisan check:dead_controllers`
@@ -747,31 +736,40 @@ Gate::define('someAbility', 'UserGate@someMethod');
 Finds controllers with no routes pointing to them.
 
 <a name="generic_docblocks"></a>
+### `php artisan check:generic_docblocks`
 
-### `php artisan check:generic_docblocks {--folder=app/Models} {--file=SomeFile.php}`
+```bash
+php artisan check:generic_docblocks {--folder=app/Models} {--file=SomeFile.php}
+```
 
-
-- Removes Laravel's DocBlocks.
-- You can use `--folder=` or `--file=`, `--except-file`, `--except-folder` option to narrow down the scanned folders.
+Removes Laravel's default doc-blocks. Use `--folder=`, `--file=`, `--except-file`, or `--except-folder` to narrow down the scanned folders.
 
 <a name="helper_functions"></a>
+### `php artisan enforce:helper_functions`
 
-### `php artisan enforce:helper_functions {--folder=app/Models} {--file=SomeFile.php}`               
+```bash
+php artisan enforce:helper_functions {--folder=app/Models} {--file=SomeFile.php}
+```
 
-
-- Converting Laravel facade into helper functions.
-- You can use `--folder=`, `--file=`, `--except-file`, `--except-folder`  option to narrow down the scanned folders.
+Converts Laravel facade calls into helper functions. Use `--folder=`, `--file=`, `--except-file`, or `--except-folder` to narrow down the scanned folders.
 
 <a name="models"></a>
+### `php artisan list:models`
 
-### `php artisan list:models {--folder=app/Models}`
+```bash
+php artisan list:models {--folder=app/Models}
+```
 
 Searches the project and lists the model classes. Use `--folder=` to narrow down the scanned folders.
 
-### `php artisan check:extra_fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}`
+<a name="extra_fqcn"></a>
+### `php artisan check:extra_fqcn`
 
-- It searches for unnecessary FQCN that are already imported at the top.
-- You can use `--class=` option to only fix references to a certain class. 
+```bash
+php artisan check:extra_fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}
+```
+
+Searches for unnecessary fully qualified class names (FQCN) that are already imported at the top. Use `--class=` to only fix references to a specific class.
 
 And more features will be added soon. ;)
 
