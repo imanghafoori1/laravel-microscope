@@ -562,19 +562,11 @@ foreach ($products as $product) {
     }
     
     // A lot of code 1
-    // A lot of code 1
-    // A lot of code 1
-    // A lot of code 1
-    // A lot of code 1
 
     if (! $someOtherCond) {
         continue;
     }
- 
-    // A lot more code 2
-    // A lot more code 2
-    // A lot more code 2
-    // A lot more code 2 
+
     // A lot more code 2
 }
 
@@ -639,14 +631,12 @@ if ($var1 > 1)
 
 
 <a name="bad_practices"></a>
-
 ### `php artisan check:bad_practices`
 
 
 - It detects bad practices like `env()` calls outside the config files.
 
 <a name="routes"></a>
-
 ### `php artisan check:routes`
 
 
@@ -656,7 +646,6 @@ if ($var1 > 1)
 - It will report the public methods of controllers, which have no routes pointing to them. In other words, `dead controllers` are detected.
 
 <a name="compact"></a>
-
 ### `php artisan check:compact`
 
 
@@ -700,7 +689,9 @@ After you execute `php artisan check:extract_blades` it will become:
     @include('myPartials.body')
 </html>
 ```
-Also, it will create:
+
+It also creates:
+
 - `resources/views/myPartials/head.blade.php`
 - `resources/views/myPartials/body.blade.php`
 
@@ -743,7 +734,8 @@ You may use `--class=MyCls1,MyCls2` flag to limit the imported class names.
 <a name="check_abort_if"></a>
 ### `php artisan check:abort_if`
 
-This command refactors your code from:
+Refactors:
+
 ```php
 <?php
 
@@ -752,7 +744,7 @@ if ($some === 'Condition') {
 }
 ```
 
-into this:
+into:
 
 ```php
 <?php
@@ -763,10 +755,7 @@ abort_if(404, 'optional message.');
 <a name="gates"></a>
 ### `php artisan check:gates`
 
-
-It checks the validity of all the gates you have defined, making sure that they refer to a valid class and method.
-
-It also checks for the policy definitions to be valid.
+Checks the validity of all gates, ensuring they refer to a valid class and method. Also checks policy definitions:
 
 ```php
 Gate::policy(User::class, 'UserPolicy@someMethod');
@@ -780,7 +769,6 @@ Gate::define('someAbility', 'UserGate@someMethod');
 3 - It checks the `someMethod` method to exist.
 
 <a name="dynamic_where"></a>
-
 ### `php artisan check:dynamic_where`
 
 
@@ -796,7 +784,6 @@ Gate::define('someAbility', 'UserGate@someMethod');
 - For example, converts: `User::where(...` to `User::query()->where(...`
 
 <a name="dead_controllers"></a>
-
 ### `php artisan check:dead_controllers`
 
 
@@ -841,35 +828,34 @@ And more features will be added soon. ;)
 <a name="license"></a>
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
+The MIT License (MIT). Please see the [License File](LICENSE.md) for more information.
 
 <a name="contributing"></a>
+## 🙋 Contributing
 
 ### :raising_hand: Contributing
 If you find an issue or have a better way to do something, feel free to open an issue or a pull request.
 If you use laravel-microscope in your open source project, create a pull request to provide its URL as a sample application in the README.md file.
 
 <a name="security"></a>
-### :exclamation: Security
+## ❗ Security
+
 If you discover any security-related issues, please email `imanghafoori1@gmail.com` instead of using the issue tracker.
 
 <a name="more-from-author"></a>
-## More from the author:
+## More From The Author
 
 ### Laravel HeyMan
 
-:gem: It allows us to write expressive code to authorize, validate, and authenticate.
+💎 It allows us to write expressive code to authorize, validate, and authenticate.
 
 - https://github.com/imanghafoori1/laravel-heyman
 
---------------
+---
 
-```
-A man will never fail unless he stops trying.
-
-Albert Einstein
-```
+> A man will never fail unless he stops trying.
+>
+> — Albert Einstein
 
 [ico-laravel]: https://img.shields.io/badge/Laravel-%E2%89%A5%205.6-ff2d20?style=flat-square&logo=laravel
 [ico-php]: https://img.shields.io/packagist/php-v/imanghafoori/laravel-microscope?color=%238892BF&style=flat-square&logo=php
@@ -886,7 +872,6 @@ Albert Einstein
 [link-downloads]: https://packagist.org/packages/imanghafoori/laravel-microscope/stats
 [link-author]: https://github.com/imanghafoori1
 [link-contributors]: ../../contributors
-
 
 <a name="contributors"></a>
 ## ❤️ Contributors
