@@ -124,22 +124,20 @@ php artisan vendor:publish --provider="Imanghafoori\LaravelMicroscope\LaravelMic
 ```
 
 <a name="usage"></a>
-## <g-emoji class="g-emoji" alias="gem" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f48e.png">💎</g-emoji> Usage:
+## 💎 Usage
 
-### Useful Commands:
+### Useful Commands
 
+> You can run 👇
 
->You can run :point_down:
-
-|#|Artisan Command|
+| # | Artisan Command |
 |---|---|
-|1|`php artisan search_replace`|
-|2|`php artisan check:early_returns`|
-|3|`php artisan check:all`|
+| 1 | `php artisan search_replace` |
+| 2 | `php artisan check:early_returns` |
+| 3 | `php artisan check:all` |
 
-
-<a name="less-use-commands"></a>
-### Less Used Commands:
+<a name="less-used-commands"></a>
+### Less Used Commands
 
 | #  | Artisan Command                            |
 |----|--------------------------------------------|
@@ -336,8 +334,8 @@ This is more complex but works much faster. (since it does not need the php synt
 
 - You can optionally comment your placeholders (as above `<1:any>`) with numbers so that you know which one corresponds to which when replaced.
 
-<a name="filters" ></a>
-:four: **Filters:**
+<a name="filters"></a>
+#### 4️⃣ Filters
 
 Currently, the microscope offers only two built-in filters: `is_sub_class_of` and `in_array`
 
@@ -534,10 +532,6 @@ For example:
 foreach ($products as $product) {
     if ($someCond) {
         // A lot of code 1
-        // A lot of code 1
-        // A lot of code 1
-        // A lot of code 1
-        // A lot of code 1
         if ($someOtherCond) {
             // A lot more code 2
             // A lot more code 2
@@ -696,6 +690,9 @@ So this syntax will work: `'MyMod::myPartials.body'`
 <a name="action_comments"></a>
 ### `php artisan check:action_comments {--file=SomeFile.php}`
 
+```bash
+php artisan check:action_comments {--file=SomeFile.php}
+```
 
 - This adds annotations in the controller actions so that you know which route is pointing to the current controller action.
 - You can use the `--file=` option to narrow down the scanned files.
@@ -755,11 +752,9 @@ Gate::policy(User::class, 'UserPolicy@someMethod');
 Gate::define('someAbility', 'UserGate@someMethod');
 ```
 
-1 - It checks the `User` classpath to be valid.
-
-2 - It checks the `UserPolicy` classpath to be valid.
-
-3 - It checks the `someMethod` method to exist.
+1. Checks that the `User` classpath is valid.
+2. Checks that the `UserPolicy` classpath is valid.
+3. Checks that `someMethod` exists.
 
 <a name="dynamic_where"></a>
 ### `php artisan check:dynamic_where`
@@ -800,8 +795,7 @@ Finds controllers with no routes pointing to them.
 
 ### `php artisan list:models {--folder=app/Models}`
 
-- It searches the project and lists the model classes.
-- You can use `--folder=` option to narrow down the scanned folders.
+Searches the project and lists the model classes. Use `--folder=` to narrow down the scanned folders.
 
 ### `php artisan check:extra_fqcn {--folder=app/Models} --fix {--class=ClassRefsToBeFixed}`
 
@@ -866,7 +860,10 @@ If you discover any security-related issues, please email `imanghafoori1@gmail.c
 ## ❤️ Contributors
 
 This project exists thanks to all the people who contribute. [[Contributors](https://github.com/imanghafoori1/laravel-microscope/graphs/contributors)].
-<a href="https://github.com/imanghafoori1/laravel-microscope/graphs/contributors"><img src="https://opencollective.com/laravel-microscope/contributors.svg?width=890&button=false" /></a>
+
+<a href="https://github.com/imanghafoori1/laravel-microscope/graphs/contributors">
+    <img src="https://opencollective.com/laravel-microscope/contributors.svg?width=890&button=false" />
+</a>
 
 ## ⭐ Star History
 
