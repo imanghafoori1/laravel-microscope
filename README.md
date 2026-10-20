@@ -1,25 +1,13 @@
-<h2 align="center">
-     Find Bugs Before They Bite
-</h2>
-
+<h2 align="center">Find Bugs Before They Bite</h2>
 
 <p align="center">
-    <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="microscope_header"></img>
+    <img width="300px" src="https://user-images.githubusercontent.com/6961695/78522127-920e9e80-77e1-11ea-869a-05a29466e6b0.png" alt="microscope_header">
 </p>
 
-<h4 align="center">
-Built with :heart: for lazy Laravel developers ;)
-</h4>
+<h4 align="center">Built with ❤️ for lazy Laravel developers ;)</h4>
 
-<h3 align="center">
-Why repeat the old errors, if there are so many new errors to commit?
-</h3>
-<h3 align="center">
-(Bertrand Russel)
-</h3>
-<h5 align="center">
-Give your eyes a rest, we will detect and fix them for you.
-</h5>
+<h3 align="center">Check the vibe-coded project to make sure it passes health checks.</h3>
+<h3 align="center">AI hallucinations are never going to end.</h3>
 
 ![Packagist Stars](https://img.shields.io/packagist/stars/imanghafoori/laravel-microscope)
 [![Required Laravel Version][ico-laravel]][link-packagist]
@@ -31,83 +19,58 @@ Give your eyes a rest, we will detect and fix them for you.
 [![Coverage Status](https://coveralls.io/repos/github/imanghafoori1/laravel-microscope/badge.svg?branch=master)](https://coveralls.io/github/imanghafoori1/laravel-microscope?branch=master)
 [![Test Package with Laravel 12](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/app_test.yml/badge.svg)](https://github.com/imanghafoori1/laravel-microscope/actions/workflows/app_test.yml)
 
-<!--
-<p align="center">
-<a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/8d75e05f4b67de65b51e10772b054f506aa8cfab/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f762f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Latest Version on Packagist" data-canonical-src="https://img.shields.io/packagist/v/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
-<a href="https://scrutinizer-ci.com/g/imanghafoori1/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/ee6d1b9eee22268201b7e253867c6bb64838651e/68747470733a2f2f696d672e736869656c64732e696f2f7363727574696e697a65722f672f696d616e676861666f6f7269312f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Quality Score" data-canonical-src="https://img.shields.io/scrutinizer/g/imanghafoori1/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
-<a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/5441e915afbdb81de92b808965f294b0c7d18c52/68747470733a2f2f706f7365722e707567782e6f72672f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652f642f6461696c79" alt="Daily Downloads" data-canonical-src="https://poser.pugx.org/imanghafoori/laravel-microscope/d/daily" style="max-width:100%;"></a>
-<a href="https://packagist.org/packages/imanghafoori/laravel-microscope" rel="nofollow"><img src="https://camo.githubusercontent.com/7f10826df8cf3fb52525fd2494554c0e587b8bb7/68747470733a2f2f696d672e736869656c64732e696f2f7061636b61676973742f64742f696d616e676861666f6f72692f6c61726176656c2d6d6963726f73636f70652e7376673f7374796c653d666c61742d737175617265" alt="Total Downloads" data-canonical-src="https://img.shields.io/packagist/dt/imanghafoori/laravel-microscope.svg?style=round-square" style="max-width:100%;"></a>
-<a href="/imanghafoori1/laravel-microscope/blob/master/LICENSE.md"><img src="https://camo.githubusercontent.com/d885b3999bb863974fb67118174bb0402d089a89/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e7376673f7374796c653d726f756e642d737175617265" alt="Software License" data-canonical-src="https://img.shields.io/badge/license-MIT-blue.svg?style=round-square" style="max-width:100%;"></a></p>
--->
+## Table of Contents
 
-
-- Table Of Contents
-    - [Key Things To Know](#key-things-to-know)
-    - [Installation](#installation)
-    - [Usage](#usage)
-        - [Useful Commands](#useful-commands)
-        - [Fewer Use Commands](#less-use-commands)
-    - [What The Commands Do?](#what-the-commands-do)
-
-      <details>
-
-        <summary>show commands</summary>
-
-        1. [`php artisan search_replace`](#search_replace)
-            - [Defining Patterns](#defining-patterns)
-            - [Placeholders](#placeholders)
-            - [Mutator](#mutator)
-            - [Filters](#filters)
-            - [Capturing Php "statements"](#capturing-php-statements)
-            - [Capturing Global Function Calls](#capturing-global)
-            - [Repeating Patterns](#repeating-patterns)
-
-        1. [`php artisan check:early_returns`](#early_returns)
-        1. [`php artisan check:psr4`](#psr4)
-        1. [`php artisan check:imports`](#imports)
-        1. [`php artisan check:bad_practices`](#bad_practices)
-        1. [`php artisan check:routes`](#routes)
-        1. [`php artisan check:compact`](#compact)
-        1. [`php artisan check:blade_queries`](#blade_queries)
-        1. [`php artisan check:extract_blades`](#extract_blades)
-        1. [`php artisan check:action_comments`](#action_comments)
-        1. [`php artisan check:views`](#views)
-        1. [`php artisan check:gates`](#gates)
-        1. [`php artisan check:aliases`](#aliases)
-        1. [`php artisan check:dead_controllers`](#dead_controllers)
-        1. [`php artisan check:generic_docblocks`](#generic_docblocks)
-        1. [`php artisan check:migrations`](#migrations)
-        1. [`php artisan check:empty_comment`](#empty_comment)
-        1. [`php artisan enforce:helper_functions`](#helper_functions)
-        1. [`php artisan check:extra_fqcn`](#fqcn)
-        1. [`php artisan list:models`](#models)
-        1. [`php artisan check:extra_imports`](#extra_imports)
-        1. [`php artisan enforce:imports`](#enforce_imports)
-        1. [`php artisan check:abort_if`](#check_abort_if)
-     </details>
-
-    - [Credits](#credits)
-    - [License](#license)
-    - [Contributing](#contributing)
-    - [More From The Author](#more-from-author)
-    - [Contributors](#contributors)
+- [Key Things To Know](#key-things-to-know)
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Useful Commands](#useful-commands)
+    - [Less Used Commands](#less-used-commands)
+- [What The Commands Do](#what-the-commands-do)
+    - [`search_replace`](#search_replace)
+    - [`check:early_returns`](#early_returns)
+    - [`check:psr4`](#psr4)
+    - [`check:imports`](#imports)
+    - [`check:bad_practices`](#bad_practices)
+    - [`check:routes`](#routes)
+    - [`check:compact`](#compact)
+    - [`check:blade_queries`](#blade_queries)
+    - [`check:extract_blades`](#extract_blades)
+    - [`check:action_comments`](#action_comments)
+    - [`check:views`](#views)
+    - [`check:gates`](#gates)
+    - [`check:aliases`](#aliases)
+    - [`check:dead_controllers`](#dead_controllers)
+    - [`check:generic_docblocks`](#generic_docblocks)
+    - [`check:abort_if`](#check_abort_if)
+    - [`check:dynamic_where`](#dynamic_where)
+    - [`check:extra_fqcn`](#extra_fqcn)
+    - [`check:extra_imports`](#extra_imports)
+    - [`enforce:imports`](#enforce_imports)
+    - [`enforce:helper_functions`](#helper_functions)
+    - [`enforce:query`](#enforce_query)
+    - [`list:models`](#models)
+- [Credits](#credits)
+- [License](#license)
+- [Contributing](#contributing)
+- [More From The Author](#more-from-author)
+- [Contributors](#contributors)
 
 <a name="key-things-to-know"></a>
-## Key things to know:
+## Key Things To Know
 
-- It is created to be **smarter than phpstorm** and other IDEs in finding errors.
-- It is created to **understand laravel run-time** and magic.
-- It does **not show you stupid false errors**, all the reported cases are really errors.
-- Even If you have written a lot of tests for your app, **you may still need this**.
-- **It can refactor your code**, by applying `early returns` automatically.
-- It is written from scratch to yield the **maximum performance** possible.
+- It is created to be **smarter than PhpStorm** and other IDEs in finding errors.
+- It is created to **understand Laravel runtime** and magic.
+- It does **not show you stupid false errors** — every reported case is really an error.
+- Even if you have written a lot of tests for your app, **you may still need this**.
+- **It can refactor your code**, by applying early returns automatically.
+- It is written from scratch to yield the **maximum possible performance**.
 
-### :film_strip: Video tutorial [here](https://youtu.be/aEkiE30wNKk)
+### ⭐ Your Stars Make Us Do More
 
-### :star: Your Stars Make Us Do More
->If you found this package useful, and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
+> If you found this package useful and you want to encourage the maintainer to work on it, just press the star button to declare your willingness.
 
-<a href="https://github.com/imanghafoori1/microscope/stargazers">Stargazers</a>
+[Stargazers](https://github.com/imanghafoori1/microscope/stargazers)
 
 <a name="installation"></a>
 ## ⬇️ Installation
@@ -488,7 +451,6 @@ User::where('name', 'John')->where('family', 'Dou')->where('age', 20)->get();
 into:
 
 ```php
-    'name' => 'John',
 User::where([
     'name'   => 'John',
     'family' => 'Dou',
